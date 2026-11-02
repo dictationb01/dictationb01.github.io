@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.2.b-shell';
+const SHELL = 'sdp-v0.0.3-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -72,7 +72,7 @@ async function launch() {
       await navigator.serviceWorker.ready;
       await new Promise((r) => setTimeout(r, 1200));
       const names = (await caches.keys()).sort();
-      const shell = await caches.open('sdp-v0.0.2.b-shell');
+      const shell = await caches.open('sdp-v0.0.3-shell');
       const shellNames = (await shell.keys()).map((req) => new URL(req.url).pathname);
       return { names, shellNames, controller: !!navigator.serviceWorker.controller };
     }, null);
@@ -101,7 +101,9 @@ async function launch() {
     /* the "published" build is derived from the running one, so this fixture
        can never fall out of sync with the release it ships alongside. */
     const LOCAL_VER = JSON.parse(read('data/version.json')).appVersion;
-    const REMOTE_VER = LOCAL_VER.replace(/[a-z]$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
+    /* bump the LAST segment whatever its shape (0.0.3 → 0.0.4), so the
+       fixture can never coincide with the running build. */
+    const REMOTE_VER = LOCAL_VER.replace(/(\d+)$/, (n) => String(Number(n) + 1));
     server.setOverride('/data/version.json', JSON.stringify({
       ver: 1, appVersion: REMOTE_VER, version: REMOTE_VER, buildDate: '2026-11-02',
       schema: 1, settingsRev: 1, session: '8',

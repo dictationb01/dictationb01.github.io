@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — dictation engine (v0.0.2.a)
+/*! Smart Dictation Player — dictation engine (v0.0.3)
  * Strict ES5, dependency free.
  * contract: docs/ARCHITECTURE_MAP.md §R2 priority #3 single integrated cockpit
  * contract: docs/ARCHITECTURE_MAP.md §R4 focus & input law
@@ -48,6 +48,13 @@
     deadline: 0,
     ticker: null,
     repeatTimer: null,
+    /* R3: the cue chain (preparing / number / paused / resumed / complete)
+       owns exactly one timer at a time so a pause can always cancel it. */
+    cueTimer: null,
+    needPreparingCue: false,
+    /* R1: the explicit pause flag. E.phase === 'paused' is the cockpit state;
+       E.paused is the one law every speech path re-checks. */
+    paused: false,
     epoch: 0,
     retryOnly: false,
     sessionNo: '8',
@@ -184,13 +191,18 @@
         pill[i].setAttribute('aria-current', i === E.index ? 'true' : 'false');
       }
     }
-    setText(byId('sessionProgressCount'), t('progressWord', 'Word #') + pad2(E.index + 1) + t('progressOf', ' of 30'));
-    setText(byId('btnPrev'), t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')');
-    setText(byId('btnNext'), t('btnNextNum', '⏭ Next (#') + Math.min(total, E.index + 2) + ')');
+    /* Phase 5: the single-line cockpit header (WORD #01 / 30). */
+    setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + t('progressOf30', ' / 30'));
+    /* Phase 5: a symbol-first deck — the glyph is the button, the caption
+       beside it carries the word. aria-label keeps it accessible. */
+    var prevBtn = byId('btnPrev');
+    if (prevBtn) { setText(prevBtn, '⏮'); prevBtn.setAttribute('aria-label', t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')'); }
+    var nextBtn = byId('btnNext');
+    if (nextBtn) { setText(nextBtn, '⏭'); nextBtn.setAttribute('aria-label', t('btnNextNum', '⏭ Next (#') + Math.min(total, E.index + 2) + ')'); }
     var replay = byId('btnReplay');
-    if (replay) setText(replay, t('btnReplay', '🔊 Replay Word'));
+    if (replay) { setText(replay, '🔊'); replay.setAttribute('aria-label', t('btnReplay', '🔊 Replay Word')); }
     var preset = byId('playerPresetBadge');
-    if (preset) setText(preset, 'Fast Exam 5s · 2×');
+    if (preset) setText(preset, String(Math.max(3, Number(E.writeSecs) || 5)) + t('writeSecsBadge', 's Write') + ' · ' + Math.max(1, Number(E.repeats) || 1) + '×');
     return total;
   }
   function updateMeta() {
@@ -261,7 +273,13 @@
   function cycleHint() {
     var order = ['pos', 'first', 'si', 'sentence'], i;
     for (i = 0; i < order.length; i++) {
-      if (!E.hints[order[i]]) { E.hints[order[i]] = true; renderHints(); return order[i]; }
+      if (!E.hints[order[i]]) {
+        E.hints[order[i]] = true;
+        renderHints();
+        /* R3: one cue per reveal, never per tap-loop. */
+        try { if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.hint', noop); } catch (e) {}
+        return order[i];
+      }
     }
     for (i = 0; i < order.length; i++) E.hints[order[i]] = false;
     renderHints();
@@ -349,6 +367,7 @@
   function stopTicker() {
     if (E.ticker) { global.clearInterval(E.ticker); E.ticker = null; }
     if (E.repeatTimer) { global.clearTimeout(E.repeatTimer); E.repeatTimer = null; }
+    clearCueTimer();
   }
   function startTicker() {
     stopTicker();
@@ -435,6 +454,7 @@
   function enterListening() {
     if (screenIsCovered()) return false;
     E.phase = 'listening';
+    E.paused = false;
     E.pausedPhase = '';
     E.pauseReason = '';
     E.phaseStart = now();
@@ -464,15 +484,19 @@
        already spoken, instead of paying for repeat 1 again. */
     var done = Math.max(0, Math.min(Number(startFrom) || 0, Math.max(0, Number(E.repeats) - 1)));
     var gap = repeatGapMs();
+    var cueGap = cueGapMs();
+    function live() { return epoch === E.epoch && E.phase === 'listening' && !E.paused; }
     function scheduleNext() {
-      if (epoch !== E.epoch || E.phase !== 'listening') return;
+      if (!live()) return;
       if (done >= E.repeats) return;
       if (E.repeatTimer) { global.clearTimeout(E.repeatTimer); E.repeatTimer = null; }
       E.repeatTimer = global.setTimeout(fire, gap);
     }
     function fire() {
       E.repeatTimer = null;
-      if (epoch !== E.epoch || E.phase !== 'listening') return;
+      /* R1 Path D (F1): the repeat chain is the fourth leak. A timer that
+         fired after Pause used to speak "Afraid." into an empty cockpit. */
+      if (!live()) return;
       var item = current();
       if (!item) return;
       done += 1;
@@ -492,6 +516,7 @@
         if (settled) return;
         settled = true;
         global.clearTimeout(guard);
+        if (!live()) return;
         if (E.repeatsDone < E.repeatsTotal) extendListening();
         scheduleNext();
       }
@@ -499,6 +524,40 @@
         if (SDP.Speech && SDP.Speech.playWord) SDP.Speech.playWord(item.word, {}, after);
         else after();
       } catch (e) { after(); }
+    }
+    /* R3: the natural classroom opening. Word #1 announces the lesson and its
+       number; words #2–#30 announce only their number; both then hand over to
+       the first repetition after `cueGap`. Every callback re-checks live(). */
+    if (done === 0) {
+      var withPreparing = !!E.needPreparingCue;
+      reserveCueAir((withPreparing ? 1700 + cueGap : 0) + 1700 + cueGap + 600);
+      E.needPreparingCue = false;
+      var speakNumber = function () {
+        if (!live()) return;
+        sayCueSafe('num.' + (E.index + 1), epoch, function () {
+          if (!live()) return;
+          clearCueTimer();
+          E.cueTimer = global.setTimeout(function () {
+            E.cueTimer = null;
+            if (!live()) return;
+            fire();
+          }, cueGap);
+        });
+      };
+      if (withPreparing) {
+        sayCueSafe('cmd.preparing', epoch, function () {
+          if (!live()) return;
+          clearCueTimer();
+          E.cueTimer = global.setTimeout(function () {
+            E.cueTimer = null;
+            if (!live()) return;
+            speakNumber();
+          }, cueGap);
+        });
+      } else {
+        speakNumber();
+      }
+      return;
     }
     fire();
   }
@@ -526,6 +585,7 @@
     if (index >= E.items.length) { finish(); return; }
     E.index = index;
     E.finished = false;
+    E.paused = false;
     E.hints = { pos: false, first: false, si: false, sentence: false };
     updateMeta();
     renderHints();
@@ -545,7 +605,38 @@
     if (E.finished) return false;
     return E.phase === 'listening' || E.phase === 'writing';
   }
-  function isPaused() { return E.phase === 'paused'; }
+  function isPaused() { return !!E.paused || E.phase === 'paused'; }
+  /* R3: one guarded cue call. The callback only runs while this exact beat is
+     still live, listening and unpaused — never in a 5 s write window. */
+  function sayCueSafe(key, epoch, cb) {
+    cb = cb || noop;
+    try {
+      if (!SDP.Speech || !SDP.Speech.sayCue) { cb(); return false; }
+      SDP.Speech.sayCue(key, function () {
+        if (epoch !== E.epoch || E.phase !== 'listening' || E.paused) return;
+        cb();
+      });
+      return true;
+    } catch (e) { cb(); return false; }
+  }
+  function clearCueTimer() {
+    if (E.cueTimer) { try { global.clearTimeout(E.cueTimer); } catch (e) {} E.cueTimer = null; }
+    return true;
+  }
+  /* R3/R9: 400 ms of studio air in class, 15 ms under a sub-second test pacing
+     so a Chromium journey never waits on the intro. */
+  function cueGapMs() { return (E.writeSecs && E.writeSecs < 1) ? 15 : 400; }
+  /* R3: the intro chain needs air; push the listening deadline out so the
+     write countdown cannot open on top of "Preparing lesson." */
+  function reserveCueAir(ms) {
+    var extra = Math.max(0, Number(ms) || 0);
+    if (!extra) return E.deadline;
+    E.deadline = Math.max(E.deadline, now() + extra);
+    E.phaseMs = Math.max(E.phaseMs, E.deadline - (E.phaseStart || now()));
+    E.remainingMs = Math.max(0, E.deadline - now());
+    E.phaseEnd = E.deadline;
+    return E.deadline;
+  }
 
   function reasonLabel(reason) {
     var r = str(reason);
@@ -564,7 +655,7 @@
       var shown = Math.min(total, Math.max(1, Number(E.repeatShown || E.repeatsDone || 1)));
       var live = E.phase === 'listening' || E.phase === 'writing' || E.phase === 'paused';
       rep.hidden = !live;
-      setText(rep, t('repeatBadge', 'Repeat') + ' ' + shown + ' / ' + total);
+      setText(rep, t('repeatBadge', 'Repeat') + ' ' + shown + t('repeatOf', ' of ') + total);
     }
     var banner = byId('playerPausedBanner');
     if (banner) {
@@ -578,11 +669,14 @@
     var btn = byId('btnPlayPause');
     if (btn) {
       if (E.phase === 'paused') {
-        btn.textContent = t('btnResumeWord', '▶ Resume Word #') + (E.index + 1);
+        btn.textContent = '▶';
+        btn.setAttribute('aria-label', t('btnResumeWord', '▶ Resume Word #') + (E.index + 1));
       } else if (E.phase === 'listening' || E.phase === 'writing') {
-        btn.textContent = t('btnPauseDictation', '⏸ Pause Dictation');
+        btn.textContent = '⏸';
+        btn.setAttribute('aria-label', t('btnPauseDictation', '⏸ Pause Dictation'));
       } else {
-        btn.textContent = t('btnStartDictation', '▶ Start Dictation');
+        btn.textContent = '▶';
+        btn.setAttribute('aria-label', t('btnStartDictation', '▶ Start Dictation'));
       }
     }
     return true;
@@ -597,11 +691,18 @@
     E.pauseReason = str(reason) || 'user';
     E.remainingMs = Math.max(0, E.deadline - now());
     E.phase = 'paused';
+    /* R1: the flag every speech path reads. Set BEFORE the stop so an
+       in-flight callback can never sneak a word out in between. */
+    E.paused = true;
     stopTicker();
     E.epoch += 1;
     try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
     paint(E.phaseMs ? E.remainingMs / E.phaseMs : 0);
     setStateText();
+    /* R3 (F4): the student now hears why the room went quiet. */
+    try {
+      if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.paused', noop);
+    } catch (e) {}
     saveDraft();
     renderBadges();
     try { if (SDP.Sync && SDP.Sync.flushDeferred) SDP.Sync.flushDeferred(); } catch (e) {}
@@ -614,6 +715,7 @@
   function resumeFromPaused() {
     var back = E.pausedPhase === 'writing' ? 'writing' : 'listening';
     E.pauseReason = '';
+    E.paused = false;
     if (back === 'writing') {
       E.phase = 'writing';
       if (!(E.phaseMs > 0)) E.phaseMs = Math.max(3, Number(E.writeSecs) || 5) * 1000;
@@ -625,6 +727,7 @@
       mountInput();
       bindInput();
       focusInputOnce();
+      try { if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.resumed', noop); } catch (e) {}
     } else {
       E.phase = 'listening';
       E.epoch += 1;
@@ -635,7 +738,23 @@
       paint(1);
       setStateText();
       startTicker();
-      speakRepeats(E.epoch, E.repeatsDone || 0);
+      /* R3: "Session resumed." then the interrupted repetition. The chain is
+         handed back at most 1.5 s later (20 ms under a sub-second test pace)
+         even if the cue backend never calls back. */
+      var epoch = E.epoch;
+      var resumed = false;
+      var handover = function () {
+        if (resumed) return;
+        resumed = true;
+        clearCueTimer();
+        if (epoch !== E.epoch || E.phase !== 'listening' || E.paused) return;
+        speakRepeats(epoch, E.repeatsDone || 0);
+      };
+      E.cueTimer = global.setTimeout(handover, (E.writeSecs && E.writeSecs < 1) ? 20 : 1500);
+      try {
+        if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.resumed', function () { handover(); });
+        else handover();
+      } catch (e) { handover(); }
     }
     saveDraft();
     renderBadges();
@@ -652,6 +771,7 @@
     E.pausedPhase = str(d.pausedPhase) === 'writing' ? 'writing' : 'listening';
     E.pauseReason = str(d.pauseReason) || 'user';
     E.phase = 'paused';
+    E.paused = true;
     stopTicker();
     E.epoch += 1;
     try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
@@ -950,9 +1070,14 @@
     E.phase = 'finished';
     E.finished = true;
     E.remainingMs = 0;
+    E.paused = false;
     try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
     paint(0);
     setStateText();
+    /* R3 (F4): the run ends with a sentence, not silence. */
+    try {
+      if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.complete', noop);
+    } catch (e) {}
     grade();
     renderResults();
     showResults(true);
@@ -1049,9 +1174,16 @@
     E.index = Math.min(Math.max(0, Number(opts.startIndex) || 0), Math.max(0, E.items.length - 1));
     E.finished = false;
     E.pausedPhase = '';
+    E.paused = false;
     E.pauseReason = '';
     E.remainingMs = 0;
     E.startedAt = now();
+    /* R3/R6: the opening cue belongs to the FIRST word of this run only, and
+       the fallback persona is pinned for the whole run. */
+    E.needPreparingCue = true;
+    try {
+      if (SDP.Speech && SDP.Speech.lockSessionVoice) SDP.Speech.lockSessionVoice();
+    } catch (e) {}
     refreshEls();
     showResults(false);
     setMode(E.mode, !!opts.silentMode);
@@ -1070,7 +1202,10 @@
     E.epoch += 1;
     E.phase = 'idle';
     E.finished = false;
+    E.paused = false;
+    E.needPreparingCue = false;
     try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
+    try { if (SDP.Speech && SDP.Speech.endSessionVoice) SDP.Speech.endSessionVoice(); } catch (e) {}
     return state();
   }
 

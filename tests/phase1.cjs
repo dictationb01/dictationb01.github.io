@@ -27,7 +27,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
       }
     });
     const progress = JSON.parse(app.w.localStorage.getItem('sdp.progress'));
@@ -46,7 +46,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
@@ -68,7 +68,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
@@ -87,8 +87,10 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
-    const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '78987898');
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
+    /* R7: use a PIN that is NOT the master recovery code, so the lockout
+       assertions below still see a plain refusal. */
+    const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
     check('G3.2a a configured vault is recognised', app.SDP.Studio.hasVault() === true);
@@ -100,13 +102,35 @@ const sinhala = /[\u0D80-\u0DFF]/;
     check('G3.2c vault locks out after the fifth failure', app.SDP.Sync.Vault.isLocked() === true);
     check('G3.2d lockout message is shown to the lecturer', /60/.test(app.SDP.Studio.message()), app.SDP.Studio.message());
     let lockedErr = null;
-    await new Promise((resolve) => app.SDP.Studio.unlock('78987898', (err) => { lockedErr = err; resolve(); }));
+    await new Promise((resolve) => app.SDP.Studio.unlock('159753', (err) => { lockedErr = err; resolve(); }));
     check('G3.2e the correct PIN is refused while locked', !!lockedErr && lockedErr.code === 'locked', lockedErr && lockedErr.code);
     app.SDP.Sync.Vault.resetLock();
     let okErr = 'unset';
-    await new Promise((resolve) => app.SDP.Studio.unlock('78987898', (err) => { okErr = err; resolve(); }));
+    await new Promise((resolve) => app.SDP.Studio.unlock('159753', (err) => { okErr = err; resolve(); }));
     check('G3.2f the correct PIN unlocks after the lock expires', okErr === null && app.SDP.Studio.isUnlocked(), String(okErr));
     check('G3.2g unlocked secrets stay in sessionStorage only', !!app.w.sessionStorage.getItem('sdp.studio.unlocked') && !app.w.localStorage.getItem('sdp.studio.unlocked'));
+    app.close();
+  }
+
+  /* ── 2b. R7 bootstrap master recovery ──────────────────────────────── */
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
+  // always opens a recovery session, even while the PIN pad is locked out.
+  {
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
+    const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
+    app.SDP.Studio.setEnvelope(envelope);
+    app.SDP.Sync.Vault.resetLock();
+    for (let i = 0; i < 5; i++) {
+      await new Promise((resolve) => app.SDP.Studio.unlock('111111', () => { resolve(); }));
+    }
+    let recErr = 'unset';
+    await new Promise((resolve) => app.SDP.Studio.unlock('78987898', (err) => { recErr = err; resolve(); }));
+    check('G3.2h the master recovery code opens a session even while locked out',
+      recErr === null && app.SDP.Studio.isUnlocked() === true, String(recErr));
+    check('G3.2i a recovery session is flagged and can re-seal a fresh PIN',
+      app.SDP.Studio.recoveryMode() === true && typeof app.SDP.Studio.changePin === 'function',
+      String(app.SDP.Studio.recoveryMode()));
+    app.SDP.Sync.Vault.resetLock();
     app.close();
   }
 
@@ -123,13 +147,13 @@ const sinhala = /[\u0D80-\u0DFF]/;
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.2.b');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.3');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -140,7 +164,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
@@ -154,9 +178,9 @@ const sinhala = /[\u0D80-\u0DFF]/;
     check('G3.4c paper mode has no #typeInput in the DOM', app.byId('typeInput') === null);
     check('G3.4d the beat starts in listening with the verbatim phase line',
       /Listen Carefully \(Repeat \d of \d\)/.test(app.byId('beatStateText').textContent), app.byId('beatStateText').textContent);
-    /* D10: the ladder answers in milliseconds now, so the first writing
-       window opens ~1.3 s in — 2.5 s lands inside it. */
-    await app.advance(2500);
+    /* R3: the classroom opening is "Preparing lesson." → "Number 1." → the
+       word, so the first writing window opens ~5 s in on the fake clock. */
+    for (let i = 0; i < 40 && app.SDP.Engine.state() !== 'writing'; i++) await app.advance(250);
     check('G3.4e the beat advances into writing with the word number and countdown',
       /Write Word #\d+ in Your Book! \(\d+s countdown\)/.test(app.byId('beatStateText').textContent), app.byId('beatStateText').textContent);
     app.SDP.Engine.pause();
@@ -220,7 +244,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -240,7 +264,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
       .map((n) => n.textContent).join(' ');
     check('G3.5d Sinhala chrome is rendered in Sinhala', sinhala.test(chromeSi));
     check('G3.5e proper nouns survive the switch', chromeSi.indexOf('CCBE B1') >= 0 && app.byId('appHeader').textContent.indexOf('Smart Dictation') >= 0);
-    const guide = app.SDP.Views.t('guideStep1Body');
+    const guide = app.SDP.Views.t('guideSpotlight1');
     check('G3.5f Sinhala guide step one is natural Sinhala', sinhala.test(guide) && guide.length > 40, guide.slice(0, 60));
     check('G3.5g English and Sinhala tables have identical key sets',
       JSON.stringify(Object.keys(app.SDP.STRINGS_EN).sort()) === JSON.stringify(Object.keys(app.SDP.STRINGS_SI).sort()),
@@ -258,7 +282,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -299,7 +323,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         /* The student touched every classroom key — the lecturer still wins. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
@@ -334,7 +358,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -351,7 +375,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
@@ -367,7 +391,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
       app.byId('guideTitle').textContent);
     check('G3.9c #btnGuideSkipStart is visible and labelled',
       app.byId('btnGuideSkipStart').hidden === false &&
-      /Skip Guide & Start Immediately/.test(app.byId('btnGuideSkipStart').textContent),
+      /▶ Start Dictation Now/.test(app.byId('btnGuideSkipStart').textContent),
       app.byId('btnGuideSkipStart').textContent);
     await app.advance(1200);
     const spoken = app.SDP.Speech.lastUtterances();
@@ -398,30 +422,35 @@ const sinhala = /[\u0D80-\u0DFF]/;
       app.qa('#sessionPills .word-pill.todo').length === 30,
       app.qa('#sessionPills .word-pill').length + ' pills');
     check('G3.10b the idle transport reads ▶ Start Dictation, never a lying Pause',
-      text('btnPlayPause') === app.SDP.Views.t('btnStartDictation') && /Start Dictation/.test(text('btnPlayPause')),
-      text('btnPlayPause'));
+      text('btnPlayPause') === '▶' &&
+      app.byId('btnPlayPause').getAttribute('aria-label') === app.SDP.Views.t('btnStartDictation') &&
+      /Start Dictation/.test(app.byId('btnPlayPause').getAttribute('aria-label')),
+      text('btnPlayPause') + ' | ' + app.byId('btnPlayPause').getAttribute('aria-label'));
     check('G3.10c the progress line and the preset badge are honest at boot',
-      /^Word #01 of 30$/.test(text('sessionProgressCount')) && /Fast Exam/.test(text('playerPresetBadge')),
+      /^WORD #01 \/ 30$/.test(text('sessionProgressCount')) && /5s Write · 2×/.test(text('playerPresetBadge')),
       text('sessionProgressCount') + ' | ' + text('playerPresetBadge'));
     app.SDP.Engine.start({ mode: 'paper' });
     await app.settle(3);
     check('G3.10d a live beat reads the verbatim listening line and ⏸ Pause Dictation',
       /^Listen Carefully \(Repeat \d of \d\)…$/.test(text('beatStateText')) &&
-      text('btnPlayPause') === app.SDP.Views.t('btnPauseDictation'),
-      text('beatStateText') + ' | ' + text('btnPlayPause'));
+      app.byId('btnPlayPause').getAttribute('aria-label') === app.SDP.Views.t('btnPauseDictation'),
+      text('beatStateText') + ' | ' + app.byId('btnPlayPause').getAttribute('aria-label'));
     check('G3.10e exactly one pill is live and the numbered transport names the words',
       app.qa('#sessionPills .word-pill.current').length === 1 &&
-      /^⏮ Prev \(#1\)$/.test(text('btnPrev')) && /^⏭ Next \(#2\)$/.test(text('btnNext')) &&
-      /^🔊 Replay Word$/.test(text('btnReplay')),
-      text('btnPrev') + ' | ' + text('btnNext'));
+      /^⏮ Prev \(#1\)$/.test(app.byId('btnPrev').getAttribute('aria-label')) &&
+      /^⏭ Next \(#2\)$/.test(app.byId('btnNext').getAttribute('aria-label')) &&
+      /^🔊 Replay Word$/.test(app.byId('btnReplay').getAttribute('aria-label')) &&
+      text('btnPrev') === '⏮' && text('btnNext') === '⏭',
+      app.byId('btnPrev').getAttribute('aria-label') + ' | ' + app.byId('btnNext').getAttribute('aria-label'));
     app.byId('btnPlayPause').click();
     await app.settle(2);
     check('G3.10f pause prints the verbatim paused sentence with ONE closing bracket',
       text('beatStateText') === 'Dictation Paused at Word #1 (Repeat 1 of 2) — Press Resume Below',
       text('beatStateText'));
     check('G3.10g pause relabels the transport ▶ Resume Word #1 and shows the banner',
-      text('btnPlayPause') === '▶ Resume Word #1' && app.byId('playerPausedBanner').hidden === false,
-      text('btnPlayPause'));
+      app.byId('btnPlayPause').getAttribute('aria-label') === '▶ Resume Word #1' &&
+      text('btnPlayPause') === '▶' && app.byId('playerPausedBanner').hidden === false,
+      app.byId('btnPlayPause').getAttribute('aria-label'));
     app.SDP.Views.showTab('home');
     await app.settle(2);
     check('G3.10h the giant resume card names the word, the repeat and the seconds left',
@@ -432,14 +461,15 @@ const sinhala = /[\u0D80-\u0DFF]/;
     app.SDP.Engine.resume();
     await app.settle(2);
     check('G3.10i resume returns to a live ⏸ Pause Dictation and clears the banner',
-      text('btnPlayPause') === app.SDP.Views.t('btnPauseDictation') && app.byId('playerPausedBanner').hidden === true,
-      text('btnPlayPause'));
+      app.byId('btnPlayPause').getAttribute('aria-label') === app.SDP.Views.t('btnPauseDictation') &&
+      app.byId('playerPausedBanner').hidden === true,
+      app.byId('btnPlayPause').getAttribute('aria-label'));
     app.byId('btnNext').click();
     await app.settle(2);
     check('G3.10j stepping forward turns pill 1 green and moves the live pill to 2',
       app.qa('#sessionPills .word-pill.done').length === 1 &&
       app.qa('#sessionPills .word-pill.current')[0].getAttribute('data-word-pill') === '2' &&
-      /^Word #02 of 30$/.test(text('sessionProgressCount')),
+      /^WORD #02 \/ 30$/.test(text('sessionProgressCount')),
       text('sessionProgressCount'));
     app.close();
   }
@@ -460,11 +490,11 @@ const sinhala = /[\u0D80-\u0DFF]/;
     check('G3.11b unlock mounts exactly the three numbered cards',
       app.qa('.studio-card').length === 3 && app.byId('studioGate') === null,
       app.qa('.studio-card').length + ' cards');
-    check('G3.11c the 34-clip dashboard states X/34 live',
-      /Voice Pack: \d+\/34 Clips/.test(app.byId('studioPackDashboard').textContent),
+    check('G3.11c the 70-clip dashboard states X/70 live',
+      /Voice Pack: \d+\/70 Clips/.test(app.byId('studioPackDashboard').textContent),
       app.byId('studioPackDashboard').textContent);
-    check('G3.11d #btnOneClickMasterSetup is the primary 34-clip CTA',
-      /^🚀 Generate 34 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
+    check('G3.11d #btnOneClickMasterSetup is the primary 70-clip CTA',
+      /^🚀 Generate 70 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
       app.byId('btnOneClickMasterSetup').getAttribute('data-primary-cta') === '1',
       app.byId('btnOneClickMasterSetup').textContent);
     check('G3.11e the retry row stays hidden until a clip actually fails',
@@ -475,13 +505,15 @@ const sinhala = /[\u0D80-\u0DFF]/;
       app.byId('screen-studio').contains(app.byId('lecturerSyncBar')),
       barDocked + ' -> ' + app.byId('lecturerSyncBar').parentNode.id);
     const fullQueue = app.SDP.Studio.queueFor(null, false);
-    const retryQueue = app.SDP.Studio.queueFor(null, false, ['_guide_1']);
-    check('G3.11g the pack is exactly 34 clips (30 words + 4 guide steps)',
-      fullQueue.length === 34 &&
-      fullQueue.filter((c) => c.key.indexOf('_guide_') === 0).length === 4,
+    const retryQueue = app.SDP.Studio.queueFor(null, false, ['guide.en.1']);
+    check('G3.11g the pack is exactly 70 clips (30 words + 30 numbers + 6 commands + 4 guide steps)',
+      fullQueue.length === 70 &&
+      fullQueue.filter((c) => c.key.indexOf('guide.en.') === 0).length === 4 &&
+      fullQueue.filter((c) => c.key.indexOf('num.') === 0).length === 30 &&
+      fullQueue.filter((c) => c.key.indexOf('cmd.') === 0).length === 6,
       fullQueue.length + ' clips');
     check('G3.11h a delta retry re-queues ONLY the failed clip — never a paid one',
-      retryQueue.length === 1 && retryQueue[0].key === '_guide_1',
+      retryQueue.length === 1 && retryQueue[0].key === 'guide.en.1',
       retryQueue.map((c) => c.key).join(','));
     app.SDP.Views.showTab('settings');
     await app.settle(2);

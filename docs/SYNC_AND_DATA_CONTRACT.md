@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.2.b
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.3
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the
@@ -10,13 +10,13 @@ code is the bug.
 
 | Constant | Value | Where |
 | --- | --- | --- |
-| `APP_VERSION` / `SDP.version` | `0.0.2.b` | `index.html` (`TARGET`), every module |
-| `ver` | `11` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
-| `schema` | `11` | same |
-| `settingsRev` | `17` | same, and `SETTINGS_REV` in `data/sdp-data-sync.js:17` |
-| `syncRev` | `1793620000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
-| `SW_VERSION` | `sdp-v0.0.2.b` | `sw.js` |
-| `SHELL_CACHE` | `sdp-v0.0.2.b-shell` | `sw.js` |
+| `APP_VERSION` / `SDP.version` | `0.0.3` | `index.html` (`TARGET`), every module |
+| `ver` | `12` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
+| `schema` | `12` | same |
+| `settingsRev` | `20` | same, and `SETTINGS_REV` in `data/sdp-data-sync.js:17` |
+| `syncRev` | `1793654400000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
+| `SW_VERSION` | `sdp-v0.0.3` | `sw.js` |
+| `SHELL_CACHE` | `sdp-v0.0.3-shell` | `sw.js` |
 | `PRESERVE_CACHES` | `['sdp-youdao-v1', 'sdp-audio-clips']` | `sw.js` |
 
 There is exactly one version file: `data/version.json`. Never a root `/version.json`.
@@ -57,16 +57,16 @@ The watch runs `checkForUpdates` every 120,000 ms and on `visibilitychange`
 
 ```json
 {
-  "ver": 11,
-  "appVersion": "0.0.2.b",
-  "version": "0.0.2.b",
+  "ver": 12,
+  "appVersion": "0.0.3",
+  "version": "0.0.3",
   "buildDate": "2026-11-02",
-  "schema": 11,
-  "settingsRev": 17,
+  "schema": 12,
+  "settingsRev": 20,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "updatedAt": "2026-11-02T09:58:11.030Z",
-  "syncRev": 1793620000000
+  "syncRev": 1793654400000
 }
 ```
 
@@ -204,11 +204,11 @@ app-written since v0.0.1.d and is therefore budgeted, not hash-frozen (D-UI11).
 Must keep, untouched: `credits`, `tts`, `voice`, `live` (ntfy state/community/inbox),
 `repoOwner: "dictationb1"`, `repoName: "dictationb1.github.io"`,
 `encVault: "SDP_ENC_V2:AAA="`, `defaults`, `classInfo`,
-`voiceId: "Xb7hH8MSUJpSbSDYk0k2"`, `voiceName: "Alice"`,
+`voiceId: "XB0fDUnXU5powFXDhCwa"`, `voiceName: "Charlotte"`,
 `modelId: "eleven_flash_v2_5"`.
 
-Only `ver: 11`, `appVersion: "0.0.2.b"`, `version: "0.0.2.b"`, `schema: 11`,
-`settingsRev: 17` are ours to change.
+Only `ver: 12`, `appVersion: "0.0.3"`, `version: "0.0.3"`, `schema: 12`,
+`settingsRev: 20` are ours to change.
 
 ---
 
@@ -639,9 +639,9 @@ v0.0.2.a moved a lot of pixels without moving a byte of student data.
 | `cuesSeen` (which amber `.cue` the student has already acted on) | inside `sdp.settings` | a sixth localStorage key would break R8; a malformed value is healed to `{}` on read (`sdp-data-sync.js:196`) |
 | `#sessionPills` done/current/todo | DOM only | repainted from `E.items` + `E.index` on every tick; never persisted |
 | `pendingGen`, `lastFailedClip`, `genProgress` | `SDP.Studio.state` (memory) | a failed clip is retried with a fresh request, never resumed from a stale pointer |
-| `#studioPackDashboard` X/34 | computed by `clipCount()` | counts only keys that `clipExists()`; never a cached number |
+| `#studioPackDashboard` X/70 | computed by `clipCount()` | counts only keys that `clipExists()`; never a cached number |
 | `#resumeBanner` | `sdp.session` draft | `{index, repeatsDone, remainingMs, pausedPhase, pauseReason}` — the same draft R5 already guarantees |
-| `guide_seen` stamp | `sdp.guide_seen` | still one of the five keys; value is the release string `0.0.2.b` |
+| `guide_seen` stamp | `sdp.guide_seen` | still one of the five keys; value is the release string `0.0.3` |
 
 The publish order is unchanged: `session.json → config.json → elevenlabs-audio.json →
 version.json`, one `syncRev` for all four, `version.json` last. A locked studio or a

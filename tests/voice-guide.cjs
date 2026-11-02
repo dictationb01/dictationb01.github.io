@@ -49,7 +49,7 @@ function installVoices(app, list) {
   /* ── 1. D-V1: the ReferenceError that killed v0.0.1.b ────────────────── */
   // contract: docs/CHANGELOG_LEDGER.md §D-V1 — pickVoice must always be a function
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     check('G10.1a the speech module exports pickVoice as a function',
       typeof app.SDP.Speech.pickVoice === 'function');
     let picked = 'unset';
@@ -65,7 +65,7 @@ function installVoices(app, list) {
   /* ── 2. D-V2: one unified British female professor, male names banned ── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 male-name blacklist
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     const list = fakeVoices();
     installVoices(app, list);
     await new Promise((resolve) => app.SDP.Speech.selectProfessorVoice((v) => { app.w.__picked = v; resolve(); }));
@@ -86,71 +86,81 @@ function installVoices(app, list) {
     app.close();
   }
 
-  /* ── 3. R3: Guide 2.0 auto-opens, speaks step 1, and advances ────────── */
-  // contract: docs/UI_COMPONENT_GUIDE.md §3 guide step machine
+  /* ── 3. R2 (F3): the Guide 4.0 spotlight — one card, four dots ───────── */
+  // contract: docs/UI_COMPONENT_GUIDE.md §3 Guide 4.0 spotlight
   {
     const app = await createApp({ before(w) { w.localStorage.removeItem('sdp.guide_seen'); } });
-    const steps = app.qa('.guide-step');
-    check('G10.3a the guide ships exactly four steps', steps.length === 4, steps.length);
+    const steps = app.qa('#guideSteps .guide-step');
+    check('G10.3a the hidden step list carries exactly four sentences', steps.length === 4, steps.length);
+    check('G10.3b the step list is screen-reader only, never the visible card',
+      !!app.byId('guideSteps') && app.byId('guideSteps').hidden === true);
     const modal = app.byId('guideModal');
-    check('G10.3b the guide auto-opens for a first-time student',
+    check('G10.3c the guide auto-opens for a first-time student',
       !!modal && modal.hidden === false && modal.classList.contains('is-open'),
       modal ? (modal.hidden + '/' + modal.className) : 'missing');
-    check('G10.3c step 1 is the active step', app.qa('.guide-step.guide-active').length === 1 &&
-      app.q('.guide-step.guide-active').getAttribute('data-step') === '0');
-    /* the tap banner is the D-V6 fallback: it must exist but stay hidden while
-     * narration is healthy */
-    const banner = app.byId('guideTapBanner');
-    check('G10.3d #guideTapBanner is a real element and starts hidden',
-      !!banner && (banner.hidden === true || banner.classList.contains('hidden')));
-    app.byId('guideNextStep').click();
-    await app.settle(6);
-    check('G10.3e "next" advances to step 2 exactly once',
-      app.q('.guide-step.guide-active').getAttribute('data-step') === '1',
-      app.q('.guide-step.guide-active').getAttribute('data-step'));
-    app.byId('guideReplayStep').click();
-    await app.settle(4);
-    check('G10.3f "replay" stays on the current step',
-      app.q('.guide-step.guide-active').getAttribute('data-step') === '1');
-    app.byId('guideSpeak').click();
-    await app.settle(4);
-    check('G10.3g #guideSpeak restarts narration from step 1',
-      app.q('.guide-step.guide-active').getAttribute('data-step') === '0',
-      app.q('.guide-step.guide-active').getAttribute('data-step'));
-    /* D-G1: the v0.0.1.b `catch (e) {}` swallowed every narration failure. The
-     * honest failure path is the banner + the documented pause/resume pair. */
+    check('G10.3d the spotlight renders Step 1 of 4 and the first sentence',
+      app.byId('guideStepTag').textContent === 'Step 1 of 4' &&
+      app.byId('guideStepText').textContent === 'Press Start Dictation to begin.',
+      app.byId('guideStepTag').textContent + ' | ' + app.byId('guideStepText').textContent);
+    check('G10.3e four dots ship and exactly the first is active',
+      app.qa('#guideDots .guide-dot').length === 4 &&
+      app.qa('#guideDots .guide-dot.is-active').length === 1 &&
+      app.qa('#guideDots .guide-dot')[0].classList.contains('is-active') &&
+      app.qa('#guideDots .guide-dot')[0].getAttribute('aria-current') === 'step');
+    /* F3: the card must never expose badge/clutter text as the spoken line. */
+    check('G10.3f the spotlight text is one clean sentence, never card chrome',
+      !/Auto pause|Listen twice\. Write in five|Step \d of 4/.test(app.byId('guideStepText').textContent) &&
+      app.byId('guideStepText').textContent.split('.').filter(Boolean).length === 1,
+      app.byId('guideStepText').textContent);
+    const footButtons = Array.from(app.q('#guideModal .modal-foot').querySelectorAll('button')).map((b) => b.id);
+    check('G10.3g the guide carries exactly two buttons',
+      JSON.stringify(footButtons) === JSON.stringify(['btnGuideSkipStart', 'btnGuideClose']), footButtons.join(','));
+    check('G10.3h the retired step/next/replay controls are gone',
+      app.byId('guideNextStep') === null && app.byId('guideReplayStep') === null && app.byId('guideSpeak') === null);
+    app.byId('guideLangPill').click();
+    check('G10.3i the language pill re-paints the SAME step in Sinhala',
+      app.byId('guideStepTag').textContent.indexOf('පියවර') === 0 &&
+      /[\u0D80-\u0DFF]/.test(app.byId('guideStepText').textContent),
+      app.byId('guideStepTag').textContent + ' | ' + app.byId('guideStepText').textContent.slice(0, 30));
+    app.byId('guideLangPill').click();
+    /* D-G1: a narration failure must surface, never be swallowed. */
     const viewSrc = require('node:fs').readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
     const at = viewSrc.indexOf('function startGuideNarration');
     const block = viewSrc.slice(at, at + 2600);
-    check('G10.3h a narration failure surfaces a toast and the tap banner',
+    check('G10.3j a narration failure surfaces a toast and the tap banner',
       /catch\s*\(\s*e\s*\)\s*\{[\s\S]{0,500}?showGuideTapBanner\(\)/.test(block) &&
       /console\.error/.test(block));
+    check('G10.3k every narration callback re-checks the run id (no F2 loop)',
+      /runId !== guideState\.guideRunId/.test(block) && /guideState\.guideRunId \+= 1/.test(viewSrc));
+    app.byId('btnGuideClose').click();
+    check('G10.3l closing hides the modal and stamps the visit',
+      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.3');
     app.close();
   }
 
-  /* ── 4. R3: a silenced device falls back to the tap banner ──────────── */
-  // contract: docs/UI_COMPONENT_GUIDE.md §3 600 ms watchdog
+  /* ── 4. R2: no 700 ms Youdao watchdog, no tap-restart loop ───────────── */
+  // contract: docs/CHANGELOG_LEDGER.md §R2 — the watchdog and the loop are dead
   {
-    /* A device whose audio is blocked: playGuideStep accepts the call but never
-       starts or completes, which is exactly what Chrome does before a gesture. */
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } });
-    app.SDP.Speech.playGuideStep = function () { return false; };
-    /* re-open the guide with a blocked engine: openGuide() arms the 600 ms
-       watchdog, and nothing will ever report "speaking" */
+    const viewSrc = require('node:fs').readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
+    check('G10.4a the 700 ms watchdog never ships again', !/armGuideWatchdog/.test(viewSrc) && !/\}, 700\);/.test(viewSrc));
+    check('G10.4b a banner tap resumes the CURRENT step, never step 1',
+      /startGuideNarration\(guideState\.activeStep\)/.test(viewSrc) &&
+      !/onGuideBannerTap[\s\S]{0,400}?startGuideNarration\(0\)/.test(viewSrc));
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } });
     app.byId('btnReplayGuide').click();
-    await app.settle(6);
-    const hiddenFirst = app.byId('guideTapBanner').hidden;
-    await app.advance(900);
+    await app.settle(4);
     const banner = app.byId('guideTapBanner');
-    check('G10.4a a silent device reveals the tap banner within the watchdog',
-      hiddenFirst === true && banner.hidden === false && !banner.classList.contains('hidden'),
-      banner ? (hiddenFirst + '->' + banner.hidden + '/' + banner.className) : 'missing');
-    check('G10.4b the banner explains what to tap',
-      !!banner && /voice|sound|tap/i.test(banner.textContent), banner && banner.textContent.slice(0, 80));
-    /* tapping the banner primes the audio engine and starts from step 1 */
+    check('G10.4c the tap banner exists and starts hidden while narration is healthy',
+      !!banner && banner.hidden === true && app.byId('guideModal').hidden === false,
+      banner ? String(banner.hidden) : 'missing');
+    /* the banner explains what to tap */
+    app.SDP.Views.showGuideTapBanner();
+    check('G10.4d the banner explains what to tap',
+      /voice|sound|tap/i.test(banner.textContent), banner.textContent.slice(0, 80));
+    /* tapping primes audio once and hides itself — it never restarts step 1 */
     banner.dispatchEvent(new app.w.MouseEvent('click', { bubbles: true }));
     await app.settle(6);
-    check('G10.4c tapping the banner primes speech and hides itself',
+    check('G10.4e tapping the banner primes speech and hides itself',
       app.SDP.Speech.isUnlocked() === true &&
       (banner.hidden === true || banner.classList.contains('hidden')));
     app.close();
@@ -161,7 +171,7 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
         /* appliedSettingsRev pins the student's own lock against adoption. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({ voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
       }
@@ -191,6 +201,68 @@ function installVoices(app, list) {
     check('G10.6e both languages carry the string',
       /tap/i.test(app.SDP.STRINGS_EN.guideAutoplayBanner) &&
       /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.guideAutoplayBanner));
+    app.close();
+  }
+
+  /* ── 7. R1 (F1): the ghost-voice kill switch ─────────────────────────── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.3 — Session paused. once, zero late "Afraid."
+  {
+    const app = await createApp({
+      before(w) {
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({
+          mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+          rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
+          voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
+        }));
+      }
+    });
+    app.byId('btnStart').click();
+    await app.settle(4);
+    check('G10.7a Start opens a live listening beat', /Listen Carefully/.test(app.byId('beatStateText').textContent),
+      app.byId('beatStateText').textContent);
+    app.SDP.Engine.pause();
+    await app.settle(4);
+    const said = app.SDP.Speech.lastUtterances();
+    check('G10.7b pausing during listening speaks "Session paused." exactly once',
+      said.filter((l) => l === 'Session paused.').length === 1 && said[said.length - 1] === 'Session paused.',
+      JSON.stringify(said));
+    check('G10.7c the beat is frozen and the cockpit says so',
+      app.SDP.Engine.isPaused() === true && /Paused/.test(app.byId('beatStateText').textContent),
+      app.SDP.Engine.isPaused() + ' / ' + app.byId('beatStateText').textContent);
+    /* F1: every pending repeat chain, number cue and word clip must stay dead. */
+    const stopAt = said.length;
+    await app.advance(8000);
+    await app.settle(4);
+    const tail = app.SDP.Speech.lastUtterances().slice(stopAt);
+    check('G10.7d no late word/repeat cue leaks after the pause (F1)',
+      tail.every((l) => !/Afraid|Number \d|Preparing lesson/.test(l)), JSON.stringify(tail));
+    app.close();
+  }
+
+  /* ── 8. R3: the classroom opening cue chain ──────────────────────────── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.3 — cmd.preparing → num.N → the word
+  {
+    const app = await createApp({
+      before(w) {
+        w.localStorage.setItem('sdp.guide_seen', '0.0.3');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({
+          mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+          rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
+          voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
+        }));
+      }
+    });
+    app.byId('btnStart').click();
+    await app.settle(4);
+    await app.advance(12000);
+    const said = app.SDP.Speech.lastUtterances();
+    check('G10.8a the lesson opens with cmd.preparing then "Number 1."',
+      said[0] === 'Preparing lesson. Listen carefully.' && said[1] === 'Number 1.',
+      JSON.stringify(said.slice(0, 3)));
+    check('G10.8b the chain then hands over to the write window',
+      app.SDP.Engine.state() === 'writing' && /Write Word #1 in Your Book/.test(app.byId('beatStateText').textContent),
+      app.SDP.Engine.state() + ' / ' + app.byId('beatStateText').textContent);
     app.close();
   }
 

@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.2.a)
+/*! Smart Dictation Player — views, i18n & router (v0.0.3)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -11,7 +11,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.2.b';
+    return '0.0.3';
   })();
 
   function noop() {}
@@ -63,7 +63,7 @@
     setPacing: '1 · Dictation pacing & mode', modeLabel: 'Mode', writeTime: 'Writing time', repeats: 'Word repeats',
     pauseBetween: 'Pause between repeats', autoAdvance: 'Advance automatically',
     setAudio: '2 · Audio & voice', voiceSource: 'Voice source', voiceAuto: 'Auto (best British voice)',
-    voiceLecturer: 'Lecturer clips', voiceAlice: 'Alice (ElevenLabs UK)', voiceDevice: 'Device voice',
+    voiceLecturer: 'Lecturer clips', voiceAlice: 'Charlotte (ElevenLabs UK)', voiceDevice: 'Device voice',
     rate: 'Speech rate', volume: 'Volume', testVoice: 'Test Voice',
     setLangTheme: '3 · Language & appearance', language: 'Language', theme: 'Theme',
     themeDark: 'Dark', themeLight: 'Light', langEnglish: 'English', langSinhala: 'Sinhala',
@@ -77,7 +77,6 @@
     resetStats: 'Reset local stats', checkUpdate: 'Check for session update',
     studioTitle: '6 · Lecturer Studio & admin vault', studioLocked: 'Enter the lecturer PIN to open the studio.',
     studioChangePin: 'Change PIN',
-    guideSpeakBtn: 'Listen to the steps (EN)', guideCloseBtn: 'Got it, Start Learning',
     /* Table B additions — UI labels, badges, presets and studio controls */
     dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
     syncBadgeSynced: 'Synced',
@@ -97,10 +96,6 @@
     syncBadgeOffline: 'Offline — showing cached session',
     syncBadgeUpdate: 'Update found — tap to reload',
     syncBadgeRetry: 'Check failed — retry',
-    guidePauseVoice: '⏸ Pause Voice',
-    guideResumeVoice: '▶ Resume Voice',
-    guideNextStep: '⏭ Next Step',
-    guideReplayStep: '🔁 Replay Step',
     guideReplay: '🎓 Replay Step-by-Step Voice Guide',
     guideAutoPlay: 'Auto-play English voice guide on start',
     presetHeading: 'Quick Pacing Presets',
@@ -123,14 +118,6 @@
     pinPadClear: 'Clear',
     pinPadUnlock: 'Unlock',
     studioCommitClip: 'Commit Recorded Clip',
-    guideStep1Title: '1 of 4 — Press Start Dictation',
-    guideStep1Body: 'One tap on the big blue Start Dictation button begins the whole thirty-word session at Word one. Nothing else has to be chosen first.',
-    guideStep2Title: '2 of 4 — Listen twice, write in five seconds, auto-pause',
-    guideStep2Body: 'Each word is spoken twice in a British professor voice and you get five seconds to write it in your book. If you leave this screen or open a dialog, the dictation pauses itself and waits for you.',
-    guideStep3Title: '3 of 4 — Check words one to thirty in order',
-    guideStep3Body: 'When the session ends, open the thirty-word list and check each word in order. Tap Listen to hear it again, then mark it Correct or Needs Practice.',
-    guideStep4Title: '4 of 4 — Automatic classroom sync and lecturer admin',
-    guideStep4Body: 'The word list and pacing chosen by Ms. Sumodya Sewmini sync automatically to every device. Your lecturer opens Lecturer Admin with the PIN to broadcast new settings.',
     toastLoaded: 'Loaded', toastOffline: 'Offline ready',
     updateChecking: 'Checking for a newer session…', updateNone: 'You already have the latest session',
     updateFound: 'New session downloaded', resetDone: 'Local stats cleared', exportReady: 'Backup downloaded',
@@ -147,7 +134,7 @@
     studioEnvelope: 'Encrypted vault envelope (SDP_ENC_V2)', studioCopy: 'Copy envelope',
     studioPublishOk: 'Session published', studioPublishFail: 'Publish failed',
     studioNoToken: 'Add a GitHub token (Contents API) in the vault first', studioWordsCount: 'words parsed',
-    studioElevenNote: 'ElevenLabs generation runs only while unlocked, using the Alice voice and flash_v2_5.',
+    studioElevenNote: 'ElevenLabs generation runs only while unlocked, using the Charlotte voice and flash_v2_5.',
     /* ── v0.0.1.c Table B: Guide 2.0, Home journey, Smart Board bar, Studio ── */
     guideTapToStart: '🔊 Tap anywhere to start the voice guide',
     homeJourney1: 'Listen & write',
@@ -190,7 +177,7 @@
     pauseReasonVisibility: 'the app went to the background',
     pauseReasonUser: 'you tapped pause',
     guideAutoplayBanner: '🔊 Tap Anywhere to Start Voice Guide',
-    studioCardKeys: 'STEP 1 — API KEYS & 34-CLIP VOICE PACK GENERATOR',
+    studioCardKeys: 'STEP 1 — API KEYS & 70-CLIP VOICE PACK GENERATOR',
     studioCardWords: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioCardSettings: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
     studioLockLecturer: 'Lock Lecturer Mode',
@@ -198,7 +185,7 @@
     studioAiKey: 'Free AI key (optional)',
     studioTestAi: 'Test Free AI / Dictionary Engine',
     studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
-    studioOneClick: '🚀 Generate 34 British Professor Voices & Sync All Devices',
+    studioOneClick: '🚀 Generate 70 British Professor Voices & Sync All Devices',
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
@@ -238,7 +225,7 @@
     settingsLecturerActive: '🔓 Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
     openStudioBtn: '🎓 Open Lecturer Admin Studio',
     studioScreenTitle: '🎓 Lecturer Admin Studio',
-    studioScreenSub: 'Three numbered steps: keys and the 34-clip voice pack, the 30-word session editor, and the classroom settings broadcast.',
+    studioScreenSub: 'Three numbered steps: keys and the 70-clip voice pack, the 30-word session editor, and the classroom settings broadcast.',
     lecturerAdminLocked: '🔒 Lecturer Admin', lecturerAdminUnlocked: '🔓 Lecturer Admin',
     btnReplay: '🔊 Replay Word',
     btnPauseDictation: '⏸ Pause Dictation',
@@ -249,24 +236,41 @@
     pausedAtWord: 'Dictation Paused at Word #', pausedResumeTail: ' — Press Resume Below',
     resumeMetaLine: 'Paused at Word #', ofWord: ' of 30 · Repeat ', secondsLeft: 's left',
     progressWord: 'Word #', progressOf: ' of 30',
+    /* Phase 5 (v0.0.3): the one-line cockpit header and the symbol deck. */
+    progressWordUpper: 'WORD #', progressOf30: ' / 30', repeatOf: ' of ', writeSecsBadge: 's Write',
+    capPrev: 'Prev', capPlay: 'Pause', capReplay: 'Replay', capNext: 'Next',
+    capRepeat: 'Repeat', capHint: 'Hint', capMode: 'Mode', capFinish: 'Check',
+    pillsDrawer: 'Jump to Word 1–30 ▾',
     markCorrectWord: '✓ Correct', markWeakWord: '✗ Needs Practice', btnStartDictation: '▶ Start Dictation',
     studioRetryNone: 'No failed clip to retry — every clip is already saved.',
     studioRetryOne: '↻ Retry Only the Failed Clip',
-    studioStep1Head: 'STEP 1 — API KEYS & 34-CLIP VOICE PACK GENERATOR',
+    studioStep1Head: 'STEP 1 — API KEYS & 70-CLIP VOICE PACK GENERATOR',
     studioStep2Head: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioStep3Head: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
     studioPackVault: 'Vault: Saved ✓', studioPackGithub: 'GitHub: Connected ✓', studioPackClips: 'Voice Pack: ',
-    studioClipsUnit: '/34 Clips', studioGenPrefix: 'Generating clip ',
-    studioGenCharsTail: ' chars used', studioClipsSaved: '/34 Clips Saved to GitHub · syncRev ',
+    studioClipsUnit: '/70 Clips', studioGenPrefix: 'Generating clip ',
+    studioGenCharsTail: ' chars used', studioClipsSaved: '/70 Clips Saved to GitHub · syncRev ',
     studioRetryFailed: '🔁 Retry Only the Missing Clips',
-    studioOneClick34: '🚀 Generate 34 British Professor Voices & Sync All Devices',
+    studioOneClick34: '🚀 Generate 70 British Professor Voices & Sync All Devices',
     studioSaveOnly: '💾 Save Keys to Vault Only',
     studioPublishWordsVoice34: '🔊 Generate Voices & Publish 30 Words to All Devices',
-    studioBroadcast34: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
-    guideCard1Tag: '1 of 4 — Press ▶ Start Dictation', guideCard2Tag: '2 of 4 — Listen 2×, Write in 5s & Auto-Pause',
-    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
+    studioBroadcast34: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Start Dictation Now',
+    /* R2 (v0.0.3): the compact spotlight — four clean spoken sentences. */
+    guideSpotlight1: 'Press Start Dictation to begin.',
+    guideSpotlight2: 'Listen twice, then write in five seconds.',
+    guideSpotlight3: 'Check all thirty words in order.',
+    guideSpotlight4: 'Practise the words you missed.',
+    guideStepTagPrefix: 'Step', guideStepTagSuffix: 'of 4',
+    guideExitBtn: '✕ Exit',
     studioSavedOk: '✓ Keys saved & protected across updates',
+    studioVerifyEl: '🔊 Test & Verify ElevenLabs Voice Key',
+    studioVerifyOk: 'VALID ✓ (Remaining Free Credits: ',
+    studioVerifyBad: 'INVALID KEY ✗ (HTTP ',
+    studioVerifyHint: 'INVALID KEY — paste the sk_… secret from ElevenLabs (the e1b… value is the key ID and will not work)',
+    studioClips70: '70 clips = 829 chars ≈ 8.3% of the free monthly quota (flash_v2_5 ≈ 414 credits)',
+    studioRecoveryUsed: 'Master recovery used — set a new PIN now',
+    studioChangePinBtn: '🔑 Change Lecturer PIN',
     studioPublishOkFull: '✓ Published & synced to all classroom devices'
   };
 
@@ -314,7 +318,6 @@
     resetStats: 'දේශීය සංඛ්‍යාලේඛන මකන්න', checkUpdate: 'වාර යාවත්කාලීනය පරීක්ෂා කරන්න',
     studioTitle: '6 · කථිකාචාර්ය ස්ටුඩියෝ සහ පරිපාලන බඳුන', studioLocked: 'ස්ටුඩියෝ විවෘත කිරීමට කථිකාචාර්ය PIN ඇතුළත් කරන්න.',
     studioChangePin: 'PIN වෙනස් කරන්ඕ.',
-    guideSpeakBtn: 'උපදෙස් හඬින් අසන්න (EN)', guideCloseBtn: 'තේරුණා, ආරම්භ කරමු',
     /* Table B additions — Sinhala UI labels, badges, presets and studio controls */
     dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
     syncBadgeSynced: 'සමමුහුර්තයි',
@@ -333,10 +336,6 @@
     syncBadgeOffline: 'අන්තර්ජාලය නැත — සුරැකි වාරය පෙන්වයි',
     syncBadgeUpdate: 'නව යාවත්කාලීනයක් ඇත — නැවත පූරණයට ඔබන්න',
     syncBadgeRetry: 'පරීක්ෂාව අසාර්ථකයි — නැවත උත්සාහ කරන්න',
-    guidePauseVoice: '⏸ හඬ නවතන්න',
-    guideResumeVoice: '▶ හඬ අරඹන්න',
-    guideNextStep: '⏭ ඊළඟ පියවර',
-    guideReplayStep: '🔁 මෙම පියවර නැවත අසන්න',
     guideReplay: '🎓 පියවරෙන් පියවර හඬ උපදෙස් නැවත අසන්න',
     guideAutoPlay: 'ආරම්භයේදී ඉංග්‍රීසි හඬ උපදෙස් ස්වයංක්‍රීයව වාදනය කරන්න',
     presetHeading: 'ඉක්මන් කාල සැකසුම් (Presets)',
@@ -359,14 +358,6 @@
     pinPadClear: 'මකන්න',
     pinPadUnlock: 'විවෘත කරන්න',
     studioCommitClip: 'පටිගත කළ හඬපටය සුරකින්න',
-    guideStep1Title: '4 න් 1 — ඩික්ටේෂන් ආරම්භ කරන්න ඔබන්න',
-    guideStep1Body: 'නිල් පැහැති ඩික්ටේෂන් ආරම්භ කරන්න බොත්තම එක් වරක් ඔබීමෙන් වචන 30 ඩික්ටේෂන් වාරය වචන එකෙන් ආරම්භ වේ; වෙනත් කිසිවක් තෝරාගැනීම අවශ්‍ය නැත.',
-    guideStep2Title: '4 න් 2 — දෙවරක් අසන්න, තත්පර පහකින් ලියන්න',
-    guideStep2Body: 'සෑම වචනයක්ම බ්‍රිතාන්‍ය මහාචාර්ය හඬින් දෙවරක් ඇසෙන අතර ලිවීමට තත්පර පහක් ලැබේ; තිරය මාරු කළහොත් ඩික්ටේෂන් ස්වයංක්‍රීයව නැවතී ඔබ එනතෙක් රැඳී සිටී.',
-    guideStep3Title: '4 න් 3 — වචන එකේ සිට තිහ දක්වා පිළිවෙලින් පරීක්ෂා කරන්න',
-    guideStep3Body: 'වාරය අවසන් වූ පසු වචන 30 ලැයිස්තුව විවෘත කර එකින් එක පිළිවෙලින් පරීක්ෂා කරන්න; නැවත ඇසීමට අසන්න ඔබා, නිවැරදි හෝ පුහුණුව අවශ්‍යයි ලෙස ලකුණු කරන්න.',
-    guideStep4Title: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
-    guideStep4Body: 'Ms. Sumodya Sewmini තෝරන වචන ලැයිස්තුව සහ වේගය සෑම උපාංගයකටම ස්වයංක්‍රීයව සමමුහුර්ත වේ; නව සැකසුම් විකාශනයට ඔබේ කථිකාචාර්යවරයා PIN සමඟ කථිකාචාර්ය පරිපාලනය විවෘත කරයි.',
     toastLoaded: 'පූරණය විය', toastOffline: 'නොබැඳිව සූදානම්',
     updateChecking: 'නව වාරයක් පරීක්ෂා කරමින්…', updateNone: 'ඔබ සතුව නවතම වාරය දැනටමත් ඇත',
     updateFound: 'නව වාරය බාගත විය', resetDone: 'දේශීය සංඛ්‍යාලේඛන මකා දමන ලදී', exportReady: 'උපස්ථය බාගත විය',
@@ -383,7 +374,7 @@
     studioEnvelope: 'සංකේතිත බඳුන ලියුම (SDP_ENC_V2)', studioCopy: 'ලියුම පිටපත් කරන්න',
     studioPublishOk: 'වාරය ප්‍රකාශයට පත් විය', studioPublishFail: 'ප්‍රකාශනය අසාර්ථක විය',
     studioNoToken: 'පළමුව බඳුනට GitHub ටෝකනයක් එක් කරන්න', studioWordsCount: 'වචන විග්‍රහ කර ඇත',
-    studioElevenNote: 'ElevenLabs ජනනය සිදු වන්නේ අගුළු හැර ඇති විට පමණක්, Alice හඬ සහ flash_v2_5 සමඟය.',
+    studioElevenNote: 'ElevenLabs ජනනය සිදු වන්නේ අගුළු හැර ඇති විට පමණක්, Charlotte හඬ සහ flash_v2_5 සමඟය.',
     /* ── v0.0.1.c Table B (සිංහල) ── */
     guideTapToStart: '🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
     homeJourney1: 'අසා ලියන්න',
@@ -434,7 +425,7 @@
     studioAiKey: 'නොමිලේ AI යතුර (අවශ්‍ය නැත)',
     studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
     studioAiNoKey: '1: ඉදිකළ නොමිලේ Oxford/Wikimedia ශබ්දකෝෂය සහ සිංහල පරිවර්තකය (100% නොමිලේ — යතුරක් අවශ්‍ය නැත)',
-    studioOneClick: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 34 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
+    studioOneClick: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
@@ -485,6 +476,10 @@
     pausedAtWord: 'වචන #', pausedResumeTail: ' දී ඩික්ටේෂන් නවතා ඇත — පහතින් දිගටම යන්න ඔබන්න',
     resumeMetaLine: 'වචන # දී නවතා ඇත · ඉතිරි ', ofWord: ' / 30 · වාරය ', secondsLeft: ' තත්පර',
     progressWord: 'වචන #', progressOf: ' / 30',
+    progressWordUpper: 'වචන #', progressOf30: ' / 30', repeatOf: ' න් ', writeSecsBadge: 'තත් ලියන්න',
+    capPrev: 'පෙර', capPlay: 'නවත්වන්න', capReplay: 'නැවත', capNext: 'ඊළඟ',
+    capRepeat: 'පුනරාවර්තනය', capHint: 'ඉඟිය', capMode: 'ක්‍රමය', capFinish: 'පරීක්ෂාව',
+    pillsDrawer: 'වචන 1–30 වෙත යන්න ▾',
     markCorrectWord: '✓ නිවැරදි', markWeakWord: '✗ පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
     studioRetryNone: 'නැවත උත්සාහ කිරීමට අසාර්ථක ක්ලිපයක් නැත — සියලු ක්ලිප සුරකිනු ලැබීය.',
     studioRetryOne: '↻ අසාර්ථක වූ ක්ලිපය පමණක් නැවත උත්සාහ කරන්න',
@@ -492,17 +487,28 @@
     studioStep2Head: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioStep3Head: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
     studioPackVault: 'බඳුන: සුරකින ලදී ✓', studioPackGithub: 'GitHub: සම්බන්ධයි ✓', studioPackClips: 'හඬ පැකේජය: ',
-    studioClipsUnit: '/හඬපට 34', studioGenPrefix: 'හඬපට සාදමින් ',
+    studioClipsUnit: '/හඬපට 70', studioGenPrefix: 'හඬපට සාදමින් ',
     studioGenCharsTail: ' අක්ෂර භාවිතය', studioClipsSaved: '/හඬපට 34 GitHub වෙත සුරකින ලදී · syncRev ',
     studioRetryFailed: '🔁 ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
-    studioOneClick34: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 34 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
+    studioOneClick34: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioSaveOnly: '💾 යතුරු බඳුනේ පමණක් සුරකින්න',
     studioPublishWordsVoice34: '🔊 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
-    studioBroadcast34: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',
-    guideCard1Tag: '4 න් 1 — ▶ ඩික්ටේෂන් ආරම්භ කරන්න ඔබන්න', guideCard2Tag: '4 න් 2 — 2 වාරය අසන්න, තත් 5 කින් ලියන්න',
-    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
+    studioBroadcast34: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
     guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
+    guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
+    guideSpotlight2: 'සෑම වචනයක්ම දෙවරක් අසන්න, පසුව තත්පර පහක් තුළ ලියන්න.',
+    guideSpotlight3: 'වාරය අවසන් වූ පසු වචන තිහම පිළිවෙලින් පරීක්ෂා කරන්න.',
+    guideSpotlight4: 'ඔබට මඟ හැරුණු වචන නැවත පුහුණු වන්න.',
+    guideStepTagPrefix: 'පියවර', guideStepTagSuffix: 'න් 4',
+    guideExitBtn: '✕ ඉවත් වන්න',
     studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
+    studioVerifyEl: '🔊 ElevenLabs හඬ යතුර පරීක්ෂා කරන්න',
+    studioVerifyOk: 'වලංගුයි ✓ (ඉතිරි නොමිලේ අක්ෂර: ',
+    studioVerifyBad: 'වලංගු නොවේ ✗ (HTTP ',
+    studioVerifyHint: 'වලංගු නොවේ — ElevenLabs වෙතින් sk_… රහස අලවන්න (e1b… අගය යතුරු හැඳුනුමයි, වැඩ නොකරයි)',
+    studioClips70: 'හඬපට 70 = අක්ෂර 829 ≈ මාසික නොමිලේ කෝටාවෙන් 8.3% (flash_v2_5 ≈ ණය 414)',
+    studioRecoveryUsed: 'ප්‍රධාන ප්‍රතිසාධනය භාවිතයි — දැන් නව PIN එකක් සකසන්න',
+    studioChangePinBtn: '🔑 කථිකාචාර්ය PIN වෙනස් කරන්න',
     studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
 
@@ -928,77 +934,67 @@
     }
   }
 
-  /* ══ Guide 3.0 ══ */
-  var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, autoplayTimer: null, quickMode: false, pendingMode: null, guideRunId: 0 };
-  var guidePaused = false;
-
-  /* D16: Guide 3.0 — four voice-transition cards with animated previews. */
-  function guideMockMarkup(step) {
-    if (step === 1) {
-      return '<div class="guide-mock">' +
-        '<span class="mock-btn">▶ ' + esc(t('startDictation')) + '</span>' +
-        '<span class="mock-cue">' + esc(t('cueStep1')) + '</span></div>';
-    }
-    if (step === 2) {
-      return '<div class="guide-mock">' +
-        '<div class="mock-row"><span class="mock-ring">5s</span>' +
-        '<span>⏸ ' + esc(t('btnPauseDictation')) + '</span></div>' +
-        '<div class="mock-row"><span class="mock-sync">2× · ' + esc(t('repeatBadge')) + ' 1 / 2</span></div></div>';
-    }
-    if (step === 3) {
-      var list = words(), rows = '', i, n = Math.min(3, list.length);
-      for (i = 0; i < n; i++) {
-        var w = list[i] || {};
-        rows += '<div class="mock-row"><span class="mock-num">#' + pad2(i + 1) + '</span>' +
-          '<span>' + esc(w.w) + '</span><span class="mock-cue">🔊</span>' +
-          '<span>' + esc(t('markCorrectWord')) + '</span><span>' + esc(t('markWeakWord')) + '</span></div>';
-      }
-      return '<div class="guide-mock">' + (rows || '<div class="mock-row">#01 · #02 · #03</div>') + '</div>';
-    }
-    return '<div class="guide-mock">' +
-      '<span class="mock-sync">📡 Ms. Sumodya Sewmini · ' + esc(t('lecturerSyncIdle')) + '</span>' +
-      '<span class="mock-btn mock-go">🎓 ' + esc(t('tabStudio')) + '</span></div>';
+  /* ══ Guide 4.0 — the compact four-step spotlight (R2 / F2 / F3) ══════
+   * One viewport, one sentence, four dots, two buttons. The spoken text is
+   * NEVER the card chrome: the class used to hear "Auto pause. Listen twice.
+   * Write in five seconds..." because the title carried badge words. The four
+   * sentences below are the only thing narration may say. */
+  var GUIDE_SPOTLIGHT_STEPS = [
+    'Press Start Dictation to begin.',
+    'Listen twice, then write in five seconds.',
+    'Check all thirty words in order.',
+    'Practise the words you missed.'
+  ];
+  var guideState = { activeStep: 0, narrating: false, opener: null, autoplayTimer: null, quickMode: false, pendingMode: null, guideRunId: 0 };
+  function guideIndex(n) {
+    var i = Number(n);
+    if (!(i >= 0)) i = 0;
+    if (i > 3) i = 3;
+    return i;
   }
+  function guideSentence(idx) { return GUIDE_SPOTLIGHT_STEPS[guideIndex(idx)]; }
+  /* The hidden <ol> keeps the four steps machine-readable (and translated) for
+     the language pill and for assistive tech; the spotlight is what is seen. */
   function renderGuideSteps() {
     var host = byId('guideSteps');
-    if (!host) return;
+    if (!host) return 0;
     var html = '', i;
     for (i = 1; i <= 4; i++) {
-      html += '<li class="guide-step" data-step="' + (i - 1) + '">' +
-        '<h3>' + esc(t('guideCard' + i + 'Tag')) + '</h3>' +
-        guideMockMarkup(i) +
-        '<p>' + esc(t('guideStep' + i + 'Body')) + '</p>' +
-        '</li>';
+      html += '<li class="guide-step" data-step="' + (i - 1) + '">' + esc(t('guideSpotlight' + i)) + '</li>';
     }
     host.innerHTML = html;
-    var steps = host.querySelectorAll ? host.querySelectorAll('.guide-step') : [];
-    for (i = 0; i < steps.length; i++) {
-      steps[i].classList.remove('guide-active');
-      steps[i].classList.remove('active-step');
-    }
-    if (steps[guideState.activeStep]) {
-      steps[guideState.activeStep].classList.add('guide-active');
-      steps[guideState.activeStep].classList.add('active-step');
-    }
+    paintGuideSpotlight(guideState.activeStep);
+    return 4;
   }
-  function highlightGuideStep(idx) {
+  function paintGuideSpotlight(idx) {
+    var at = guideIndex(idx);
+    guideState.activeStep = at;
+    setText(byId('guideStepTag'), t('guideStepTagPrefix', 'Step') + ' ' + (at + 1) + ' ' + t('guideStepTagSuffix', 'of 4'));
+    setText(byId('guideStepText'), t('guideSpotlight' + (at + 1), GUIDE_SPOTLIGHT_STEPS[at]));
+    var dots = byId('guideDots');
+    if (dots && dots.querySelectorAll) {
+      var all = dots.querySelectorAll('.guide-dot');
+      for (var d = 0; d < all.length; d++) {
+        var on = d === at;
+        if (all[d].classList) {
+          if (on) all[d].classList.add('is-active'); else all[d].classList.remove('is-active');
+        }
+        if (on) all[d].setAttribute('aria-current', 'step');
+        else all[d].removeAttribute('aria-current');
+      }
+    }
     var host = byId('guideSteps');
-    if (!host) return;
-    var steps = host.querySelectorAll ? host.querySelectorAll('.guide-step') : [];
-    var j;
-    for (j = 0; j < steps.length; j++) {
-      steps[j].classList.remove('guide-active');
-      steps[j].classList.remove('active-step');
+    if (host && host.querySelectorAll) {
+      var steps = host.querySelectorAll('.guide-step');
+      for (var j = 0; j < steps.length; j++) {
+        var live = j === at;
+        if (steps[j].classList) {
+          if (live) { steps[j].classList.add('guide-active'); steps[j].classList.add('active-step'); }
+          else { steps[j].classList.remove('guide-active'); steps[j].classList.remove('active-step'); }
+        }
+      }
     }
-    if (steps[idx]) {
-      steps[idx].classList.add('guide-active');
-      steps[idx].classList.add('active-step');
-      guideState.activeStep = idx;
-      /* D-G3: keep the spoken card inside the viewport on a 390px phone. */
-      try {
-        if (steps[idx].scrollIntoView) steps[idx].scrollIntoView({ block: 'nearest' });
-      } catch (e) { try { steps[idx].scrollIntoView(false); } catch (e2) {} }
-    }
+    return at;
   }
 
   /* ── D-G2: the "tap to start" autoplay-unlock banner ──────────────────── */
@@ -1022,8 +1018,7 @@
     if (banner.hidden) return false;
     return !(banner.classList && banner.classList.contains('hidden'));
   }
-  /* D11: 700 ms in, ask for a tap if no utterance really started. */
-  /* D16/R9: 900 ms in, a cold-boot browser may still be un-gestured;… */
+  /* D16/R9: 900 ms in, a cold-boot browser may still be un-gestured. */
   function showGuideAutoplayBanner() {
     var banner = byId('guideAutoplayBanner');
     if (!banner) return false;
@@ -1067,150 +1062,95 @@
     }, 900);
     return true;
   }
-  function armGuideWatchdog() {
-    if (guideState.watchdog) { try { global.clearTimeout(guideState.watchdog); } catch (e) {} }
-    guideState.watchdog = global.setTimeout(function () {
-      guideState.watchdog = null;
-      var modal = byId('guideModal');
-      if (!modal || modal.hidden) return;
-      var audible = false;
-      try {
-        audible = !!(SDP.Speech && SDP.Speech.hasStarted && SDP.Speech.hasStarted()) ||
-          !!(SDP.Speech && SDP.Speech.isAudioPlaying && SDP.Speech.isAudioPlaying());
-      } catch (e) { audible = false; }
-      if (!audible) showGuideTapBanner();
-    }, 700);
-  }
-  function clearGuideWatchdog() {
-    if (guideState.watchdog) { try { global.clearTimeout(guideState.watchdog); } catch (e) {} guideState.watchdog = null; }
-  }
-
+  /* R2: one run id per narration. Every callback re-checks it, so a tap or a
+     skip can never be overtaken by an older chain (the F2 loop). */
   function startGuideNarration(fromStep, lastStep) {
-    if (guideState.narrating) return false;
     guideState.narrating = true;
-    guideState.activeStep = Math.max(0, Math.min(3, Number(fromStep) || 0));
-    var last = lastStep === undefined ? 3 : Math.max(0, Math.min(3, Number(lastStep)));
+    guideState.guideRunId += 1;
+    var runId = guideState.guideRunId;
+    var start = guideIndex(fromStep);
+    var last = lastStep === undefined ? 3 : guideIndex(lastStep);
     renderGuideSteps();
     function speakStep(idx) {
+      if (runId !== guideState.guideRunId) return false;
+      var modal = byId('guideModal');
+      if (!modal || modal.hidden) { guideState.narrating = false; return false; }
       if (idx > last) {
         guideState.narrating = false;
-        clearGuideWatchdog();
         /* VOX-07: the quick walkthrough starts the dictation by itself. */
         if (guideState.quickMode) finishQuickGuide(true);
-        return;
+        return true;
       }
-      highlightGuideStep(idx);
-      var title = t('guideStep' + (idx + 1) + 'Title');
-      var body = t('guideStep' + (idx + 1) + 'Body');
-      /* R3: narration always speaks English, even when the cards show SI. */
+      paintGuideSpotlight(idx);
+      hideGuideTapBanner();
+      var sentence = guideSentence(idx);
       try {
-        SDP.Speech.playGuideStep(idx, title + '. ' + body, { lang: 'en-GB', rate: 0.94, pitch: 1.03 }, function () {
+        SDP.Speech.playGuideStep(idx, sentence, { lang: 'en-GB', rate: 0.94, pitch: 1.03 }, function () {
+          if (runId !== guideState.guideRunId || !guideState.narrating) return;
           speakStep(idx + 1);
         });
-        hideGuideTapBanner();
       } catch (e) {
-        /* D-G1: never swallow a narration failure — an empty catch hid the pickVoice… */
+        /* D-G1: never swallow a narration failure. */
         guideState.narrating = false;
         try { console.error('[SDP] guide narration failed:', e); } catch (e2) {}
         showToast(t('guideVoiceFailed'));
         showGuideTapBanner();
       }
+      return true;
     }
-    speakStep(guideState.activeStep);
+    speakStep(start);
     return true;
   }
-  /* First tap/click inside the modal: unlock audio, hide the banner, narrate. */
-  function onGuideGesture() {
-    var modal = byId('guideModal');
-    if (!modal || modal.hidden) return false;
-    var fromBanner = guideTapBannerVisible() || guideAutoplayBannerVisible();
+  function stopGuideNarration() {
+    guideState.guideRunId += 1;
+    try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
+    guideState.narrating = false;
+    return true;
+  }
+  /* R2 (F2): the banner tap primes audio and resumes the CURRENT step — it is
+     not a modal-wide gesture loop that restarts from Step 1 on every tap. */
+  function onGuideBannerTap(ev) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    if (ev && ev.preventDefault) ev.preventDefault();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     clearGuideAutoplayWatch();
     closeGuideSpot();
-    /* The first tap unlocks audio + speechSynthesis. */
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
-    if (fromBanner) { guideState.narrating = false; startGuideNarration(0); return true; }
     if (!guideState.narrating) startGuideNarration(guideState.activeStep);
     return true;
-  }
-  function stopGuideNarration() {
-    guidePaused = false;
-    var btn = byId('guidePauseVoice');
-    if (btn) btn.textContent = t('guidePauseVoice');
-    try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
-    guideState.narrating = false;
-    clearGuideWatchdog();
-  }
-  function toggleGuidePause() {
-    if (!guideState.narrating && !guidePaused) return;
-    var btn = byId('guidePauseVoice');
-    try {
-      if (global.speechSynthesis && typeof global.speechSynthesis.pause === 'function') {
-        if (guidePaused) { global.speechSynthesis.resume(); guidePaused = false; if (btn) btn.textContent = t('guidePauseVoice'); }
-        else { global.speechSynthesis.pause(); guidePaused = true; if (btn) btn.textContent = t('guideResumeVoice'); }
-        return;
-      }
-    } catch (e) {}
-    /* No synth pause: restart the current step instead. */
-    if (guidePaused) { guidePaused = false; if (btn) btn.textContent = t('guidePauseVoice'); startGuideNarration(guideState.activeStep); }
-    else { stopGuideNarration(); }
-  }
-  function guideNextStep() {
-    stopGuideNarration();
-    startGuideNarration(Math.min(3, guideState.activeStep + 1));
-  }
-  function guideReplayStep() {
-    stopGuideNarration();
-    startGuideNarration(guideState.activeStep);
   }
   function openGuide(opener, opts) {
     opts = opts || {};
     var modal = byId('guideModal');
     if (!modal) return false;
-    /* E6: each guide run gets its own id; old narration/watchdogs never act
-       on a new run. */
     guideState.guideRunId += 1;
     /* R6 / D10: opening the guide is a modal event — pause the beat first. */
     pauseForNavigation('settings');
-    if (!opts.quick && !guideState.quickMode) restoreGuideTitle();
-    /* An event object is never a focus target. */
+    if (!opts.quick) restoreGuideTitle();
     guideState.opener = opener && typeof opener.focus === 'function' ? opener : null;
-    guidePaused = false;
+    guideState.activeStep = 0;
     renderGuideSteps();
-    var btn = byId('guidePauseVoice');
-    if (btn) btn.textContent = t('guidePauseVoice');
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
     if (modal.classList) modal.classList.add('is-open');
     var conf = settings();
-    /* R3: Step 1 is attempted immediately, then a 600 ms watchdog decides… */
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     if (conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
-    armGuideWatchdog();
-    /* D16: 900 ms cold-boot autoplay check, alongside the 700 ms tap watchdog. */
     armGuideAutoplayWatch();
-    /* R3/D-V6: the first tap unlocks audio and narrates 1 -> 4. */
-    if (!modal._guideNarrationBound) {
-      modal._guideNarrationBound = true;
-      modal.addEventListener('click', onGuideGesture, false);
-      modal.addEventListener('touchstart', onGuideGesture, false);
-      modal.addEventListener('pointerup', onGuideGesture, false);
-    }
     var banner = byId('guideTapBanner');
     if (banner && !banner._sdpBound) {
       banner._sdpBound = true;
-      banner.addEventListener('click', function (ev) {
-        if (ev && ev.stopPropagation) ev.stopPropagation();
-        onGuideGesture();
-      }, false);
+      banner.addEventListener('click', onGuideBannerTap, false);
       banner.addEventListener('keydown', function (ev) {
-        if (ev && (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar')) {
-          if (ev.preventDefault) ev.preventDefault();
-          onGuideGesture();
-        }
+        if (ev && (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar')) onGuideBannerTap(ev);
       }, false);
+    }
+    var auto = byId('guideAutoplayBanner');
+    if (auto && !auto._sdpBound) {
+      auto._sdpBound = true;
+      auto.addEventListener('click', onGuideBannerTap, false);
     }
     var spotClose = byId('btnGuideSpotClose');
     if (spotClose && !spotClose._sdpBound) {
@@ -1230,11 +1170,10 @@
     }
     closeGuideSpot();
     stopGuideNarration();
-    clearGuideWatchdog();
     clearGuideAutoplayWatch();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    /* W7/D-G5: write the stamp — dismissing still counts as seen (G7.1d), and… */
+    /* W7/D-G5: write the stamp — dismissing still counts as seen (G7.1d). */
     try { SDP.Data.markGuideSeen(); } catch (e) {}
     restoreGuideTitle();
     var opener = guideState.opener;
@@ -1244,21 +1183,21 @@
     return true;
   }
   /* ── VOX-07: Quick Walkthrough Mode ───────────────────────────────────── */
-  function quickSkipButton(show, labelKey) {
+  function quickSkipButton(show) {
     var btn = byId('btnGuideSkipStart');
     if (!btn) return false;
-    btn.hidden = !show;
-    btn.setAttribute('aria-hidden', show ? 'false' : 'true');
-    if (show) btn.textContent = t(labelKey || 'guideSkipStart');
-    return show;
+    btn.hidden = show === false;
+    btn.setAttribute('aria-hidden', show === false ? 'true' : 'false');
+    btn.textContent = t('guideSkipStartNow', '▶ Start Dictation Now');
+    return true;
   }
   function restoreGuideTitle() {
     var title = byId('guideTitle');
     if (title) title.textContent = t('howToUse');
     guideState.quickMode = false;
     guideState.pendingMode = null;
-    /* D16: the guide footer always carries ▶ Start Dictation Now. */
-    quickSkipButton(true, 'guideSkipStartNow');
+    /* R2: the footer always carries exactly ▶ Start Dictation Now. */
+    quickSkipButton(true);
     return true;
   }
   function openGuideQuick(mode) {
@@ -1273,8 +1212,7 @@
     guideState.activeStep = 0;
     renderGuideSteps();
     if (settings().guideAutoPlay !== false) {
-      guideState.narrating = false;
-      try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
+      stopGuideNarration();
       startGuideNarration(0, 1);
     }
     return true;
@@ -1289,8 +1227,8 @@
     if (wasQuick && startNow !== false) beginDictation(mode);
     return true;
   }
-
-  /* D-G4: "Listen to the steps (EN)" reuses the openGuide() step machine. */
+  /* R2: the retired "Listen to the steps (EN)" affordance now just reopens the
+     spotlight and starts from Step 1. */
   function speakGuide() {
     var modal = byId('guideModal');
     if (modal && modal.hidden) {
@@ -1301,9 +1239,8 @@
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     hideGuideTapBanner();
     closeGuideSpot();
-    guideState.narrating = false;
+    stopGuideNarration();
     startGuideNarration(0);
-    armGuideWatchdog();
     armGuideAutoplayWatch();
     return 4;
   }
@@ -2207,21 +2144,25 @@
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
     on('btnGuideSkipStart', 'click', function () {
-      /* D16: the footer CTA starts the dictation from the full guide too. */
-      if (!guideState.quickMode) {
-        var mode = settings().mode;
-        closeGuide();
-        beginDictation(mode);
-        return;
+      /* R2: ▶ Start Dictation Now — close, stamp, speak the lesson. */
+      var mode = guideState.pendingMode || settings().mode;
+      closeGuide();
+      beginDictation(mode);
+    });
+    /* Phase 5: the 30-pill map lives in a collapsed bottom drawer. */
+    on('pillsDrawerToggle', 'click', function () {
+      var drawer = byId('pillsDrawer');
+      var toggle = byId('pillsDrawerToggle');
+      if (!drawer) return;
+      var open = drawer.hidden === true;
+      drawer.hidden = !open;
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.textContent = t('pillsDrawer', 'Jump to Word 1–30 ▾');
       }
-      finishQuickGuide(true);
     });
     on('btnLang', 'click', toggleLang);
     on('guideLangPill', 'click', toggleLang);
-    on('guideSpeak', 'click', speakGuide);
-    on('guidePauseVoice', 'click', toggleGuidePause);
-    on('guideNextStep', 'click', guideNextStep);
-    on('guideReplayStep', 'click', guideReplayStep);
     on('btnTheme', 'click', toggleTheme);
     on('btnStart', 'click', function () { markCueSeen('home'); startDictation(); });
     on('btnResume', 'click', resumeDictation);
@@ -2341,8 +2282,9 @@
     try { if (SDP.Speech && SDP.Speech.loadManifest) SDP.Speech.loadManifest(noop); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.onDataReady) SDP.Studio.onDataReady(); } catch (e) {}
     if (!err && global.__SDP_NO_LIVE__ !== true) {
-      /* D18/D5: the ONLY background poller — startWatch(25000) feeds the honest badge. */
-      try { SDP.Sync.startWatch(25000); } catch (e) {}
+      /* R8 (F8): the watch tightened from 25 s to 15 s; the honest badge and
+         the deferred-adoption queue both ride on this single ticker. */
+      try { SDP.Sync.startWatch(15000); } catch (e) {}
     }
     return true;
   }

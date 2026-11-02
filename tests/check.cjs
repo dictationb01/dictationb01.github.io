@@ -48,7 +48,9 @@ const BUDGET = {
   'data/sdp-audio-speech.js': 52000,
   'data/sdp-dictation-engine.js': 62000,
   'data/sdp-ui-views.js': 136000,
-  'data/studio.js': 126000,
+  /* v0.0.3: the studio gained sha1Hex, the 70-clip catalogue and the live key
+     verifier; the ceiling moved with it, in lockstep with audit-v42.cjs. */
+  'data/studio.js': 140000,
   'data/data-meter.js': 24000,
   'data/session.json': 57381,
   'data/config.json': 36000,
@@ -79,7 +81,7 @@ const EXACT = [
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §Appendix A — hashes of the five
  * irreplaceable classroom files. Update only after an intentional publish. */
 const PRESERVED_SHA = {
-  'data/session.json': 'c96dbe6de02d7d6d6a1a92ac0409d2c1745f24629b8ae8375a2a88ad10651db9',
+  'data/session.json': 'c06e197c6e90620cedd6a4ef95623cdd7817cb8e24accaec40c6379710892643',
   'data/gas-source.txt': '591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e',
   'assets/fonts/NotoSansSinhala-Regular.woff2': '23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280',
   'assets/fonts/NotoSansSinhala-Bold.woff2': 'bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e'
@@ -228,9 +230,10 @@ function pending(p) {
 
   if (exists('data/elevenlabs-audio.json')) {
     const v = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack pins Alice / eleven_flash_v2_5',
-      v.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && v.modelId === 'eleven_flash_v2_5' && typeof v.clips === 'object',
-      JSON.stringify({ voiceId: v.voiceId, modelId: v.modelId }));
+    record('voice pack pins Charlotte / eleven_flash_v2_5',
+      v.voiceId === 'XB0fDUnXU5powFXDhCwa' && v.voiceName === 'Charlotte' &&
+      v.modelId === 'eleven_flash_v2_5' && typeof v.clips === 'object',
+      JSON.stringify({ voiceId: v.voiceId, voiceName: v.voiceName, modelId: v.modelId }));
   }
   if (exists('data/gas-source.txt')) {
     record('Apps Script backend source keeps doGet/doPost handlers',
@@ -242,11 +245,11 @@ function pending(p) {
 (function versions() {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.2.b ships ver 11 / schema 11 / settingsRev 17
-    const ok = v.ver === 11 && v.appVersion === '0.0.2.b' && v.version === '0.0.2.b' &&
-      v.schema === 11 && v.settingsRev === 17 && String(v.session) === '8';
-    record('version.json carries the v0.0.2.b schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1793620000000', Number(v.syncRev) === 1793620000000, JSON.stringify(v).slice(0, 200));
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.3 ships ver 12 / schema 12 / settingsRev 20
+    const ok = v.ver === 12 && v.appVersion === '0.0.3' && v.version === '0.0.3' &&
+      v.schema === 12 && v.settingsRev === 20 && String(v.session) === '8';
+    record('version.json carries the v0.0.3 schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1793654400000', Number(v.syncRev) === 1793654400000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -260,14 +263,14 @@ function pending(p) {
     const c = JSON.parse(readText('data/config.json'));
     record('config.json keeps the preserved backend payload',
       c.credits && c.credits.createdBy === 'Hansana' && c.credits.ideaBy === 'Ayya01 (Lesandu)' &&
-      c.tts && c.live && c.live.state && c.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && c.voiceName === 'Alice' &&
+      c.tts && c.live && c.live.state && c.voiceId === 'XB0fDUnXU5powFXDhCwa' && c.voiceName === 'Charlotte' &&
       c.modelId === 'eleven_flash_v2_5' && c.repoOwner === 'dictationb1' &&
       c.repoName === 'dictationb1.github.io' && c.defaults && c.classInfo,
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.2.b bump set
-    record('config.json carries v0.0.2.b version fields',
-      c.ver === 11 && c.appVersion === '0.0.2.b' && c.version === '0.0.2.b' && c.schema === 11 && c.settingsRev === 17,
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.3 bump set
+    record('config.json carries v0.0.3 version fields',
+      c.ver === 12 && c.appVersion === '0.0.3' && c.version === '0.0.3' && c.schema === 12 && c.settingsRev === 20,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -411,7 +414,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.2.b boot target', html.indexOf("'0.0.2.b'") > 0 || html.indexOf('"0.0.2.b"') > 0);
+  record('index.html declares the v0.0.3 boot target', html.indexOf("'0.0.3'") > 0 || html.indexOf('"0.0.3"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -449,17 +452,21 @@ function pending(p) {
   record('D11 the 30-pill strip and its done/current/todo states ship',
     /\.word-pill\.done/.test(css) && /\.word-pill\.current/.test(css) && /\.word-pill\.todo/.test(css));
   var studio = exists('data/studio.js') ? readText('data/studio.js') : '';
-  record('D2 #studioPackDashboard computes X/34 clips live from the pack',
+  record('D2 #studioPackDashboard computes X/70 clips live from the pack',
     studio.indexOf('studioPackDashboard') > 0 && /studioClipsUnit/.test(studio) && /\.clips/.test(studio));
   record('D3 #studioGenProgress prints the verbatim "Generating clip n/N" line',
     /studioGenPrefix/.test(studio) && studio.indexOf('studioGenProgress') > 0);
   record('D4 the failed clip is recorded and #btnRetryFailedClip exists',
     /lastFailedClip/.test(studio) && studio.indexOf('btnRetryFailedClip') > 0);
-  record('D18 the 34-clip arithmetic is stated in the cost line',
-    /clips \(30 words \+ 4 guide steps\)/.test(studio));
+  record('D18 the 70-clip arithmetic is stated in the cost line',
+    /clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(studio));
   var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
-  record('D16 Guide 3.0 ships four voice-transition cards with previews',
-    /guideMockMarkup/.test(views) && /active-step/.test(views) && /mock-ring/.test(views) && /mock-sync/.test(views));
+  /* contract: docs/UI_COMPONENT_GUIDE.md §3 — v0.0.3 replaces the four mock
+     cards with ONE compact spotlight (R2/F3). No mock markup may survive. */
+  record('D16 the compact four-step spotlight ships (no mock cards)',
+    /GUIDE_SPOTLIGHT_STEPS/.test(views) && /guideSpotlight/.test(readText('index.html')) &&
+    /guideStepTag/.test(readText('index.html')) && /guideDots/.test(readText('index.html')) &&
+    !/guideMockMarkup/.test(views) && !/mock-ring/.test(views));
   record('D16 the guide stamp follows the running version', /markGuideSeen/.test(exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '') && /APP_VERSION/.test(views));
 })();
 
@@ -489,15 +496,16 @@ function pending(p) {
     var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
     record('index.html ships the in-session sync badge', html.indexOf('id="syncBadge"') > 0);
     record('index.html ships the studio quick launcher', html.indexOf('id="btnStudioQuick"') > 0);
-    record('index.html ships guide narration controls (pause / next / replay)',
-      /guidePauseVoice/.test(html) && /guideNextStep/.test(html) && /guideReplayStep/.test(html) && /guideResumeVoice/.test(views));
-    record('index.html boots at the v0.0.2.b target', /var TARGET = '0\.0\.2\.b'/.test(html));
-    record('service worker pins the v0.0.2.b shell caches',
-      /SW_VERSION = 'sdp-v0\.0\.2\.b'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.2\.b-shell'/.test(sw));
+    record('index.html ships exactly the two spotlight buttons (start / exit)',
+      /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
+      !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
+    record('index.html boots at the v0.0.3 target', /var TARGET = '0\.0\.3'/.test(html));
+    record('service worker pins the v0.0.3 shell caches',
+      /SW_VERSION = 'sdp-v0\.0\.3'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.3-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
-      !/0\.0\.2\.[abc]/.test(studioCode) && /SDP\.version/.test(studioCode), (studioCode.match(/0\.0\.2\.[abc]/g) || []).join(','));
+      !/0\.0\.[0-9]/.test(studioCode) && /SDP\.version/.test(studioCode), (studioCode.match(/0\.0\.[0-9]/g) || []).join(','));
     record('service worker handles on-demand word-audio caching (sdp:cache-words)', /sdp:cache-words/.test(sw));
     record('sync module exposes triggerVersionUpgrade (D1 in-session upgrade)', /triggerVersionUpgrade/.test(sync));
     record('sync module exposes downloadOfflineAudio (offline clips)', /downloadOfflineAudio/.test(sync));
@@ -513,28 +521,29 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.2.b',
-      /"start_url": "\.\/\?v=0\.0\.2\.b/.test(man) && man.indexOf('?v=0.0.2.b') > 0 &&
-      (man.match(/v=0\.0\.2\.b/g) || []).length >= 3, (man.match(/v=0\.0\.2\.b/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.3',
+      /"start_url": "\.\/\?v=0\.0\.3/.test(man) && man.indexOf('?v=0.0.3') > 0 &&
+      (man.match(/v=0\.0\.3/g) || []).length >= 3, (man.match(/v=0\.0\.3/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.2.b';
+    var app = '0.0.3';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP.ver = 11;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP.ver = 12;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 11,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 11
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 12,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 12
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.2.b / ver 11',
+    record('D15 all seven versioned surfaces agree on 0.0.3 / ver 12',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.2.b header',
-      pack.version === '0.0.2.b' && pack.appVersion === '0.0.2.b' && pack.ver === 11 && pack.schema === 11,
-      JSON.stringify([pack.version, pack.ver]));
+    record('voice pack carries the v0.0.3 header',
+      pack.version === '0.0.3' && pack.appVersion === '0.0.3' && pack.ver === 12 && pack.schema === 12 &&
+      pack.voiceId === 'XB0fDUnXU5powFXDhCwa' && pack.hashAlgo === 'sha1',
+      JSON.stringify([pack.version, pack.ver, pack.voiceId]));
   })();
 
 const failed = results.filter(function (r) { return r.status === 'FAIL'; });

@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.2.b
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.3
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -675,3 +675,53 @@ both `STRINGS_EN` and `STRINGS_SI`.
 
 Start now goes straight to the cockpit unless `guideAutoPlay: true` is set; the boot
 guide is unaffected.
+
+## 14. What v0.0.3 changed on screen (voice, spotlight, deck, studio, pack)
+
+### 14.1 Guide 4.0 — one compact spotlight (R2/F2/F3)
+
+`#guideModal` now renders a single card: `#guideStepTag` (`Step 1 of 4`), `#guideStepText`
+(one clean sentence), `#guideDots` (four `.guide-dot`, the live one `.is-active` +
+`aria-current="step"`) and a hidden `<ol id="guideSteps" class="guide-steps-sr">` that keeps
+the four sentences machine-readable and translatable. The footer carries **exactly two**
+buttons: `#btnGuideSkipStart` (`▶ Start Dictation Now`) and `#btnGuideClose` (`✕ Exit`). The
+700 ms Youdao watchdog and the tap-restart loop are deleted: every narration callback
+re-checks `guideRunId`, and a tap on `#guideTapBanner` resumes `guideState.activeStep`, never
+step 1. Narration reads only the four step sentences — never the card chrome.
+
+### 14.2 The cockpit line, the pills drawer and the glyph deck (P4)
+
+`#sessionProgressStrip` became one `.cockpit-line`: `#sessionProgressCount` (`WORD #01 / 30`),
+`#playerRepeatBadge` (`Repeat 1 of 2`) and `#playerPresetBadge` (`5s Write · 2×`).
+`#pillsDrawerToggle` (`Jump to Word 1–30 ▾`, ≥48 px) opens `#pillsDrawer` with the same 30
+`#sessionPills` `.word-pill`s (`.todo` → `.current` → `.done`). The transport is a glyph deck
+(`.deck-key`, `.deck-btn`, `.deck-cap`, larger `.deck-main`): the 8 buttons render
+`▶ ⏸ ⏮ ⏭ 🔊` and carry `aria-label`s (`▶ Start Dictation`, `⏸ Pause Dictation`,
+`▶ Resume Word #N`, `⏮ Prev (#N)`, `⏭ Next (#N)`, `🔊 Replay Word`), so every control stays
+48 px tall and screen readers still hear the sentence.
+
+### 14.3 Studio: Words first, verify, and a real PIN change (P3/P5)
+
+Card order is `#studioCardWords` → `#studioCardSettings` → `#studioCardKeys`. Card 3 adds
+`#btnVerifyEleven` + `#elVerifyStatus`: a `sk_…` key is checked with a zero-character
+`GET /v1/user/subscription`, then Charlotte's `cmd.sample` is played from the vault (or
+generated once, on a human click). `#btnChangePin` performs the atomic re-seal — fresh salt,
+fresh verifier, re-encrypted envelope, `config.json` then `version.json` last.
+`BOOTSTRAP_PIN` is the documented master recovery: it opens a session even while the PIN pad
+is locked out, flags `Studio.recoveryMode()`, and the next `#btnChangePin` closes it.
+
+### 14.4 Pause honesty (R1/F1)
+
+Pausing during a listening beat speaks **Session paused.** exactly once. Nothing else may
+speak: every timer, `<audio>` handler and repeat callback re-checks `speechEpoch`/`live()`,
+so the class never hears a late "Afraid." after the pause. Resume says **Session resumed.**
+and restores the same word, the same repeat and the same write-window remainder.
+
+### 14.5 The 70-clip voice pack (R4/R5)
+
+Charlotte (`XB0fDUnXU5powFXDhCwa`, `eleven_flash_v2_5`) replaces Alice. The pack is 70 clips —
+30 words (241 chars) + 30 numbers (291) + 6 commands (163) + 4 guide steps (134) = 829 chars
+≈ 414 credits — and `#studioPackDashboard` reads `Voice Pack: X/70 Clips`.
+`#btnOneClickMasterSetup` reads `🚀 Generate 70 British Professor Voices & Sync All Devices`.
+Every clip carries a synchronous ES5 `sha1Hex` content hash (`hashAlgo: 'sha1'`), so a re-run
+re-buys nothing; `#studioForceRegen` is the only way to force a regeneration.

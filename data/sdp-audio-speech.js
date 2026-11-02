@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — speech & audio pipeline (v0.0.2.a)
+/*! Smart Dictation Player — speech & audio pipeline (v0.0.3)
  * Strict ES5, dependency free.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 audio priority chain
  * Dictionary audio always plays through a plain <audio> element; element audio
@@ -54,7 +54,16 @@
     /* VOX-03: the 10 s speechSynthesis.resume() keepalive. */
     keepAlive: null,
     /* VOX-09: Chrome drops a speak() issued in the same tick as cancel(). */
-    lastCancelAt: 0
+    lastCancelAt: 0,
+    /* R1 (F1): every live timer is named so stopAll() can kill it. A timer
+       that outlives a pause is exactly how "Afraid." spoke after Stop. */
+    wordWatchTimer: null,
+    guardTimer: null,
+    urlTimer: null,
+    /* R6 (F9): the persona is pinned once per Engine.start(), never swapped
+       mid-session when Android re-announces voiceschanged. */
+    sessionVoice: null,
+    voiceDirty: false
   };
 
   /* D10/D12: one honest read of the platform voice list. Brave desktop and
@@ -129,11 +138,27 @@
     state.activeUtter = null;
     state.activeQueue = null;
     state.activeIndex = 0;
+    state.audioPlaying = false;
     state.lastCancelAt = nowMs();
+    /* R1 Path C: every named timer dies with the queue. A watchdog that fires
+       after Stop is a second voice the student never asked for. */
+    var names = ['wordWatchTimer', 'guardTimer', 'urlTimer'];
+    for (var t = 0; t < names.length; t++) {
+      if (state[names[t]]) {
+        try { global.clearTimeout(state[names[t]]); } catch (e) {}
+        state[names[t]] = null;
+      }
+    }
     stopKeepAlive();
     try { if (global.speechSynthesis) global.speechSynthesis.cancel(); } catch (e) {}
     var el = state.audioEl || (doc && doc.getElementById ? doc.getElementById('sdpSharedAudio') : null);
-    if (el) { try { el.pause(); } catch (e) {} }
+    if (el) {
+      /* R1 Path C: an <audio> handler that survives Stop can re-enter the
+         ladder and speak the next word into a paused cockpit. */
+      el.onended = null;
+      el.onerror = null;
+      try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {}
+    }
   }
 
   /* ── E2: deterministic Professor Voice scoring (Table D) ──────────────── */
@@ -309,7 +334,15 @@
       if (line === '') continue;
       queue.push(line);
     }
-    state.lastUtterances = queue.slice();
+    state.lastUtterances = state.lastUtterances || [];
+    for (i = 0; i < queue.length; i++) {
+      /* R2 (F2): the audit trail of what was actually spoken. The pause cue
+         assertion in G7 reads this, and the cap keeps it bounded. */
+      if (state.lastUtterances[state.lastUtterances.length - 1] !== queue[i]) {
+        state.lastUtterances.push(queue[i]);
+        if (state.lastUtterances.length > 25) state.lastUtterances.shift();
+      }
+    }
     if (!queue.length) { cb(null); return; }
     stopAll();
     var myId = ++state.queueId;
@@ -373,6 +406,7 @@
         utter.onstart = function () { state.utterStarted = true; };
         var armGuard = function (ms) {
           guard = global.setTimeout(function () {
+            if (state.guardTimer === guard) state.guardTimer = null;
             if (advanced || myId !== state.queueId) return;
             /* VOX-02: onend is the primary driver. The guard only fires when a
                platform silently swallows onend, and it extends exactly once
@@ -386,6 +420,7 @@
             state.activeUtter = null;
             next();
           }, ms);
+          state.guardTimer = guard;
         };
         /* D10/D12: the 800 ms real-onstart word watchdog. A voiceless engine,
            or one that silently drops the utterance (no onstart), is cancelled
@@ -394,6 +429,7 @@
         var armWordWatchdog = function () {
           wordWatch = global.setTimeout(function () {
             wordWatch = null;
+            if (state.wordWatchTimer === wordWatch) state.wordWatchTimer = null;
             if (advanced || myId !== state.queueId) return;
             if (state.utterStarted) return;
             try { if (synth && synth.cancel) synth.cancel(); } catch (e) {}
@@ -410,12 +446,15 @@
             }
             next();
           }, 800);
+          state.wordWatchTimer = wordWatch;
         };
         utter.onend = function () {
           if (advanced) return;
           advanced = true;
           global.clearTimeout(guard);
+          if (state.guardTimer === guard) state.guardTimer = null;
           if (wordWatch) global.clearTimeout(wordWatch);
+          if (state.wordWatchTimer === wordWatch) state.wordWatchTimer = null;
           /* VOX-01: release the module-scope reference only when done. */
           if (state.activeUtter === utter) state.activeUtter = null;
           next();
@@ -424,7 +463,9 @@
           if (advanced) return;
           advanced = true;
           global.clearTimeout(guard);
+          if (state.guardTimer === guard) state.guardTimer = null;
           if (wordWatch) global.clearTimeout(wordWatch);
+          if (state.wordWatchTimer === wordWatch) state.wordWatchTimer = null;
           if (state.activeUtter === utter) state.activeUtter = null;
           next();
         };
@@ -441,7 +482,14 @@
         var sinceCancel = nowMs() - (Number(state.lastCancelAt) || 0);
         if (sinceCancel >= 0 && sinceCancel < 200) {
           global.setTimeout(function () {
-            if (myId !== state.queueId) return;
+            /* R1 Path B (F1): a deferred speak() outliving a pause/cancel is
+               the exact "Afraid." leak. Re-check the id, the epoch and the
+               pause flag immediately before the engine is touched. */
+            if (myId !== state.queueId || myEpoch !== state.speechEpoch) return;
+            if (!opts || !opts.allowWhenPaused) {
+              if (SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
+            }
+            if (advanced) return;
             try { synth.speak(utter); } catch (e) { utter.onerror(); }
           }, 200);
         } else {
@@ -472,10 +520,15 @@
     var timer = null;
     function finish(ok) {
       if (done) return;
-      if (state.speechEpoch !== pEpoch) return;
       done = true;
       state.audioPlaying = false;
-      if (timer) global.clearTimeout(timer);
+      if (timer) { try { global.clearTimeout(timer); } catch (e) {} }
+      if (state.urlTimer === timer) state.urlTimer = null;
+      timer = null;
+      /* R1 Path C: detach the element handlers the moment this play finishes,
+         so a stale onended can never start another tier. */
+      if (el) { el.onended = null; el.onerror = null; }
+      if (state.speechEpoch !== pEpoch) return;
       cb(ok ? null : new Error('audio_failed'));
     }
     try {
@@ -494,6 +547,7 @@
     } catch (e) { finish(false); return; }
     /* Bounded: a broken URL must hand over to the next tier quickly. */
     timer = global.setTimeout(function () { finish(false); }, Number(opts.timeoutMs) || 12000);
+    state.urlTimer = timer;
   }
 
   /* ── ElevenLabs manifest: cached clips only (student path, 0 credits) ── */
@@ -618,6 +672,20 @@
     return true;
   }
 
+  function entryUrl(entry) {
+    if (typeof entry === 'string') return entry;
+    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || '');
+    return '';
+  }
+  /* R5: the 70-clip pack names every word clip 'words.<w>' and keeps the legacy
+     bare '<w>' key readable, so an old published pack never goes silent. */
+  function manifestClip(key) {
+    var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
+    if (!clips) return '';
+    var k = str(key).toLowerCase();
+    if (!k) return '';
+    return entryUrl(clips[k] || clips['words.' + k] || null);
+  }
   function clipFromManifest(word) {
     var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
     if (!clips) {
@@ -625,15 +693,12 @@
       var ses = s && s.state ? s.state.clips : null;
       if (s && ses) {
         var key = str(word && word.w).toLowerCase();
-        if (key && ses[key]) return ses[key];
+        if (key && ses[key]) return entryUrl(ses[key]);
       }
       return '';
     }
     var k = str(word && word.w).toLowerCase();
-    var entry = clips[k] || clips[str(word && word.i)] || null;
-    if (typeof entry === 'string') return entry;
-    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || '');
-    return '';
+    return entryUrl(clips['words.' + k] || clips[k] || clips[str(word && word.i)] || null);
   }
 
   /* E3 / VOX-04 / D10: the bulletproof word ladder under voiceLock 'unified'.
@@ -646,6 +711,13 @@
    * stayed silent and Windows fell back to robotic US Zira. Now the real human
    * UK recording ALWAYS precedes low-quality synth, and the neural tier exists
    * only when a genuinely British female neural voice is verified present. */
+  /* R1(c): the active dictation may only speak into #screen-player. */
+  function viewIsPlayer() {
+    try {
+      if (!SDP.Views || typeof SDP.Views.currentTab !== 'function') return true;
+      return str(SDP.Views.currentTab()) === 'player';
+    } catch (e) { return true; }
+  }
   function resolveTiers(wordObj, opts) {
     opts = opts || {};
     var w = isObj(wordObj) ? wordObj : { w: wordObj };
@@ -680,10 +752,9 @@
     if (stepIdx === null || stepIdx === undefined || stepIdx < 0) return '';
     var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
     if (!clips) return '';
-    var entry = clips['_guide_' + (Number(stepIdx) + 1)] || null;
-    if (typeof entry === 'string') return str(entry);
-    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || '');
-    return '';
+    var n = Number(stepIdx);
+    var entry = clips['guide.en.' + n] || clips['_guide_' + (n + 1)] || null;
+    return entryUrl(entry);
   }
   /* D11: four concise British-English fallback lines for the guide. When the
      browser never fires utter.onstart (Brave desktop, voiceless kiosks), the
@@ -709,28 +780,11 @@
      plays through <audio> (state.lastTier = 'guide_audio'). Only when that
      <audio> playback also fails does the caller reveal #guideTapBanner. */
   function narrateGuideStep(stepIdx, stepText, rate, volume, cb) {
-    var watchdog = null;
-    var finished = false;
-    var nEpoch = state.speechEpoch;
-    function done() {
-      if (finished) return;
-      if (state.speechEpoch !== nEpoch) return;
-      finished = true;
-      if (watchdog) { global.clearTimeout(watchdog); watchdog = null; }
-      cb(null);
-    }
-    watchdog = global.setTimeout(function () {
-      if (state.speechEpoch !== nEpoch) return;
-      watchdog = null;
-      if (finished) return;
-      if (state.utterStarted) return;
-      var synth = global.speechSynthesis;
-      try { if (synth && synth.cancel) synth.cancel(); } catch (e) {}
-      stopAll(); /* the silent utterance queue is dead; this watchdog owns the step */
-      state.lastTier = 'guide_audio';
-      playUrl(youdaoAudioUrl(shortGuideLine(stepIdx)), { rate: 1, volume: volume, timeoutMs: 9000 }, function () { done(); });
-    }, 700);
-    say([stepText], { lang: 'en-GB', rate: rate, pitch: 1.03, volume: volume }, function () { done(); });
+    /* R2 (F2): the 700 ms watchdog used to cancel a perfectly good utterance
+       and play a Youdao clip of a DIFFERENT sentence — that is the loop the
+       class heard. One sentence in, one utterance out; the views watchdog
+       (900 ms, no speech) is the only silent-device fallback. */
+    say([str(stepText)], { lang: 'en-GB', rate: rate, pitch: 1.03, volume: volume }, function () { cb(null); });
     return true;
   }
   function playGuideStep(a, b, c, d) {
@@ -764,6 +818,72 @@
     return false;
   }
 
+  /* ══ R3: spoken button cues (`cmd.*` and `num.<n>`) ══════════════════════
+   * Every cue has three tiers and none of them bills a character:
+   *   1. the committed 70-clip pack clip (state.manifest.clips[key])
+   *   2. the documented English fallback sentence below
+   *   3. silence, with the callback still honoured so the beat never stalls. */
+  var CUE_TEXTS = {
+    'cmd.preparing': 'Preparing lesson. Listen carefully.',
+    'cmd.paused': 'Session paused.',
+    'cmd.resumed': 'Session resumed.',
+    'cmd.hint': 'Hint shown.',
+    'cmd.complete': "Dictation complete. Let's check your thirty words.",
+    'cmd.sample': 'British female lecturer voice ready.'
+  };
+  function cueDefaultText(cueKey) {
+    var k = str(cueKey).toLowerCase();
+    if (CUE_TEXTS[k]) return CUE_TEXTS[k];
+    var m = /^num\.(\d+)$/.exec(k);
+    if (m) return 'Number ' + m[1] + '.';
+    return '';
+  }
+  function sayCue(cueKey, fallbackText, cb) {
+    if (typeof fallbackText === 'function') { cb = fallbackText; fallbackText = ''; }
+    cb = cb || noop;
+    var key = str(cueKey).toLowerCase();
+    var text = str(fallbackText) || cueDefaultText(key);
+    /* The caller has already called stop(); this epoch is this cue's own. */
+    var cueEpoch = state.speechEpoch;
+    if (text) {
+      state.lastUtterances = state.lastUtterances || [];
+      if (state.lastUtterances[state.lastUtterances.length - 1] !== text) {
+        state.lastUtterances.push(text);
+        if (state.lastUtterances.length > 25) state.lastUtterances.shift();
+      }
+    }
+    var clipUrl = manifestClip(key);
+    if (clipUrl) {
+      playUrl(playableUrl(clipUrl), { rate: 0.92, volume: undefined }, function (err) {
+        if (state.speechEpoch !== cueEpoch) return;
+        if (!err) { state.lastTier = 'eleven'; cb(null); return; }
+        if (!text) { cb(null); return; }
+        say([text], { lang: 'en-GB', rate: 0.92, pitch: 1.03, allowWhenPaused: key === 'cmd.paused' }, cb);
+      });
+      return true;
+    }
+    if (!text) { cb(null); return false; }
+    say([text], { lang: 'en-GB', rate: 0.92, pitch: 1.03, allowWhenPaused: key === 'cmd.paused' }, cb);
+    return true;
+  }
+
+  /* R6 (F9): the persona is resolved once per session and then held. Android
+     fires voiceschanged mid-session; swapping the voice then changes the
+     speaker in the middle of a word. */
+  function lockSessionVoice() {
+    if (state.sessionVoice) return state.sessionVoice;
+    var v = pickVoice('en-GB');
+    if (!v) {
+      state.voiceDirty = true;
+      warmProfessorVoice(function (warmed) { if (warmed && !state.sessionVoice) state.sessionVoice = warmed; });
+      return null;
+    }
+    state.sessionVoice = v;
+    state.voiceDirty = false;
+    return v;
+  }
+  function endSessionVoice() { state.sessionVoice = null; return null; }
+
   /* ══ SDP.Speech.playWord — the D10 5-tier chain, bounded at every step ══ */
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 tier order */
   function playWord(word, opts, cb) {
@@ -776,6 +896,17 @@
     var gen = 0;
     var wEpoch = state.speechEpoch;
     state.lastTier = '';
+    /* R1 (a)(b)(c)(d): no word may be produced by a paused engine, by a dead
+       epoch, or into a screen the student cannot see. This single gate is the
+       one law; the per-tier checks below are only belt and braces. */
+    if (Refuse()) { cb(null); return false; }
+    function Refuse() {
+      if (SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return true;
+      var active = false;
+      try { active = !!(SDP.Engine && SDP.Engine.isActive && SDP.Engine.isActive()); } catch (e) { active = false; }
+      if (active && !viewIsPlayer()) return true;
+      return false;
+    }
     function attempt() {
       var myGen = gen;
       if (at >= tiers.length) {
@@ -796,6 +927,10 @@
           settled = true;
           cb(null);
         });
+        /* say() bumps the epoch through its own stopAll(); adopt it so the
+           callback above is not rejected as stale, and so a real pause during
+           the word still invalidates this chain. */
+        wEpoch = state.speechEpoch;
         return;
       }
       playUrl(current.url, { rate: opts.rate, volume: opts.volume, timeoutMs: opts.timeoutMs }, function (err) {
@@ -820,7 +955,13 @@
     }
     if (!opts.tiers && !state.manifest && !state.manifestRequested) {
       loadManifest(function () {
+        /* R1 Path A (F1): the manifest restart was the loudest leak — a slow
+           fetch landed seconds after Pause and replayed the word. The epoch,
+           the pause flag and the current screen are all re-checked FIRST. */
         if (settled || opts.tiers || !state.manifest) return;
+        if (state.speechEpoch !== wEpoch) return;
+        if (SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
+        if (Refuse()) return;
         gen += 1;
         at = 0;
         tiers = resolveTiers(word);
@@ -872,6 +1013,10 @@
     resolveTiers: resolveTiers,
     playGuideStep: playGuideStep,
     guideClipUrl: guideClipUrl,
+    sayCue: sayCue,
+    cueDefaultText: cueDefaultText,
+    lockSessionVoice: lockSessionVoice,
+    endSessionVoice: endSessionVoice,
     selectProfessorVoice: selectProfessorVoice,
     pickVoice: pickVoice,
     warmProfessorVoice: warmProfessorVoice,
@@ -908,11 +1053,13 @@
       var synth = global.speechSynthesis;
       if (synth && synth.addEventListener) {
         synth.addEventListener('voiceschanged', function () {
+          if (state.sessionVoice) { state.voiceDirty = true; return; }
           cachedProfVoice = null;
           warmProfessorVoice(noop);
         }, false);
       } else if (synth && typeof synth.onvoiceschanged !== 'undefined') {
         synth.onvoiceschanged = function () {
+          if (state.sessionVoice) { state.voiceDirty = true; return; }
           cachedProfVoice = null;
           warmProfessorVoice(noop);
         };

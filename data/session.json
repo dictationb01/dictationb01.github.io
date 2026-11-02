@@ -18,13 +18,285 @@
     "activeMediaType": "static",
     "videoPlaylistMode": "loop",
     "perf": "full",
-    "wallpaperVideo": false
+    "wallpaperVideo": false,
+    "words": [
+      {
+        "w": "afraid",
+        "p": "əˈfreɪd",
+        "pos": "adj.",
+        "m": "Feeling fear or anxiety; frightened.",
+        "si": "බියට පත් වූ",
+        "s": "She was never afraid of speaking in front of a large audience.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=afraid"
+      },
+      {
+        "w": "amazed",
+        "p": "əˈmeɪzd",
+        "pos": "adj.",
+        "m": "Greatly surprised; astonished.",
+        "si": "මවිතයට පත් වූ",
+        "s": "We were amazed by how quickly the students learned the new words.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=amazed"
+      },
+      {
+        "w": "amusing",
+        "p": "əˈmjuː.zɪŋ",
+        "pos": "adj.",
+        "m": "Causing laughter and providing entertainment.",
+        "si": "විනෝදජනක",
+        "s": "The lecturer told an amusing story at the start of the lesson.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=amusing"
+      },
+      {
+        "w": "annoyed",
+        "p": "əˈnɔɪd",
+        "pos": "adj.",
+        "m": "Slightly angry; irritated.",
+        "si": "කෝපයට හෝ කරදරයට පත් වූ",
+        "s": "He felt annoyed when he missed the morning bus by ten seconds.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=annoyed"
+      },
+      {
+        "w": "anxious",
+        "p": "ˈæŋk.ʃəs",
+        "pos": "adj.",
+        "m": "Experiencing worry, unease, or nervousness.",
+        "si": "කනස්සල්ලෙන් සිටින",
+        "s": "Many students feel anxious right before an important examination.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=anxious"
+      },
+      {
+        "w": "ashamed",
+        "p": "əˈʃeɪmd",
+        "pos": "adj.",
+        "m": "Embarrassed or guilty because of one's actions.",
+        "si": "ලැජ්ජාවට පත් වූ",
+        "s": "He felt ashamed after forgetting his best friend's birthday.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ashamed"
+      },
+      {
+        "w": "awesome",
+        "p": "ˈɔː.səm",
+        "pos": "adj.",
+        "m": "Extremely impressive or daunting; inspiring admiration.",
+        "si": "ඉතා විශිෂ්ට",
+        "s": "The view from the top of the mountain was truly awesome.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=awesome"
+      },
+      {
+        "w": "boring",
+        "p": "ˈbɔː.rɪŋ",
+        "pos": "adj.",
+        "m": "Not interesting; tedious.",
+        "si": "කම්මැලි හෝ නීරස",
+        "s": "Sitting indoors all afternoon on a rainy day can feel boring.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=boring"
+      },
+      {
+        "w": "brilliant",
+        "p": "ˈbrɪl.jənt",
+        "pos": "adj.",
+        "m": "Exceptionally clever, talented, or impressive.",
+        "si": "ඉතා දක්ෂ හෝ විශිෂ්ට",
+        "s": "She came up with a brilliant idea for the science project.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=brilliant"
+      },
+      {
+        "w": "challenging",
+        "p": "ˈtʃæl.ɪn.dʒɪŋ",
+        "pos": "adj.",
+        "m": "Testing one's abilities; demanding.",
+        "si": "අභියෝගාත්මක",
+        "s": "Learning a new language is challenging but very rewarding.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=challenging"
+      },
+      {
+        "w": "charming",
+        "p": "ˈtʃɑː.mɪŋ",
+        "pos": "adj.",
+        "m": "Very pleasant, polite, or attractive.",
+        "si": "ආකර්ෂණීය හෝ සිත්ගන්නාසුලු",
+        "s": "They stayed in a charming little cottage near the coast in Galle.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=charming"
+      },
+      {
+        "w": "confident",
+        "p": "ˈkɒn.fɪ.dənt",
+        "pos": "adj.",
+        "m": "Feeling sure of oneself and one's abilities.",
+        "si": "ආත්ම විශ්වාසයෙන් යුතු",
+        "s": "Regular dictation practice makes students confident in their spelling.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=confident"
+      },
+      {
+        "w": "confusing",
+        "p": "kənˈfjuː.zɪŋ",
+        "pos": "adj.",
+        "m": "Bewildering or perplexing; hard to understand.",
+        "si": "ව්‍යාකූල කරන",
+        "s": "The road signs at the busy junction were quite confusing.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=confusing"
+      },
+      {
+        "w": "cruel",
+        "p": "ˈkruː.əl",
+        "pos": "adj.",
+        "m": "Wilfully causing pain or suffering to others.",
+        "si": "කෲර හෝ නපුරු",
+        "s": "It is cruel to keep wild birds locked inside a tiny cage.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cruel"
+      },
+      {
+        "w": "curious",
+        "p": "ˈkjʊə.ri.əs",
+        "pos": "adj.",
+        "m": "Eager to know or learn something.",
+        "si": "කුතුහලයෙන් යුතු",
+        "s": "The curious child asked dozens of questions about the stars.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=curious"
+      },
+      {
+        "w": "delighted",
+        "p": "dɪˈlaɪ.tɪd",
+        "pos": "adj.",
+        "m": "Feeling or showing great pleasure.",
+        "si": "ඉතා සතුටට පත් වූ",
+        "s": "Her parents were delighted when she passed the exam with top marks.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=delighted"
+      },
+      {
+        "w": "depressed",
+        "p": "dɪˈprest",
+        "pos": "adj.",
+        "m": "In a state of unhappiness or despondency.",
+        "si": "දැඩි කලකිරීමට හෝ දුකට පත් වූ",
+        "s": "He felt depressed after his team lost the final match.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=depressed"
+      },
+      {
+        "w": "disappointed",
+        "p": "ˌdɪs.əˈpɔɪn.tɪd",
+        "pos": "adj.",
+        "m": "Sad or displeased because expectations were not met.",
+        "si": "බලාපොරොත්තු සුන් වූ",
+        "s": "We were disappointed that the concert was cancelled due to rain.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disappointed"
+      },
+      {
+        "w": "embarrassing",
+        "p": "ɪmˈbær.ə.sɪŋ",
+        "pos": "adj.",
+        "m": "Causing a feeling of self-consciousness or shame.",
+        "si": "අපහසුතාවයට පත් කරන",
+        "s": "Forgetting someone's name during an introduction can be embarrassing.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=embarrassing"
+      },
+      {
+        "w": "enjoyable",
+        "p": "ɪnˈdʒɔɪ.ə.bəl",
+        "pos": "adj.",
+        "m": "Giving delight or pleasure.",
+        "si": "රසවත් හෝ සතුටුදායක",
+        "s": "We spent a very enjoyable evening talking with our classmates.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=enjoyable"
+      },
+      {
+        "w": "excellent",
+        "p": "ˈek.səl.ənt",
+        "pos": "adj.",
+        "m": "Extremely good; outstanding.",
+        "si": "ඉතා විශිෂ්ට",
+        "s": "The restaurant near the harbour serves excellent seafood.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=excellent"
+      },
+      {
+        "w": "excited",
+        "p": "ɪkˈsaɪ.tɪd",
+        "pos": "adj.",
+        "m": "Very enthusiastic and eager.",
+        "si": "උද්‍යෝගිමත් වූ",
+        "s": "The students were excited about the upcoming school trip.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=excited"
+      },
+      {
+        "w": "fantastic",
+        "p": "fænˈtæs.tɪk",
+        "pos": "adj.",
+        "m": "Extraordinarily good or attractive.",
+        "si": "අති විශිෂ්ට",
+        "s": "You did a fantastic job completing all thirty dictation words.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fantastic"
+      },
+      {
+        "w": "favourite",
+        "p": "ˈfeɪ.vər.ɪt",
+        "pos": "adj.",
+        "m": "Preferred before all others of the same kind.",
+        "si": "ප්‍රියතම",
+        "s": "English is her favourite subject at the academy.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=favourite"
+      },
+      {
+        "w": "frightened",
+        "p": "ˈfraɪ.tənd",
+        "pos": "adj.",
+        "m": "Afraid or anxious.",
+        "si": "බියට පත් වූ",
+        "s": "The little puppy was frightened by the loud thunder.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=frightened"
+      },
+      {
+        "w": "friendly",
+        "p": "ˈfrend.li",
+        "pos": "adj.",
+        "m": "Kind, pleasant, and welcoming towards others.",
+        "si": "මිත්‍රශීලී",
+        "s": "Everyone at the Galle branch gave the new student a friendly welcome.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=friendly"
+      },
+      {
+        "w": "generous",
+        "p": "ˈdʒen.ər.əs",
+        "pos": "adj.",
+        "m": "Showing a readiness to give more of something than is necessary.",
+        "si": "ත්‍යාගශීලී",
+        "s": "It was very generous of her to share her notes with the whole class.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=generous"
+      },
+      {
+        "w": "guilty",
+        "p": "ˈɡɪl.ti",
+        "pos": "adj.",
+        "m": "Culpable of or responsible for a specified wrongdoing.",
+        "si": "වරදකාරී හැඟීමක් ඇති",
+        "s": "He felt guilty for not studying harder before the test.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guilty"
+      },
+      {
+        "w": "healthy",
+        "p": "ˈhel.θi",
+        "pos": "adj.",
+        "m": "In a good physical or mental condition.",
+        "si": "සෞඛ්‍ය සම්පන්න",
+        "s": "Eating fresh fruit and sleeping well keeps your mind healthy.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=healthy"
+      },
+      {
+        "w": "hungry",
+        "p": "ˈhʌŋ.ɡri",
+        "pos": "adj.",
+        "m": "Feeling or displaying the need for food.",
+        "si": "කුසගින්නෙන් පෙළෙන",
+        "s": "After the two-hour lecture, everyone in the class was hungry.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hungry"
+      }
+    ]
   },
   "lists": [
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "5.7.0",
+      "version": "0.0.1.g",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -514,10 +786,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "9.0.0.4",
-  "updatedAt": "2026-10-31T12:00:00.000Z",
+  "updatedAt": "2026-11-02T05:53:30.531Z",
   "version": "9.0.0.4",
   "buildDate": "2026-10-31",
-  "settingsRev": 60,
+  "settingsRev": 8,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -826,7 +1098,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793385986993,
+  "syncRev": 1793598810530,
   "words": [
     {
       "w": "afraid",

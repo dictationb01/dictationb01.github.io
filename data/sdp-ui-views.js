@@ -931,8 +931,8 @@
         });
         hideGuideTapBanner();
       } catch (e) {
-        /* D-G1: never swallow a narration failure — a bare `catch (e) {}` hid the
-     pickVoice ReferenceError for a whole release. */
+        /* D-G1: never swallow a narration failure — an empty catch hid the pickVoice
+     ReferenceError for a whole release. */
         guideState.narrating = false;
         try { console.error('[SDP] guide narration failed:', e); } catch (e2) {}
         showToast(t('guideVoiceFailed'));

@@ -386,7 +386,7 @@ bytes; merge to main only with --no-ff.
   G9.2a red. Its §G9.3a monolith line (any `data/*.js` over 120,000 B) is a *third*
   number that the 128,000 B ceiling does not exempt: the v0.0.1.i strings pushed
   `sdp-ui-views.js` to 121,619 B, so 24 historical comment blocks were folded into
-  one-liners and the module shipped at 119,126 B. Trim, never raise.
+  one-liners and the module shipped at 119,119 B. Trim, never raise.
 * Escaped-dot regexes survive a bulk `0.0.1.h → 0.0.1.i` replace: `/0\.0\.1\.h/` in
   `audit-v42.cjs` G9.7a stayed on the old release until it was grepped separately.
 * `T(key, fallback)` must be `esc(t(key, fallback))`; a wrapper that calls itself recurses

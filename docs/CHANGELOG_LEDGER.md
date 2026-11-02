@@ -30,7 +30,7 @@
 G1 89/0 · G2 12/0 · G3 81/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 597 assertions, 0 FAIL.
 
 ### Bytes (`wc -c`)
-index.html 30,223/36,000 · sdp-ui.css 45,402/60,000 · sdp-data-sync.js 83,666/86,000 · sdp-ui-views.js 119,126/128,000 · studio.js 115,884/116,000 · data-meter.js 22,845/24,000 · data.html = data/index.html 27,974 each/32,000 · session.json 57,381 exact (SHA `4e80cd95…`).
+index.html 30,223/36,000 · sdp-ui.css 45,402/60,000 · sdp-data-sync.js 83,666/86,000 · sdp-ui-views.js 119,119/128,000 · studio.js 115,884/116,000 · data-meter.js 22,845/24,000 · data.html = data/index.html 27,974 each/32,000 · session.json 57,381 exact (SHA `4e80cd95…`).
 
 `config.encVault` + `config.pinVerifier` survived byte-for-byte; PBKDF2 250,000, PIN `78987898`, five localStorage keys, strict ES5 and both credit lines unchanged.
 

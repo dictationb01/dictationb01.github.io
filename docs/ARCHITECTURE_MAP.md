@@ -495,7 +495,7 @@ ceilings; a ceiling that exists in only one of them fails the release (§H5.4).
 | `data/sdp-data-sync.js` | 83,666 | 86,000 |
 | `data/sdp-audio-speech.js` | 38,831 | 52,000 |
 | `data/sdp-dictation-engine.js` | 43,844 | 60,000 |
-| `data/sdp-ui-views.js` | 119,126 | 128,000 |
+| `data/sdp-ui-views.js` | 119,119 | 128,000 |
 | `data/studio.js` | 115,884 | 116,000 |
 | `data/data-meter.js` | 22,845 | 24,000 |
 | `data/session.json` | 57,381 (exact, SHA `4e80cd95…`) | 57,381 |
@@ -562,7 +562,7 @@ other is exactly what turned G9.2a red on this release; both were re-pinned in t
 same commit. G9.3a is a third, independent line: any single `data/*.js` over
 120,000 B fails it, and the 128,000 B ceiling above it is not an exemption. The
 D1–D20 strings pushed `sdp-ui-views.js` to 121,619 B, so the module was trimmed
-back to 119,126 B by folding twenty-four historical comment blocks into one-liners
+back to 119,119 B by folding twenty-four historical comment blocks into one-liners
 (no code path changed) rather than raising the monolith line.
 
 ### §H5.5 Gate results on this tree

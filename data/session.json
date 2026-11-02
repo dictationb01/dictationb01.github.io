@@ -296,7 +296,7 @@
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.1.h",
+      "version": "0.0.1.i",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -786,10 +786,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "9.0.0.4",
-  "updatedAt": "2026-11-02T07:49:58.414Z",
+  "updatedAt": "2026-11-02T09:52:56.500Z",
   "version": "9.0.0.4",
   "buildDate": "2026-10-31",
-  "settingsRev": 11,
+  "settingsRev": 13,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1098,7 +1098,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793605798414,
+  "syncRev": 1793613176500,
   "words": [
     {
       "w": "afraid",

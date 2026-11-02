@@ -88,7 +88,7 @@ const TARGET_VERSION = /var TARGET = '([^']+)'/.exec(fs.readFileSync(path.join(R
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
  * this pacing against a classSettings adoption; guideAutoPlay is off so a
  * resilience tap reaches the cockpit without the quick walkthrough. */
-const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 7 };
+const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 };
 
 (async function main() {
   const server = await start({ root: ROOT });
@@ -270,7 +270,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           localStorage.setItem('sdp.guide_seen', seed.guide);
           localStorage.setItem('sdp.settings', JSON.stringify(seed.settings));
         } catch (e) {}
-      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 7 }) });
+      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 99 }) });
       const pageA = await ctxA.newPage();
       const errorsA = [];
       pageA.on('pageerror', (e) => errorsA.push(e.message));

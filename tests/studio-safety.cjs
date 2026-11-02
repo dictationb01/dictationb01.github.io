@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* G12 — Lecturer Studio: real DOM widgets, zero-credit quota, delta clips (P3/P4).
- * v0.0.1.h adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
+ * v0.0.1.i adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
  * contract: docs/UI_COMPONENT_GUIDE.md §5 studio widgets
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §W5 CREDIT SAFETY
  * CREDIT SAFETY: this gate never calls /v1/text-to-speech. The only network
@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.h'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.i'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -170,7 +170,7 @@ async function unlockStudio(app) {
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
       'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
-      /* v0.0.1.h studio surface */
+      /* v0.0.1.i studio surface */
       'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
       'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
       'studioAiKey', 'studioAiNoKey', 'studioPublishWordsVoice', 'studioLock',
@@ -190,7 +190,7 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 7. v0.0.1.h: three cards, the one-click setup, the PIN and the dots ─ */
+  /* ── 7. v0.0.1.i: three cards, the one-click setup, the PIN and the dots ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio cards · §R4 PIN · §R5 lock
   {
     const app = await createApp(base);
@@ -309,7 +309,7 @@ async function unlockStudio(app) {
     offlineApp.close();
   }
 
-  /* ── 9. v0.0.1.h: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
+  /* ── 9. v0.0.1.i: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio Card 1 · §R8 free ladder
   {
     const app = await createApp(base);
@@ -403,6 +403,79 @@ async function unlockStudio(app) {
     check('G12.9x the tier warning ships in both languages',
       /Built-in Free British Female Professor Voice/.test(app.SDP.STRINGS_EN.studioElTierWarn) &&
       /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.studioElTierWarn), app.SDP.STRINGS_SI.studioElTierWarn);
+    app.close();
+  }
+
+  /* ── 13. v0.0.1.i: per-field secrets (D1/D9), the lecturer bar (D19)
+   *        and the busy flags on a failure exit (D18) ────────────────────── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.1.i · docs/UI_COMPONENT_GUIDE.md §11
+  {
+    const app = await createApp(base);
+    await unlockStudio(app);
+    const el = app.byId('elKeyInput');
+    const gh = app.byId('ghTokenInput');
+    const ai = app.byId('studioAiKey');
+    const gas = app.byId('studioGasUrl');
+    check('G12.13a every credential field ships data-pristine and no data-dirty',
+      [el, gh, ai, gas].every((n) => !!n && n.getAttribute('data-pristine') === '1' && n.getAttribute('data-dirty') !== '1'),
+      [el, gh, ai, gas].map((n) => n && n.getAttribute('data-pristine')).join(','));
+    check('G12.13b the four credential fields each own an explicit Clear button',
+      ['btnClearElKey', 'btnClearGhToken', 'btnClearAi', 'btnClearGasUrl'].every((id) => !!app.byId(id)),
+      ['btnClearElKey', 'btnClearGhToken', 'btnClearAi', 'btnClearGasUrl'].filter((id) => !app.byId(id)).join(','));
+    el.value = 'sk_typed_by_hand';
+    el.removeAttribute('data-pristine'); el.setAttribute('data-dirty', '1');
+    app.byId('btnClearElKey').click();
+    check('G12.13c Clear empties only its own field', el.value === '' && gh.value === 'ghp_x', el.value + '|' + gh.value);
+    check('G12.13d a cleared field is data-dirty, never pristine again',
+      el.getAttribute('data-dirty') === '1' && !el.hasAttribute('data-pristine'));
+    app.SDP.Studio.mergeSecretInputs();
+    check('G12.13e an empty dirty field clears the vault slot it owns',
+      app.SDP.Studio.secrets().elevenKey === '', JSON.stringify(app.SDP.Studio.secrets().elevenKey));
+    check('G12.13f an untouched field never loses the secret it holds (D1 belt-and-braces)',
+      app.SDP.Studio.secrets().ghToken === 'ghp_x', JSON.stringify(app.SDP.Studio.secrets().ghToken));
+
+    /* D19: the lecturer sync bar is a real, polite, translated status line */
+    const bar = app.byId('lecturerSyncLast');
+    check('G12.13g the lecturer bar is a polite live region that starts idle',
+      !!bar && bar.getAttribute('aria-live') === 'polite' && bar.getAttribute('data-state') === 'idle',
+      bar && bar.outerHTML.slice(0, 120));
+    check('G12.13h the idle line is an i18n key, not a bare version literal',
+      !!bar && bar.getAttribute('data-i18n') === 'lecturerSyncIdle' &&
+      !/rev \d/.test(bar.textContent) && /Not synced yet/.test(bar.textContent), bar && bar.textContent);
+    check('G12.13i the string exists in both languages',
+      !!app.SDP.STRINGS_EN.lecturerSyncIdle && /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.lecturerSyncIdle),
+      app.SDP.STRINGS_SI.lecturerSyncIdle);
+
+    /* D18: a failed publish must not leave a spinner pinned on */
+    app.byId('ghTokenInput').value = '';
+    app.byId('ghTokenInput').setAttribute('data-dirty', '1');
+    app.SDP.Studio.mergeSecretInputs();
+    let failure = null;
+    await new Promise((resolve) => { app.SDP.Studio.publish(function (err) { failure = err; resolve(); }); });
+    check('G12.13j a token-less publish fails without leaving a busy flag set',
+      !!failure && app.SDP.Studio.isBusy() === false, JSON.stringify(app.SDP.Studio.isBusy()));
+    const line = app.byId('lecturerSyncLast');
+    check('G12.13k the failure line stays a human sentence (R10)',
+      !!line && !/^(ERR|E_|[a-z]+_[a-z]+$)/.test(String(line.textContent).trim()), line && line.textContent);
+    /* D5/D6/D7: the failure composer and the mapped status sentences */
+    app.SDP.Studio.saveClassSettings(function () {});
+    const line2 = app.byId('lecturerSyncLast');
+    check('G12.13l a failed class-settings publish reads "Publish failed · hhmm · reason"',
+      !!line2 && /^Publish failed · \d{2}:\d{2} · no token$/.test(String(line2.textContent)) &&
+      line2.getAttribute('data-state') === 'bad', line2 && line2.textContent);
+    check('G12.13m a failed publish never prints a revision number',
+      !!line2 && !/rev\s*\d/i.test(String(line2.textContent)), line2 && line2.textContent);
+    const e401 = app.SDP.Sync.publishErrorText(401, 'Bad credentials');
+    const e403 = app.SDP.Sync.publishErrorText(403, '');
+    const e500 = app.SDP.Sync.publishErrorText(500, '');
+    const eOff = app.SDP.Sync.publishErrorText(0, '');
+    check('G12.13n every GitHub failure status gets its own sentence',
+      [e401, e403, e500, eOff].every((t) => typeof t === 'string' && t.length > 8) &&
+      new Set([e401, e403, e500, eOff]).size === 4, [e401, e403, e500, eOff].join(' | '));
+    check("G12.13o GitHub's own message is appended when the API sent one",
+      String(e401).indexOf('Bad credentials') > 0 && String(e403).indexOf('Bad credentials') < 0, e401);
+    check('G12.13p the class-settings failure also leaves no busy flag behind (D18)',
+      app.SDP.Studio.isBusy() === false, JSON.stringify(app.SDP.Studio.isBusy()));
     app.close();
   }
 

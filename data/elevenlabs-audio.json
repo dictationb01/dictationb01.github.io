@@ -1,21 +1,22 @@
 {
   "version": "0.0.1.g",
   "appVersion": "0.0.1.g",
+  "ver": 7,
+  "schema": 7,
+  "settingsRev": 8,
   "voiceId": "Xb7hH8MSUJpSbSDYk0k2",
   "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
   "clips": {},
-  "ver": 7,
-  "schema": 7,
-  "settingsRev": 7,
   "storageKey": "sdp.progress",
   "note": "Permanent ElevenLabs voice vault. Clips committed here play on every device with 0 API calls and 0 credits, and the encrypted settings envelope travels with them.",
   "strictAdminOnly": true,
   "creditLock": "student playback replays saved clips only",
   "voiceModel": "eleven_flash_v2_5",
   "generatedAt": "2026-11-01T00:00:00.000Z",
-  "syncRev": 1793595000000,
+  "syncRev": 1793598810530,
   "buildDate": "2026-11-02",
-  "updatedAt": "2026-11-02T00:00:00.000Z",
-  "versionFamily": "0.0.1"
+  "updatedAt": "2026-11-02T05:53:30.532Z",
+  "versionFamily": "0.0.1",
+  "manifestSource": "raw"
 }

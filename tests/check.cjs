@@ -247,6 +247,12 @@ function pending(p) {
       v.schema === 10 && v.settingsRev === 16 && String(v.session) === '8';
     record('version.json carries the v0.0.2.a schema', ok, JSON.stringify(v).slice(0, 220));
     record('version.json pins syncRev 1793615000000', Number(v.syncRev) === 1793615000000, JSON.stringify(v).slice(0, 200));
+    /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
+       shipped pointer must never disagree, or a device re-adopts stale classSettings. */
+    const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
+    const m = /var\s+SETTINGS_REV\s*=\s*(\d+)/.exec(syncSrc);
+    record('SETTINGS_REV agrees with version.json settingsRev',
+      !!m && Number(m[1]) === Number(v.settingsRev), m ? m[1] + ' vs ' + v.settingsRev : 'SETTINGS_REV missing');
     record('version.json stays slim (<= 2000 B)', bytes('data/version.json') <= 2000, bytes('data/version.json'));
   } else { pending('version.json'); }
 

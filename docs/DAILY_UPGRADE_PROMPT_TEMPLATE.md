@@ -319,6 +319,46 @@ zero occurrences of the retired PIN, verbatim EN + SI credit lines, all five doc
 * `enrichWords()` must decide what needs enrichment from the *provided/prior* record, not
   from the merged fallback, otherwise the lexicon short-circuits the dictionary call.
 
+## v0.0.2.a upgrade prompt (copy/paste block, 2026-11-02)
+
+```
+Upgrade dictationb1/dictationb1.github.io from v0.0.1.i to v0.0.2.a in one autonomous pass.
+Target: appVersion/version 0.0.2.a, ver 10, schema 10, settingsRev 16,
+syncRev 1793615000000, buildDate 2026-11-02, TARGET '0.0.2.a',
+SW sdp-v0.0.2.a / sdp-v0.0.2.a-shell.
+
+P1  A 54px tactile button system and amber .cue callouts. Tokens --btn-h, --shadow-btn,
+    --grad-primary (#2563EB->#1D4ED8), --grad-go (#059669->#10B981), --cue-bg #F59E0B.
+    .btn 54px/700/1.5px border, :active translateY(2px) + no shadow, .btn-sm 48px,
+    .btn-ghost dashed, .badge flat #A1A1AA. Every new class needs a rule in sdp-ui.css
+    (W3: never a runtime <style>).
+P2  A sixth screen: #screen-studio + #tab-studio + #rail-studio. Settings stays
+    student-only (5 sections + #aboutCard + #settingsLecturerBanner); #studioAccordion,
+    #studioBody and the three studio cards live only in #screen-studio. Locked studio is
+    strictly PIN-only: 12-dot #pinDots (8 visible digits max), 56px 12-key #pinPad.
+P3  One-click 34-clip workflow: #studioPackDashboard X/34 (clipCount()), #studioGenProgress
+    "Generating clip n/N · key · chars used", #btnRetryFailedClip doing a delta retry
+    through queueFor(words, singleTest, keys) so a saved clip is never re-billed.
+    #btnOneClickMasterSetup is the primary CTA (data-primary-cta), #btnSaveKeys is ghost.
+P4  Cockpit: 30-pill #sessionProgressStrip/#sessionPills (done/current/todo, click jumps),
+    4-button transport (⏮ Prev (#k) / ⏸ Pause Dictation / ▶ Resume Word #k / 🔇 Replay Word
+    / ⏭ Next (#k)), verbatim phase lines "Listen Carefully (Repeat n of m)…",
+    "Write Word #k in Your Book! (Ns countdown)", "Dictation Paused at Word #k (Repeat n of
+    m) — Press Resume Below", giant #resumeBanner, ordered #01..#30 word sheet with
+    ✓ Correct / ✗ Needs Practice writing sdp.progress.mastered + weakWords.
+P5  Guide 3.0: four voice-transition cards with animated previews (guideMockMarkup(),
+    .active-step, sdpRing), footer CTA "▶ Start Dictation Now", stamp follows APP_VERSION.
+P6  Ledgers: ARCHITECTURE_MAP §1 budgets + §H2 ids, this template, CHANGELOG, sync
+    contract (schema 10) and UI guide (tactile tokens) updated in the same release.
+
+Legal: config.encVault and config.pinVerifier are never rewritten; five localStorage keys
+(cuesSeen lives INSIDE sdp.settings); strict ES5, no build step; /v1/text-to-speech only
+from a human click in data/studio.js; version.json commits last (one syncRev).
+
+Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 100, G4 8, G5 60, G6 15, G7 52, G8 39,
+G9 47, G10 26, G11 74, G12 94 = 636 assertions; preserved SHA-256 4/4; merge to main.
+```
+
 ## v0.0.1.g upgrade prompt (copy/paste block, 2026-11-02)
 
 ```
@@ -353,14 +393,14 @@ D17    needSession also true when the session no. differs, state.deferredSession
 D18    Re-stamp every versioned literal, re-baseline BUDGET (W2 ceilings below), extend
        G11 (74) and G12 (78), bump the appliedSettingsRev fixtures 6 -> 7.
 
-W2 ceilings (v0.0.1.i): index.html 36000, sdp-ui.css 60000, sdp-data-sync.js 86000,
-sdp-audio-speech.js 52000, sdp-dictation-engine.js 60000, sdp-ui-views.js 128000,
-studio.js 116000, data-meter.js 24000, session.json exactly 57381,
-data.html = data/index.html 32000, sw.js 13000, manifest 4000, config.json 36000,
-version.json 2000, docs 48000 each (CHANGELOG 52000, template 24000).
+W2 ceilings (v0.0.2.a): index.html 38000, sdp-ui.css 68000, sdp-data-sync.js 86000,
+sdp-audio-speech.js 52000, sdp-dictation-engine.js 62000, sdp-ui-views.js 136000,
+studio.js 126000, data-meter.js 24000, session.json exactly 57381,
+data.html = data/index.html 34000, sw.js 13000, manifest 4000, config.json 36000,
+version.json 2000, docs 52000 each (CHANGELOG 52000, template 26000).
 
-Hard gates: 12 gates 0 FAIL — G1 89, G2 12, G3 81, G4 8, G5 60, G6 15, G7 52, G8 39,
-G9 47, G10 26, G11 74, G12 94 = 597 assertions; shasum -a 256 -c 4/4 OK;
+Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 100, G4 8, G5 60, G6 15, G7 52, G8 39,
+G9 47, G10 26, G11 74, G12 94 = 636 assertions; shasum -a 256 -c 4/4 OK;
 data/session.json and gas-source.txt byte-identical; zero occurrences of the retired PIN;
 verbatim EN + SI credit lines on Home, About and /data; all five docs updated with real
 bytes; merge to main only with --no-ff.

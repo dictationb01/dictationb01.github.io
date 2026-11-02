@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.i
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.2.a
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -47,13 +47,21 @@ by `html[data-theme="light"]` / `body[data-theme="light"]`.
 | `--rail-w` | `232px` | `232px` | desktop rail |
 | `--radius` / `--radius-sm` | `14px` / `10px` | same | cards / controls |
 | `--tap` | `48px` | `48px` | minimum hit target |
+| `--btn-h` | `54px` | `54px` | the tactile primary button height |
+| `--shadow-btn` | `0 2px 0 rgba(0,0,0,.45), 0 6px 14px rgba(0,0,0,.35)` | same | the ONLY shadow in the app (buttons only) |
+| `--grad-primary` | `linear-gradient(180deg,#2563EB,#1D4ED8)` | `#0284C7→#0369A1` | `.btn-primary` |
+| `--grad-go` | `linear-gradient(180deg,#059669,#10B981)` | same | `.btn-go` (unmissable "go" action) |
+| `--cue-bg` / `--cue-ink` | `#F59E0B` / `#09090B` | same | the amber `.cue` STEP callout |
 
 Rules that never change:
 
 - `backdrop-filter: none !important` on header, cards, modals, toast, bars, pills.
-- Zero shadows (`--shadow: none`); depth comes from the border + surface pair.
-- No gradients except the credits shimmer sweep.
-- Every interactive element is at least `48 × 48` px (`min-height: var(--tap)`).
+- `--shadow: none` on every surface; the single exception is `.btn`'s `--shadow-btn`,
+  which is what makes a 54 px button read as a physical key on a projector.
+- Gradients only on `.btn-primary` / `.btn-go` (and the credits shimmer sweep).
+- Every interactive element is at least `48 × 48` px (`min-height: var(--tap)`);
+  a primary action is 54 px and `font-weight: 700`.
+- A class used in `index.html` must have a rule here (W3) — never a runtime `<style>`.
 
 ---
 
@@ -568,3 +576,75 @@ failure (G12.13g–m). `lecturerSyncIdle` ships in EN (`:85`) and SI (`:279`).
 * Every failure exit calls `clearBusy()` (`:1994`), which resets `generating`,
   `publishing` and `enriching` and repaints the bar — no button is left disabled and no
   spinner survives a crash (G12.13j, G12.13p).
+
+---
+
+## 12. What v0.0.2.a changed on screen (P1–P5)
+
+Six surfaces moved, and the five key laws held: one stylesheet, no runtime `<style>`,
+one `.screen.active`, 48 px minimum targets and both credit lines verbatim.
+
+### 12.1 The tactile button system (P1)
+
+```css
+.btn { min-height: var(--btn-h); font-weight: 700; border: 1.5px solid var(--border-strong);
+       box-shadow: var(--shadow-btn); }
+.btn:active { transform: translateY(2px); box-shadow: none; }
+.btn-primary { background: var(--grad-primary); color: #FFFFFF; }
+.btn-go      { background: var(--grad-go);      color: #FFFFFF; }
+.btn-sm      { min-height: 48px; }
+.btn-ghost   { background: transparent; border-style: dashed; box-shadow: none; }
+.badge       { box-shadow: none; color: #A1A1AA; }
+.pill:not([aria-pressed='true']) { box-shadow: none; }
+```
+
+`.btn-transport` is the cockpit's 4-button row (54 px, equal columns, wraps at 390 px).
+Nothing else in the app casts a shadow, so the eye lands on the action, not the chrome.
+
+### 12.2 The amber `.cue` STEP callout (P1, D9)
+
+```html
+<span class="cue" data-cue="home">STEP 1 — PRESS HERE</span>
+```
+
+10 px / 800 weight uppercase, `--cue-bg` on `--cue-ink`, one per screen, attached to that
+screen's primary CTA. `SDP.Views.paintCues()` hides a cue whose screen is already in
+`sdp.settings.cuesSeen`; `markCueSeen(screen)` writes it there (never a sixth key), and
+`#btnStart` is wrapped so the Home cue retires on the first real tap.
+
+### 12.3 The sixth screen: `#screen-studio` (P2)
+
+`#tab-studio` / `#rail-studio` route to `#screen-studio`, which owns
+`#studioSyncDock`, `#lecturerSyncBar`, `#studioAccordion` and `#studioBody`. Settings is
+student-only again — five sections + `#aboutCard` + one `#settingsLecturerBanner` with
+`#btnOpenStudioFromSettings`. Locked, the studio is a PIN gate (`#studioGate`,
+`#pinDots` 12 dots with 8 visible digits max, 56 px 12-key `#pinPad`); unlocked, it is
+three numbered cards with `.studio-h4` header bars in `--grad-primary`.
+
+### 12.4 The 34-clip pack dashboard (P3)
+
+`#studioPackDashboard` reads `Vault: … | GitHub: … | Voice Pack: X/34 Clips` from
+`clipCount()`; `#studioGenProgress` prints the verbatim
+`Generating clip n/34 · <key> · <chars> chars used`; `#btnRetryFailedClip` lives in
+`.studio-retry-row` which stays `hidden` until a clip really fails, and then re-queues
+**only** that key. `#btnOneClickMasterSetup` is the primary CTA; `#btnSaveKeys` is the
+ghost alternative.
+
+### 12.5 The cockpit map and the word sheet (P4)
+
+`#sessionProgressStrip` holds `#sessionPills` (30 `.word-pill` — `.done` green,
+`.current` pulsing via `sdpPulse`, `.todo` slate), a pill click jumps to that word, and
+`#sessionProgressCount` reads `Word #NN of 30`. The transport is exactly four buttons:
+`⏮ Prev (#k)`, `⏸ Pause Dictation` / `▶ Resume Word #k` / `▶ Start Dictation`,
+`🔊 Replay Word`, `⏭ Next (#k)`. The giant `.resume-card` (`#resumeBanner`) names the
+word, the repeat and the seconds left, with `#btnResumeWord` and `#btnStartOver`.
+`#dictList` is strict class order `#01..#30`, each card with `🔊 Listen`,
+`✓ Correct` and `✗ Needs Practice` writing `sdp.progress.mastered` / `weakWords`.
+
+### 12.6 Guide 3.0 (P5)
+
+`#guideSteps` is a `.guide-steps` grid of four `.guide-step` cards. The narrated card is
+`.active-step` (2 px `--accent` border) and carries a `.guide-mock` preview of the real
+control (ring, transport row, sync line, studio card). The footer CTA is
+`▶ Start Dictation Now`; the stamp follows `APP_VERSION`, so `0.0.2.a` re-opens the guide
+for every device once.

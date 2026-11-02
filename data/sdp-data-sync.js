@@ -14,7 +14,7 @@
   var doc = global.document;
   var APP_VERSION = '0.0.2.a';
   var SCHEMA = 10;
-  var SETTINGS_REV = 12;
+  var SETTINGS_REV = 16;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */

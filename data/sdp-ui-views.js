@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.1.h)
+/*! Smart Dictation Player — views, i18n & router (v0.0.1.i)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -81,6 +81,8 @@
     syncShortSyncing: 'Syncing…',
     lecturerSyncBar: '📡 Save & Sync Current Settings to All Classroom Devices',
     lecturerSyncLast: 'Last synced to the class',
+    /* D19: a dedicated idle label — applyLang can never overwrite a real stamp. */
+    lecturerSyncIdle: 'Not synced yet — press Save & Sync',
     lecturerSyncedToast: '📡 Synced teacher\'s latest classroom settings (Rev #',
     lecturerSyncNoToken: 'Add a GitHub token in Lecturer Studio to sync the class',
     guideQuickTitle: 'Quick Voice Guide — How This Dictation Works',
@@ -216,6 +218,9 @@
     studioAiSlotOpenrouter: '4: OpenRouter Free Models · Llama-3.3-70B:free (sk-or-… — Free Tier)',
     studioAiSlotGemini: '5: Google Gemini Free Tier · gemini-2.5-flash (AIza… — Optional)',
     studioWorking: 'Working…',
+    studioClear: 'Clear',
+    studioRestored: 'Studio restored from this tab',
+    studioNoVaultWarn: 'No vault sealed yet — words publish without keys; seal the vault when you add your keys',
     studioAiOfflineFallback: 'AI offline — free dictionary used',
     studioSavedOk: '✓ Keys saved & protected across updates',
     studioPublishOkFull: '✓ Published & synced to all classroom devices'
@@ -271,6 +276,7 @@
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
     lecturerSyncBar: '📡 සියලු උපකරණවලට සැකසුම් සුරැකීම හා සමමුහුර්ත කිරීම',
     lecturerSyncLast: 'පන්තියට සමමුහුර්ත කළ අවසන් වාරය',
+    lecturerSyncIdle: 'තවම සමමුහුර්ත නොවීය — Save & Sync එබන්න',
     lecturerSyncedToast: '📡 ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
     lecturerSyncNoToken: 'පන්තිය සමමුහුර්ත කිරීමට කථිකාචාර්ය ස්ටූඩියෝවේ GitHub ටෝකනය එක් කරන්න',
     guideQuickTitle: 'ක්ෂණික හඬ උපදෙස් — ඩික්ටේෂන් ක්‍රියා කරන ආකාරය',
@@ -406,6 +412,9 @@
     studioAiSlotOpenrouter: '4: OpenRouter නොමිලේ ආකෘති · Llama-3.3-70B:free (sk-or-… — නොමිලේ මට්ටම)',
     studioAiSlotGemini: '5: Google Gemini නොමිලේ මට්ටම · gemini-2.5-flash (AIza… — අමතර)',
     studioWorking: 'ක්‍රියාත්මක වෙමින්…',
+    studioClear: 'හිස් කරන්න',
+    studioRestored: 'මෙම ටැබයෙන් ස්ටූඩියෝව නැවත ලබා ගන්නා ලදි',
+    studioNoVaultWarn: 'තවම බඳුනක් සකසා නැත — යතුරු නොමැතිව වචන ප්‍රකාශ වේ',
     studioAiOfflineFallback: 'AI අක්‍රියයි — නොමිලේ ශබ්දකෝෂය භාවිතා විය',
     studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
     studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
@@ -493,8 +502,7 @@
     var wanted = str(next).toLowerCase();
     return THEMES.indexOf(wanted) >= 0 ? wanted : 'dark';
   }
-  /* D-UI2: 'board' used to be coerced to 'dark' on line 311, and line 324 read
-     an undefined `name` variable, so the Smart Board mode could never work. */
+  /* D-UI2: 'board' must survive normalizeTheme, and 'name' must exist. */
   function applyTheme(next, quiet) {
     theme = normalizeTheme(next);
     if (doc && doc.documentElement) doc.documentElement.setAttribute('data-theme', theme);
@@ -515,8 +523,7 @@
     renderBoardBar();
     return theme;
   }
-  /* ENG-05 / R1: the ten classroom keys the lecturer owns. Personal keys
-     (lang, guideAutoPlay, volume, hints) are never marked as touched. */
+  /* ENG-05/R1: the ten classroom keys; personal keys are never marked touched. */
   var CLASS_SETTING_KEYS = [
     'mode', 'writeSecs', 'repeats', 'pauseSecs', 'autoAdvance',
     'pacingPreset', 'voiceLock', 'voiceSource', 'rate', 'theme'
@@ -531,9 +538,7 @@
     out[key] = true;
     return out;
   }
-  /* ENG-05: ONE writer for every classroom control. Marks every classroom key
-     in the patch as touched, answers with a toast, and — when the Lecturer
-     Studio is unlocked — keeps the classroom sync bar in front of her. */
+  /* ENG-05: ONE writer for classroom keys — marks touched, toasts, repaints the bar. */
   function saveTouched(patch, label) {
     var withTouch = {}, k, i;
     var keys = [];
@@ -564,9 +569,7 @@
   /* ══ router ═════════════════════════════════════════════════════════════ */
   /* contract: docs/ARCHITECTURE_MAP.md §R3 exactly one active screen */
   var TABS = ['home', 'player', 'practice', 'dict', 'settings'];
-  /* R6 / D10: leaving the cockpit pauses the live beat. The cockpit tabs keep
-     the session running; every other destination (and Settings, which is a
-     modal-equivalent surface) pauses it and silences speech first. */
+  /* R6/D10: leaving the cockpit pauses the live beat; Settings is a modal surface. */
   function pauseForNavigation(target) {
     var engine = SDP.Engine;
     if (!engine || !engine.isActive || !engine.isActive()) return false;
@@ -668,9 +671,8 @@
     setText(byId('homeAnnText'), annText);
     paintModePills();
   }
-  /* R1: all three credit lines are preserved verbatim in the markup, but the
-     English chrome must stay Sinhala-free (G3.5c), so only the active language
-     is rendered into the DOM at any moment. */
+  /* R1: all three credit lines stay verbatim, but only the active language is
+     rendered (G3.5c). */
   function paintCredits() {
     if (!doc || !doc.querySelectorAll) return false;
     var enText = lang === 'si' ? '' : STRINGS_EN.creditsLine;
@@ -701,8 +703,7 @@
     badge.setAttribute('data-ready', count > 0 ? 'true' : 'false');
     return true;
   }
-  /* D17: the active classroom preset is visible on Home, so a student always
-     knows the pacing their lecturer published (Fast Exam · 5s · 2× · British). */
+  /* D17: show the published preset on Home (Fast Exam · 5s · 2× · British). */
   function presetLabel(conf) {
     var s = isObj(conf) ? conf : settings();
     var preset = str(s.pacingPreset || 'exam');
@@ -841,15 +842,10 @@
     if (banner.hidden) return false;
     return !(banner.classList && banner.classList.contains('hidden'));
   }
-  /* D11: 700 ms after the guide opens, if no utterance has REALLY started
-     (utter.onstart) and no <audio> fallback is playing, the student is told to
-     tap. The v0.0.1.d watchdog read the synchronous state.speaking flag, which
-     is true the moment say() is called — so the banner never showed on
-     voiceless browsers like Brave Desktop even though nothing was audible. */
-  /* D16 / R9: a cold-boot browser may refuse the very first un-gestured
-     utterance. 900 ms after the guide opens, if no utterance has really
-     started (onstart) and no <audio> is playing, the prominent
-     #guideAutoplayBanner asks for the one gesture that unlocks audio. */
+  /* D11: 700 ms in, if no utterance REALLY started (onstart) and no <audio> plays,
+     ask for a tap — read state.speaking and a voiceless browser never showed it. */
+  /* D16/R9: 900 ms in, a cold-boot browser may still be un-gestured;
+     #guideAutoplayBanner asks for the one tap that unlocks audio. */
   function showGuideAutoplayBanner() {
     var banner = byId('guideAutoplayBanner');
     if (!banner) return false;
@@ -935,8 +931,8 @@
         });
         hideGuideTapBanner();
       } catch (e) {
-        /* D-G1: never swallow a narration failure — the v0.0.1.b `catch (e) {}`
-           is exactly what hid the pickVoice ReferenceError for a whole release. */
+        /* D-G1: never swallow a narration failure — an empty catch hid the pickVoice
+     ReferenceError for a whole release. */
         guideState.narrating = false;
         try { console.error('[SDP] guide narration failed:', e); } catch (e2) {}
         showToast(t('guideVoiceFailed'));
@@ -954,8 +950,7 @@
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     clearGuideAutoplayWatch();
-    /* The first tap creates the media element, unlocks speechSynthesis and
-       restarts Step 1 in the unified British female professor voice. */
+    /* The first tap creates the media element and unlocks speechSynthesis. */
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     if (fromBanner) { guideState.narrating = false; startGuideNarration(0); return true; }
     if (!guideState.narrating) startGuideNarration(guideState.activeStep);
@@ -1016,8 +1011,7 @@
     armGuideWatchdog();
     /* D16: 900 ms cold-boot autoplay check, alongside the 700 ms tap watchdog. */
     armGuideAutoplayWatch();
-    /* R3/D-V6: the student's first tap anywhere in the modal unlocks
-       speechSynthesis + the shared <audio> element and narrates 1 -> 4. */
+    /* R3/D-V6: the first tap unlocks speechSynthesis + <audio> and narrates 1 -> 4. */
     if (!modal._guideNarrationBound) {
       modal._guideNarrationBound = true;
       modal.addEventListener('click', onGuideGesture, false);
@@ -1054,10 +1048,8 @@
     clearGuideAutoplayWatch();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    /* W7: write the version stamp so the guide re-opens on the next upgrade.
-       D-G5: dismissing still counts as seen (G7.1d), so the replay affordance
-       stays prominent instead: #btnGuide on Home and #btnReplayGuide in
-       Settings both reopen the narrated guide at any time. */
+    /* W7/D-G5: write the stamp — dismissing still counts as seen (G7.1d), and
+     #btnGuide / #btnReplayGuide reopen the guide at any time. */
     try { SDP.Data.markGuideSeen(); } catch (e) {}
     restoreGuideTitle();
     var opener = guideState.opener;
@@ -1112,9 +1104,7 @@
     return true;
   }
 
-  /* D-G4: "Listen to the steps (EN)" used to dump eight strings at once with
-     no highlighting and no Pause/Next/Replay. It now runs through the exact
-     same step state machine as openGuide(). */
+  /* D-G4: "Listen to the steps (EN)" runs the same step machine as openGuide(). */
   function speakGuide() {
     var modal = byId('guideModal');
     if (modal && modal.hidden) {
@@ -1385,10 +1375,14 @@
     bar.setAttribute('aria-hidden', unlocked ? 'false' : 'true');
     if (unlocked) {
       var btn = byId('btnSyncClassSettings');
-      if (btn) btn.textContent = t('lecturerSyncBar');
+      /* D2: never repaint the label of a button that is mid-action. */
+      if (btn && btn.getAttribute('data-busy') !== '1') btn.textContent = t('lecturerSyncBar');
       var hint = byId('lecturerSyncHint');
       if (hint) hint.textContent = t('studioAskLecturer');
     }
+    /* D19: the idle label is separate from the live status stamp. */
+    var last = byId('lecturerSyncLast');
+    if (last && !last.getAttribute('data-state')) last.textContent = t('lecturerSyncIdle');
     return unlocked;
   }
   function renderSettings() {
@@ -1440,8 +1434,7 @@
   }
   function bindSettings() {
     function save(patch) { try { SDP.Data.saveSettings(patch); } catch (e) {} }
-    /* P5/ENG-05: every manual change answers immediately and is remembered as
-       "touched" (R7) through the one shared saveTouched() above. */
+    /* P5/ENG-05: every manual change answers at once and is remembered as touched. */
     window.__sdpSaveTouched = saveTouched;
     function range(id, key, scale, format, label, personal) {
       var node = byId(id);
@@ -1629,16 +1622,28 @@
       syncBtn._sdpBound = true;
       syncBtn.addEventListener('click', function () {
         if (!SDP.Studio || !SDP.Studio.saveClassSettings) return;
-        var result = SDP.Studio.saveClassSettings(function (err) {
-          if (err) {
-            setUpdateStatus(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'), 'bad');
-            showToast(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'));
-            return;
+        /* D2: no double-click can ever start two publishes. */
+        if (syncBtn.getAttribute('data-busy') === '1') return;
+        var work = function (finish) {
+          var result = SDP.Studio.saveClassSettings(function (err) {
+            if (err) {
+              setUpdateStatus(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'), 'bad');
+              showToast(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'));
+            } else {
+              /* D19: Studio already stamped the exact Rev # on #lecturerSyncLast. */
+              setUpdateStatus(t('lecturerSyncLast') + ' · ' + t('studioPublishOk'), 'ok');
+            }
+            finish();
+          });
+          if (result && result.ok === false && result.reason === 'no_token') {
+            showToast(t('lecturerSyncNoToken'));
           }
-          setUpdateStatus(t('lecturerSyncLast'), 'ok');
-        });
-        if (result && result.ok === false && result.reason === 'no_token') {
-          showToast(t('lecturerSyncNoToken'));
+        };
+        if (SDP.Studio.withBusy) SDP.Studio.withBusy(syncBtn, work);
+        else {
+          syncBtn.setAttribute('data-busy', '1');
+          syncBtn.disabled = true;
+          work(function () { syncBtn.removeAttribute('data-busy'); syncBtn.disabled = false; });
         }
       });
     }
@@ -1649,13 +1654,13 @@
     node.textContent = str(text);
     if (state) node.setAttribute('data-state', state); else node.removeAttribute('data-state');
   }
-  /* ══ Sync badge — four honest states (I1/R10) ═════════════════════════════════════════════════════════════════ */
+  /* ══ Sync badge — four honest states (I1/R10) ══ */
   function paintSyncBadge(state) {
     state = state || {};
     var session = str(state.session || '8');
     var badge = byId('syncBadge');
-    /* D-UI10: the badge owns #settingsSyncStatus and NOTHING else; the update
-       line keeps #settingsUpdateStatus so a sync tick can never erase it. */
+    /* D-UI10: the badge owns #settingsSyncStatus only; the update line keeps
+     #settingsUpdateStatus. */
     var status = byId('settingsSyncStatus');
     var label;
     if (state.state === 'synced') {
@@ -1673,8 +1678,7 @@
       label = t('syncBadgeRetry');
     }
     if (badge) {
-      /* D-UI6: on a 390px phone the badge speaks a two-word summary; the full
-         sentence still lives in #settingsSyncStatus below. */
+      /* D-UI6: below 480 px the badge speaks a two-word summary. */
       var vw = Number(global.innerWidth || 0);
       var shortLabel = label;
       if (vw > 0 && vw < 480) {
@@ -1689,10 +1693,8 @@
     }
     if (status) { status.textContent = label; status.setAttribute('data-state', state.state || 'synced'); status.setAttribute('title', label); }
   }
-  /* R2/D1: checkForUpdates(cb) is node-style — it calls cb(err, result) where
-     result is the SECOND argument. v0.0.1.d read arg 1 (null) and painted
-     "Check failed — retry" even on a healthy 200 OK. This one shared handler
-     is the single honest painter for the manual check AND every 30 s tick. */
+  /* R2/D1: checkForUpdates(cb) is node-style, cb(err, result); v0.0.1.d read arg 1
+     (null) and painted "Check failed" on a healthy 200. One painter for both. */
   function handleSyncCheckResult(err, result) {
     var res = (result && typeof result === 'object') ? result : ((err && typeof err === 'object' && 'ok' in err) ? err : {});
     var hasErr = (result !== undefined && !!err) || !res.ok;
@@ -1771,8 +1773,7 @@
     return n;
   }
   function boardBarShouldShow() {
-    /* R10/D-UI4: decoupled from theme coercion. A projector-sized viewport gets
-       the bar as soon as a session exists; the board theme always shows it. */
+    /* R10/D-UI4: a projector viewport shows the board bar once a session exists. */
     if (boardWordCount() <= 0) return false;
     if (theme === 'board') return true;
     var vw = Number(global.innerWidth || (doc && doc.documentElement && doc.documentElement.clientWidth) || 0);
@@ -1985,9 +1986,8 @@
         node.addEventListener('click', function () { startPractice(str(node.getAttribute('data-prac'))); });
       })(quick[q]);
     }
-    /* D-L1: the header lock button was rendered on every screen and wired to
-       nothing. It now opens Settings -> Lecturer Studio and focuses the PIN
-       pad, and it mirrors the lock state (🔒 locked / 🔓 unlocked). */
+    /* D-L1: the header lock button opens Settings -> Lecturer Studio and mirrors
+     the lock state (locked / unlocked). */
     var quickBtn = byId('btnStudioQuick');
     if (quickBtn && !quickBtn._sdpBound) {
       quickBtn._sdpBound = true;
@@ -2005,8 +2005,8 @@
     bindSettings();
   }
 
-  /* D-S10/S11 (R7): the teacher republished class settings. Tell the student
-     plainly, and let SDP.Sync adopt only the keys they never touched. */
+  /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys they
+     never touched are adopted. */
   function bindTeacherUpdates() {
     if (bindTeacherUpdates._bound || !doc || !doc.addEventListener) return false;
     bindTeacherUpdates._bound = true;
@@ -2016,9 +2016,7 @@
       showToast(rev ? t('lecturerSyncedToast') + rev + ')' : t('teacherUpdatedToast'));
       renderAll();
     }, false);
-    /* D3: every adopted publish repaints the views. v0.0.1.e emitted
-       'sdp:update' and nobody listened, so an adopted session/title/word list
-       stayed invisible until the student switched tabs by hand. */
+    /* D3: every adopted publish repaints — v0.0.1.e emitted 'sdp:update' to nobody. */
     doc.addEventListener('sdp:update', function () {
       renderAll();
       if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
@@ -2027,9 +2025,8 @@
     if (global.addEventListener) {
       global.addEventListener('sdp:update', function () { renderAll(); }, false);
     }
-    /* D16: SDP.Sync publishes every 30 s watcher tick and every
-       visibilitychange check on this event; the badge repaints from the real
-       (err, result) pair instead of being frozen at boot-time optimism. */
+    /* D16: the 30 s tick and every visibilitychange repaint the badge from the
+     real (err, result) pair. */
     doc.addEventListener('sdp:sync-status', function (ev) {
       var d = (ev && ev.detail) || {};
       handleSyncCheckResult(d.err, d.result);
@@ -2063,9 +2060,7 @@
     try { if (SDP.Speech && SDP.Speech.loadManifest) SDP.Speech.loadManifest(noop); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.onDataReady) SDP.Studio.onDataReady(); } catch (e) {}
     if (!err && global.__SDP_NO_LIVE__ !== true) {
-      /* D18 / D5: this is the ONLY background poller. startWatch(25000) owns
-         the 25-second cadence and feeds every tick into the honest badge;
-         index.html keeps just its one-shot boot version check. */
+      /* D18/D5: the ONLY background poller — startWatch(25000) feeds the honest badge. */
       try { SDP.Sync.startWatch(25000); } catch (e) {}
     }
     return true;

@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.h)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.i)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.h';
+  SDP.version = '0.0.1.i';
   SDP.build = '2026-11-02';
-  SDP.ver = 8;
+  SDP.ver = 9;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.h';
-  var SCHEMA = 8;
-  var SETTINGS_REV = 8;
+  var APP_VERSION = '0.0.1.i';
+  var SCHEMA = 9;
+  var SETTINGS_REV = 12;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -973,11 +973,8 @@
        never gated on a previous revision being present. */
     var appliedRev = 0;
     try { appliedRev = Number(Data.settings().appliedSettingsRev) || 0; } catch (e) { appliedRev = 0; }
-    /* D20: align appliedSettingsRev to remote.settingsRev on 0.0.1.h upgrade
-       so devices stuck at appliedSettingsRev > 8 don't ignore settingsRev: 8. */
-    if (APP_VERSION === '0.0.1.h' && appliedRev > state.settingsRev && state.settingsRev === 8) {
-      try { Data.saveSettings({ appliedSettingsRev: 8 }); appliedRev = 8; } catch (e) {}
-    }
+    /* D10 (v0.0.1.i): the adoption test is MONOTONIC — no release literal and
+       no settingsRev clamp may ever pin appliedSettingsRev to one number. */
     if (state.settingsRev > appliedRev) adoptRemoteSettings(cfg, state.settingsRev);
     state.clips = {};
     var clipMap = (ses && ses.clips) || (list && list.clips) || null;
@@ -1196,10 +1193,32 @@
           var sessionOk = failedLegs.indexOf('data/session.json') < 0;
           state.deferredSession = !sessionOk;
           if (got.session) state.sessionRev = Number(got.session.syncRev) || Number(state.sessionRev || 0);
-          applyPayloads(got.version || remote, got.config, got.session || state.session);
+          /* R7 (D11): config.json is sovereign, but the SESSION POINTER only
+             moves when session.json itself verified. The words on screen stay
+             the last delivered 30; the pointer is retried on the next tick. */
+          var appliedVersion = got.version || remote;
+          if (!sessionOk) {
+            appliedVersion = JSON.parse(JSON.stringify(appliedVersion || {}));
+            appliedVersion.session = str(local.session);
+          }
+          applyPayloads(appliedVersion, got.config, got.session || state.session);
           /* R7: the full chain, in one place. */
           try { adoptRemoteSettings(got.config, Number(remote.settingsRev || 0)); } catch (e) {}
           var chainState = adoptionChain();
+          if (!sessionOk) {
+            /* D11 / Never-Red: a REQUIRED leg that could not prove its syncRev
+               is reported honestly as stale_payload (never silently skipped)
+               while the verified config + version are already adopted. */
+            state.lastCheckSource = primarySource;
+            cb(null, {
+              ok: false, error: 'stale_payload', changed: true, updated: true, deferred: true,
+              deferredSession: true, retry: ['data/session.json'],
+              session: str(local.session), settingsRev: remote.settingsRev,
+              appVersion: result.appVersion, source: primarySource,
+              payloadSources: usedSources, chain: chainState
+            });
+            return;
+          }
           var detail = {
             session: state.sessionNo, sessionChanged: sessionChanged,
             settingsChanged: settingsChanged, syncRev: remote.syncRev,
@@ -1334,12 +1353,20 @@
     getFileSha: function (path, token, cb) {
       cb = cb || noop;
       if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return; }
+      /* D7: the GET status is inspected too, so a 401/403 can never be
+         reported as a phantom write failure. Extra args stay additive. */
       global.fetch(Sync.contentsUrl(path) + '?ref=main&t=' + nowMs(), {
         cache: 'no-store',
         headers: { Authorization: 'Bearer ' + str(token), Accept: 'application/vnd.github+json' }
-      }).then(function (res) { return res && res.json ? res.json() : null; })
-        .then(function (data) { cb(null, data && data.sha ? data.sha : ''); })
-        .catch(function (e) { cb(e || new Error('sha_failed')); });
+      }).then(function (res) {
+        var status = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+        if (!res || typeof res.json !== 'function') return { status: status, data: null };
+        return res.json().then(function (data) { return { status: status, data: data }; },
+          function () { return { status: status, data: null }; });
+      }).then(function (out) {
+        var data = out && out.data;
+        cb(null, data && data.sha ? data.sha : '', Number(out && out.status) || 0, isObj(data) ? str(data.message) : '');
+      }).catch(function (e) { cb(e || new Error('sha_failed'), '', 0, ''); });
     },
     commitFile: function (path, text, message, token, cb) {
       cb = cb || noop;
@@ -1398,9 +1425,26 @@
      * commit response -> next file, with exactly one 409 retry, and
      * data/version.json always LAST so no device ever sees a version stamp
      * pointing at a session that has not landed yet. */
-    publishFilesSequential: function (files, token, onFileStatus, cb) {
+    /* R6/D7: every GitHub HTTP status becomes one human sentence. No raw
+       status, no raw JSON `message` and no `commit_failed` reaches the DOM. */
+    publishErrorText: function (status, ghMsg) {
+      var s = Number(status) || 0, text;
+      if (s === 401) text = 'GitHub token expired or revoked (401)';
+      else if (s === 403) text = 'GitHub token lacks write access (403)';
+      else if (s === 404) text = 'Repository or path not found (404)';
+      else if (s === 409) text = 'Concurrent edit conflict (409)';
+      else if (s === 422) text = 'Payload rejected (422)';
+      else if (s >= 500) text = 'GitHub server error (' + s + ')';
+      else text = 'Network problem — check your internet and try again';
+      var note = str(ghMsg);
+      if (note && text.indexOf(note) < 0) text += ' · ' + note;
+      return text;
+    },
+
+    publishFilesSequential: function (files, token, onFileStatus, cb, opts) {
       onFileStatus = onFileStatus || noop;
       cb = cb || noop;
+      opts = isObj(opts) ? opts : {};
       var list = Array.isArray(files) ? files.slice() : [];
       if (!token) { cb(new Error('no_token'), { ok: false, published: 0, failed: list.length }); return false; }
       if (typeof global.fetch !== 'function') { cb(new Error('no_fetch'), { ok: false, published: 0, failed: list.length }); return false; }
@@ -1412,53 +1456,91 @@
         else head.push(item);
       }
       var queue = head.concat(tail);
-      var at = 0, published = 0, failedList = [];
+      var at = 0, published = 0, failedList = [], errorsList = [];
+      /* D16: one 5xx / network retry after 2 s (50 ms when a gate passes it). */
+      var retryDelayMs = Number(opts.retryDelayMs) >= 0 ? Number(opts.retryDelayMs) : 2000;
       function finish() {
-        cb(failedList.length ? new Error('publish_partial') : null, {
+        var err = null;
+        if (failedList.length) {
+          err = new Error('publish_partial');
+          err.reason = errorsList.length ? str(errorsList[0].message) : Sync.publishErrorText(0, '');
+          err.status = errorsList.length ? Number(errorsList[0].status) || 0 : 0;
+          err.errors = errorsList.slice();
+        }
+        cb(err, {
           ok: failedList.length === 0,
           published: published,
           failed: failedList.slice(),
+          errors: errorsList.slice(),
+          reason: err ? err.reason : '',
           order: queue.map(function (f) { return str(f.path); })
         });
+      }
+      function failFile(file, status, ghMsg) {
+        var reason = Sync.publishErrorText(status, ghMsg);
+        errorsList.push({ path: file.path, status: Number(status) || 0, message: reason });
+        failedList.push(file.path);
+        onFileStatus(file.path, false, reason);
+      }
+      function readResponse(res) {
+        var status = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+        if (!res || typeof res.json !== 'function') return Promise.resolve({ status: status, data: null });
+        return res.json().then(function (data) { return { status: status, data: data }; },
+          function () { return { status: status, data: null }; });
       }
       function step() {
         if (at >= queue.length) { finish(); return; }
         var file = queue[at];
         at += 1;
         if (!file || !file.path) { step(); return; }
-        putOne(file, false);
+        putOne(file, {});
       }
-      function putOne(file, retried) {
-        Sync.getFileSha(file.path, token, function (err, sha) {
+      function putOne(file, flags) {
+        flags = flags || {};
+        Sync.getFileSha(file.path, token, function (err, sha, getStatus, getMsg) {
           var body = Sync.buildContentsCommitPayload(file.path, str(file.content), file.message, err ? '' : sha);
-          global.fetch(Sync.contentsUrl(file.path), {
-            method: 'PUT',
-            headers: {
-              Authorization: 'Bearer ' + str(token),
-              Accept: 'application/vnd.github+json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-          }).then(function (res) {
-            var status = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
-            /* One fresh-sha retry on a branch-ref race. */
-            if (status === 409 && !retried) { putOne(file, true); return null; }
-            return res && res.json ? res.json() : null;
-          }).then(function (data) {
-            if (data === null) return; /* the 409 retry owns the continuation */
-            if (data && data.content && data.content.sha) {
-              published += 1;
-              onFileStatus(file.path, true, null);
-            } else {
-              failedList.push(file.path);
-              onFileStatus(file.path, false, new Error('commit_failed'));
-            }
-            step();
-          }, function (e) {
-            failedList.push(file.path);
-            onFileStatus(file.path, false, e || new Error('commit_failed'));
-            step();
-          });
+          var req;
+          try {
+            req = global.fetch(Sync.contentsUrl(file.path), {
+              method: 'PUT',
+              headers: {
+                Authorization: 'Bearer ' + str(token),
+                Accept: 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(body)
+            });
+          } catch (e) {
+            req = Promise.reject(e || new Error('network_error'));
+          }
+          if (!req || typeof req.then !== 'function') req = Promise.reject(new Error('network_error'));
+          req.then(readResponse, function () { return { status: 0, data: null, network: true }; })
+            .then(function (out) {
+              var status = Number(out && out.status) || 0;
+              var data = out && out.data;
+              var ghMsg = isObj(data) ? str(data.message) : '';
+              if (status >= 200 && status < 300 && data && data.content && data.content.sha) {
+                published += 1;
+                onFileStatus(file.path, true, null);
+                step();
+                return;
+              }
+              /* D7: one fresh-SHA retry on a branch-ref race (409). */
+              if (status === 409 && !flags.conflict) {
+                putOne(file, { conflict: true, transient: flags.transient });
+                return;
+              }
+              /* D16: one delayed retry with a fresh GET sha on 5xx / network. */
+              if ((status === 0 || status >= 500) && !flags.transient) {
+                global.setTimeout(function () {
+                  putOne(file, { conflict: flags.conflict, transient: true });
+                }, retryDelayMs);
+                return;
+              }
+              if (status === 0 && (getStatus === 401 || getStatus === 403)) status = Number(getStatus) || 0;
+              failFile(file, status, ghMsg || (status === 0 ? str(getMsg) : ''));
+              step();
+            });
         });
       }
       step();

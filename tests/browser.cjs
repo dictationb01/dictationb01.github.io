@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.1.h'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.1.i'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -58,10 +58,10 @@ async function bootSettings(page, settings) {
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
      the test's own pacing against a classSettings adoption, and guideAutoPlay
      keeps Start on the fast path (the quick guide is G3/G7's job). */
-  const seed = Object.assign({ appliedSettingsRev: 7, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
+  const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.1.h');
+    localStorage.setItem('sdp.guide_seen', '0.0.1.i');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -160,6 +160,33 @@ async function bootSettings(page, settings) {
       });
       check('G5.4c search narrows the list instantly', search === 1, search);
       check('G5.3b no page errors while routing', errors.length === 0, errors.join(' | '));
+      errorsAll.push(...errors);
+      await context.close();
+    }
+
+    /* ── 4b. D8: exactly one screen at EVERY width, desktop included ───── */
+    // contract: docs/ARCHITECTURE_MAP.md §R3 the single-active-screen law (D8)
+    for (const viewport of [{ width: 1366, height: 768 }, { width: 390, height: 844 }]) {
+      const { context, page, errors } = await openPage(browser, server.origin, viewport);
+      await page.waitForTimeout(400);
+      const tag = viewport.width + 'x' + viewport.height;
+      /* ≥1024px shows the 232px rail and hides the bottom tab bar. */
+      const navPrefix = viewport.width >= 1024 ? '#rail-' : '#tab-';
+      for (const name of ['home', 'player', 'practice', 'dict', 'settings', 'home']) {
+        await page.click(navPrefix + name);
+        await page.waitForTimeout(120);
+        const state = await page.evaluate(() => {
+          const screens = Array.from(document.querySelectorAll('.screen'));
+          const visible = screens.filter((s) => getComputedStyle(s).display !== 'none');
+          return { ids: visible.map((s) => s.id), display: visible.length === 1 ? getComputedStyle(visible[0]).display : '' };
+        });
+        /* D8: the ≥1024px Bento grid may compute `grid`, every other screen
+           computes `block` — but EXACTLY one screen is ever visible. */
+        check('G5.3c [' + tag + ' -> ' + name + '] exactly one visible screen',
+          state.ids.length === 1 && state.ids[0] === 'screen-' + name && (state.display === 'block' || state.display === 'grid'),
+          JSON.stringify(state));
+      }
+      check('G5.3d [' + tag + '] no page errors while routing every width', errors.length === 0, errors.join(' | '));
       errorsAll.push(...errors);
       await context.close();
     }

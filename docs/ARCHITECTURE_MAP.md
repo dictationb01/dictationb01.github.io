@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.h
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.i
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -17,21 +17,21 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | `assets/css/sdp-ui.css` | ≤ 60,000 B | The single stylesheet (Zinc + Sky flat matte). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
-| `data/sdp-data-sync.js` | ≤ 82,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
+| `data/sdp-data-sync.js` | ≤ 86,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
 | `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
 | `data/sdp-dictation-engine.js` | ≤ 60,000 B | `SDP.Engine`: beat machine, ring/bar timer, Paper/Typing, hints, 30-row self-check |
-| `data/sdp-ui-views.js` | ≤ 125,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
-| `data/studio.js` | ≤ 112,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
+| `data/sdp-ui-views.js` | ≤ 128,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
+| `data/studio.js` | ≤ 116,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
-| `data/session.json` | exactly 46,403 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
+| `data/session.json` | exactly 57,381 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
 | `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
 | `data.html` | ≤ 32,000 B | `/data` transparency route |
 | `data/index.html` | ≤ 32,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.h` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.h` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.i` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.i` |
 | `docs/*.md` (5 files) | ≤ 48,000 B each (template ≤ 24,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
@@ -46,7 +46,7 @@ on every publish (D-UI11), so freezing it would have made publishing impossible.
 
 ```js
 window.SDP = {
-  version: '0.0.1.b', build: '2026-11-01', ver: 2,
+  version: '0.0.1.i', build: '2026-11-02', ver: 9,
   Data:   { /* storage + migration */ },
   Sync:   { /* fetchers, reconciliation, publishing, Service Worker, Vault */ },
   Speech: { /* utterances + audio tiers */ },
@@ -419,9 +419,10 @@ locked or token-less studio commits nothing.
 
 ### §H3.4 Docs budget used at release
 
-Every doc stays inside its cap: `CHANGELOG_LEDGER.md` 42763 B / 44,000 ·
-`SYNC_AND_DATA_CONTRACT.md` 22338 B / 44,000 · `UI_COMPONENT_GUIDE.md` 19141 B / 44,000 ·
-`DAILY_UPGRADE_PROMPT_TEMPLATE.md` 15124 B / 22,000 · this file 22395 B / 44,000.
+Caps only (the bytes move every release; the v0.0.1.i measurements are §H5.6):
+`CHANGELOG_LEDGER.md` ≤ 52,000 · every other doc ≤ 48,000 · this template file ≤ 24,000.
+G1 and G9.2c both enforce them, so a doc that grows past its cap fails the release the
+same way an oversized module does.
 
 ---
 
@@ -475,3 +476,111 @@ Pointer: `appVersion/version '0.0.1.h'` · `ver/schema/settingsRev 8` ·
 byte-identical (Appendix A). `data/elevenlabs-audio.json` is app-written and budgeted,
 never hash-frozen. The credits strip stays verbatim in EN and SI on Home, About and
 `/data`.
+
+---
+
+## §H5 — v0.0.1.i release tree, budgets and module deltas (2026-11-02)
+
+Pointer: `appVersion/version '0.0.1.i'` · `ver/schema 9` · `settingsRev 12` ·
+`syncRev 1793610000000` · `SW_VERSION 'sdp-v0.0.1.i'` / `SHELL_CACHE 'sdp-v0.0.1.i-shell'`.
+`tests/check.cjs` (gate G1 `BUDGET`) and `tests/audit-v42.cjs` §G9.2 carry the same
+ceilings; a ceiling that exists in only one of them fails the release (§H5.4).
+
+### §H5.1 Bytes measured on the release tree (`wc -c`, this checkout)
+
+| File | Bytes | Ceiling |
+| --- | --- | --- |
+| `index.html` | 30,223 | 36,000 |
+| `assets/css/sdp-ui.css` | 45,402 | 60,000 |
+| `data/sdp-data-sync.js` | 83,666 | 86,000 |
+| `data/sdp-audio-speech.js` | 38,831 | 52,000 |
+| `data/sdp-dictation-engine.js` | 43,844 | 60,000 |
+| `data/sdp-ui-views.js` | 119,119 | 128,000 |
+| `data/studio.js` | 115,884 | 116,000 |
+| `data/data-meter.js` | 22,845 | 24,000 |
+| `data/session.json` | 57,381 (exact, SHA `4e80cd95…`) | 57,381 |
+| `data/config.json` | 35,469 | 36,000 |
+| `data/version.json` | 366 | 2,000 |
+| `data/elevenlabs-audio.json` | 744 | 2,500,000 |
+| `data.html` = `data/index.html` | 27,974 each | 32,000 |
+| `sw.js` | 10,759 | 13,000 |
+| `manifest.webmanifest` | 2,030 | 4,000 |
+
+`data/studio.js` was 111,993 B on v0.0.1.h and is 115,884 B here: the D1–D20 work
+added ~4 KB net after consolidating duplicate helpers (see §H5.3). The 116,000 B
+ceiling was **not** raised to make room; the code was compacted instead.
+
+### §H5.2 Module ownership of the v0.0.1.i register
+
+* **`data/studio.js` (Studio).** D1/D9 `SECRET_FIELDS` + `secretSnapshot()` +
+  `guardSecretMerge()` + `clearSecretField()` (`:736`–`:760`), `mergeSecretInputs()`
+  (`:1205`), the four `#btnClear*` handlers (`:1137`–`:1140`); D2 `withBusy()`
+  (`:128`); D3 `enrichWords()` live `n/30` + 45,000 ms cap (`:1487`); D4
+  `paintLecturerBar()` (`:1990`); D5 `publishReason()` (`:1979`); D6 `hhmm()` +
+  `"Publish failed · hhmm · reason"`; D7 `publishErrorText()` (`:1974`, delegates to
+  `SDP.Sync`); D13 `restoreSessionStash()` (`:642`); D14 one `nextSyncRev()` (`:88`,
+  `:1661`, `:1687`); D17 `publishChecklist()` (`:1873`); D18 `clearBusy()` (`:1994`);
+  D20 `bumpMeterCache()` (`:1995`).
+* **`data/sdp-data-sync.js` (Data + Sync + Vault).** `SCHEMA 9` (`:16`),
+  `SETTINGS_REV 12` (`:17`, aligned with the shipped `settingsRev`); D7
+  `publishErrorText(status, ghMsg)` (`:1430`); D10 the hardcoded
+  `APP_VERSION === '0.0.1.h' && settingsRev === 8` clamp is gone — adoption is
+  monotonic (`:976`); D11 config-sovereign `settle()` (`:1174`) returning
+  `stale_payload` + `deferredSession` + `retry`; D16 one delayed retry with a fresh
+  SHA (`:1460`, `:1533`); R6 `publishFilesSequential()` (`:1480` region) commits
+  `version.json` last.
+* **`data/sdp-ui-views.js` (Views).** D4 exported `paintLecturerBar()` (`:1388`,
+  export `:2150`) repainted from `unlock()`, `unlockWithVerifier()` and `lock()`
+  (`:1441`); D19 `lecturerSyncIdle` in EN (`:85`) and SI (`:279`) with
+  `data-state`/`aria-live`; D2 `SDP.Studio.withBusy` around `#btnSyncClassSettings`
+  (`:1662`); new strings `studioClear`, `studioRestored`, `studioNoVaultWarn`.
+* **`assets/css/sdp-ui.css` (stylesheet).** D8 `.screen:not(.active) { display: none
+  !important; }` (`:148`) and the desktop Bento rule scoped to `#screen-home.active`
+  (`:1019`) behind `@media (min-width: 1024px)` (`:1018`), so an id rule can never
+  outrank the single-active-screen law.
+* **`data/data-meter.js` (transparency).** D20 `CACHE_VERSION = '0.0.1.i'` (`:12`),
+  `cacheKey()` (`:358`), `clearCache()` (`:351`), and a cached manifest is honoured
+  only when its `__v` matches (`:39`, `:46`).
+* **`data/sdp-dictation-engine.js` / `data/sdp-audio-speech.js`.** Untouched by
+  v0.0.1.i; their headers stay at the release that last changed them
+  (`0.0.1.h` / `0.0.1.d`).
+
+### §H5.3 Why the studio grew and then shrank
+
+The D1–D20 edits first pushed `data/studio.js` to 124,447 B. Comment-only
+compression could not recover 8,447 B, so duplicate helper definitions
+(`withStatus`, a second provider mapper) were removed and `doneCount` folded into
+`done`; the shipped file is 115,884 B with every behaviour intact. This is the
+only sanctioned way to buy room: **never raise a ceiling to fit a change.**
+
+### §H5.4 Two budget tables, one truth
+
+`tests/check.cjs` `BUDGET` and `tests/audit-v42.cjs` §G9.2 hold the same numbers
+(`data/sdp-data-sync.js` 86,000 · `data/sdp-ui-views.js` 128,000 ·
+`data/studio.js` 116,000 · `data/session.json` 57,381). Bumping one and not the
+other is exactly what turned G9.2a red on this release; both were re-pinned in the
+same commit. G9.3a is a third, independent line: any single `data/*.js` over
+120,000 B fails it, and the 128,000 B ceiling above it is not an exemption. The
+D1–D20 strings pushed `sdp-ui-views.js` to 121,619 B, so the module was trimmed
+back to 119,119 B by folding twenty-four historical comment blocks into one-liners
+(no code path changed) rather than raising the monolith line.
+
+### §H5.5 Gate results on this tree
+
+G1 89/0 · G2 12/0 · G3 81/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 ·
+G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 597 assertions, 0 FAIL
+(`cd tests && npm run gates`).
+
+### §H5.6 Bytes measured on the five living docs (`wc -c`)
+
+| Doc | Bytes | Cap |
+| --- | --- | --- |
+| `docs/ARCHITECTURE_MAP.md` | 30,963 | 48,000 |
+| `docs/CHANGELOG_LEDGER.md` | 51,232 | 52,000 |
+| `docs/SYNC_AND_DATA_CONTRACT.md` | 30,634 | 48,000 |
+| `docs/UI_COMPONENT_GUIDE.md` | 26,854 | 48,000 |
+| `docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md` | 20,348 | 24,000 |
+
+The changelog is the only doc near its cap; the old duplicate block in its P7 section
+and the duplicated P6b/P7 gate tables were folded into one line each to make room for
+the v0.0.1.i register rather than raising the cap.

@@ -1,8 +1,38 @@
-# CHANGELOG_LEDGER — Smart Dictation Player
+## v0.0.1.i — 2026-11-02 — Per-Field Secrets, Honest Publish Errors & One Live Screen
 
-Newest release first. Every row is a fact verified by a gate, not a promise.
-When you ship a release, copy the block, rename it, and fill in the real numbers
-from the twelve gates.
+**Release type:** defect-fix release over v0.0.1.h (twenty defects D1–D20).
+**Stamp:** `appVersion/version '0.0.1.i'` · `ver/schema 9` · `settingsRev 12` · `syncRev 1793610000000` · `SW_VERSION 'sdp-v0.0.1.i'` / `SHELL_CACHE 'sdp-v0.0.1.i-shell'`.
+
+| # | Defect | Fix (`file:line`) |
+| --- | --- | --- |
+| D1 | An empty field overwrote a stored secret | `guardSecretMerge()` restores a pristine field, `mergeSecretInputs()` reads `data-dirty` (`data/studio.js:746`, `:1205`) |
+| D2 | `#btnSyncClassSettings` was double-clickable | `SDP.Studio.withBusy` wraps it (`data/sdp-ui-views.js:1662`; helper `data/studio.js:128`) |
+| D3 | Enrichment gave no progress for 45 s | live `n/30` + 45,000 ms cap (`data/studio.js:1487`) |
+| D4 | Lecturer bar kept a stale stamp | `paintLecturerBar()` exported (`data/sdp-ui-views.js:2150`), called from `unlock()`, `unlockWithVerifier()`, `lock()` (`:1441`) |
+| D5 | A failed step said only “failed” | per-step sentences from `publishReason()` (`data/studio.js:1979`) |
+| D6 | A failed publish still printed `rev N` | `"Publish failed · hhmm · reason"` (`data/studio.js:1989`) |
+| D7 | GitHub codes reached the DOM raw | `SDP.Sync.publishErrorText()` maps 401/403/404/409/422/5xx/network + GitHub `message` (`data/sdp-data-sync.js:1430`) |
+| D8 | Two screens could show at once | `.screen:not(.active){display:none!important}` + `#screen-home.active{display:grid!important}` in `@media (min-width:1024px)` (`assets/css/sdp-ui.css:148`, `:1019`) |
+| D9 | A stored secret could not be cleared | four `#btnClear*` → `clearSecretField()` (`data/studio.js:756`, handlers `:1137`–`:1140`) |
+| D10 | A hardcoded `0.0.1.h` + `settingsRev === 8` clamp could re-adopt stale settings | clamp deleted, adoption is monotonic (`data/sdp-data-sync.js:976`) |
+| D11 | A failed session leg failed the whole sync | `settle()` returns `stale_payload` + `deferredSession` + `retry`, config still adopted (`data/sdp-data-sync.js:1174`) |
+| D12 | G3 fixtures pinned ver 8 | re-baselined to ver 9 / `settingsRev` 12 (`tests/phase1.cjs`) |
+| D13 | A same-tab reload lost the unlocked vault | `restoreSessionStash()` calls `Vault.read()` once (`data/studio.js:642`) |
+| D14 | Two publish clocks | one `nextSyncRev()` per publish (`data/studio.js:88`, `:1661`, `:1687`) |
+| D15 | Version surfaces could drift | G1 pins `0.0.1.i` / ver 9 across seven surfaces (`tests/check.cjs`) |
+| D16 | A transient 5xx failed a publish for good | one 2,000 ms retry, fresh SHA (`data/sdp-data-sync.js:1460`, `:1533`) |
+| D17 | Publish demanded a vault on a keys-less bundle | `publishChecklist()` needs `encVault`+`pinVerifier` only when `hasVault()` (`data/studio.js:1873`) |
+| D18 | Failure exits left busy flags on | `clearBusy()` on every failure exit (`data/studio.js:1994`) |
+| D19 | The sync line had no idle state | `lecturerSyncIdle` + `data-state`/`aria-live="polite"` (`data/sdp-ui-views.js:85`, `index.html:245`) |
+| D20 | The meter served a stale cache | `CACHE_VERSION='0.0.1.i'`, `cacheKey()`, `clearCache()`, `__v` (`data/data-meter.js:12`, `:351`, `:358`) |
+
+### Gate results (`cd tests && npm run gates`)
+G1 89/0 · G2 12/0 · G3 81/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 597 assertions, 0 FAIL.
+
+### Bytes (`wc -c`)
+index.html 30,223/36,000 · sdp-ui.css 45,402/60,000 · sdp-data-sync.js 83,666/86,000 · sdp-ui-views.js 119,119/128,000 · studio.js 115,884/116,000 · data-meter.js 22,845/24,000 · data.html = data/index.html 27,974 each/32,000 · session.json 57,381 exact (SHA `4e80cd95…`).
+
+`config.encVault` + `config.pinVerifier` survived byte-for-byte; PBKDF2 250,000, PIN `78987898`, five localStorage keys, strict ES5 and both credit lines unchanged.
 
 ---
 
@@ -385,17 +415,11 @@ repeat visit is served from `sdp-v0.0.1.a-shell` and costs ≈ 0 KB.
 
 ## P6b — the nine gates rebased onto 0.0.1.a (gate-align)
 
-| Gate | File | Was (v60) | Is (0.0.1.a) |
-| --- | --- | --- | --- |
-| G1 | `tests/check.cjs` | 61 assertions, 9 FAIL | 55 assertions, 0 FAIL |
-| G2 | `tests/upgrade.test.cjs` | QUnit-free `node:test` | 10 tests over the new `Sync` API |
-| G3 | `tests/phase1.cjs` | jsdom v50 shell | 61 behavioural checks on the ES5 app |
-| G4 | `tests/server.cjs` | 8/8 (test 8 v58 metadata) | 8/8 (test 8 → 0.0.1.a metadata) |
-| G5 | `tests/browser.cjs` | axe + v50 layout | 44 layout/focus/ring/toast checks |
-| G6 | `tests/upgrade-browser.cjs` | v60 → v60 cache walk | 15 checks on the v60 → 0.0.1.a journey |
-| G7 | `tests/e2e.cjs` | 21-step v58 playthrough | 48-step student journey |
-| G8 | `tests/live-lab.cjs` | live-relay soak | 26 offline/dead-API/hung-relay checks |
-| G9 | `tests/audit-v42.cjs` | v42 retirement audit | 46 retirement + budget + ES5 checks |
+All nine gates were rewritten onto the new app in that commit, ending the v60 era
+(`G1` 55 assertions, `G2` 10, `G3` 61, `G4` 8/8, `G5` 44, `G6` 15, `G7` 48, `G8` 26,
+`G9` 46 — every one 0 FAIL; the v60 columns they replaced were 61/9-FAIL, an inline
+QUnit shim, a jsdom v50 shell, v58 metadata, axe + v50 layout, a v60→v60 cache walk,
+a 21-step v58 playthrough, a live-relay soak and the v42 retirement audit).
 
 Two shared helpers were added so the gates cannot drift apart:
 `tests/static-server.cjs` (one HTTP server with per-test overrides) and
@@ -427,58 +451,19 @@ Defects the new gates surfaced — all fixed in the app, never asserted around:
 
 ## P7 — the nine gates rebased onto 0.0.1.b (gate-align)
 
-| Gate | File | Was (0.0.1.a) | Is (0.0.1.b) |
-| --- | --- | --- | --- |
-| G1 | `tests/check.cjs` | 55 assertions, 0 FAIL | 71 assertions, 0 FAIL |
-| G2 | `tests/upgrade.test.cjs` | 10 tests over the new `Sync` API | 10 tests, constants rebased to ver 2 / 0.0.1.b |
-| G3 | `tests/phase1.cjs` | 61 behavioural checks on the ES5 app | 61 checks, `sdp.guide_seen` stamped `0.0.1.b` |
-| G4 | `tests/server.cjs` | 8/8 (test 8 → 0.0.1.a metadata) | 8/8 (test 8 → 0.0.1.b metadata) |
-| G5 | `tests/browser.cjs` | 44 layout/focus/ring/toast checks | 44 checks, storage audit expects 12 honest keys |
-| G6 | `tests/upgrade-browser.cjs` | 15 checks on the v60 → 0.0.1.a journey | 15 checks, `sdp-v0.0.1.b-shell` precache + one reload |
-| G7 | `tests/e2e.cjs` | 48-step student journey | 48 steps, backups pin `0.0.1.b` |
-| G8 | `tests/live-lab.cjs` | 26 offline/dead-API/hung-relay checks | 26 checks, unchanged |
-| G9 | `tests/audit-v42.cjs` | 46 retirement + budget + ES5 checks | 46 checks, hashes re-pinned for the re-issued voice pack |
-
-Both shared helpers (`tests/static-server.cjs`, `tests/app-harness.cjs`) are unchanged; no gate reimplements them.
-3. **Dishonest accuracy after self-check.** Flipping a row to *missed* changed
-   `lastScore` but left the lifetime counters at 30/30, so Home claimed 100%
-   after a 24/30 session. Attempts now move by an exact delta.
-4. **No About block.** The mandated attribution existed only on Home. Settings
-   gained a fifth card (`#aboutCard`, studio stays the sixth and last) that
-   repeats the exact credit line plus the pill.
-5. **A missing Enter key.** Typing mode only advanced when the writing window
-   expired. `Enter` now submits the typed word and advances.
-6. **A self-linking `/data` back button.** `href="./"` resolved to `/data/` on
-   the directory route; it now points at `../index.html`.
-7. **A lying empty state.** With no session payload the hero still promised
-   "30 B1 words" and Start opened an empty cockpit. The bank note, the disabled
-   Start button and the `—` denominator say what is actually true.
+Every constant was rebased to ver 2 / `0.0.1.b` in one pass: `G1` 71 assertions,
+`G2` 10, `G3` 61 (`sdp.guide_seen` stamped `0.0.1.b`), `G4` 8/8, `G5` 44 (storage audit
+expects 12 honest keys), `G6` 15 (`sdp-v0.0.1.b-shell` precache + one reload), `G7` 48,
+`G8` 26, `G9` 46 (hashes re-pinned for the re-issued voice pack) — all 0 FAIL.
 
 ---
 
 ## Release verification (filled by the release commit)
 
-```
-shasum -a 256 -c /tmp/sdp-preserve.sha256   → 5 × OK
-node tests/check.cjs                        → G1  71 PASS / 0 FAIL
-node --test tests/upgrade.test.cjs          → G2  10 PASS / 0 FAIL
-node tests/phase1.cjs                       → G3  61 PASS / 0 FAIL
-node tests/server.cjs                       → G4   8 PASS / 0 FAIL
-node tests/browser.cjs                      → G5  44 PASS / 0 FAIL
-node tests/upgrade-browser.cjs              → G6  15 PASS / 0 FAIL
-node tests/e2e.cjs                          → G7  48 PASS / 0 FAIL
-node tests/live-lab.cjs                     → G8  26 PASS / 0 FAIL
-node tests/audit-v42.cjs                    → G9  46 PASS / 0 FAIL
-                                              ─────────────────────
-                                              329 assertions, 0 FAIL
-```
-
-The Chromium gates (G5–G8) run against real Chromium 138 served over
-`http://127.0.0.1`, with every non-local host aborted and media mocked, so the
-counts are reproducible offline. Suite total: 151 KB of `tests/*.cjs`
-(cap 220,000 B).
-
-Released under: `Release Smart Dictation Player v0.0.1.a (Clean-Slate Rebuild)`.
+`shasum -a 256 -c /tmp/sdp-preserve.sha256` → 5 × OK. Nine gates: G1 71/0, G2 10/0,
+G3 61/0, G4 8/0, G5 44/0, G6 15/0, G7 48/0, G8 26/0, G9 46/0 — 329 assertions, 0 FAIL.
+Chromium gates ran on real Chromium 138 over `http://127.0.0.1` with every non-local host
+aborted and media mocked. Released as `Release Smart Dictation Player v0.0.1.a (Clean-Slate Rebuild)`.
 
 ---
 

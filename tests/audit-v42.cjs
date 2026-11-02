@@ -65,14 +65,15 @@ check('G9.1f no retired CSS is merely hidden with display:none',
 /* ── 2. H1 byte budgets ────────────────────────────────────────────────── */
 // contract: docs/ARCHITECTURE_MAP.md §5 budget table
 const BUDGETS = {
-  'index.html': 35000,
-  'assets/css/sdp-ui.css': 68000,
-  'data/sdp-data-sync.js': 74000,
-  'data/sdp-audio-speech.js': 54000,
-  'data/sdp-dictation-engine.js': 64000,
-  'data/sdp-ui-views.js': 120000,
-  'data/studio.js': 98000,
-  'data/data-meter.js': 22000,
+  /* v0.0.1.g (W2) ceilings — identical to tests/check.cjs BUDGET. */
+  'index.html': 36000,
+  'assets/css/sdp-ui.css': 60000,
+  'data/sdp-data-sync.js': 82000,
+  'data/sdp-audio-speech.js': 52000,
+  'data/sdp-dictation-engine.js': 60000,
+  'data/sdp-ui-views.js': 125000,
+  'data/studio.js': 108000,
+  'data/data-meter.js': 24000,
   'data/config.json': 36000,
   'data/version.json': 2000,
   'data/session.json': 46403,
@@ -80,9 +81,9 @@ const BUDGETS = {
   'data/elevenlabs-audio.json': 2500000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data.html': 60000,
-  'data/index.html': 60000,
-  'sw.js': 12000,
+  'data.html': 32000,
+  'data/index.html': 32000,
+  'sw.js': 13000,
   'manifest.webmanifest': 4000
 };
 const over = [];
@@ -94,7 +95,7 @@ check('G9.2a every shipped file fits its H1 byte cap', over.length === 0, over.j
 check('G9.2b the /data pair is byte-identical', read('data.html') === read('data/index.html'),
   bytes('data.html') + ' vs ' + bytes('data/index.html'));
 
-const docsBudget = { 'ARCHITECTURE_MAP.md': 44000, 'CHANGELOG_LEDGER.md': 44000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 22000, 'SYNC_AND_DATA_CONTRACT.md': 44000, 'UI_COMPONENT_GUIDE.md': 44000 };
+const docsBudget = { 'ARCHITECTURE_MAP.md': 48000, 'CHANGELOG_LEDGER.md': 48000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 24000, 'SYNC_AND_DATA_CONTRACT.md': 48000, 'UI_COMPONENT_GUIDE.md': 48000 };
 const docsOver = Object.entries(docsBudget).filter(([f, cap]) => bytes('docs/' + f) > cap).map(([f]) => f);
 check('G9.2c all five living docs are inside their caps', docsOver.length === 0, docsOver.join(','));
 check('G9.2d there are exactly five living docs', fs.readdirSync(path.join(ROOT, 'docs')).filter((f) => f.endsWith('.md')).length === 5);
@@ -205,7 +206,7 @@ const lockFails = LOCKED.filter(([file, prefix]) => sha(file).slice(0, 8) !== pr
 check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lockFails.length === 0, lockFails.join(','));
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
-  voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.version === '0.0.1.f' &&
+  voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.version === '0.0.1.g' &&
   typeof voicePack.clips === 'object', JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
@@ -220,19 +221,19 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.1.f is ver 6 / schema 6 / settingsRev 6
-  config.ver === 6 && config.appVersion === '0.0.1.f' && config.version === '0.0.1.f' && config.schema === 6 && config.settingsRev === 6,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.1.g is ver 7 / schema 7 / settingsRev 7
+  config.ver === 7 && config.appVersion === '0.0.1.g' && config.version === '0.0.1.g' && config.schema === 7 && config.settingsRev === 7,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.1.f in its description', /0\.0\.1\.f/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.1.g in its description', /0\.0\.1\.g/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
-check('G9.7c theme and background are the 0.0.1.f matte black', manifest.theme_color === '#09090B' && manifest.background_color === '#09090B', manifest.theme_color);
+check('G9.7c theme and background are the 0.0.1.g matte black', manifest.theme_color === '#09090B' && manifest.background_color === '#09090B', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.1.f cache names', sw.indexOf('sdp-v0.0.1.f') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.1.g cache names', sw.indexOf('sdp-v0.0.1.g') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
 const order = ['data-meter.js', 'sdp-data-sync.js', 'sdp-audio-speech.js', 'sdp-dictation-engine.js', 'sdp-ui-views.js', 'studio.js'];

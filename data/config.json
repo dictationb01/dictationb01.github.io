@@ -56,9 +56,9 @@
     "defaultsResetV001f": true,
     "appliedSettingsRev": 6
   },
-  "ver": 6,
-  "version": "0.0.1.f",
-  "buildDate": "2026-10-31",
+  "ver": 7,
+  "version": "0.0.1.g",
+  "buildDate": "2026-11-02",
   "credits": {
     "createdBy": "Hansana",
     "ideaBy": "Ayya01 (Lesandu)",
@@ -91,8 +91,8 @@
     "community": "https://ntfy.sh/sdp_dictationb1_comm_v8",
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
-  "appVersion": "0.0.1.f",
-  "settingsRev": 6,
+  "appVersion": "0.0.1.g",
+  "settingsRev": 7,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -417,9 +417,9 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-10-31T12:00:00.000Z",
+  "updatedAt": "2026-11-02T00:00:00.000Z",
   "updatedAtMs": 1793448000000,
-  "schema": 6,
+  "schema": 7,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
   "sessionTitle": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "sessionCode": "Session 8",
@@ -694,7 +694,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793590000000,
+  "syncRev": 1793595000000,
   "versionFamily": "9.0.0",
   "encVault": "SDP_ENC_V2:AAA=",
   "classSettings": {

@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.f)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.g)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.f';
+  SDP.version = '0.0.1.g';
   SDP.build = '2026-11-02';
-  SDP.ver = 6;
+  SDP.ver = 7;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.f';
-  var SCHEMA = 6;
-  var SETTINGS_REV = 6;
+  var APP_VERSION = '0.0.1.g';
+  var SCHEMA = 7;
+  var SETTINGS_REV = 7;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -63,7 +63,12 @@
       hints: { pos: true, first: false, si: false, sentence: false },
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
-      vaultLock: { fails: 0, lockUntil: 0, strikes: 0 }
+      /* D5 (v0.0.1.g): Layer-1 — the encrypted vault backup and its PIN
+         verifier live INSIDE sdp.settings.vaultLock (W4: still five keys). */
+      vaultLock: {
+        fails: 0, lockUntil: 0, strikes: 0, until: 0,
+        encVault: '', pinVerifier: null, updatedAt: 0
+      }
     };
   }
   /* The ten keys the lecturer's config.classSettings owns (R1). */
@@ -458,13 +463,18 @@
   /* SEC-04: the brute-force lockout lives inside sdp.settings.vaultLock, so
      reloading the page can never reset a 5-attempt / 60 s (or 300 s) timer. */
   function persistedVaultLock() {
-    var out = { fails: 0, lockUntil: 0, strikes: 0 };
+    var out = { fails: 0, lockUntil: 0, strikes: 0, until: 0, encVault: '', pinVerifier: null, updatedAt: 0 };
     try {
       var s = Data.settings();
       var raw = isObj(s.vaultLock) ? s.vaultLock : {};
       out.fails = Math.max(0, Number(raw.fails) || 0);
       out.lockUntil = Math.max(0, Number(raw.lockUntil) || 0);
       out.strikes = Math.max(0, Number(raw.strikes) || 0);
+      out.until = Math.max(0, Number(raw.until) || out.lockUntil);
+      /* D5: the encrypted envelope + verifier must survive every lock write. */
+      out.encVault = str(raw.encVault);
+      out.pinVerifier = isObj(raw.pinVerifier) ? raw.pinVerifier : null;
+      out.updatedAt = Math.max(0, Number(raw.updatedAt) || 0);
     } catch (e) {}
     if (out.fails > VAULT.fails) VAULT.fails = out.fails;
     if (out.lockUntil > VAULT.lockUntil) VAULT.lockUntil = out.lockUntil;
@@ -475,10 +485,31 @@
   function storeVaultLock(patch) {
     var lock = persistedVaultLock(), k;
     for (k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)) lock[k] = patch[k];
+    if (lock.until !== undefined) lock.until = Number(lock.lockUntil) || 0;
     VAULT.fails = Number(lock.fails) || 0;
     VAULT.lockUntil = Number(lock.lockUntil) || 0;
     try { Data.saveSettings({ vaultLock: lock }); } catch (e) {}
     return lock;
+  }
+  /* D8: boot-time self-heal — a released config.json that lost its envelope is
+     repaired from the Layer-1 backup inside sdp.settings.vaultLock. */
+  function healVaultFromLayerOne() {
+    try {
+      var lock = persistedVaultLock();
+      var env = str(lock.encVault);
+      if (env.indexOf('SDP_ENC_V2:') !== 0 || VAULT.isEmptyEnvelope(env)) return false;
+      var cfg = state.config;
+      if (!isObj(cfg)) return false;
+      var cfgEnv = str(cfg.encVault);
+      var realCfg = cfgEnv.indexOf('SDP_ENC_V2:') === 0 && !VAULT.isEmptyEnvelope(cfgEnv);
+      var lockRev = Number(lock.updatedAt) || 0;
+      var cfgRev = Number(cfg.syncRev || 0) || 0;
+      if (realCfg && !(lockRev > cfgRev)) return false;
+      cfg.encVault = env;
+      if (isObj(lock.pinVerifier)) cfg.pinVerifier = lock.pinVerifier;
+      try { Data.saveSettings({ cachedVault: env, cachedVaultSyncRev: lockRev || Date.now() }); } catch (e) {}
+      return true;
+    } catch (e) { return false; }
   }
   function recordVaultFail() {
     var lock = persistedVaultLock();
@@ -677,6 +708,10 @@
     pastSessions: [],
     clips: {},
     lastCheck: 0,
+    /* D15/D17 (v0.0.1.g): the syncRev of the session.json actually adopted, and
+       the retry flag for a publish whose session leg could not be delivered. */
+    sessionRev: 0,
+    deferredSession: false,
     online: (typeof global.navigator !== 'undefined' && global.navigator.onLine !== false)
   };
   var listeners = [];
@@ -714,19 +749,51 @@
     if (isObj(payload.session) && payload.session.no !== undefined) return str(payload.session.no);
     return str(payload.session || payload.sessionNo || '');
   }
+  /* The active list of a session payload, or null. */
+  function activeListOf(payload) {
+    var lists = isObj(payload) && Array.isArray(payload.lists) ? payload.lists : [];
+    var i, list = null;
+    for (i = 0; i < lists.length; i++) {
+      if (isObj(lists[i]) && lists[i].active && Array.isArray(lists[i].words) && lists[i].words.length) { list = lists[i]; break; }
+    }
+    if (!list) {
+      for (i = 0; i < lists.length; i++) {
+        if (isObj(lists[i]) && Array.isArray(lists[i].words) && lists[i].words.length) { list = lists[i]; break; }
+      }
+    }
+    return list;
+  }
+  /* D16: is this session payload the very list already adopted? */
+  function sameActiveList(payload) {
+    try {
+      var curList = state.list, nextList = activeListOf(payload);
+      if (!isObj(curList) || !isObj(nextList)) return false;
+      if (str(curList.id) !== str(nextList.id)) return false;
+      var curLen = Array.isArray(curList.words) ? curList.words.length : 0;
+      var nextLen = Array.isArray(nextList.words) ? nextList.words.length : 0;
+      if (curLen !== nextLen) return false;
+      return str(curList.updatedAt) === str(nextList.updatedAt);
+    } catch (e) { return false; }
+  }
   function verifyPayloadLeg(payload, kind, targetSyncRev, remoteVersion) {
     if (!isObj(payload)) return false;
     var target = Number(targetSyncRev) || 0;
     var rev = Number(payload.syncRev);
     if (!isNaN(rev) && rev >= target) return true;
     if (kind !== 'session') return false;
-    /* Preserved baseline session: same classroom session, full word bank. */
-    var words = payloadWords(payload);
-    if (words.length < 30) return false;
+    /* D16 (v0.0.1.g): a settings-only or keys-only publish never rewrites
+       session.json, so an absent / older syncRev must not hold sync hostage.
+       Two proofs are accepted: */
     var want = isObj(remoteVersion) ? str(remoteVersion.session) : '';
     var have = payloadSessionNo(payload);
-    if (want && have && want !== have) return false;
-    return true;
+    var words = payloadWords(payload);
+    /* 1) the SAME classroom session with at least one active word (>= 1, not
+          >= 30 — a 25-word session must never lock up the class). */
+    var sessionMatches = !(want && have && want !== have);
+    if (sessionMatches && words.length >= 1) return true;
+    /* 2) byte-for-byte the list already adopted (id + length + updatedAt). */
+    if (sameActiveList(payload)) return true;
+    return false;
   }
   /* D2: one reader for both sources. Same-origin Pages CDN (6 s) and the
    * raw.githubusercontent.com edge (5 s) race in parallel; the payload with the
@@ -918,6 +985,8 @@
     } else if (isObj(clipMap)) {
       for (var k in clipMap) { if (Object.prototype.hasOwnProperty.call(clipMap, k)) state.clips[str(k).toLowerCase()] = str(clipMap[k]); }
     }
+    /* D8: repair a released config.json that lost its vault. */
+    try { healVaultFromLayerOne(); } catch (e) {}
     state.ready = state.words.length > 0;
   }
 
@@ -1063,7 +1132,18 @@
         /* D-S7: an envelope published a second ago must not be missed because
            the CDN still serves yesterday's config.json — so a stale leg is
            retried against the other source instead of being accepted. */
-        var needSession = sessionChanged || newer;
+        /* D17 (v0.0.1.g): a settings-only / keys-only publish touches only
+           config.json + version.json, so the 46 KB session.json must NOT be
+           re-pulled on a 3G student phone. The publisher stamps
+           version.payloadFiles, which lets the reader prove the case; a legacy
+           header (no payloadFiles) falls back to the safe "always pull". */
+        var wroteSession = true;
+        if (Array.isArray(remote.payloadFiles)) {
+          wroteSession = remote.payloadFiles.indexOf('data/session.json') >= 0;
+        }
+        var needSession = Boolean(sessionChanged ||
+          str(remote.session || '') !== str(local.session || '') ||
+          state.deferredSession || wroteSession);
         var needConfig = settingsChanged || newer || !state.config;
         var waiting = (needSession ? 1 : 0) + (needConfig ? 1 : 0) + 1;
         var got = { version: remote, session: null, config: null };
@@ -1092,9 +1172,14 @@
         function settle() {
           waiting -= 1;
           if (waiting > 0) return;
-          if (failedLegs.length) {
-            /* D1: never advance the pointer past an undelivered payload. The
-               previous version stays, so the next tick retries this publish. */
+          /* D15 (v0.0.1.g): config.json is SOVEREIGN. If config + version were
+             delivered, this publish is adopted even when the session leg failed
+             — one missing 46 KB file can no longer hold settings, keys and the
+             encrypted vault hostage behind a stale_payload loop. */
+          var configOk = failedLegs.indexOf('data/config.json') < 0;
+          if (!configOk) {
+            /* Without config.json nothing may advance: keep the old pointer so
+               the next 25 s tick retries this publish. */
             state.lastCheckSource = primarySource;
             cb(null, {
               ok: true, error: 'stale_payload', changed: false, updated: false, deferred: true,
@@ -1103,7 +1188,10 @@
             });
             return;
           }
-          applyPayloads(got.version, got.config, got.session);
+          var sessionOk = failedLegs.indexOf('data/session.json') < 0;
+          state.deferredSession = !sessionOk;
+          if (got.session) state.sessionRev = Number(got.session.syncRev) || Number(state.sessionRev || 0);
+          applyPayloads(got.version || remote, got.config, got.session || state.session);
           /* R7: the full chain, in one place. */
           try { adoptRemoteSettings(got.config, Number(remote.settingsRev || 0)); } catch (e) {}
           var chainState = adoptionChain();
@@ -1119,7 +1207,10 @@
             ok: true, error: null, changed: true, updated: true, session: state.sessionNo,
             sessionChanged: sessionChanged, settingsRev: remote.settingsRev,
             appVersionChanged: appChanged, source: primarySource,
-            payloadSources: usedSources, chain: chainState
+            payloadSources: usedSources, chain: chainState,
+            /* D15: the next 25 s watch tick retries session.json. */
+            deferredSession: !!state.deferredSession,
+            retry: state.deferredSession ? ['data/session.json'] : []
           });
         }
         if (needSession) pullVerified('data/session.json', 'session', function (d) { got.session = d; }, function (ok) { if (!ok) failedLegs.push('data/session.json'); settle(); });

@@ -35,6 +35,7 @@
     lastUtterances: [],
     speaking: false,
     queueId: 0,
+    speechEpoch: 0,
     audioEl: null,
     /* D11: the REAL onstart flag. It is set only inside utter.onstart — never
        by the synchronous state.speaking bookkeeping — so the watchdogs can
@@ -105,8 +106,24 @@
     }, 10000);
     return true;
   }
+  /* E5: every async chain gets an epoch. stopAll() bumps it so any in-flight
+   * timer, watchdog, onend or <audio> handler from a dead chain is ignored.
+   * Hard screen guard: no speech or <audio> act while a screen is covered
+   * (document hidden, the guide modal open, or the lecturer lock gate up).
+   */
+  /* E5 hard screen guard — no speech or <audio> acts while the page is
+     hidden or the lecturer lock gate covers the cockpit. The guide modal is
+     not a cover: guide narration happens inside it. */
+  function screenIsCovered() {
+    try { if (doc && doc.hidden === true) return true; } catch (e) { return true; }
+    var g = doc && doc.getElementById ? doc.getElementById('studioGate') : null;
+    var studioScreen = doc && doc.getElementById ? doc.getElementById('screen-studio') : null;
+    if (g && !g.hidden && studioScreen && studioScreen.classList && studioScreen.classList.contains('active')) return true;
+    return false;
+  }
   function stopAll() {
     state.queueId += 1;
+    state.speechEpoch += 1;
     state.speaking = false;
     state.utterStarted = false;
     state.activeUtter = null;
@@ -296,6 +313,7 @@
     if (!queue.length) { cb(null); return; }
     stopAll();
     var myId = ++state.queueId;
+    var myEpoch = state.speechEpoch;
     var conf = settings();
     /* D-V4: voiceLock 'unified' is the shipped default and owns the whole
      * utterance, not just voiceSource === 'auto'. Every line then leaves with
@@ -312,7 +330,20 @@
     var at = 0;
 
     function next() {
-      if (myId !== state.queueId) return;
+      if (myId !== state.queueId || state.speechEpoch !== myEpoch) return;
+      /* E5 hard screen guard: a covered screen aborts the queue cleanly so
+         no utterance lands while the student cannot see the cockpit. */
+      if (screenIsCovered()) {
+        state.speaking = false;
+        state.activeUtter = null;
+        state.activeQueue = null;
+        state.activeIndex = 0;
+        stopKeepAlive();
+        if (guard) global.clearTimeout(guard);
+        if (wordWatch) global.clearTimeout(wordWatch);
+        cb(null);
+        return;
+      }
       if (at >= queue.length) {
         state.speaking = false;
         state.activeUtter = null;
@@ -430,14 +461,18 @@
   function playUrl(url, opts, cb) {
     opts = opts || {};
     cb = cb || noop;
+    var pEpoch = state.speechEpoch;
     var el = sharedAudio();
     if (!el) { cb(new Error('no_audio_element')); return; }
+    /* E5 hard screen guard: a covered screen never plays <audio>. */
+    if (screenIsCovered()) { finish(false); return; }
     var conf = settings();
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
     var done = false;
     var timer = null;
     function finish(ok) {
       if (done) return;
+      if (state.speechEpoch !== pEpoch) return;
       done = true;
       state.audioPlaying = false;
       if (timer) global.clearTimeout(timer);
@@ -676,13 +711,16 @@
   function narrateGuideStep(stepIdx, stepText, rate, volume, cb) {
     var watchdog = null;
     var finished = false;
+    var nEpoch = state.speechEpoch;
     function done() {
       if (finished) return;
+      if (state.speechEpoch !== nEpoch) return;
       finished = true;
       if (watchdog) { global.clearTimeout(watchdog); watchdog = null; }
       cb(null);
     }
     watchdog = global.setTimeout(function () {
+      if (state.speechEpoch !== nEpoch) return;
       watchdog = null;
       if (finished) return;
       if (state.utterStarted) return;
@@ -710,8 +748,10 @@
     /* 1. A committed Alice guide clip always wins (zero credits). */
     var clip = guideClipUrl(stepIdx);
     if (clip) {
+      var gEpoch = state.speechEpoch;
       state.speaking = true;
       playUrl(playableUrl(clip), { rate: rate, volume: volume }, function (err) {
+        if (state.speechEpoch !== gEpoch) return;
         state.speaking = false;
         if (!err) { state.lastTier = 'guide_clip'; cb(null); return; }
         /* A broken cached clip must still narrate the step. */
@@ -734,6 +774,7 @@
     var tiers = null;
     var settled = false;
     var gen = 0;
+    var wEpoch = state.speechEpoch;
     state.lastTier = '';
     function attempt() {
       var myGen = gen;
@@ -751,14 +792,14 @@
            human British recording as its 800 ms watchdog fallback, so even
            the TTS tier can never leave a word silent. */
         say([str(word && word.w ? word.w : word)], { rate: 0.92, pitch: 1.03, volume: opts.volume, fallbackAudioUrl: str(word && word.audio) }, function () {
-          if (myGen !== gen || settled) return;
+          if (myGen !== gen || settled || state.speechEpoch !== wEpoch) return;
           settled = true;
           cb(null);
         });
         return;
       }
       playUrl(current.url, { rate: opts.rate, volume: opts.volume, timeoutMs: opts.timeoutMs }, function (err) {
-        if (myGen !== gen || settled) return;
+        if (myGen !== gen || settled || state.speechEpoch !== wEpoch) return;
         if (!err) {
           state.lastTier = current.tier;
           settled = true;

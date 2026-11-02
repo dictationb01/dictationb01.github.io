@@ -853,7 +853,7 @@
       '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
       '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
       '<input id="studioNewPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
-      '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
+      '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnChangePin', t('studioChangePin'), 'btn-ghost') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
       '<div class="studio-lock-row">' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-ghost') + '</div>' +
       '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
       btn('btnCommitClip', t('studioCommitClip'), 'btn-primary', 'disabled') + '</div>' +
@@ -1246,6 +1246,10 @@
     btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
     btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
     btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { saveClassSettings(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
+    /* E8: atomic PIN change — validate 4–12 digits, confirm match, re-seal the
+       vault with the new PIN, publish config.json then version.json last, and
+       clear every busy flag on any failure exit. The studio stays unlocked. */
+    btnChangePin: function () { saveKeys(); },
     btnRetryFailedClip: function () {
       var failed = ST.lastFailedClip;
       if (!failed || !failed.key) { msg(t('studioRetryNone'), ''); return; }

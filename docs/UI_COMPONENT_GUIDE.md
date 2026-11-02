@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.2.a
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.2.b
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -646,5 +646,32 @@ word, the repeat and the seconds left, with `#btnResumeWord` and `#btnStartOver`
 `#guideSteps` is a `.guide-steps` grid of four `.guide-step` cards. The narrated card is
 `.active-step` (2 px `--accent` border) and carries a `.guide-mock` preview of the real
 control (ring, transport row, sync line, studio card). The footer CTA is
-`▶ Start Dictation Now`; the stamp follows `APP_VERSION`, so `0.0.2.a` re-opens the guide
+`▶ Start Dictation Now`; the stamp follows `APP_VERSION`, so `0.0.2.a` re-opened the guide
 for every device once.
+
+## 13. What v0.0.2.b changed on screen (guard, spot, deck, PIN)
+
+### 13.1 Hard screen guard (P2/P4)
+
+No speech or `<audio>` acts while a screen covers the cockpit: `screenIsCovered()` is
+true when `document.hidden` or when the lecturer lock gate `#studioGate` is visible
+over the active `#screen-studio`. Every timer, watchdog, `onend` and `<audio>` handler
+re-checks the per-chain epoch (`speechEpoch` in `SDP.Speech`, `E.epoch` in
+`SDP.Engine`) before acting. The guide modal is deliberately **not** a cover —
+narration happens inside it.
+
+### 13.2 Guide spot and symbol deck (P3)
+
+`#guideSpot` (`.guide-spot`) sits after `#guideModal` and is driven by
+`openGuideSpot()`/`closeGuideSpot()`; each guide run bumps `guideRunId()` so old
+narrators never act on a new run. `#symbolDeck` (`.deck` grid) holds 15 IPA symbol
+cards inside `#screen-home`.
+
+### 13.3 Studio PIN change (P5)
+
+`#btnChangePin` on the studio settings card opens the PIN change flow; its handler
+calls `saveKeys()` so the new PIN seals the vault. `studioChangePin` strings ship in
+both `STRINGS_EN` and `STRINGS_SI`.
+
+Start now goes straight to the cockpit unless `guideAutoPlay: true` is set; the boot
+guide is unaffected.

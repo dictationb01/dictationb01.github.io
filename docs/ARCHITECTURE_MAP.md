@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.2.a
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.2.b
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -14,7 +14,7 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | File | Budget | Owner / role |
 | --- | --- | --- |
 | `index.html` | ≤ 38,000 B | Shell: 54px header, **6 screens** (`home/player/practice/dict/settings/studio`), guide modal, `#resumeBanner`, toast, boot check, 6 deferred modules |
-| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.2.a tactile tokens). No runtime CSS injection, ever |
+| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.2.b tactile tokens). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
 | `data/sdp-data-sync.js` | ≤ 86,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
@@ -30,8 +30,8 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
 | `data.html` | ≤ 34,000 B | `/data` transparency route |
 | `data/index.html` | ≤ 34,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 13,000 B | `sdp-v0.0.2.a` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.2.a` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.2.b` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.2.b` |
 | `docs/*.md` (5 files) | ≤ 52,000 B each (template ≤ 26,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
@@ -46,7 +46,7 @@ on every publish (D-UI11), so freezing it would have made publishing impossible.
 
 ```js
 window.SDP = {
-  version: '0.0.2.a', build: '2026-11-02', ver: 10,
+  version: '0.0.2.b', build: '2026-11-02', ver: 11,
   Data:   { /* storage + migration */ },
   Sync:   { /* fetchers, reconciliation, publishing, Service Worker, Vault */ },
   Speech: { /* utterances + audio tiers */ },

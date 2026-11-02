@@ -924,6 +924,37 @@ html[lang='si'] .guide-steps p { font-family: var(--font-si); }
 .modal-foot { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .modal-foot .btn { flex: 1 1 160px; }
 
+/* E7: guide-spot spotlight — covers the chrome and spots the control the
+   step describes. Kept hidden (.hidden / [hidden] → display:none) until a
+   guide step opens it; never deleted. */
+.guide-spot {
+  position: fixed; inset: 0; z-index: 90; display: flex;
+  align-items: center; justify-content: center;
+  background: rgba(7, 7, 7, 0.78); padding: 16px; box-sizing: border-box;
+}
+.guide-spot.hidden, .guide-spot[hidden] { display: none !important; }
+.guide-spot > * {
+  background: var(--bg-card); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); padding: 18px 22px; max-width: 420px;
+  text-align: center; color: var(--text);
+}
+.guide-spot-cue { margin: 0 0 14px; font-size: 15px; font-weight: 700; }
+
+/* E9: sound-symbol deck — practice surface for IPA symbols (hidden by
+   default, opened from Home; every ID stays alive off the active chrome). */
+.deck { display: none; padding: 0; margin: 0; }
+.deck:not([hidden]) { display: block; }
+.deck-head { margin-bottom: 14px; }
+.deck-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.symbol-card {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 6px; height: 78px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-elev); color: var(--text); font-size: 18px; cursor: pointer;
+}
+.symbol-card:active { transform: scale(0.96); }
+@media (min-width: 720px) { .deck-grid { grid-template-columns: repeat(6, 1fr); } }
+
 /* ── Whisper data toast ────────────────────────────────────────────────── */
 /* contract: docs/UI_COMPONENT_GUIDE.md §Data toast */
 #sdpDataToast {

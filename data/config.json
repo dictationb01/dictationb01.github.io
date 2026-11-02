@@ -417,7 +417,7 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-11-02T21:46:29.211Z",
+  "updatedAt": "2026-11-02T21:46:32.582Z",
   "updatedAtMs": 1793448000000,
   "schema": 12,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
@@ -694,9 +694,9 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793655989211,
+  "syncRev": 1793655992580,
   "versionFamily": "10.0.0",
-  "encVault": "SDP_ENC_V2:OFihE5C39FO9mY1TnFm+/cjRP7vUJ24T6GexiupXYA5T2dYhTiYlUKE2tGlPO1XX38AvN5MYz8pM1Urx+vTKJX765XI4w3fvlM1gvOZEQM8GNPnYK6yPzVCzc1HJppYj7f7lqSi5XFBq79Np1Ct8MM7sLhFL/1eo/qVLJg62Hr3NwUybYNjPpikG7gxUgHhtTbsGR3QhyKtlCsC1RiZ4ixpyesHvtd/OZepMYV9AkXsK3lhlu9ynNe1jiTmfxDRczY+oSd2sDHQyvBWkacckRKTZKtsrxHp4b/2oVw8SEduqUNoKnY/qknA940mQ7uQ8UmeBEwtiYBmcmCmTkTdJwDmCuZdJpUsnAj/yUR9ck8tCfC4gVSCx7v2b9Db5o7dr8Ew00yEAV67qXaD1qxvL43P4q4fQLvh8KN3W5qMcQ7UykmlunfABPehkr7PQ82jF7uAsQrc=",
+  "encVault": "SDP_ENC_V2:idw2FXNFHVpjNfu1n2JReH6AhAwzMRWJmlTNzNde2PyQELgB+nHaQ6jAakNGkjr5Ws/pB9rqfqZdItyBCTcUwsKlFmuxbrY0DNmP5TIG2eQ1ekR7iv0Y3jMs23MqO0RdjqRd0z5aN5ELI83GTxjytp7DeQe3h4bdRuPu/brLjqf60xzqb4jHEWXRzVn1i4Wh+4SQoIbiUUZzacMiaxejphM7DNAGVkyWBX7hRVODg0msmHMyB6R/bgLaQyDPA0JhvVLpe5ZyrrX50SToJ/7ogzjYRoFW59d2d0kJTF1ehcVeXPzO0nNALz7XwYiJaaKEyuJAI4ln+0YRTgKhvkJVJYVvaQj54BVebUPO42fJ8qGcTMK76qkxB29CmhBaQ5eQo5sQyCkeuQtLbGMy3kOjnuv2AqImcmNPTL8CCFTKcENgl1/eHYor7SRwibxfrDdj4lGLw1I=",
   "classSettings": {
     "mode": "paper",
     "writeSecs": 5,

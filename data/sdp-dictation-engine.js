@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — dictation engine (v0.0.1.e)
+/*! Smart Dictation Player — dictation engine (v0.0.1.f)
  * Strict ES5, dependency free.
  * contract: docs/ARCHITECTURE_MAP.md §R2 priority #3 single integrated cockpit
  * contract: docs/ARCHITECTURE_MAP.md §R4 focus & input law
@@ -17,7 +17,7 @@
   function setText(el, text) { if (el) el.textContent = str(text); }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function settings() {
-    try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true }; }
+    try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 1.5, autoAdvance: true, lang: 'en', pacingPreset: 'exam', voiceLock: 'unified', voiceSource: 'auto', rate: 0.95 }; }
   }
   function t(key, fallback) {
     try { if (SDP.Views && SDP.Views.t) return SDP.Views.t(key, fallback); } catch (e) {}
@@ -35,8 +35,8 @@
     index: 0,
     items: [],
     hints: { pos: false, first: false, si: false, sentence: false },
-    writeSecs: 8,
-    repeats: 3,
+    writeSecs: 5,
+    repeats: 2,
     pauseSecs: 1.5,
     autoAdvance: true,
     repeatsDone: 0,
@@ -52,6 +52,7 @@
     retryOnly: false,
     sessionNo: '8',
     finished: false,
+    pauseReason: '',
     startedAt: 0
   };
 
@@ -151,6 +152,7 @@
     }
     var title = el('sessionTitle');
     if (title && SDP.Sync && SDP.Sync.sessionTitle) setText(title, SDP.Sync.sessionTitle());
+    renderBadges();
   }
 
   /* ── hints ──────────────────────────────────────────────────────────── */
@@ -373,6 +375,8 @@
 
   function enterListening() {
     E.phase = 'listening';
+    E.pausedPhase = '';
+    E.pauseReason = '';
     E.phaseStart = now();
     E.epoch += 1;
     E.phaseMs = listenMs();
@@ -395,8 +399,10 @@
      waits for the previous one to finish, then holds the configured gap.
      A bounded fallback timer guarantees the chain never stalls if a speech
      backend forgets to call back. */
-  function speakRepeats(epoch) {
-    var done = 0;
+  function speakRepeats(epoch, startFrom) {
+    /* D11: resuming a 'listening' pause continues from the repeat that was
+       already spoken, instead of paying for repeat 1 again. */
+    var done = Math.max(0, Math.min(Number(startFrom) || 0, Math.max(0, Number(E.repeats) - 1)));
     var gap = repeatGapMs();
     function scheduleNext() {
       if (epoch !== E.epoch || E.phase !== 'listening') return;
@@ -467,28 +473,89 @@
     if (E.startedAt === 0) E.startedAt = now();
     saveDraft();
     enterListening();
+    renderBadges();
+    /* D4: a deferred remote adoption lands here — between words, never
+       mid-word, so a settings bump can never cut a beat in half. */
+    try { if (SDP.Sync && SDP.Sync.flushDeferred) SDP.Sync.flushDeferred(); } catch (e) {}
   }
 
-  function pause() {
-    if (E.phase !== 'listening' && E.phase !== 'writing') return;
+  /* R6 / D10: isActive() is the ONE truth about a live beat. An active
+     dictation is in the 'listening' or 'writing' phase (never 'running'). */
+  function isActive() {
+    if (E.finished) return false;
+    return E.phase === 'listening' || E.phase === 'writing';
+  }
+  function isPaused() { return E.phase === 'paused'; }
+
+  function reasonLabel(reason) {
+    var r = str(reason);
+    if (r === 'navigation') return t('pauseReasonNavigation', 'you switched screens');
+    if (r === 'modal') return t('pauseReasonModal', 'a dialog opened');
+    if (r === 'visibility') return t('pauseReasonVisibility', 'the app went to the background');
+    return t('pauseReasonUser', 'you tapped pause');
+  }
+
+  /* D17: the cockpit badges — repeat position, the paused reason banner and
+     the Resume button label all live in one painter. */
+  function renderBadges() {
+    var rep = byId('playerRepeatBadge');
+    if (rep) {
+      var total = Math.max(1, Number(E.repeats) || 1);
+      var shown = Math.min(total, Math.max(1, Number(E.repeatShown || E.repeatsDone || 1)));
+      var live = E.phase === 'listening' || E.phase === 'writing' || E.phase === 'paused';
+      rep.hidden = !live;
+      setText(rep, t('repeatBadge', 'Repeat') + ' ' + shown + ' / ' + total);
+    }
+    var banner = byId('playerPausedBanner');
+    if (banner) {
+      var paused = E.phase === 'paused';
+      banner.hidden = !paused;
+      if (paused) {
+        setText(banner, t('pausedBanner', 'Paused — Tap Resume to Continue') +
+          ' · ' + reasonLabel(E.pauseReason));
+      }
+    }
+    var btn = byId('btnPlayPause');
+    if (btn) {
+      if (E.phase === 'paused') {
+        btn.textContent = t('btnResumeDictation', 'Resume Dictation') + ' (Word #' + (E.index + 1) + ')';
+      } else {
+        btn.textContent = t('btnPlayPause', 'Listen / Pause');
+      }
+    }
+    return true;
+  }
+
+  /* D10: pause(reason) stops the ticker, silences speech, saves the exact beat
+     position and repaints the cockpit, so a Smart Board can never keep
+     dictating to an empty classroom. */
+  function pause(reason) {
+    if (E.phase !== 'listening' && E.phase !== 'writing') return false;
     E.pausedPhase = E.phase;
+    E.pauseReason = str(reason) || 'user';
     E.remainingMs = Math.max(0, E.deadline - now());
     E.phase = 'paused';
     stopTicker();
+    E.epoch += 1;
     try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
     paint(E.phaseMs ? E.remainingMs / E.phaseMs : 0);
     setStateText();
+    saveDraft();
+    renderBadges();
+    try { if (SDP.Sync && SDP.Sync.flushDeferred) SDP.Sync.flushDeferred(); } catch (e) {}
+    return true;
   }
 
-  /* F1: resume into 'writing' remounts/binds #typeInput and preserves any
-     partial typed text; resume into 'listening' bumps the epoch and
-     restarts the current word's repeat schedule from repeat 1 with a fresh
-     listening deadline. */
-  function resume() {
-    if (E.phase !== 'paused') return;
+  /* F1 / D11: resume into 'writing' restores the exact remaining countdown and
+     any partial typed text; resume into 'listening' continues from the repeat
+     that was already spoken of the current word, never from repeat 1. */
+  function resumeFromPaused() {
     var back = E.pausedPhase === 'writing' ? 'writing' : 'listening';
-    E.phase = back;
+    E.pauseReason = '';
     if (back === 'writing') {
+      E.phase = 'writing';
+      if (!(E.phaseMs > 0)) E.phaseMs = Math.max(3, Number(E.writeSecs) || 5) * 1000;
+      if (!(E.remainingMs > 0)) E.remainingMs = E.phaseMs;
       E.deadline = now() + E.remainingMs;
       startTicker();
       paint(E.phaseMs ? E.remainingMs / E.phaseMs : 1);
@@ -497,16 +564,50 @@
       bindInput();
       focusInputOnce();
     } else {
+      E.phase = 'listening';
       E.epoch += 1;
       E.phaseMs = listenMs();
       E.remainingMs = E.phaseMs;
       E.deadline = now() + E.phaseMs;
-      E.repeatShown = 1;
+      E.repeatShown = Math.min(Math.max(1, Number(E.repeats) || 1), Math.max(1, Number(E.repeatsDone) || 0) + 1);
       paint(1);
       setStateText();
       startTicker();
-      speakRepeats(E.epoch);
+      speakRepeats(E.epoch, E.repeatsDone || 0);
     }
+    saveDraft();
+    renderBadges();
+    return true;
+  }
+  /* R6: a page that reloaded into a paused draft resumes the same beat. */
+  function restorePausedDraft(draft) {
+    var d = isObj(draft) ? draft : {};
+    start({
+      mode: d.mode, startIndex: Number(d.index) || 0,
+      answers: isObj(d.answers) ? d.answers : {}, silentMode: true, restore: true
+    });
+    if (E.phase !== 'listening' && E.phase !== 'writing') return false;
+    E.pausedPhase = str(d.pausedPhase) === 'writing' ? 'writing' : 'listening';
+    E.pauseReason = str(d.pauseReason) || 'user';
+    E.phase = 'paused';
+    stopTicker();
+    E.epoch += 1;
+    try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
+    if (E.pausedPhase === 'writing') E.phaseMs = Math.max(3, Number(E.writeSecs) || 5) * 1000;
+    E.remainingMs = Math.max(0, Number(d.remainingMs) || 0);
+    E.repeatsDone = Math.max(0, Number(d.repeatsDone) || 0);
+    paint(E.phaseMs ? E.remainingMs / E.phaseMs : 0);
+    setStateText();
+    renderBadges();
+    return true;
+  }
+  function resume() {
+    if (E.phase === 'paused') return resumeFromPaused();
+    if (E.phase === 'idle') {
+      var draft = loadDraft();
+      if (draft && str(draft.status) === 'paused' && restorePausedDraft(draft)) return resumeFromPaused();
+    }
+    return false;
   }
 
   function togglePlayPause() {
@@ -560,19 +661,45 @@
   }
 
   /* ── draft resume (R8 sdp.session) ─────────────────────────────────── */
+  /* D11: the draft now carries the exact beat position, so a reload (or a
+     Smart Board that slept) resumes the same word, the same countdown and the
+     same repeat instead of restarting. */
+  function draftStatus() {
+    if (E.phase === 'paused') return 'paused';
+    if (E.phase === 'listening' || E.phase === 'writing') return E.phase;
+    if (E.phase === 'finished') return 'finished';
+    return 'idle';
+  }
   function saveDraft() {
     try {
-      if (!SDP.Data || E.finished || !E.items.length) return;
+      if (!SDP.Data || E.finished || !E.items.length) return null;
       var answers = {}, i;
       for (i = 0; i < E.items.length; i++) {
         var item = E.items[i];
         if (item.typed || item.marked) answers[item.w] = { typed: item.typed, marked: item.marked };
       }
-      SDP.Data.saveSession({
-        sessionId: str(E.sessionNo), index: E.index, mode: E.mode,
-        answers: answers, updatedAt: now()
-      });
-    } catch (e) {}
+      var draft = {
+        sessionId: str(E.sessionNo),
+        index: E.index,
+        mode: E.mode,
+        status: draftStatus(),
+        pausedPhase: str(E.pausedPhase || E.phase),
+        remainingMs: Math.max(0, Math.round(Number(E.remainingMs) || 0)),
+        repeatsDone: Math.max(0, Number(E.repeatsDone) || 0),
+        pauseReason: str(E.pauseReason || ''),
+        answers: answers,
+        updatedAt: now()
+      };
+      SDP.Data.saveSession(draft);
+      return draft;
+    } catch (e) { return null; }
+  }
+  function loadDraft() {
+    try {
+      var d = SDP.Data && SDP.Data.session ? SDP.Data.session() : null;
+      if (!d || typeof d.index !== 'number') return null;
+      return d;
+    } catch (e) { return null; }
   }
 
   /* ── results & self-check table ─────────────────────────────────────── */
@@ -757,6 +884,7 @@
     if (!E.items.length) return;
     stopTicker();
     E.epoch += 1;
+    E.pauseReason = '';
     E.phase = 'finished';
     E.finished = true;
     E.remainingMs = 0;
@@ -778,6 +906,8 @@
     if (doc && doc.getElementById && doc.getElementById('resultsPanel')) {
       try { doc.getElementById('resultsPanel').scrollIntoView({ block: 'nearest' }); } catch (e) {}
     }
+    renderBadges();
+    try { if (SDP.Sync && SDP.Sync.flushDeferred) SDP.Sync.flushDeferred(); } catch (e) {}
     return buildModel();
   }
 
@@ -811,8 +941,10 @@
         sentence: !!conf.hints.sentence
       };
     }
-    E.writeSecs = Math.max(3, Number(conf.writeSecs) || 8);
-    E.repeats = Math.min(5, Math.max(1, Number(conf.repeats) || 3));
+    /* R3 / D9: 5 s · 2× is the classroom default; intervalSec is the older
+       field name for the same writing window. */
+    E.writeSecs = Math.max(3, Number(conf.writeSecs || conf.intervalSec) || 5);
+    E.repeats = Math.min(5, Math.max(1, Number(conf.repeats) || 2));
     E.pauseSecs = Number(conf.pauseSecs) || 1.5;
     E.autoAdvance = conf.autoAdvance !== false;
     E.mode = conf.mode === 'typing' ? 'typing' : 'paper';
@@ -854,6 +986,9 @@
     E.retryOnly = !!opts.retryOnly;
     E.index = Math.min(Math.max(0, Number(opts.startIndex) || 0), Math.max(0, E.items.length - 1));
     E.finished = false;
+    E.pausedPhase = '';
+    E.pauseReason = '';
+    E.remainingMs = 0;
     E.startedAt = now();
     refreshEls();
     showResults(false);
@@ -926,6 +1061,28 @@
     return true;
   }
 
+  /* D10: ONE module-level lifecycle binder. A hidden tab, a page hide or a
+     window that loses focus pauses the beat instead of letting it run into an
+     empty room (and burning the student's data plan on silent repeats). */
+  var lifecycleBound = false;
+  function bindLifecycle() {
+    if (lifecycleBound) return false;
+    lifecycleBound = true;
+    try {
+      if (doc && doc.addEventListener) {
+        doc.addEventListener('visibilitychange', function () {
+          if (doc.hidden && isActive()) pause('visibility');
+        }, false);
+      }
+      if (global.addEventListener) {
+        global.addEventListener('pagehide', function () { if (isActive()) pause('visibility'); }, false);
+        global.addEventListener('blur', function () { if (isActive()) pause('visibility'); }, false);
+      }
+    } catch (e) {}
+    return true;
+  }
+  bindLifecycle();
+
   var Engine = {
     start: start,
     stop: stop,
@@ -944,6 +1101,15 @@
     finish: finish,
     pause: pause,
     resume: resume,
+    isActive: isActive,
+    isPaused: isPaused,
+    draftStatus: draftStatus,
+    loadDraft: loadDraft,
+    restorePausedDraft: restorePausedDraft,
+    renderBadges: renderBadges,
+    pauseReasonLabel: reasonLabel,
+    bindLifecycle: bindLifecycle,
+    flushDeferred: function () { try { if (SDP.Sync && SDP.Sync.flushDeferred) return SDP.Sync.flushDeferred(); } catch (e) {} return 0; },
     togglePlayPause: togglePlayPause,
     next: goNext,
     prev: goPrev,
@@ -963,7 +1129,7 @@
     repaintState: function () { setStateText(); return true; },
     ringColor: ringColor,
     config: function () {
-      return { writeSecs: E.writeSecs, repeats: E.repeats, pauseSecs: E.pauseSecs, autoAdvance: E.autoAdvance, mode: E.mode, index: E.index, phase: E.phase };
+      return { writeSecs: E.writeSecs, repeats: E.repeats, pauseSecs: E.pauseSecs, autoAdvance: E.autoAdvance, mode: E.mode, index: E.index, phase: E.phase, pausedPhase: E.pausedPhase, remainingMs: E.remainingMs, repeatsDone: E.repeatsDone, pauseReason: E.pauseReason, active: isActive() };
     }
   };
 

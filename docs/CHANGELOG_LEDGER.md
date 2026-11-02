@@ -419,7 +419,7 @@ VOX-01..09, ENG-01..08, PIPE-01..03.
 `#studioFirstTimePanel` is **deleted**; the locked body is only `#studioPin`,
 `#pinDots`, the 56 px 12-key `#pinPad`, `#studioMsg` and the ask-lecturer hint.
 `config.pinVerifier` (PBKDF2-SHA256, 250,000 iterations) authenticates the
-bootstrap PIN `246813` while `encVault` is `SDP_ENC_V2:AAA=`. A new PIN requires
+bootstrap PIN `78987898` while `encVault` is `SDP_ENC_V2:AAA=`. A new PIN requires
 the 2-step `#newPinInput` / `#confirmPinInput` confirmation, and the lockout
 (`5` fails → `60 s`, `strikes >= 2` → `300 s`) now lives in
 `sdp.settings.vaultLock`, so a reload cannot reset it.
@@ -528,3 +528,102 @@ node tests/studio-safety.cjs                → G12 33 PASS / 0 FAIL
 `docs/*.md` 34,609 / 18,660 / 18,310 / 16,064 / 11,878 (cap 40,000, template 18,000).
 
 Released under: `Release Smart Dictation Player v0.0.1.e (Honest Sync, British English Default, Guaranteed Voice & Bento UI)`.
+
+## v0.0.1.f — Honest Adoption, One-Click Setup & Free Enrichment (2026-11-02)
+
+ver 6 · schema 6 · settingsRev 6 · appVersion `0.0.1.f` · release `syncRev` 1793590000000 ·
+buildDate `2026-11-02`. The release moves the whole classroom surface forward in one
+publish clock: no device may ever read a config newer than the version that names it.
+
+### Requirements shipped
+
+* **R1/R2 dual-source adoption.** `SDP.Sync.fetchFreshDataJson(relPath, cb)` races the
+  same-origin Pages copy (`cache:'no-store'`, 6 s) against `raw.githubusercontent.com`
+  (5 s), keeps the higher `syncRev` (raw breaks a tie) and reports `source`. A payload
+  leg must now *prove* it belongs to the winning pointer (`json.syncRev >= targetSyncRev`,
+  or the preserved 30-word baseline session number); a leg that fails, times out or comes
+  back stale is retried once on the other source and, if it still cannot deliver, the
+  pointer is **not** advanced (`{error:'stale_payload', deferred:true, retry:[...]}`).
+  The watcher, `SDP.Speech`'s manifest loader and Studio's `loadVoicePack()` all read
+  through this one reader.
+* **R3 classroom defaults + one-time migration.** `en` · `exam` · 5 s · 2× · unified ·
+  `voiceSource:'auto'` · `rate:0.95`. `defaultsResetV001f` lives **inside** `sdp.settings`
+  (the five-key localStorage law is untouched) and clears only the pacing `touchedKeys`.
+* **R4 PIN.** `78987898` (4–12 digits) verified with PBKDF2-SHA256 × 250,000 against
+  `config.pinVerifier` (salt `ISzHPhxESOW/5ZOl5hO4Gg==`, hash `VlIxxCOF...CKsY=`).
+  Every PIN input is `maxlength="12" minlength="4"`; the dot row renders
+  `min(12, max(8, len))` dots. The retired PIN string is scrubbed from shipped code,
+  tests and docs.
+* **R5 locked Studio + auto-lock.** The locked DOM is PIN-only; the unlocked header adds
+  `#btnLockStudio`, and `pagehide` / `beforeunload` lock the board automatically.
+* **R6 pause/resume.** `SDP.Engine.isActive()` is true only in `listening`/`writing`;
+  `pause(reason)` records `status`, `pausedPhase`, `remainingMs`, `repeatsDone`,
+  `pauseReason`; `resume()` restores the exact beat (same word, same repeat, same
+  write-window remainder) and can pick a paused draft up after a reload.
+* **R7 adoption chain.** `applyPayloads → adoptRemoteSettings → Speech.reloadManifest →
+  Views.refreshAll`, deferred to the end of a live beat ("beat deferral"). One 25 s watch,
+  a `focus` listener, and a `sdp:update` listener that repaints every view.
+* **R8 third vault slot + free enrichment.** `aiKey` / `aiProvider` (`free_dict` default,
+  plus `groq`, `gemini`, `openrouter`) travel inside the same `SDP_ENC_V2` envelope.
+  `SDP.Studio.enrichWords()` fills `p/pos/m/si/s` from `api.dictionaryapi.dev` and
+  `api.mymemory.translated.net` (`en|si`), upgrades a batch through the optional LLM, and
+  always ends in the deterministic offline B1 lexicon — it never throws and never calls
+  ElevenLabs.
+* **R9 instance reload + one-click setup.** `Speech.injectClips()` / `reloadManifest()`,
+  `#btnOneClickMasterSetup` with its four-step tracker, the 900 ms cold-boot
+  `#guideAutoplayBanner`, and **one** `nextSyncRev()` per publish with `version.json`
+  committed last.
+* **R10 version bump** across `data/version.json`, `config.json`,
+  `elevenlabs-audio.json`, `sw.js` (`sdp-v0.0.1.f` / `sdp-v0.0.1.f-shell`),
+  `manifest.webmanifest`, `#sdpVerPill`, About, and the byte-identical
+  `data.html` == `data/index.html` pair.
+
+### Defects closed
+
+D1 stale-payload adoption · D2 mixed-source pairs · D3 dead CDN legs · D4 silent
+adoption · D5 missing focus watch · D6 PIN length ceiling · D7 stale language default ·
+D8 unlocked board left on the Smart Board · D9 `intervalSec`/`writeSecs` drift · D10
+two routers · D11 resume replaying repeat 1 · D12 no 30-row editor · D13 stale
+`pinVerifier` · D14 key-required enrichment · D15 five-step manual setup · D16 guide
+narration silent on a cold boot · D17 object-vs-string `version` · D18 one giant studio
+scroll · D19 mixed publish clocks · D20 second publish path in one-click setup.
+
+### Release verification (2026-11-02, full twelve-gate run on the release tree)
+
+```
+shasum -a 256 -c /tmp/sdp-preserve.sha256   → 4 × OK
+node tests/check.cjs                        → G1  88 PASS / 0 FAIL
+node --test tests/upgrade.test.cjs          → G2  12 pass / 0 fail
+node tests/phase1.cjs                       → G3  81 PASS / 0 FAIL
+node tests/server.cjs                       → G4   8 PASS / 0 FAIL
+node tests/browser.cjs                      → G5  46 PASS / 0 FAIL
+node tests/upgrade-browser.cjs              → G6  15 PASS / 0 FAIL
+node tests/e2e.cjs                          → G7  52 PASS / 0 FAIL
+node tests/live-lab.cjs                     → G8  39 PASS / 0 FAIL
+node tests/audit-v42.cjs                    → G9  47 PASS / 0 FAIL
+node tests/voice-guide.cjs                  → G10 26 PASS / 0 FAIL
+node tests/vault-sync.cjs                   → G11 40 PASS / 0 FAIL
+node tests/studio-safety.cjs                → G12 55 PASS / 0 FAIL
+                                              ─────────────────────
+                                              509 assertions, 0 FAIL
+```
+
+### Byte budgets actually used
+
+`index.html` 30,170 / 40,000 · `sdp-ui.css` 43,383 / 68,000 · `sdp-data-sync.js`
+73,761 / 74,000 · `sdp-audio-speech.js` 38,831 / 54,000 · `sdp-dictation-engine.js`
+43,844 / 64,000 · `sdp-ui-views.js` 115,546 / 120,000 · `studio.js` 97,706 / 98,000 ·
+`data-meter.js` 21,740 / 22,000 · `data.html` = `data/index.html` 27,905 / 60,000 ·
+`sw.js` 10,759 / 12,000 · `config.json` 35,001 / 36,000.
+Docs: `ARCHITECTURE_MAP.md` 22395 B / 44,000 · `SYNC_AND_DATA_CONTRACT.md` 22338 B / 44,000 ·
+`UI_COMPONENT_GUIDE.md` 19141 B / 44,000 · `DAILY_UPGRADE_PROMPT_TEMPLATE.md` 15124 B / 22,000 ·
+`CHANGELOG_LEDGER.md` 42763 B / 44,000.
+
+### Preserved payloads (byte-identical, `shasum -a 256 -c` 4 × OK)
+
+`data/session.json` `e0e86c80…b86a5f` · `data/gas-source.txt` `591b9b08…b0981e` ·
+`NotoSansSinhala-Regular.woff2` `23f1503e…d20ff280` ·
+`NotoSansSinhala-Bold.woff2` `bf59c148…944a643e`. `data/elevenlabs-audio.json` stays
+app-written and budgeted (≤ 2.5 MB), never hash-frozen.
+
+Released under: `Release Smart Dictation Player v0.0.1.f (Verified Adoption, One-Click Studio & Free Enrichment)`.

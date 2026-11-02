@@ -1,9 +1,7 @@
-/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.1.d)
- * Strict ES5, dependency free.
- * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 publishing, §R7 vault
- * contract: docs/UI_COMPONENT_GUIDE.md §Settings 6th section (collapsed)
- * The studio is the ONLY place that touches a GitHub token or an ElevenLabs
- * key, and only while unlocked; secrets never reach localStorage. */
+/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.1.f)
+ * Strict ES5, dependency free. The ONLY place that touches a token or a key,
+ * and only while unlocked (W5/W6).
+ * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 publishing, §R7 vault */
 (function (global) {
   'use strict';
 
@@ -14,6 +12,24 @@
   var EL_SUBSCRIPTION = 'https://api.elevenlabs.io/v1/user/subscription';
   var GUIDE_KEYS = ['_guide_1', '_guide_2', '_guide_3', '_guide_4'];
   var WORD_CAP = 30;
+  /* R4/D6: the classroom bootstrap PIN (4–12 digits, PBKDF2-verified). */
+  var BOOTSTRAP_PIN = '78987898';
+  var PIN_MAX = 12;
+  var PIN_MIN = 4;
+  var DICTIONARY_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
+  var SINHALA_API = 'https://api.mymemory.translated.net/get?q=';
+  /* R8 / D13: the free-by-default AI ladder. Slot 1 needs no key at all. */
+  var AI_PROVIDERS = {
+    free_dict: { id: 'free_dict', label: '1: Built-in Free Dictionary + Sinhala Translator — No Key Needed', needsKey: false, prefix: '' },
+    groq: { id: 'groq', label: '2: Groq · llama-3.3-70b-versatile (gsk_…)', needsKey: true, prefix: 'gsk_' },
+    gemini: { id: 'gemini', label: '3: Google Gemini · gemini-2.5-flash (AIza…)', needsKey: true, prefix: 'AIza' },
+    openrouter: { id: 'openrouter', label: '4: OpenRouter · meta-llama/llama-3.3-70b-instruct:free (sk-or-…)', needsKey: true, prefix: 'sk-or-' }
+  };
+  var LLM_ENDPOINTS = {
+    groq: { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
+    openrouter: { url: 'https://openrouter.ai/api/v1/chat/completions', model: 'meta-llama/llama-3.3-70b-instruct:free' },
+    gemini: { url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', model: 'gemini-2.5-flash' }
+  };
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -35,10 +51,7 @@
   function sync() { return SDP.Sync || null; }
   function vault() { return SDP.Sync && SDP.Sync.Vault ? SDP.Sync.Vault : null; }
 
-  /* ══ D-S3: the studio version is READ, never hardcoded ═══════════════════
-   * v0.0.1.b shipped `var APP_VERSION = '0.0.1.a'`, so every publish stamped an
-   * older version into version.json — and every open device dutifully reloaded
-   * itself into the past, in a loop. */
+  /* D-S3: the studio version is READ from SDP.version, never hardcoded. */
   function appVersion() {
     var v = '';
     try { v = str(global.SDP && global.SDP.version); } catch (e) { v = ''; }
@@ -61,11 +74,7 @@
     try { current = Number((sync() && sync().version() && sync().version().settingsRev) || 0); } catch (e) { current = 0; }
     return Math.max(schemaVer(), current + 1);
   }
-  /** D19: ONE monotonic publish clock. Every JSON file committed in the same
-   * publish (config / session / voice pack / version) is stamped with this
-   * same syncRev, so a device can never see a config newer than its version.
-   * Date.now() wins unless the previous publish is somehow ahead of it, in
-   * which case we step exactly one tick past it. */
+  /** D19/W8: ONE monotonic publish clock (Math.max(Date.now(), prev+1)). */
   function nextSyncRev() {
     var prev = 0;
     try { prev = Number((sync() && sync().version() && sync().version().syncRev) || 0); } catch (e) { prev = 0; }
@@ -91,8 +100,18 @@
     quota: null,
     voicePack: { loaded: false, clips: {}, rev: 0 },
     testStatus: '',
-    testState: ''
+    testState: '',
+    /* D12–D15: the free-AI slot, the 4-step master-setup tracker and the
+       last enrichment report. Memory only — the key lives in the vault. */
+    aiProvider: 'free_dict',
+    aiKey: '',
+    masterStep: 0,
+    masterDetail: '',
+    enrichStatus: '',
+    enriching: false,
+    publishing: false
   };
+  var autoLockBound = false;
 
   /* ══ envelope resolution (D-S7) ════════════════════════════════════════ */
   function cachedVault() {
@@ -214,9 +233,9 @@
     opts = opts || {};
     var base = sync() && sync().session ? JSON.parse(JSON.stringify(sync().session() || {})) : { ok: true, lists: [] };
     var listId = str(opts.listId || (sync() && sync().state ? sync().state.listId : '') || 'list_session_8_feelings');
-    var list = null, i;
     var version = appVersion();
     var lists = Array.isArray(base.lists) ? base.lists : [];
+    var list = null, i;
     for (i = 0; i < lists.length; i++) if (lists[i] && lists[i].id === listId) list = lists[i];
     if (!list) {
       list = { id: listId, name: str(opts.title || 'Session ' + version), version: version, session: 'Session ' + version, date: new Date().toISOString().slice(0, 10), active: true, words: [] };
@@ -225,12 +244,8 @@
     var clean = [];
     for (i = 0; i < (words || []).length; i++) {
       var w = words[i] || {};
-      var cleanWord = {
-        w: str(w.w), p: str(w.p), pos: str(w.pos), m: str(w.m), si: str(w.si), s: str(w.s)
-      };
-      /* D19: keep the dictionary pronunciation URL. Stripping it made every
-         freshly published word fall to robotic TTS on voiceless browsers —
-         the real British human recording must survive a Studio publish. */
+      /* D19: keep the real British recording URL through a publish. */
+      var cleanWord = { w: str(w.w), p: str(w.p), pos: str(w.pos), m: str(w.m), si: str(w.si), s: str(w.s) };
       if (str(w.audio)) cleanWord.audio = str(w.audio);
       clean.push(cleanWord);
     }
@@ -239,12 +254,11 @@
     list.version = version;
     base.lists = lists;
     base.words = clean;
-    /* D-L9: the cockpit reads base.session.words; leaving it empty made a
-       freshly published session look truncated on the device that pulled it. */
+    /* D-L9: the cockpit reads base.session.words. */
     base.session = isObj(base.session) ? base.session : {};
     base.session.words = clean;
     base.session.no = str(opts.sessionNo || base.session.no || '8');
-    base.session.title = str(opts.title || base.session.title || 'Session ' + appVersion());
+    base.session.title = str(opts.title || base.session.title || 'Session ' + version);
     base.ok = true;
     base.updatedAt = new Date().toISOString();
     return base;
@@ -270,7 +284,7 @@
       opts.title || (session.session && session.session.title) || '',
       opts.syncRev || nextSyncRev());
     var cfgBase = sync() && sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
-    /* D-S2: v0.0.1.b cloned the remote config and never set encVault, so the
+    /* D-S2: v0.0.1.b cloned config without encVault, so the
        very next publish erased the lecturer's encrypted keys from GitHub. */
     var env = str(opts.envelope) || (isRealEnvelope(ST.envelope) ? ST.envelope : configEnvelope());
     cfgBase.ver = schemaVer();
@@ -341,9 +355,8 @@
       cb(err, info);
     });
   }
-  /* ══ SYNC-03: save & sync the ten classroom keys to every device ════════
-   * Copies the lecturer's live settings into config.classSettings, bumps
-   * settingsRev, stamps syncRev and commits config.json + version.json. */
+  /* SYNC-03: copy the ten classroom keys into config.classSettings, bump
+     settingsRev and commit config.json + version.json (version last). */
   function saveClassSettings(cb) {
     cb = cb || noop;
     if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
@@ -351,28 +364,13 @@
     if (!sync() || !sync().publishFilesSequential) { cb(new Error('no_sync')); return { ok: false, reason: 'no_sync' }; }
     var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
     cfgBody.classSettings = conf;
-    cfgBody.ver = schemaVer();
-    cfgBody.appVersion = appVersion();
-    cfgBody.version = appVersion();
-    cfgBody.schema = schemaVer();
-    var liveVersion = sync().version ? (sync().version() || {}) : {};
-    var liveSession = str(liveVersion.session || '8') || '8';
-    var liveTitle = str(liveVersion.title || '') || ('Session ' + liveSession);
-    var versionBody = buildVersionPayload(liveSession, liveTitle, nextSyncRev());
-    var rev = Number(versionBody.settingsRev);
-    var nowIso = new Date().toISOString();
-    cfgBody.settingsRev = rev;
-    cfgBody.updatedAt = nowIso;
-    cfgBody.syncRev = Number(versionBody.syncRev);
-    var env = (isRealEnvelope(ST.envelope) ? ST.envelope : configEnvelope());
-    if (env) cfgBody.encVault = str(env);
+    var env = isRealEnvelope(ST.envelope) ? ST.envelope : configEnvelope();
     var token = str(ST.secrets.ghToken);
-    var last = byId('lecturerSyncLast');
     function stamp(ok, detail) {
+      var last = byId('lecturerSyncLast');
       if (!last) return;
-      var when = new Date().toISOString().slice(11, 16);
-      last.textContent = (ok ? t('lecturerSyncLast') : t('studioPublishFail')) + ' · ' + when +
-        (detail ? ' · ' + detail : '');
+      last.textContent = (ok ? t('lecturerSyncLast') : t('studioPublishFail')) + ' · ' +
+        new Date().toISOString().slice(11, 16) + (detail ? ' · ' + detail : '');
       last.setAttribute('data-state', ok ? 'ok' : 'bad');
     }
     if (!token) {
@@ -381,7 +379,8 @@
       cb(new Error('no_token'));
       return { ok: false, reason: 'no_token', classSettings: conf };
     }
-    publishVaultFiles(buildVaultFiles(cfgBody, versionBody, 'Class settings rev ' + rev), token, function (err, info) {
+    publishConfigAndVersion(cfgBody, env, 'Class settings rev', function (err, info, body) {
+      var rev = Number((body && body.settingsRev) || 0);
       if (err) { msg(t('studioPublishFail'), 'bad'); stamp(false, 'rev ' + rev); cb(err, info); return; }
       try { if (data() && data().saveSettings) data().saveSettings({ appliedSettingsRev: rev }); } catch (e) {}
       msg(t('studioPublishOk') + ' · Rev #' + rev, 'ok');
@@ -389,7 +388,7 @@
       stamp(true, 'Rev #' + rev);
       cb(null, info || { ok: true, settingsRev: rev, classSettings: conf });
     });
-    return { ok: true, settingsRev: rev, classSettings: conf };
+    return { ok: true, classSettings: conf };
   }
 
   function clearVaultLock() {
@@ -400,9 +399,8 @@
     var cfg = sync() && sync().config ? sync().config() : null;
     return cfg && isObj(cfg.pinVerifier) ? cfg.pinVerifier : null;
   }
-  /* SEC-03: bootstrap unlock. When encVault is the placeholder
-     "SDP_ENC_V2:AAA=" there is no envelope to decrypt, so the PIN is proved
-     against config.pinVerifier (PBKDF2-SHA256, 250,000 iterations) instead. */
+  /* SEC-03: with the placeholder envelope the PIN is proved against
+     config.pinVerifier (PBKDF2-SHA256, 250k) instead of decrypting. */
   function unlockWithVerifier(pin, cb) {
     var v = vault();
     var verifier = pinVerifier();
@@ -465,8 +463,7 @@
         clearVaultLock();
         msg(t('studioUnlock') + ' ✓', 'ok');
         mount();
-        /* SYNC-11: the paid-for Alice clips must be in memory before the first
-           delta generation, otherwise the lecturer pays twice for clip one. */
+        /* SYNC-11: the committed clips must load before the first delta run. */
         loadVoicePack(noop);
         /* SYNC-07 completion: a local envelope that never reached GitHub is
            published now that a token is in hand. */
@@ -486,30 +483,17 @@
      carries the placeholder means the publish never landed — finish it. */
   function autoPublishVault(envelope) {
     try {
-      var token = str(ST.secrets.ghToken);
       var cfg = sync() && sync().config ? sync().config() : null;
-      if (!token || !cfg) return false;
+      if (!str(ST.secrets.ghToken) || !cfg) return false;
       if (isRealEnvelope(str(cfg.encVault))) return false;
-      var cfgBody = JSON.parse(JSON.stringify(cfg));
-      cfgBody.ver = schemaVer(); cfgBody.appVersion = appVersion(); cfgBody.version = appVersion();
-      cfgBody.schema = schemaVer(); cfgBody.encVault = str(envelope);
-      cfgBody.updatedAt = new Date().toISOString();
-      var liveVersion = sync().version ? (sync().version() || {}) : {};
-      var liveSession = str(liveVersion.session || '8') || '8';
-      var liveTitle = str(liveVersion.title || '') || ('Session ' + liveSession);
-      var versionBody = buildVersionPayload(liveSession, liveTitle, nextSyncRev());
-      cfgBody.settingsRev = Number(versionBody.settingsRev);
-      cfgBody.syncRev = Number(versionBody.syncRev);
-      publishVaultFiles(buildVaultFiles(cfgBody, versionBody, 'Studio vault ' + appVersion()), token, noop);
+      publishConfigAndVersion(null, envelope, 'Studio vault ' + appVersion(), noop);
       return true;
     } catch (e) { return false; }
   }
 
   /** D-S1/S2/S4: encrypt, persist locally at once, then commit config + version. */
-  /* SEC-02: setup() re-seals the vault, so it may only run for an already
-     authenticated Lecturer — or for a caller that proves the PIN it is about
-     to use (the headless G11 harness). Nothing else can reach this function:
-     the locked view renders no setup widget at all (SEC-01). */
+  /* SEC-02: setup() may only run for an authenticated lecturer, or a caller
+     that proves the PIN it is about to use (the headless G11 harness). */
   function setupAuthorised(pin, cb) {
     cb = cb || noop;
     if (ST.unlocked) { cb(null, true); return; }
@@ -551,35 +535,14 @@
       persistEnvelope(envelope);
       msg(t('studioEnvelope') + ' ✓', 'ok');
       mount();
-      var token = str(secretsIn.ghToken);
-      if (!token) {
+      if (!str(secretsIn.ghToken) || !sync() || !sync().publishFilesSequential) {
         toast(t('vaultSavedToast'));
         cb(null, envelope);
         return;
       }
-      /* Publish config.json + version.json immediately (version.json last) so a
-         reload — or a second device — can unlock before the session is ready. */
-      /* SYNC-06: reuse buildVersionPayload() so the live session number and
-         title survive every setup publish (they used to be hardcoded '8'). */
-      var nowIso = new Date().toISOString();
-      var liveVersion = sync() && sync().version ? (sync().version() || {}) : {};
-      var liveSession = str(liveVersion.session || (sync() && sync().sessionNo ? sync().sessionNo() : '8')) || '8';
-      var liveTitle = str(liveVersion.title || (sync() && sync().sessionTitle ? sync().sessionTitle() : '')) || ('Session ' + liveSession);
-      var versionBody = buildVersionPayload(liveSession, liveTitle, nextSyncRev());
-      var rev = Number(versionBody.settingsRev);
-      var cfgBody = sync() && sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
-      cfgBody.ver = schemaVer(); cfgBody.appVersion = appVersion(); cfgBody.version = appVersion();
-      cfgBody.schema = schemaVer(); cfgBody.settingsRev = rev; cfgBody.encVault = envelope;
-      cfgBody.updatedAt = nowIso; cfgBody.syncRev = versionBody.syncRev;
-      var files = buildVaultFiles(cfgBody, versionBody, 'Studio vault ' + appVersion());
-      if (!sync() || !sync().publishFilesSequential) { toast(t('vaultSavedToast')); cb(null, envelope); return; }
-      publishVaultFiles(files, token, function (err, info) {
-        if (err) {
-          msg(t('studioPublishFail'), 'bad');
-          toast(t('vaultSavedToast'));
-          cb(err, envelope);
-          return;
-        }
+          /* SYNC-06: config + version (last) so a reload can unlock at once. */
+      publishConfigAndVersion(null, envelope, 'Studio vault ' + appVersion(), function (err, info) {
+        if (err) { msg(t('studioPublishFail'), 'bad'); toast(t('vaultSavedToast')); cb(err, envelope); return; }
         msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
         toast(t('vaultSavedToast') + ' · GitHub');
         cb(null, envelope, info);
@@ -601,14 +564,49 @@
   function isUnlocked() { return !!ST.unlocked; }
   function secrets() { return isObj(ST.secrets) ? ST.secrets : {}; }
 
-  /* ══ rendering ════════════════════════════════════════════════════════ */
-  function pinDotsMarkup() {
-    return '<div id="pinDots" class="pin-dots" aria-hidden="true">' +
-      '<span></span><span></span><span></span><span></span><span></span><span></span></div>';
+  /* ══ R8 / D13: the third vault slot (free AI key) + provider ladder ════ */
+  function detectProvider(key) {
+    var k = str(key);
+    if (!k) return '';
+    if (k.indexOf('gsk_') === 0) return 'groq';
+    if (k.indexOf('sk-or-') === 0) return 'openrouter';
+    if (k.indexOf('AIza') === 0) return 'gemini';
+    return '';
   }
-  /* D-L2: the 56px Touch PIN Pad was documented for two releases and never
-     rendered. #pinPad holds exactly 12 keys (1-9, Clear, 0, Unlock); the ⌫
-     helper sits next to the dots so the grid stays 3 x 4. */
+  function aiProviderName() {
+    var node = byId('studioAiProvider');
+    var raw = node ? str(node.value) : '';
+    if (!raw) raw = str(ST.aiProvider) || str(secrets().aiProvider) || 'free_dict';
+    if (!AI_PROVIDERS[raw]) {
+      /* R8: a pasted key prefix auto-selects its provider. */
+      var guess = detectProvider(aiProviderKey());
+      raw = guess || 'free_dict';
+    }
+    return raw;
+  }
+  function aiProviderKey() {
+    var node = byId('studioAiKey');
+    var typed = node ? str(node.value) : '';
+    return typed || str(ST.aiKey) || str(secrets().aiKey) || '';
+  }
+  function aiNeedsLlm() {
+    var provider = aiProviderName();
+    return provider !== 'free_dict' && !!aiProviderKey() && !!LLM_ENDPOINTS[provider];
+  }
+
+  /* ══ rendering ════════════════════════════════════════════════════════ */
+  /* D7 / R4: the dot row grows from 8 to 12 dots as a longer PIN is typed. */
+  function pinDotCount(len) {
+    return Math.min(PIN_MAX, Math.max(8, Number(len) || 0));
+  }
+  function pinDotsMarkup() {
+    var html = '<div id="pinDots" class="pin-dots" data-dots="8" aria-hidden="true">';
+    for (var i = 1; i <= PIN_MAX; i++) {
+      html += '<span class="pin-dot' + (i > 8 ? ' pin-dot-extra' : '') + '" data-dot="' + i + '"></span>';
+    }
+    return html + '</div>';
+  }
+  /* D-L2: the 56px PIN pad carries exactly 12 keys (1-9, Clear, 0, Unlock). */
   function pinPadMarkup() {
     var html = '<div id="pinPad" class="pin-pad" role="group" aria-label="' + esc(t('studioPinLabel')) + '">';
     var i;
@@ -620,93 +618,90 @@
     return html;
   }
   function keyRowMarkup(inputId, label, placeholder, kind) {
-    return '<label class="lbl" for="' + inputId + '">' + esc(label) + '</label>' +
-      '<div class="key-row">' +
-      '<input id="' + inputId + '" class="input" type="password" autocomplete="off" spellcheck="false" placeholder="' + esc(placeholder) + '">' +
-      '<button type="button" class="btn btn-sm" id="btnToggle' + kind + '" aria-pressed="false">' + esc(t('studioShow')) + '</button>' +
-      '<button type="button" class="btn btn-sm" id="btnPaste' + kind + '">' + esc(t('studioPaste')) + '</button>' +
-      '<button type="button" class="btn btn-sm" id="btnTest' + kind + '">' +
-      esc(kind === 'ElKey' ? t('studioTestEl') : t('studioTestGh')) + '</button>' +
-      '</div>';
+    return '<label class="lbl" for="' + inputId + '">' + esc(label) + '</label>' + '<div class="key-row">' + '<input id="' + inputId + '" class="input" type="password" autocomplete="off" spellcheck="false" placeholder="' + esc(placeholder) + '">' +
+      '<button type="button" class="btn btn-sm" id="btnToggle' + kind + '" aria-pressed="false">' + esc(t('studioShow')) + '</button>' + '<button type="button" class="btn btn-sm" id="btnPaste' + kind + '">' + esc(t('studioPaste')) + '</button>' + '<button type="button" class="btn btn-sm" id="btnTest' + kind + '">' +
+      esc(kind === 'ElKey' ? t('studioTestEl') : t('studioTestGh')) + '</button>' + '</div>';
   }
+  function aiProviderSelectMarkup() {
+    var order = ['free_dict', 'groq', 'gemini', 'openrouter'];
+    var current = aiProviderName();
+    var html = '<select id="studioAiProvider" class="input">';
+    for (var i = 0; i < order.length; i++) {
+      var id = order[i];
+      html += '<option value="' + id + '"' + (id === current ? ' selected' : '') + '>' +
+        esc(t(id === 'free_dict' ? 'studioAiNoKey' : 'studioAiProvider') === 'studioAiProvider'
+          ? AI_PROVIDERS[id].label : (id === 'free_dict' ? t('studioAiNoKey') : AI_PROVIDERS[id].label)) +
+        '</option>';
+    }
+    return html + '</select>';
+  }
+  function masterStepsMarkup() {
+    var labels = [
+      '1 · Verify ElevenLabs key &amp; GitHub token',
+      '2 · Save the encrypted vault &amp; recompute config.pinVerifier',
+      '3 · Delta-generate _guide_1.._guide_4 + 30 word clips (Alice)',
+      '4 · Inject clips &amp; publish 4 JSON files with ONE syncRev'
+    ];
+    var html = '<ol id="studioMasterSteps" class="studio-steps" aria-label="' +
+      esc(t('studioMasterSteps')) + '">';
+    for (var i = 0; i < labels.length; i++) {
+      html += '<li data-step="' + (i + 1) + '" data-state="pending">' + labels[i] + '</li>';
+    }
+    return html + '</ol>';
+  }
+  /* ══ Card 1 — one-click keys and the complete Alice voice pack (D15) ══ */
   function keysCardMarkup() {
-    return '<div id="studioKeysCard" class="studio-keys">' +
-      '<h4 class="studio-h4">' + esc(t('setAudio')) + '</h4>' +
+    return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4">' + esc(t('studioCardKeys')) + '</h4>' +
       keyRowMarkup('elKeyInput', 'ElevenLabs API key', 'xi-api-key', 'ElKey') +
-      keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… or github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
-      '<label class="lbl" for="studioGasUrl">Apps Script relay URL</label>' +
-      '<input id="studioGasUrl" class="input" type="url" autocomplete="off" placeholder="https://script.google.com/…">' +
-      '<label class="lbl" for="newPinInput">' + esc(t('studioPinLabel')) + ' — new (optional)</label>' +
-      '<input id="newPinInput" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="8">' +
-      '<label class="lbl" for="confirmPinInput">' + esc(t('studioPinLabel')) + ' — confirm</label>' +
-      '<input id="confirmPinInput" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="8">' +
-      '<div class="chip-row">' +
-      '<button type="button" class="btn btn-sm" id="btnSaveKeys">' + esc(t('studioSave')) + '</button>' +
-      '</div>' +
-      '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
-      '</div>';
+      keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… / github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
+      '<label class="lbl" for="studioGasUrl">Apps Script relay URL</label>' + '<input id="studioGasUrl" class="input" type="url" autocomplete="off" placeholder="https://script.google.com/…">' + '<label class="lbl" for="studioAiProvider">' + esc(t('studioAiProvider')) + '</label>' + aiProviderSelectMarkup() +
+      '<label class="lbl" for="studioAiKey">' + esc(t('studioAiKey')) + '</label>' + '<input id="studioAiKey" class="input" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_… / AIza… / sk-or-…">' + '<div class="chip-row">' +
+      '<button type="button" class="btn btn-sm" id="btnTestAi">' + esc(t('studioTestAi')) + '</button>' + '<button type="button" class="btn btn-sm" id="btnSaveKeys">' + esc(t('studioSave')) + '</button>' + '<button type="button" class="btn btn-sm" id="btnCheckQuota">🔄 ' + esc(t('studioTestEl')) + '</button>' +
+      '<button type="button" class="btn btn-sm" id="btnRefreshQuota">🔄 ' + esc(t('quotaHeading')) + '</button>' + '<button type="button" class="btn btn-sm" id="btnTestOneWord">' + esc(t('testOneWordBtn')) + '</button>' +
+      '<button type="button" class="btn btn-sm btn-primary" id="btnGenClips">' + esc(t('genDeltaBtn')) + '</button>' + '</div>' + '<label class="checkline" for="studioForceRegen"><input type="checkbox" id="studioForceRegen"> <span>' + esc(t('forceRegenLabel')) + '</span></label>' +
+      '<input type="checkbox" id="chkForceRegen" class="visually-hidden" aria-hidden="true" tabindex="-1">' + '<button type="button" class="btn btn-sm btn-primary" id="btnOneClickMasterSetup">' + esc(t('studioOneClick')) + '</button>' +
+      masterStepsMarkup() +
+      '<div id="quotaInspectorCard" class="studio-quota">' + '<p id="quotaText" class="muted" role="status" aria-live="polite">' + esc(t('quotaHeading')) + '</p>' + '<p class="lbl">' + esc(t('costPreviewLabel')) + '</p>' + '<p id="costPreviewLine" class="muted">' + esc(costPreviewLine()) + '</p>' +
+      '<div id="clipPreviewTable" class="studio-preview"></div></div>' + '</section>';
   }
-  function quotaCardMarkup() {
-    return '<section id="quotaInspectorCard" class="studio-quota">' +
-      '<h4 class="studio-h4">' + esc(t('quotaHeading')) + '</h4>' +
-      '<p id="quotaText" class="muted" role="status" aria-live="polite">' + esc(t('quotaHeading')) + ' — ' + esc(t('studioTestEl')) + '</p>' +
-      '<div class="chip-row">' +
-      '<button type="button" class="btn btn-sm" id="btnRefreshQuota">🔄 ' + esc(t('studioTestEl')) + '</button>' +
-      '</div>' +
-      '<p class="lbl">' + esc(t('costPreviewLabel')) + '</p>' +
-      '<p id="costPreviewLine" class="muted">' + esc(costPreviewLine()) + '</p>' +
-      '<label class="checkline" for="chkForceRegen"><input type="checkbox" id="chkForceRegen"> <span>' + esc(t('forceRegenLabel')) + '</span></label>' +
-      '<div class="chip-row">' +
-      '<button type="button" class="btn btn-sm" id="btnTestOneWord">' + esc(t('testOneWordBtn')) + '</button>' +
-      '<button type="button" class="btn btn-sm btn-primary" id="btnGenClips">' + esc(t('genDeltaBtn')) + '</button>' +
-      '</div>' +
-      '<div id="clipPreviewTable" class="studio-preview"></div>' +
-      '</section>';
-  }
-  function unlockedMarkup() {
+  /* ══ Card 2 — the 30-word editor, free-AI enricher and publisher (D12) ══ */
+  function wordsCardMarkup() {
     var words = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
-    var text = wordsToText(words);
-    return '' +
-      '<div class="studio-grid">' +
-      '<label class="lbl" for="studioWords">' + esc(t('studioEditor')) + '</label>' +
-      '<textarea id="studioWords" spellcheck="false" aria-label="' + esc(t('studioEditor')) + '">' + esc(text) + '</textarea>' +
-      '<p id="studioCount" class="studio-msg">' + words.length + ' ' + esc(t('studioWordsCount')) + '</p>' +
-      '<div class="chip-row">' +
-      '<button type="button" class="btn btn-sm" id="btnStudioPreview">' + esc(t('studioPreview')) + '</button>' +
-      '<button type="button" class="btn btn-sm btn-primary" id="btnStudioPublish">' + esc(t('studioPublish')) + '</button>' +
-      '<button type="button" class="btn btn-sm" id="btnStudioGenerate">' + esc(t('studioGenerate')) + '</button>' +
-      '<button type="button" class="btn btn-sm" id="btnStudioLock">' + esc(t('studioLock')) + '</button>' +
-      '</div>' +
-      '<div id="studioPreview" class="studio-preview"></div>' +
-      '<p class="muted">' + esc(t('studioElevenNote')) + '</p>' +
-      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' +
-      '</div>' +
-      keysCardMarkup() +
-      quotaCardMarkup() +
-      '<div class="studio-record">' +
-      '<h4 class="studio-h4">' + esc(t('studioRecord')) + '</h4>' +
-      '<div class="chip-row">' +
-      '<button type="button" class="btn btn-sm" id="btnStudioRecord">' + esc(t('studioRecord')) + '</button>' +
-      '<button type="button" class="btn btn-sm btn-primary" id="btnCommitClip" disabled>' + esc(t('studioCommitClip')) + '</button>' +
-      '</div>' +
-      '<audio id="recPreviewAudio" controls preload="none" class="rec-preview"></audio>' +
-      '</div>';
+    var names = [];
+    for (var i = 0; i < words.length; i++) if (str(words[i] && words[i].w)) names.push(str(words[i].w));
+    return '<section id="studioCardWords" class="studio-card studio-card-words">' + '<h4 class="studio-h4">' + esc(t('studioCardWords')) + '</h4>' + '<label class="lbl" for="studioBulkWords">' + esc(t('studioBulkWords')) + '</label>' +
+      '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' + '<label class="lbl" for="studioWords">' + esc(t('studioEditor')) + '</label>' + '<textarea id="studioWords" spellcheck="false">' + esc(wordsToText(words)) + '</textarea>' +
+      '<p id="studioCount" class="studio-msg">' + words.length + ' ' + esc(t('studioWordsCount')) + '</p>' + '<div class="chip-row">' + '<button type="button" class="btn btn-sm" id="btnEnrichWords">' + esc(t('studioEnrich')) + '</button>' +
+      '<button type="button" class="btn btn-sm" id="btnPreviewWords">' + esc(t('studioPreview')) + '</button>' + '<button type="button" class="btn btn-sm btn-primary" id="btnPublishWords">' + esc(t('studioPublish')) + '</button>' +
+      '<button type="button" class="btn btn-sm btn-primary" id="btnPublishWordsAndVoice">' + esc(t('studioPublishWordsVoice')) + '</button>' +
+      '<button type="button" class="btn btn-sm" id="btnStudioLock">' + esc(t('studioLock')) + '</button>' + '</div>' + '<h5 class="studio-h5">' + esc(t('studioWordManager')) + '</h5>' +
+      '<div id="studioWordManager" class="studio-word-manager"></div>' + '<div id="studioPreview" class="studio-preview"></div>' + '<p class="muted">' + esc(t('studioElevenNote')) + '</p>' + '</section>';
   }
-  /* SEC-01 / SEC-02 / SEC-05: while locked the Studio body renders ONLY the
-     masked PIN field, the dot indicator, the 56px 12-key pad, the status line
-     and the ask-your-lecturer hint. No API key field, no #setupPin, no
-     #studioFirstTimePanel and no word editor may exist in the locked DOM —
-     whatever the state of encVault (even the placeholder SDP_ENC_V2:AAA=). */
+  /* ══ Card 3 — classroom settings broadcast, PIN, lecturer recorder ══════ */
+  function settingsCardMarkup() {
+    return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + esc(t('studioCardSettings')) + '</h4>' + '<label class="lbl" for="studioNewPin">' + esc(t('studioPinLabel')) + ' — new (4–12 digits)</label>' +
+      '<input id="studioNewPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<label class="lbl" for="studioConfirmPin">' + esc(t('studioPinLabel')) + ' — confirm</label>' +
+      '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<button type="button" class="btn btn-sm btn-primary" id="btnStudioSyncSettings">' + esc(t('studioSyncSettings')) + '</button>' +
+      '<p class="studio-hint">#lecturerSyncBar · #btnSyncClassSettings</p>' + '<h4 class="studio-h4">' + esc(t('studioRecord')) + '</h4>' + '<div class="chip-row">' + '<button type="button" class="btn btn-sm" id="btnStudioRecord">' + esc(t('studioRecord')) + '</button>' +
+      '<button type="button" class="btn btn-sm btn-primary" id="btnCommitClip" disabled>' + esc(t('studioCommitClip')) + '</button>' + '</div>' +
+      '<audio id="recPreviewAudio" controls preload="none" class="rec-preview"></audio>' + '<p class="studio-hint" data-i18n="studioAskLecturer">' + esc(t('studioAskLecturer')) + '</p>' + '</section>';
+  }
+  /* D18: three outcome cards under one lock header. */
+  function unlockedMarkup() {
+    return '<div class="studio-head">' + '<h4 class="studio-h4">' + esc(t('studioTitle')) + '</h4>' + '<button type="button" class="btn btn-sm btn-primary" id="btnLockStudio">' + esc(t('studioLockLecturer')) + '</button>' + '</div>' +
+      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
+      keysCardMarkup() +
+      wordsCardMarkup() +
+      settingsCardMarkup();
+  }
+  /* R5/SEC-01: while locked the body renders ONLY the PIN field, the dots,
+     the 56px 12-key pad, the status line and the lecturer hint. */
   function lockedMarkup() {
-    return '<div class="pin-row">' +
-      '<label class="for-only" for="studioPin">' + esc(t('studioPinLabel')) + '</label>' +
-      '<input id="studioPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="' + esc(t('studioPinLabel')) + '">' +
-      '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' +
-      '</div>' +
+    return '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + esc(t('studioPinLabel')) + '</label>' + '<input id="studioPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4" placeholder="' + esc(t('studioPinLabel')) + '">' +
+      '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
       pinDotsMarkup() +
       pinPadMarkup() +
-      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' +
-      '<p class="studio-hint" data-i18n="studioAskLecturer">' + esc(t('studioAskLecturer')) + '</p>';
+      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p class="studio-hint" data-i18n="studioAskLecturer">' + esc(t('studioAskLecturer')) + '</p>';
   }
 
   function mount() {
@@ -727,6 +722,19 @@
     paintPinDots();
     paintClipTable();
     paintQuickButton();
+    paintMasterSteps();
+    paintWordManager();
+    paintAiFields();
+    return true;
+  }
+  function paintAiFields() {
+    var select = byId('studioAiProvider');
+    if (select) {
+      var want = aiProviderName();
+      select.value = want;
+    }
+    var key = byId('studioAiKey');
+    if (key && !str(key.value)) key.value = str(ST.aiKey) || str(secrets().aiKey) || '';
     return true;
   }
 
@@ -749,10 +757,13 @@
   function setPinValue(v) {
     var n = activePinInput();
     if (!n) return '';
-    n.value = str(v).replace(/[^0-9]/g, '').slice(0, 8);
+    /* R4 / D7: a lecturer PIN may be 4–12 digits. */
+    n.value = str(v).replace(/[^0-9]/g, '').slice(0, PIN_MAX);
     paintPinDots();
     return n.value;
   }
+  function newPinValue() { return str(fieldValue('studioNewPin') || fieldValue('newPinInput')).replace(/[^0-9]/g, '').slice(0, PIN_MAX); }
+  function confirmPinValue() { return str(fieldValue('studioConfirmPin') || fieldValue('confirmPinInput')).replace(/[^0-9]/g, '').slice(0, PIN_MAX); }
   function appendPin(digit) {
     var next = pinValue() + str(digit).replace(/[^0-9]/g, '');
     setPinValue(next);
@@ -767,12 +778,38 @@
     var host = byId('pinDots');
     if (!host) return false;
     var dots = host.querySelectorAll ? host.querySelectorAll('span') : [];
-    var len = Math.min(dots.length, pinValue().length);
+    var len = pinValue().length;
+    /* D7: 8 dots by default, 9–12 once the lecturer types a longer PIN. */
+    var shown = pinDotCount(len);
     for (var i = 0; i < dots.length; i++) {
       if (i < len) dots[i].classList.add('on'); else dots[i].classList.remove('on');
+      if (i >= shown) dots[i].classList.add('pin-dot-off'); else dots[i].classList.remove('pin-dot-off');
     }
     host.setAttribute('data-filled', String(len));
+    host.setAttribute('data-dots', String(shown));
     return true;
+  }
+  /* D15: the 4-step one-click tracker. state: pending | active | ok | bad */
+  function paintMasterSteps() {
+    var host = byId('studioMasterSteps');
+    if (!host) return false;
+    var items = host.querySelectorAll ? host.querySelectorAll('li[data-step]') : [];
+    for (var i = 0; i < items.length; i++) {
+      var step = Number(items[i].getAttribute('data-step'));
+      var state = 'pending';
+      if (ST.masterStep > step) state = 'ok';
+      else if (ST.masterStep === step) state = ST.masterDetail || 'active';
+      else state = 'pending';
+      items[i].setAttribute('data-state', state);
+    }
+    host.setAttribute('data-step', String(ST.masterStep));
+    return true;
+  }
+  function setMasterStep(step, state) {
+    ST.masterStep = Number(step) || 0;
+    ST.masterDetail = str(state);
+    paintMasterSteps();
+    return ST.masterStep;
   }
 
   /* ══ D-L7: one delegated listener survives every innerHTML swap ═══════ */
@@ -793,20 +830,66 @@
     }
     return '';
   }
+  function forceRegenChecked() {
+    var a = byId('studioForceRegen'), b = byId('chkForceRegen');
+    return !!((a && a.checked) || (b && b.checked));
+  }
   function onStudioInput(ev) {
-    var id = ownerId(ev && ev.target, byId('studioAccordion'));
+    var target = ev && ev.target;
+    var id = ownerId(target, byId('studioAccordion'));
     if (id === 'studioWords') {
       var editor = byId('studioWords');
       ST.words = parseWords(editor ? editor.value : '');
       setText(byId('studioCount'), ST.words.length + ' ' + t('studioWordsCount'));
       setText(byId('costPreviewLine'), costPreviewLine(ST.words));
+      paintWordManager();
+    } else if (id === 'studioBulkWords') {
+      setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
+    } else if (id === 'studioAiKey') {
+      var guess = detectProvider(str(target.value));
+      if (guess) { ST.aiProvider = guess; var sel = byId('studioAiProvider'); if (sel) sel.value = guess; }
     } else if (id === 'studioPin' || id === 'setupPin') {
       paintPinDots();
+    } else if (target && target.getAttribute && target.getAttribute('data-wm')) {
+      applyWordManagerEdit(target);
     }
   }
+  /* One cell edit in the 30-row manager writes straight back into ST.words. */
+  function applyWordManagerEdit(node, commit) {
+    var row = Number(node.getAttribute('data-row'));
+    var field = str(node.getAttribute('data-wm'));
+    if (!(row >= 0) || !field) return false;
+    var list = ST.words.length ? ST.words : wordManagerWords();
+    if (!isObj(list[row])) return false;
+    list[row][field] = str(node.value);
+    if (field === 'w') {
+      ST.words = list;
+      var editor = byId('studioWords');
+      if (editor && commit !== false) editor.value = wordsToText(list);
+    } else {
+      ST.words = list;
+      if (commit !== false) {
+        var editor2 = byId('studioWords');
+        if (editor2) editor2.value = wordsToText(list);
+      }
+    }
+    setText(byId('costPreviewLine'), costPreviewLine(list));
+    return true;
+  }
   function onStudioChange(ev) {
-    var id = ownerId(ev && ev.target, byId('studioAccordion'));
+    var target = ev && ev.target;
+    var id = ownerId(target, byId('studioAccordion'));
+    if (id === 'studioForceRegen') {
+      var mirror = byId('chkForceRegen');
+      if (mirror) mirror.checked = !!target.checked;
+      return true;
+    }
     if (id === 'chkForceRegen') return true;
+    if (id === 'studioAiProvider') {
+      ST.aiProvider = str(target.value);
+      return true;
+    }
+    if (target && target.getAttribute && target.getAttribute('data-wm')) return applyWordManagerEdit(target, true);
     return false;
   }
 
@@ -835,6 +918,42 @@
     done(new Error('paste_unsupported'));
   }
 
+  var CLICK_ACTIONS = {
+    pinPadClear: function () { setPinValue(''); },
+    pinPadBack: function () { backspacePin(); },
+    pinPadUnlock: function () { unlock(pinValue(), noop); },
+    btnStudioUnlock: function () { unlock(pinValue(), noop); },
+    btnToggleElKey: function () { toggleSecretField('elKeyInput', byId('btnToggleElKey')); },
+    btnToggleGhToken: function () { toggleSecretField('ghTokenInput', byId('btnToggleGhToken')); },
+    btnPasteElKey: function () { pasteInto('elKeyInput', pasteDone); },
+    btnPasteGhToken: function () { pasteInto('ghTokenInput', pasteDone); },
+    btnTestElKey: function () { testElevenLabsKey(fieldValue('elKeyInput') || str(ST.secrets.elevenKey), onElTest); },
+    btnTestGhToken: function () { testGitHubToken(fieldValue('ghTokenInput') || str(ST.secrets.ghToken), onGhTest); },
+    btnCheckQuota: function () { quotaProbe(); },
+    btnRefreshQuota: function () { quotaProbe(); },
+    btnTestOneWord: function () { generateClips({ singleTest: true }, noop); },
+    btnGenClips: function () { generateClips({ force: forceRegenChecked() }, noop); },
+    btnTestAi: function () { testAiEngine(noop); },
+    btnEnrichWords: function () {
+      enrichWords(fieldValue('studioWords') || fieldValue('studioBulkWords'), { force: false }, noop);
+    },
+    btnOneClickMasterSetup: function () { oneClickMasterSetup(noop); },
+    btnPublishWordsAndVoice: function () { publishWordsAndVoice(noop); },
+    btnPreviewWords: function () { openPublishPreview(); },
+    btnPublishWords: function () { publish(noop); },
+    btnStudioSyncSettings: function () {
+      saveClassSettings(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); });
+    },
+    btnLockStudio: function () { lock(); },
+    btnStudioLock: function () { lock(); },
+    btnSaveKeys: function () { saveKeys(); },
+    btnStudioRecord: function () { toggleRecord(); },
+    btnCommitClip: function () {
+      commitClip(str(ST.secrets.ghToken), function (err) {
+        msg(err ? t('studioPublishFail') : t('studioCommitClip') + ' ✓', err ? 'bad' : 'ok');
+      });
+    }
+  };
   function onStudioClick(ev) {
     var target = ev && ev.target;
     var id = ownerId(target, byId('studioAccordion'));
@@ -845,80 +964,16 @@
       if (ev.preventDefault) ev.preventDefault();
       return;
     }
-    switch (id) {
-      case 'pinPadClear':
-        setPinValue('');
-        break;
-      case 'pinPadBack':
-        backspacePin();
-        break;
-      case 'pinPadUnlock':
-      case 'btnStudioUnlock':
-        unlock(pinValue(), noop);
-        break;
-      case 'btnToggleElKey':
-        toggleSecretField('elKeyInput', byId('btnToggleElKey'));
-        break;
-      case 'btnToggleGhToken':
-        toggleSecretField('ghTokenInput', byId('btnToggleGhToken'));
-        break;
-      case 'btnPasteElKey':
-        pasteInto('elKeyInput', function (err) { testStatus(err ? 'Clipboard unavailable — paste manually' : 'Pasted the ElevenLabs key', err ? 'bad' : 'ok'); });
-        break;
-      case 'btnPasteGhToken':
-        pasteInto('ghTokenInput', function (err) { testStatus(err ? 'Clipboard unavailable — paste manually' : 'Pasted the GitHub token', err ? 'bad' : 'ok'); });
-        break;
-      case 'btnTestElKey':
-        testElevenLabsKey(fieldValue('elKeyInput') || str(ST.secrets.elevenKey), function (err, data) { onElTest(err, data); });
-        break;
-      case 'btnTestGhToken':
-        testGitHubToken(fieldValue('ghTokenInput') || str(ST.secrets.ghToken), function (err, data) { onGhTest(err, data); });
-        break;
-      case 'btnRefreshQuota':
-        refreshQuota(function (err) {
-          if (err) testStatus('Quota check failed: ' + quotaError(err), 'bad');
-        });
-        break;
-      case 'btnTestOneWord':
-        generateClips({ singleTest: true }, noop);
-        break;
-      case 'btnGenClips':
-        generateClips({ force: !!(byId('chkForceRegen') && byId('chkForceRegen').checked) }, noop);
-        break;
-      case 'btnSaveKeys':
-        saveKeys();
-        break;
-      case 'btnStudioSetup':
-        doSetup();
-        break;
-      case 'btnStudioCopyEnv':
-        copyEnvelope();
-        break;
-      case 'btnStudioPreview':
-        openPublishPreview();
-        break;
-      case 'btnStudioPublish':
-        publish(noop);
-        break;
-      case 'btnStudioGenerate':
-        generateClips({ force: false }, noop);
-        break;
-      case 'btnStudioLock':
-        lock();
-        break;
-      case 'btnStudioRecord':
-        toggleRecord();
-        break;
-      case 'btnCommitClip':
-        commitClip(str(ST.secrets.ghToken), function (err) {
-          msg(err ? t('studioPublishFail') : t('studioCommitClip') + ' ✓', err ? 'bad' : 'ok');
-        });
-        break;
-      default:
-        return;
-    }
+    var action = CLICK_ACTIONS[id];
+    if (action) { if (ev.preventDefault) ev.preventDefault(); action(ev); }
   }
   function fieldValue(id) { var n = byId(id); return n ? str(n.value) : ''; }
+  function pasteDone(err) {
+    testStatus(err ? 'Clipboard unavailable — paste manually' : t('studioPaste') + ' ✓', err ? 'bad' : 'ok');
+  }
+  function quotaProbe() {
+    refreshQuota(function (err) { if (err) testStatus('❌ ' + quotaError(err), 'bad'); });
+  }
   function onElTest(err, result) {
     if (err) { testStatus('❌ ' + quotaError(err), 'bad'); return; }
     var used = Number(result.used || 0), limit = Number(result.limit || 0), left = Number(result.remaining || 0);
@@ -930,112 +985,517 @@
     testStatus('✅ GitHub Connected (' + result.repo + ' · Write OK)', 'ok');
   }
 
-  function doSetup() {
-    var pinNode = byId('setupPin');
-    var secretsIn = {
-      ghToken: fieldValue('ghTokenInput'),
-      elevenKey: fieldValue('elKeyInput'),
-      gasUrl: fieldValue('studioGasUrl'),
-      updatedAt: Date.now()
-    };
-    setup(pinNode ? pinNode.value : '', secretsIn, function (err, envelope) {
-      if (err) return;
-      var out = byId('studioEnvelope');
-      if (out) out.value = envelope;
-    });
-  }
-  function copyEnvelope() {
-    var out = byId('studioEnvelope');
-    if (!out) return false;
-    if (out.select) { try { out.select(); doc.execCommand('copy'); } catch (e) {} }
-    return true;
-  }
   function saveKeys() {
     if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); return false; }
-    /* SEC-02: a new PIN must be confirmed twice before the vault is re-sealed. */
-    var confirmNode = byId('confirmPinInput');
-    var wantPin = str(fieldValue('newPinInput') || '').replace(/[^0-9]/g, '');
-    if (confirmNode) {
-      var confirmPin = str(confirmNode.value).replace(/[^0-9]/g, '');
-      if (wantPin.length >= 4 || confirmPin.length) {
-        if (wantPin.length < 4 || wantPin.length > 8) { msg(t('studioBadPin'), 'bad'); return false; }
-        if (wantPin !== confirmPin) { msg(t('studioPinMismatch'), 'bad'); return false; }
-        ST.pin = wantPin;
-      }
+    /* SEC-02 / R4: a new 4–12 digit PIN must be confirmed twice. */
+    var wantPin = newPinValue();
+    var confirmPin = confirmPinValue();
+    if (wantPin.length >= PIN_MIN || confirmPin.length) {
+      if (wantPin.length < PIN_MIN || wantPin.length > PIN_MAX) { msg(t('studioBadPin'), 'bad'); return false; }
+      if (wantPin !== confirmPin) { msg(t('studioPinMismatch'), 'bad'); return false; }
+      ST.pin = wantPin;
     }
     var patch = {};
     var el = fieldValue('elKeyInput');
     var gh = fieldValue('ghTokenInput');
     var gas = fieldValue('studioGasUrl');
+    var aiKey = aiProviderKey();
+    var provider = aiProviderName();
     if (el) patch.elevenKey = el;
     if (gh) patch.ghToken = gh;
     if (gas) patch.gasUrl = gas;
+    /* R8 / D13: the third vault slot travels with the same AES-256-GCM
+       envelope, so a free AI key is as protected as the paid one. */
+    if (aiKey) patch.aiKey = aiKey;
+    patch.aiProvider = provider;
     patch.updatedAt = Date.now();
     ST.secrets = isObj(ST.secrets) ? ST.secrets : {};
     for (var k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)) ST.secrets[k] = patch[k];
+    ST.aiProvider = provider;
+    if (aiKey) ST.aiKey = aiKey;
     var pin = str(ST.pin || '');
     var v = vault();
     if (!v || !pin) { msg(t('vaultSavedToast'), 'ok'); return true; }
-    if (v.stash) v.stash(ST.secrets);
-    var token = str(ST.secrets.ghToken);
-    v.encryptV2(ST.secrets, pin).then(function (envelope) {
-      ST.envelope = envelope;
-      persistEnvelope(envelope);
-      /* D13: ALWAYS recompute config.pinVerifier on an explicit save, from the
-         salt already published in config.json (a fresh 16-byte salt only when
-         no verifier exists yet). The v0.0.1.d code gated this on v.PIN_SALT —
-         a property that does not exist on the vault — so the verifier silently
-         went stale after every PIN change and a fresh device could not
-         bootstrap. Now the published verifier always matches the PIN that
-         sealed this vault. */
-      var verifierPromise = null;
-      var currentVerifier = pinVerifier();
-      var currentSalt = currentVerifier && isObj(currentVerifier) ? str(currentVerifier.salt) : '';
-      if (v && v.computePinVerifier) {
-        verifierPromise = v.computePinVerifier(pin, currentSalt).then(function (verifier) {
-          var cfg = sync() && sync().config ? sync().config() : null;
-          if (cfg) cfg.pinVerifier = verifier;
-          return verifier;
-        }, function () { return null; });
-      }
-      if (!verifierPromise) verifierPromise = Promise.resolve(null);
-      verifierPromise.then(function () {
-        mount();
-        /* SYNC-07: commit the vault to GitHub NOW — localStorage alone meant a
-           second device could never unlock (the 0.0.1.c 24-hour bug). */
-        if (!token || !sync() || !sync().publishFilesSequential) {
+    sealVaultNow(function (err, envelope) {
+      if (err) { msg(t('studioPublishFail'), 'bad'); return; }
+      mount();
+      if (!str(ST.secrets.ghToken) || !sync() || !sync().publishFilesSequential) { toast(t('vaultSavedToast')); return; }
+      var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
+      cfgBody.encVaultSavedAt = new Date().toISOString();
+      publishConfigAndVersion(cfgBody, envelope, 'Studio vault ' + appVersion(), function (pubErr) {
+        if (pubErr) {
+          msg(t('studioPublishFail'), 'bad');
           toast(t('vaultSavedToast'));
           return;
         }
-        var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
-        cfgBody.ver = schemaVer(); cfgBody.appVersion = appVersion(); cfgBody.version = appVersion();
-        cfgBody.schema = schemaVer();
-        cfgBody.encVault = envelope;
-        cfgBody.encVaultSavedAt = new Date().toISOString();
-        cfgBody.updatedAt = new Date().toISOString();
-        var liveVersion = sync().version ? (sync().version() || {}) : {};
-        var liveSession = str(liveVersion.session || '8') || '8';
-        var liveTitle = str(liveVersion.title || '') || ('Session ' + liveSession);
-        var versionBody = buildVersionPayload(liveSession, liveTitle, nextSyncRev());
-        cfgBody.settingsRev = Number(versionBody.settingsRev);
-        cfgBody.syncRev = Number(versionBody.syncRev);
-        publishVaultFiles(buildVaultFiles(cfgBody, versionBody, 'Studio vault ' + appVersion()), token, function (err) {
-          if (err) {
-            msg(t('studioPublishFail'), 'bad');
-            toast(t('vaultSavedToast'));
-            return;
-          }
-          msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
-          toast('Vault saved · synced to GitHub');
-        });
+        msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
+        toast('Vault saved · synced to GitHub');
       });
-    }, function () { msg(t('studioPublishFail'), 'bad'); });
+    });
     return true;
   }
+
+  /* R5/D8: pagehide, beforeunload and #btnLockStudio all lock the studio. */
+  function bindAutoLock() {
+    if (autoLockBound) return false;
+    autoLockBound = true;
+    var handler = function () { if (ST.unlocked) { try { lock(); } catch (e) {} } };
+    try {
+      if (global.addEventListener) {
+        global.addEventListener('pagehide', handler, false);
+        global.addEventListener('beforeunload', handler, false);
+      }
+    } catch (e) {}
+    return true;
+  }
+  bindAutoLock();
 
   function currentWords() {
     if (ST.words && ST.words.length) return ST.words;
     return sync() && sync().words ? sync().words() : [];
+  }
+
+  /* R8/D14: the free enricher — dictionaryapi.dev + mymemory (en|si), always
+     ending in the offline B1 lexicon, so it never fails. */
+  function audioForWord(word) {
+    return 'https://dict.youdao.com/dictvoice?type=1&audio=' + encodeURIComponent(str(word));
+  }
+  function hasFullRecord(rec) {
+    if (!isObj(rec)) return false;
+    return !!(str(rec.w) && str(rec.p) && str(rec.pos) && str(rec.m) && str(rec.si) && str(rec.s));
+  }
+  function fallbackEnrich(word, prior) {
+    var base = isObj(prior) ? prior : {};
+    var w = str(word);
+    return {
+      w: w,
+      p: str(base.p) || ('/' + w + '/'),
+      pos: str(base.pos) || 'n/v',
+      m: str(base.m) || ('B1 classroom vocabulary word: ' + w),
+      si: str(base.si) || w,
+      s: str(base.s) || ('Please write the word ' + w + ' carefully in your dictation book.'),
+      audio: str(base.audio) || audioForWord(w),
+      exampleSi: str(base.exampleSi),
+      /* D14: an offline record says so, so the next online run retries it. */
+      enrichSource: str(base.enrichSource) || 'lexicon'
+    };
+  }
+  /* A lecturer-typed field wins; empty fields fall back to prior, then lexicon. */
+  function mergeEnrichRecord(word, prior, provided) {
+    var base = fallbackEnrich(word, prior);
+    var p = isObj(provided) ? provided : {};
+    var out = {
+      w: str(word),
+      p: str(p.p) || base.p,
+      pos: str(p.pos) || base.pos,
+      m: str(p.m) || base.m,
+      si: str(p.si) || base.si,
+      s: str(p.s) || base.s,
+      audio: str(prior && prior.audio) || base.audio,
+      exampleSi: str(p.exampleSi) || base.exampleSi,
+      enrichSource: str(p.enrichSource) || str(prior && prior.enrichSource) || base.enrichSource
+    };
+    return out;
+  }
+  function fetchJsonSafe(url, timeoutMs, cb) {
+    cb = cb || noop;
+    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
+    var done = false, timer = null;
+    function finish(err, data) {
+      if (done) return;
+      done = true;
+      if (timer) { try { global.clearTimeout(timer); } catch (e) {} timer = null; }
+      cb(err, data);
+    }
+    timer = global.setTimeout(function () { finish(new Error('timeout')); }, Number(timeoutMs) || 6000);
+    try {
+      global.fetch(url, { cache: 'no-store' })
+        .then(function (res) { return res && res.ok && res.json ? res.json() : null; })
+        .then(function (data) { if (data) finish(null, data); else finish(new Error('bad_response')); },
+          function () { finish(new Error('fetch_failed')); });
+    } catch (e) { finish(new Error('fetch_failed')); return false; }
+    return true;
+  }
+  function dictFields(json) {
+    var out = { p: '', pos: '', m: '', s: '' };
+    var entry = Array.isArray(json) ? json[0] : (isObj(json) ? json : null);
+    if (!isObj(entry)) return out;
+    if (str(entry.phonetic)) out.p = str(entry.phonetic);
+    if (!out.p && Array.isArray(entry.phonetics)) {
+      for (var i = 0; i < entry.phonetics.length; i++) {
+        if (isObj(entry.phonetics[i]) && str(entry.phonetics[i].text)) { out.p = str(entry.phonetics[i].text); break; }
+      }
+    }
+    var meanings = Array.isArray(entry.meanings) ? entry.meanings : [];
+    if (meanings.length && isObj(meanings[0])) {
+      out.pos = str(meanings[0].partOfSpeech);
+      var defs = Array.isArray(meanings[0].definitions) ? meanings[0].definitions : [];
+      if (defs.length && isObj(defs[0])) out.m = str(defs[0].definition);
+      for (var d = 0; d < defs.length; d++) {
+        if (isObj(defs[d]) && str(defs[d].example)) { out.s = str(defs[d].example); break; }
+      }
+    }
+    if (out.pos && out.pos.charAt(out.pos.length - 1) !== '.') out.pos += '.';
+    return out;
+  }
+  function sinhalaFrom(json) {
+    if (!isObj(json)) return '';
+    var rd = isObj(json.responseData) ? json.responseData : {};
+    return str(rd.translatedText || '');
+  }
+  function freeEnrichOne(word, prior, cb) {
+    cb = cb || noop;
+    var w = str(word);
+    var pending = 2, dict = null, si = '';
+    function done() {
+      pending -= 1;
+      if (pending > 0) return;
+      var out = mergeEnrichRecord(w, prior, {});
+      if (dict) {
+        if (dict.p) out.p = dict.p;
+        if (dict.pos) out.pos = dict.pos;
+        if (dict.m) out.m = dict.m;
+        if (dict.s) out.s = dict.s;
+      }
+      if (si) out.si = si;
+      out.enrichSource = (dict || si) ? 'free_dict' : 'lexicon';
+      cb(null, out, !(dict || si));
+    }
+    fetchJsonSafe(DICTIONARY_API + encodeURIComponent(w), 6000, function (err, json) {
+      if (!err) dict = dictFields(json);
+      done();
+    });
+    fetchJsonSafe(SINHALA_API + encodeURIComponent(w) + '&langpair=en|si', 6000, function (err, json) {
+      if (!err) si = sinhalaFrom(json);
+      done();
+    });
+    return true;
+  }
+  function llmPrompt(words) {
+    return 'You are a vocabulary assistant for a Sri Lankan B1 English class. ' + 'Return STRICT JSON only, no prose: {"words":[{"w":"spelling","p":"IPA","pos":"adj.","m":"short English definition","si":"Sinhala meaning","s":"one simple B1 example sentence"}]} ' + 'for exactly these words: ' + words.join(', ');
+  }
+  function parseJsonLoose(text) {
+    var t = str(text).replace(/```json/gi, '```').replace(/```/g, '').replace(/^\s+|\s+$/g, '');
+    try { return JSON.parse(t); } catch (e) {}
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (e2) {} }
+    return null;
+  }
+  function llmRows(provider, json) {
+    var text = '';
+    if (provider === 'gemini') {
+      var cand = json && json.candidates && json.candidates[0] ? json.candidates[0] : null;
+      var parts = cand && cand.content ? cand.content.parts : null;
+      if (Array.isArray(parts) && parts[0]) text = str(parts[0].text);
+    } else {
+      var choice = json && json.choices && json.choices[0] ? json.choices[0] : null;
+      text = str(choice && choice.message ? choice.message.content : '');
+    }
+    var parsed = parseJsonLoose(text);
+    var rows = isObj(parsed) && Array.isArray(parsed.words) ? parsed.words : (Array.isArray(parsed) ? parsed : []);
+    var out = {}, i;
+    for (i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      if (!isObj(r) || !str(r.w)) continue;
+      out[str(r.w).toLowerCase()] = r;
+    }
+    return out;
+  }
+  function llmRequest(provider, key, words, cb) {
+    cb = cb || noop;
+    var ep = LLM_ENDPOINTS[provider];
+    if (!ep) { cb(new Error('no_provider')); return false; }
+    if (!key) { cb(new Error('no_key')); return false; }
+    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
+    var prompt = llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
+    if (provider === 'gemini') {
+      url += '?key=' + encodeURIComponent(str(key));
+      body = { contents: [{ parts: [{ text: prompt }] }] };
+    } else {
+      headers.Authorization = 'Bearer ' + str(key);
+      body = {
+        model: ep.model, temperature: 0.2, response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: 'You answer with strict JSON only.' },
+          { role: 'user', content: prompt }
+        ]
+      };
+    }
+    try {
+      global.fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), cache: 'no-store' })
+        .then(function (res) { return res && res.json ? res.json() : null; })
+        .then(function (json) { cb(null, llmRows(provider, json)); },
+          function (err) { cb(err || new Error('llm_failed')); });
+    } catch (e) { cb(e || new Error('llm_failed')); return false; }
+    return true;
+  }
+  /* `enrichWords(rawWordsInput, opts, cb)` — the long-form public API. */
+  function enrichWords(rawWordsInput, opts, cb) {
+    if (typeof opts === 'function') { cb = opts; opts = {}; }
+    opts = opts || {};
+    cb = cb || noop;
+    var list = Array.isArray(rawWordsInput)
+      ? rawWordsInput.map(function (w) { return isObj(w) ? w : { w: str(w) }; })
+      : parseBulkWords(str(rawWordsInput));
+    list = list.slice(0, WORD_CAP);
+    if (!list.length) { cb(new Error('no_words')); return { ok: false, reason: 'no_words', words: [] }; }
+    var source = Array.isArray(opts.existing) ? opts.existing : wordManagerWords();
+    var prior = {}, i;
+    for (i = 0; i < source.length; i++) {
+      if (source[i] && str(source[i].w)) prior[str(source[i].w).toLowerCase()] = source[i];
+    }
+    var force = !!opts.force, slots = [], needs = [];
+    for (i = 0; i < list.length; i++) {
+      var raw = list[i], word = str(raw.w).replace(/^\s+|\s+$/g, '');
+      if (!word) continue;
+      var base = prior[word.toLowerCase()] || null;
+      var provided = { p: str(raw.p), pos: str(raw.pos), m: str(raw.m), si: str(raw.si), s: str(raw.s) };
+      var merged = mergeEnrichRecord(word, base, provided);
+      var slot = { w: word, prior: base, record: merged };
+      slots.push(slot);
+      if (force || !hasFullRecord(merged) || str(merged.enrichSource) === 'lexicon') needs.push(slot);
+    }
+    ST.enriching = true;
+    var offlineCount = 0, provider = aiProviderName();
+    function finishAll() {
+      var out = [], j;
+      for (j = 0; j < slots.length; j++) out.push(slots[j].record);
+      ST.enriching = false;
+      ST.enrichStatus = t('studioEnriched') + ' · ' + out.length + (offlineCount ? ' · ' + t('studioAiOffline') : '');
+      setStudioWords(out);
+      msg(ST.enrichStatus, 'ok');
+      testStatus(ST.enrichStatus + ' · ' + (provider === 'free_dict' ? 'free dictionary' : provider), 'ok');
+      var report = { ok: true, words: out, enriched: needs.length, offline: offlineCount, provider: provider };
+      cb(null, report);
+      return report;
+    }
+    function afterFree(index) {
+      if (index >= needs.length) { finishAll(); return; }
+      var slot = needs[index];
+      freeEnrichOne(slot.w, slot.prior, function (err, record, offline) {
+        slot.record = record;
+        if (offline) offlineCount += 1;
+        afterFree(index + 1);
+      });
+    }
+    if (!needs.length) { ST.enriching = false; return finishAll(); }
+    if (aiNeedsLlm()) {
+      var names = [], k;
+      for (k = 0; k < needs.length; k++) names.push(needs[k].w);
+      testStatus(t('studioEnriching') + ' · ' + provider, '');
+      llmRequest(provider, aiProviderKey(), names, function (err, rows) {
+        if (err || !isObj(rows)) { afterFree(0); return; }
+        var rest = [], m;
+        for (m = 0; m < needs.length; m++) {
+          var slot2 = needs[m];
+          var row = rows[slot2.w.toLowerCase()];
+          if (isObj(row)) slot2.record = mergeEnrichRecord(slot2.w, slot2.prior, row);
+          else rest.push(slot2);
+        }
+        needs = rest;
+        afterFree(0);
+      });
+      return { ok: true, pending: true, words: slots.length, provider: provider };
+    }
+    afterFree(0);
+    return { ok: true, pending: true, words: slots.length, provider: provider };
+  }
+  /* `testAiEngine` — #btnTestAi. Never touches ElevenLabs (W5). */
+  function testAiEngine(cb) {
+    cb = cb || noop;
+    var provider = aiProviderName();
+    var first = wordManagerWords()[0] || {};
+    var word = str(first.w) || 'afraid';
+    if (!aiNeedsLlm()) {
+      var pending = 2, okDict = false, okSi = false;
+      function done() {
+        pending -= 1;
+        if (pending > 0) return;
+        var offline = !(okDict || okSi);
+        var line = offline
+          ? '✅ Free Dictionary ready · ' + t('studioAiOffline')
+          : '✅ Free Dictionary ready · zero API key' + (okSi ? ' · EN→SI OK' : '');
+        testStatus(line, 'ok');
+        cb(null, { ok: true, provider: 'free_dict', dictionary: okDict, sinhala: okSi, offline: offline, word: word });
+      }
+      fetchJsonSafe(DICTIONARY_API + encodeURIComponent(word), 6000, function (err, json) {
+        if (!err) okDict = !!dictFields(json).m;
+        done();
+      });
+      fetchJsonSafe(SINHALA_API + encodeURIComponent(word) + '&langpair=en|si', 6000, function (err, json) {
+        if (!err) okSi = !!sinhalaFrom(json);
+        done();
+      });
+      return { ok: true, pending: true, provider: 'free_dict' };
+    }
+    llmRequest(provider, aiProviderKey(), [word], function (err, rows) {
+      if (err) {
+        testStatus('❌ ' + str(err.message || 'llm_failed') + ' — ' + t('studioAiOffline'), 'bad');
+        cb(err, { ok: false, provider: provider });
+        return;
+      }
+      var row = isObj(rows) ? rows[word.toLowerCase()] : null;
+      testStatus('✅ ' + provider + ' ready · ' + (row ? 'JSON row valid' : 'reachable'), 'ok');
+      cb(null, { ok: true, provider: provider, validated: !!row, word: word });
+    });
+    return { ok: true, pending: true, provider: provider };
+  }
+
+  /* ══ R9 / D15 / D19: one publish clock, four files, version.json last ══ */
+  /* W8/D19: stamp ONE syncRev into config + version and commit them in order
+     (version.json last). `cfgBody` is stamped in place and returned. */
+  function publishConfigAndVersion(cfgBody, envelope, label, cb) {
+    cb = cb || noop;
+    var token = str(ST.secrets.ghToken);
+    var body = isObj(cfgBody) ? cfgBody : (sync() && sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {});
+    var live = sync() && sync().version ? (sync().version() || {}) : {};
+    var sess = str(live.session || '8') || '8';
+    var versionBody = buildVersionPayload(sess, str(live.title || '') || ('Session ' + sess), nextSyncRev());
+    body.ver = schemaVer(); body.appVersion = appVersion(); body.version = appVersion();
+    body.schema = schemaVer();
+    body.settingsRev = Number(versionBody.settingsRev);
+    body.syncRev = Number(versionBody.syncRev);
+    body.updatedAt = new Date().toISOString();
+    if (envelope) body.encVault = str(envelope);
+    if (!token || !sync() || !sync().publishFilesSequential) { cb(new Error('no_token'), null, versionBody); return versionBody; }
+    publishVaultFiles(buildVaultFiles(body, versionBody, label || ('Studio vault ' + appVersion())), token, function (err, info) {
+      cb(err, info, versionBody);
+    });
+    return versionBody;
+  }
+  function publishBundle(words, opts, cb) {
+    opts = opts || {};
+    cb = cb || noop;
+    if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
+    var token = str(ST.secrets.ghToken) || fieldValue('ghTokenInput');
+    if (!token) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_token')); return { ok: false, reason: 'no_token' }; }
+    if (!sync() || !sync().publishFilesSequential) { cb(new Error('no_sync')); return { ok: false, reason: 'no_sync' }; }
+    var syncRev = nextSyncRev();
+    var liveVersion = sync().version ? (sync().version() || {}) : {};
+    var sessionNo = str(opts.sessionNo || liveVersion.session || (sync().sessionNo ? sync().sessionNo() : '8')) || '8';
+    var title = str(opts.title || liveVersion.title || '') || ('Session ' + sessionNo);
+    var version = buildVersionPayload(sessionNo, title, syncRev);
+    var session = buildSessionPayload(words, { sessionNo: sessionNo, title: title });
+    session.syncRev = syncRev;
+    session.settingsRev = Number(version.settingsRev);
+    var cfg = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
+    cfg.ver = schemaVer();
+    cfg.appVersion = appVersion();
+    cfg.version = appVersion();
+    cfg.schema = schemaVer();
+    cfg.settingsRev = Number(version.settingsRev);
+    cfg.syncRev = syncRev;
+    var env = isRealEnvelope(ST.envelope) ? ST.envelope : configEnvelope();
+    if (env) cfg.encVault = str(env);
+    var verifier = pinVerifier();
+    if (isObj(verifier)) cfg.pinVerifier = verifier;
+    cfg.classSettings = classSettingsSnapshot();
+    cfg.updatedAt = new Date().toISOString();
+    var pack = voicePackPayload(syncRev);
+    var files = [
+      { path: 'data/session.json', content: JSON.stringify(session, null, 2), message: 'Smart Dictation words ' + appVersion() },
+      { path: 'data/config.json', content: JSON.stringify(cfg, null, 2), message: 'Smart Dictation settings ' + appVersion() },
+      { path: 'data/elevenlabs-audio.json', content: JSON.stringify(pack, null, 2), message: 'Alice voice pack ' + appVersion() },
+      { path: 'data/version.json', content: JSON.stringify(version, null, 2), message: 'Smart Dictation version ' + appVersion() }
+    ];
+    sync().publishFilesSequential(files, token, function (path, ok) {
+      if (!ok) msg(t('studioPublishFail') + ' · ' + path, 'bad');
+    }, function (err, info) {
+      if (err) { cb(err, info); return; }
+      ST.lastPublish = { at: Date.now(), syncRev: syncRev, files: files.map(function (f) { return f.path; }), version: version };
+      cb(null, ST.lastPublish);
+    });
+    return { ok: true, pending: true, syncRev: syncRev };
+  }
+  /* Card 2 primary action: publish words + settings + the committed pack. */
+  function publishWordsAndVoice(cb) {
+    cb = cb || noop;
+    return publishBundle(currentWords(), {}, function (err, info) {
+      if (err) { msg(t('studioPublishFail'), 'bad'); cb(err, info); return; }
+      try { if (SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {}); } catch (e) {}
+      msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
+      toast(t('studioPublishOk'));
+      cb(null, info);
+    });
+  }
+  /* Re-seal the vault (and recompute the published PIN verifier) without
+     publishing, so the one-click flow commits exactly once at the end. */
+  function sealVaultNow(cb) {
+    cb = cb || noop;
+    var v = vault();
+    var pin = str(ST.pin || '');
+    if (!v || !pin) { cb(new Error('no_pin')); return false; }
+    if (v.stash) v.stash(ST.secrets);
+    v.encryptV2(ST.secrets, pin).then(function (envelope) {
+      ST.envelope = envelope;
+      persistEnvelope(envelope);
+      var currentVerifier = pinVerifier();
+      var currentSalt = currentVerifier && isObj(currentVerifier) ? str(currentVerifier.salt) : '';
+      if (!v.computePinVerifier) { cb(null, envelope, currentVerifier); return; }
+      v.computePinVerifier(pin, currentSalt).then(function (verifier) {
+        var cfg = sync() && sync().config ? sync().config() : null;
+        if (cfg) cfg.pinVerifier = verifier;
+        cb(null, envelope, verifier);
+      }, function () { cb(null, envelope, currentVerifier); });
+    }, function () { cb(new Error('encrypt_failed')); });
+    return true;
+  }
+  /* #btnOneClickMasterSetup — verify, seal, delta-generate, inject, publish. */
+  function oneClickMasterSetup(cb) {
+    cb = cb || noop;
+    if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
+    if (ST.publishing) { cb(new Error('busy')); return { ok: false, reason: 'busy' }; }
+    ST.publishing = true;
+    var elKey = fieldValue('elKeyInput') || str(ST.secrets.elevenKey);
+    var gh = fieldValue('ghTokenInput') || str(ST.secrets.ghToken);
+    var gas = fieldValue('studioGasUrl') || str(ST.secrets.gasUrl);
+    var aiKey = aiProviderKey();
+    var provider = aiProviderName();
+    function fail(step, detail) {
+      ST.publishing = false;
+      setMasterStep(step, 'bad');
+      msg(t('studioPublishFail') + ' · ' + str(detail), 'bad');
+      cb(new Error('master_setup_failed'), { ok: false, step: step, detail: str(detail) });
+    }
+    if (!elKey || !gh) { fail(1, !elKey ? 'ElevenLabs key missing' : 'GitHub token missing'); return { ok: false, reason: 'no_key' }; }
+    setMasterStep(1, 'active');
+    probeQuota(elKey, function (elErr) {
+      if (elErr) { fail(1, quotaError(elErr)); return; }
+      testGitHubToken(gh, function (ghErr) {
+        if (ghErr) { fail(1, ghError(ghErr)); return; }
+        setMasterStep(2, 'active');
+        ST.secrets.elevenKey = elKey;
+        ST.secrets.ghToken = gh;
+        if (gas) ST.secrets.gasUrl = gas;
+        if (aiKey) { ST.secrets.aiKey = aiKey; ST.aiKey = aiKey; }
+        ST.secrets.aiProvider = provider;
+        ST.aiProvider = provider;
+        ST.secrets.updatedAt = Date.now();
+        sealVaultNow(function (sealErr) {
+          if (sealErr) { fail(2, sealErr.message); return; }
+          setMasterStep(3, 'active');
+          generateClips({ force: forceRegenChecked(), noCommit: true }, function (genErr, genInfo) {
+            if (genErr) { fail(3, quotaError(genErr)); return; }
+            setMasterStep(4, 'active');
+            publishBundle(currentWords(), {}, function (pubErr, pubInfo) {
+              if (pubErr) { fail(4, pubErr.message || 'publish_failed'); return; }
+              try { if (SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {}); } catch (e) {}
+              ST.publishing = false;
+              ST.masterStep = 5;
+              ST.masterDetail = 'ok';
+              paintMasterSteps();
+              msg(t('studioPublishOk') + ' · ' + (genInfo ? genInfo.made.length : 0) + ' clips · syncRev ' + pubInfo.syncRev, 'ok');
+              toast(t('studioPublishOk'));
+              cb(null, {
+                ok: true, clips: genInfo ? genInfo.made.length : 0,
+                skipped: genInfo ? genInfo.skipped : 0, syncRev: pubInfo.syncRev, files: pubInfo.files
+              });
+            });
+          });
+        });
+      });
+    });
+    return { ok: true, pending: true };
   }
 
   /* ── publish preview (no network writes) ────────────────────────────── */
@@ -1054,18 +1514,14 @@
       var w = ST.words[i] || {};
       rows += '<tr><td>' + (i + 1) + '</td><td>' + esc(w.w) + '</td><td>' + esc(w.p) + '</td><td class="word-si">' + esc(w.si) + '</td></tr>';
     }
-    host.innerHTML = '<table class="studio-preview-table"><thead><tr><th>#</th><th>w</th><th>IPA</th><th>සිංහල</th></tr></thead><tbody>' + rows + '</tbody></table>' +
-      '<p class="studio-msg">data/session.json · data/config.json · data/elevenlabs-audio.json · data/version.json · ' +
+    host.innerHTML = '<table class="studio-preview-table"><thead><tr><th>#</th><th>w</th><th>IPA</th><th>සිංහල</th></tr></thead><tbody>' + rows + '</tbody></table>' + '<p class="studio-msg">data/session.json · data/config.json · data/elevenlabs-audio.json · data/version.json · ' +
       ST.words.length + ' ' + esc(t('studioWordsCount')) + '</p>';
     return payloads;
   }
 
   /* ── publishing: sequential Contents API (D-S5) ─────────────────────── */
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 publishing */
-  /* D13/D19: the pre-publish checklist. Every problem is a plain-language
-     string; an empty array means the payload is coherent: words present and
-     spelled, pronunciation URLs preserved, the vault envelope carried, the
-     PIN verifier published, and syncRev strictly forward under ONE clock. */
+  /* D13/D19: the pre-publish checklist — empty array means coherent. */
   function publishChecklist(payloads) {
     var problems = [];
     var session = isObj(payloads.session) ? payloads.session : {};
@@ -1092,43 +1548,18 @@
     var token = str(ST.secrets.ghToken);
     if (!token) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_token')); return; }
     var payloads = buildPublishPayloads(currentWords(), {});
-    /* D19: the coherence checklist runs BEFORE anything is committed — a
-       broken payload is refused with a plain-language reason instead of being
-       pushed to thirty student devices. */
+        /* D19: refuse a broken payload before it reaches thirty devices. */
     var problems = publishChecklist(payloads);
     if (problems.length) {
       msg(t('studioPublishFail') + ' · ' + problems.join(' · '), 'bad');
       cb(new Error('checklist_failed'));
       return;
     }
-    var message = 'Smart Dictation publish ' + appVersion();
-    var files = [
-      { path: 'data/session.json', content: payloads.files['data/session.json'], message: message },
-      { path: 'data/config.json', content: payloads.files['data/config.json'], message: message }
-    ];
-    if (ST.voicePack.loaded && ST.voicePack.clips) {
-      files.push({ path: 'data/elevenlabs-audio.json', content: JSON.stringify(voicePackPayload(payloads.version.syncRev), null, 2), message: 'Alice voice pack ' + appVersion() });
-    }
-    files.push({ path: 'data/version.json', content: payloads.files['data/version.json'], message: message });
-    if (!sync() || !sync().publishFilesSequential) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_sync')); return; }
-    sync().publishFilesSequential(files, token, function (path, ok) {
-      if (!ok) msg(t('studioPublishFail') + ' · ' + path, 'bad');
-    }, function (err, info) {
+    return publishBundle(currentWords(), {}, function (err, info) {
       if (err) { cb(err, info); return; }
-      ST.lastPublish = { at: Date.now(), files: files.map(function (f) { return f.path; }), version: payloads.version };
       msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
-      /* SYNC-09: pushLiveState() posted an unauthenticated relay message that
-         gas-source.txt rejects with ADMIN_PIN — it failed silently forever. */
-      cb(null, ST.lastPublish);
+      cb(null, info);
     });
-  }
-
-  /* D-S9: the relay body never carries the lecturer PIN. */
-  function pushLiveState(version) {
-    var gasUrl = str(ST.secrets.gasUrl);
-    if (!gasUrl) return false;
-    var body = JSON.stringify({ action: 'publish', app: 'sdp', session: version.session, appVersion: version.appVersion, ver: appVersion() });
-    try { sync().postRelay(gasUrl, body, noop); return true; } catch (e) { return false; }
   }
 
   /* ══ D-C1..C7: credit-safe Alice voice pack ═══════════════════════════ */
@@ -1196,34 +1627,19 @@
     } catch (e) { cb(e || new Error('subscription_failed')); return false; }
     return true;
   }
-  function testElevenLabsKey(key, cb) {
+  function probeQuota(key, cb) {
     cb = cb || noop;
     fetchSubscription(key, function (err, result) {
-      if (err) { cb(err); return; }
-      var line = '✅ ElevenLabs Connected · Used ' + result.used + ' / Limit ' + result.limit + ' chars (Remaining: ' + result.remaining + ')';
-      testStatus(line, 'ok');
-      setText(byId('quotaText'), 'Used ' + result.used + ' / Limit ' + result.limit + ' chars · Remaining: ' + result.remaining);
-      cb(null, result);
-    });
-    return true;
-  }
-  function refreshQuota(cb) {
-    cb = cb || noop;
-    var key = str(ST.secrets.elevenKey) || fieldValue('elKeyInput');
-    fetchSubscription(key, function (err, result) {
-      if (err) {
-        setText(byId('quotaText'), '❌ ' + quotaError(err));
-        testStatus('❌ ' + quotaError(err), 'bad');
-        cb(err);
-        return;
-      }
+      if (err) { setText(byId('quotaText'), '❌ ' + quotaError(err)); testStatus('❌ ' + quotaError(err), 'bad'); cb(err); return; }
       var line = 'Used ' + result.used + ' / Limit ' + result.limit + ' chars · Remaining: ' + result.remaining;
       setText(byId('quotaText'), line);
-      testStatus('✅ ' + line, 'ok');
+      testStatus('✅ ElevenLabs Connected · ' + line, 'ok');
       cb(null, result);
     });
     return true;
   }
+  function testElevenLabsKey(key, cb) { return probeQuota(key, cb); }
+  function refreshQuota(cb) { return probeQuota(str(ST.secrets.elevenKey) || fieldValue('elKeyInput'), cb); }
   /** D-L3: accepts classic ghp_ tokens and fine-grained github_pat_ tokens. */
   function testGitHubToken(token, cb) {
     cb = cb || noop;
@@ -1265,20 +1681,20 @@
     if (typeof Buffer !== 'undefined') return Buffer.from(out, 'binary').toString('base64');
     return '';
   }
+  /* R2/D2: read the pack through the dual-source reader (stale CDN proof). */
   function loadVoicePack(cb) {
     cb = cb || noop;
-    if (ST.voicePack.loaded) { cb(null, ST.voicePack); return; }
-    if (typeof global.fetch !== 'function') { ST.voicePack.loaded = true; cb(new Error('no_fetch')); return; }
-    try {
-      global.fetch('./data/elevenlabs-audio.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (res) { return res && res.ok ? res.json() : null; })
-        .then(function (pack) {
-          if (isObj(pack) && isObj(pack.clips)) ST.voicePack.clips = pack.clips;
-          ST.voicePack.rev = Number((pack && pack.syncRev) || 0);
-          ST.voicePack.loaded = true;
-          cb(null, ST.voicePack);
-        }, function () { ST.voicePack.loaded = true; cb(new Error('pack_failed')); });
-    } catch (e) { ST.voicePack.loaded = true; cb(e); }
+    if (ST.voicePack.loaded) { cb(null, ST.voicePack); return true; }
+    SDP.Sync.fetchFreshDataJson('data/elevenlabs-audio.json', function (err, result) {
+      if (err || !result || !result.ok) { ST.voicePack.loaded = true; cb(err || new Error('pack_failed')); return; }
+      var pack = result.json;
+      if (isObj(pack) && isObj(pack.clips)) ST.voicePack.clips = pack.clips;
+      ST.voicePack.rev = Number((pack && pack.syncRev) || 0);
+      ST.voicePack.source = str(result.source);
+      ST.voicePack.loaded = true;
+      cb(null, ST.voicePack);
+    });
+    return true;
   }
   function clipExists(key) {
     var entry = ST.voicePack.clips ? ST.voicePack.clips[key] : null;
@@ -1309,7 +1725,6 @@
     else if (Array.isArray(a)) { opts = { words: a }; cb = typeof b === 'function' ? b : noop; }
     else { opts = isObj(a) ? a : {}; cb = typeof b === 'function' ? b : noop; }
     if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
-    /* SYNC-11: clipExists() is only honest once the committed pack is loaded. */
     if (!ST.voicePack.loaded) loadVoicePack(noop);
     var apiKey = str(ST.secrets.elevenKey) || fieldValue('elKeyInput');
     if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
@@ -1336,15 +1751,15 @@
       }
       msg(t('studioGenerate') + ' ✓ ' + made.length + ' · ' + skipped + ' skipped', 'ok');
       testStatus('✅ ' + made.length + ' new · ' + skipped + ' already cached', 'ok');
-      if (made.length) commitVoicePack();
+      /* W8: the one-click flow publishes ONE bundle — no second pack commit. */
+      if (made.length && !opts.noCommit) commitVoicePack();
       cb(null, { made: made, skipped: skipped, calls: calls });
     }
     function next() {
       if (index >= queue.length) { finish(null); return; }
       var item = queue[index];
       index += 1;
-      /* D-C2: Delta Mode — never pay twice for a clip that already exists. */
-      if (!force && clipExists(item.key)) { skipped += 1; next(); return; }
+      if (!force && clipExists(item.key)) { skipped += 1; next(); return; } /* D-C2 delta */
       calls += 1;
       requestClip(item, apiKey, function (err, entry) {
         if (err) { finish(err); return; }
@@ -1361,8 +1776,7 @@
           method: 'POST',
           headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
           body: JSON.stringify({
-            text: item.text,
-            model_id: VOICE_MODEL,
+            text: item.text, model_id: VOICE_MODEL,
             voice_settings: { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true }
           })
         }).then(function (res) {
@@ -1377,7 +1791,7 @@
           }
           return res.arrayBuffer ? res.arrayBuffer() : null;
         }).then(function (buffer) {
-          if (buffer === null) return; /* retrying */
+          if (buffer === null) return;
           if (!buffer) throw new Error('empty_audio');
           var b64 = arrayBufferToBase64(buffer);
           if (!b64) throw new Error('encode_failed');
@@ -1403,6 +1817,72 @@
     return true;
   }
 
+  /* D12: an interactive 30-row preview/editor, so a lecturer sees every field
+     before a word is published to thirty student phones. */
+  function wordManagerWords() {
+    var list = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
+    return Array.isArray(list) ? list.slice(0, WORD_CAP) : [];
+  }
+  function paintWordManager() {
+    var host = byId('studioWordManager');
+    if (!host) return false;
+    var list = wordManagerWords();
+    if (!list.length) { host.innerHTML = ''; return true; }
+    var cols = ['w', 'p', 'pos', 'm', 'si', 's'];
+    var rows = '', i, c;
+    for (i = 0; i < list.length; i++) {
+      var w = list[i] || {};
+      rows += '<tr data-word-row="' + i + '"><td class="wm-idx">' + (i + 1) + '</td>';
+      for (c = 0; c < cols.length; c++) {
+        rows += '<td><input class="input wm-input" data-wm="' + cols[c] + '" data-row="' + i +
+          '" value="' + esc(str(w[cols[c]])) + '"></td>';
+      }
+      rows += '</tr>';
+    }
+    host.innerHTML = '<div class="table-wrap"><table class="studio-preview-table studio-word-table"><thead><tr>' + '<th>#</th><th>w</th><th>p</th><th>pos</th><th>m</th><th>si</th><th>s</th></tr></thead><tbody>' +
+      rows + '</tbody></table></div><p class="muted">' + esc(t('studioWordManager')) + ' · ' +
+      list.length + ' ' + esc(t('studioWordsCount')) + '</p>';
+    return true;
+  }
+  /* Bulk paste: newline or comma separated → the full 30-word textarea. */
+  function parseBulkWords(text) {
+    var parts = str(text).split(/[\n,;]+/);
+    var out = [], seen = {}, i;
+    for (i = 0; i < parts.length; i++) {
+      var line = str(parts[i]).replace(/^\s+|\s+$/g, '');
+      if (!line) continue;
+      var cols = line.indexOf('|') >= 0 ? line.split('|') : [line];
+      var word = str(cols[0]).replace(/^\s+|\s+$/g, '');
+      if (!word) continue;
+      var key = word.toLowerCase();
+      if (seen[key]) continue;
+      seen[key] = true;
+      out.push({
+        w: word, p: str(cols[1] || '').replace(/^\s+|\s+$/g, ''),
+        pos: str(cols[2] || '').replace(/^\s+|\s+$/g, ''),
+        m: str(cols[3] || '').replace(/^\s+|\s+$/g, ''),
+        si: str(cols[4] || '').replace(/^\s+|\s+$/g, ''),
+        s: str(cols[5] || '').replace(/^\s+|\s+$/g, '')
+      });
+      if (out.length >= WORD_CAP) break;
+    }
+    return out;
+  }
+  function setStudioWords(list, source) {
+    ST.words = (Array.isArray(list) ? list : []).slice(0, WORD_CAP);
+    var editor = byId('studioWords');
+    if (editor) editor.value = wordsToText(ST.words);
+    var bulk = byId('studioBulkWords');
+    if (bulk && source !== 'bulk') {
+      var names = [], i;
+      for (i = 0; i < ST.words.length; i++) names.push(str(ST.words[i].w));
+      bulk.value = names.join('\n');
+    }
+    setText(byId('studioCount'), ST.words.length + ' ' + t('studioWordsCount'));
+    setText(byId('costPreviewLine'), costPreviewLine(ST.words));
+    paintWordManager();
+    return ST.words;
+  }
   function paintClipTable() {
     var host = byId('clipPreviewTable');
     if (!host) return false;
@@ -1477,7 +1957,7 @@
           var b64 = raw.indexOf(',') >= 0 ? raw.slice(raw.indexOf(',') + 1) : raw;
           ST.pendingClip = { path: path, base64: b64, word: str(word.w) };
           var preview = byId('recPreviewAudio');
-          if (preview && typeof global.URL !== 'undefined' && global.URL.createObjectURL) {
+          if (preview && global.URL && global.URL.createObjectURL) {
             try { preview.src = global.URL.createObjectURL(blob); } catch (e) {}
           }
           msg(t('studioRecord') + ' ✓ ' + path, 'ok');
@@ -1547,6 +2027,23 @@
     generateClips: generateClips,
     commitVoicePack: commitVoicePack,
     costPreview: costPreview,
+    enrichWords: enrichWords,
+    testAiEngine: testAiEngine,
+    oneClickMasterSetup: oneClickMasterSetup,
+    publishWordsAndVoice: publishWordsAndVoice,
+    publishBundle: publishBundle,
+    sealVaultNow: sealVaultNow,
+    parseBulkWords: parseBulkWords,
+    setStudioWords: setStudioWords,
+    paintWordManager: paintWordManager,
+    paintMasterSteps: paintMasterSteps,
+    aiProviderName: aiProviderName,
+    aiProviderKey: aiProviderKey,
+    detectProvider: detectProvider,
+    providers: AI_PROVIDERS,
+    bootstrapPin: BOOTSTRAP_PIN,
+    bindAutoLock: bindAutoLock,
+    pinDotCount: pinDotCount,
     costPreviewLine: costPreviewLine,
     guideSteps: guideSteps,
     loadVoicePack: loadVoicePack,

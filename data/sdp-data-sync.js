@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.e)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.f)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,19 +6,20 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.e';
+  SDP.version = '0.0.1.f';
   SDP.build = '2026-11-02';
-  SDP.ver = 5;
+  SDP.ver = 6;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.e';
-  var SCHEMA = 5;
-  var SETTINGS_REV = 5;
+  var APP_VERSION = '0.0.1.f';
+  var SCHEMA = 6;
+  var SETTINGS_REV = 6;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
-  /* D5 guard: visibilitychange is registered at most once per module load. */
+  /* D5 guard: visibilitychange / focus are registered at most once per load. */
   var watchVisBound = false;
+  var watchFocusBound = false;
 
   /* ── helpers ─────────────────────────────────────────────────────────── */
   function noop() {}
@@ -56,11 +57,12 @@
      localStorage law stays 100% intact (W7). */
   function defaultSettings() {
     return {
-      mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
+      mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 1.5, autoAdvance: true,
       voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'dark',
-      guideAutoPlay: true, pacingPreset: 'standard', voiceLock: 'unified',
+      guideAutoPlay: true, pacingPreset: 'exam', voiceLock: 'unified',
       hints: { pos: true, first: false, si: false, sentence: false },
       appliedSettingsRev: 0,
+      defaultsResetV001f: false,
       vaultLock: { fails: 0, lockUntil: 0, strikes: 0 }
     };
   }
@@ -141,8 +143,10 @@
     settings: function () {
       var s = mergeSettings(defaultSettings(), readJSON(KEYS.settings, {}));
       if (s.mode !== 'paper' && s.mode !== 'typing') s.mode = 'paper';
-      s.writeSecs = Math.min(20, Math.max(3, Number(s.writeSecs) || 8));
-      s.repeats = Math.min(5, Math.max(1, Number(s.repeats) || 3));
+      /* R3 / D9: writeSecs is the classroom writing window; older payloads
+         named the same field intervalSec, so both are accepted (5 s default). */
+      s.writeSecs = Math.min(20, Math.max(3, Number(s.writeSecs || s.intervalSec) || 5));
+      s.repeats = Math.min(5, Math.max(1, Number(s.repeats) || 2));
       s.pauseSecs = Math.min(3, Math.max(0.5, Number(s.pauseSecs) || 1.5));
       s.rate = Math.min(1.2, Math.max(0.7, Number(s.rate) || 0.95));
       s.volume = Math.min(1, Math.max(0, isNaN(Number(s.volume)) ? 1 : Number(s.volume)));
@@ -154,6 +158,25 @@
       if (s.langResetV001e !== true) {
         s.lang = 'en';
         s.langResetV001e = true;
+        writeJSON(KEYS.settings, s);
+      }
+      /* R3 / D9: the one-time v0.0.1.f classroom-defaults migration. Every
+         device that upgraded from 0.0.1.e wakes up on the agreed classroom
+         pacing — EN · Fast Exam · 5 s write · 2 repeats · Unified British
+         voice — exactly once. The flag lives INSIDE sdp.settings, so the
+         five-key localStorage law (W4) is never broken by a sixth key. */
+      if (s.defaultsResetV001f !== true) {
+        s.lang = 'en';
+        s.pacingPreset = 'exam';
+        s.writeSecs = 5;
+        s.repeats = 2;
+        s.voiceLock = 'unified';
+        s.defaultsResetV001f = true;
+        if (!isObj(s.touchedKeys)) s.touchedKeys = {};
+        delete s.touchedKeys.pacingPreset;
+        delete s.touchedKeys.writeSecs;
+        delete s.touchedKeys.repeats;
+        delete s.touchedKeys.voiceLock;
         writeJSON(KEYS.settings, s);
       }
       /* D-UI3: 'board' is a real theme, not a typo for 'dark'. */
@@ -662,6 +685,105 @@
   var booted = false;
   var liveTimer = null;
 
+  /* ══ D1 / D2: verified payload adoption (v0.0.1.f) ════════════════════
+   * A fetched payload is only usable for a sync tick when it proves it was
+   * built for the pointer we are adopting: its own syncRev must be >= the
+   * winning version.json syncRev. The checked-in data/session.json is a
+   * preserved classroom payload whose own syncRev predates the pointer, so a
+   * session is also accepted when it is the SAME session number as the winner
+   * and still carries a full 30-word baseline. Anything else is stale. */
+  function payloadWords(payload) {
+    if (!isObj(payload)) return [];
+    var lists = payload.lists, words = [], i;
+    if (Array.isArray(lists)) {
+      for (i = 0; i < lists.length; i++) {
+        var list = lists[i] || {};
+        if (list.active && Array.isArray(list.words) && list.words.length) { words = list.words; break; }
+      }
+      if (!words.length) {
+        for (i = 0; i < lists.length; i++) {
+          if (isObj(lists[i]) && Array.isArray(lists[i].words) && lists[i].words.length) { words = lists[i].words; break; }
+        }
+      }
+    }
+    if (!words.length && Array.isArray(payload.words)) words = payload.words;
+    return words;
+  }
+  function payloadSessionNo(payload) {
+    if (!isObj(payload)) return '';
+    if (isObj(payload.session) && payload.session.no !== undefined) return str(payload.session.no);
+    return str(payload.session || payload.sessionNo || '');
+  }
+  function verifyPayloadLeg(payload, kind, targetSyncRev, remoteVersion) {
+    if (!isObj(payload)) return false;
+    var target = Number(targetSyncRev) || 0;
+    var rev = Number(payload.syncRev);
+    if (!isNaN(rev) && rev >= target) return true;
+    if (kind !== 'session') return false;
+    /* Preserved baseline session: same classroom session, full word bank. */
+    var words = payloadWords(payload);
+    if (words.length < 30) return false;
+    var want = isObj(remoteVersion) ? str(remoteVersion.session) : '';
+    var have = payloadSessionNo(payload);
+    if (want && have && want !== have) return false;
+    return true;
+  }
+  /* D2: one reader for both sources. Same-origin Pages CDN (6 s) and the
+   * raw.githubusercontent.com edge (5 s) race in parallel; the payload with the
+   * higher syncRev wins and raw breaks a tie. Never a mixed pair. */
+  function fetchFreshDataJson(relPath, cb) {
+    cb = cb || noop;
+    var path = str(relPath).replace(/^\.?\/+/, '');
+    var pending = 2, settled = false, origin = null, originErr = null, raw = null, rawErr = null;
+    function finish() {
+      if (settled) return;
+      pending -= 1;
+      if (pending > 0) return;
+      settled = true;
+      var originOk = !!origin, rawOk = !!raw;
+      if (!originOk && !rawOk) { cb(originErr || rawErr || new Error('no_data')); return; }
+      var oRev = originOk ? (Number(origin.syncRev) || 0) : -1;
+      var rRev = rawOk ? (Number(raw.syncRev) || 0) : -1;
+      var useRaw = rawOk && (!originOk || rRev > oRev || (rRev === oRev && rRev > 0));
+      cb(null, { ok: true, json: useRaw ? raw : origin, source: useRaw ? 'raw' : 'origin' });
+    }
+    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
+    fetchJSON('./' + path, function (err, data) {
+      if (!err && isObj(data)) origin = data; else originErr = err || new Error('bad_response');
+      finish();
+    });
+    Sync.fetchRawMainJson(path, function (err, data) {
+      if (!err && isObj(data)) raw = data; else rawErr = err || new Error('raw_failed');
+      finish();
+    });
+    return true;
+  }
+  /* D3 / D4 / D5: the adoption chain is one function so no caller can adopt
+   * payloads without reloading the voice manifest and repainting every view.
+   * While a beat is live the chain is deferred to the end of that beat, so a
+   * remote settings bump never cuts a word off mid-speech. */
+  var deferredRefresh = [];
+  function engineActive() {
+    try { return !!(SDP.Engine && SDP.Engine.isActive && SDP.Engine.isActive()); } catch (e) { return false; }
+  }
+  function runRefreshChain() {
+    try { if (SDP.Speech && SDP.Speech.reloadManifest) SDP.Speech.reloadManifest(noop); } catch (e) {}
+    try { if (SDP.Views && SDP.Views.renderAll) SDP.Views.renderAll(); } catch (e) {}
+    return true;
+  }
+  function adoptionChain() {
+    if (engineActive()) { deferredRefresh.push(runRefreshChain); return 'deferred'; }
+    runRefreshChain();
+    return 'applied';
+  }
+  function flushDeferredRefresh() {
+    if (!deferredRefresh.length) return 0;
+    var queue = deferredRefresh.slice();
+    deferredRefresh = [];
+    for (var i = 0; i < queue.length; i++) { try { queue[i](); } catch (e) {} }
+    return queue.length;
+  }
+
   function listen(cb) {
     if (typeof cb !== 'function') return noop;
     listeners.push(cb);
@@ -875,10 +997,15 @@
     },
 
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 instant propagation */
-    /* R1 Never-Red law (D1/D5): if EITHER the same-origin CDN copy or the
-       opportunistic raw.githubusercontent.com enhancer answers 200, the check
-       is ok:true — Brave Shields, CORS blocks and timeouts are non-fatal.
-       ok:false only when BOTH fail; students never poll api.github.com. */
+    /* R1 Verified Payload Adoption (D1/D2): whatever source wins the
+       version.json clock race, every payload leg must PROVE it belongs to that
+       pointer (Number(json.syncRev) >= targetSyncRev, or the preserved 30-word
+       baseline session). A leg that fails, times out or comes back stale is
+       retried once against the other source (raw <-> origin); if it still
+       cannot deliver, state.version is NOT advanced, so the next watch tick
+       retries cleanly instead of silently skipping a published update.
+       The Never-Red law still holds: ok:false only when both version sources
+       fail — Brave Shields, CORS blocks and timeouts are non-fatal. */
     checkForUpdates: function (cb) {
       cb = cb || noop;
       if (typeof global.fetch !== 'function') { cb(null, { ok: false, error: 'no_fetch', changed: false }); return; }
@@ -911,64 +1038,105 @@
         var sessionChanged = str(remote.session) !== str(local.session);
         var settingsChanged = Number(remote.settingsRev || 0) !== Number(local.settingsRev || 0);
         var newer = Number(remote.syncRev || 0) > Number(local.syncRev || 0);
+        var targetSyncRev = Number(remote.syncRev || 0);
         /* SYNC-04 / D17: share one parser for the remote app version. */
         var remoteAppVer = parseRemoteAppVer(remote);
         var appChanged = !!remoteAppVer && remoteAppVer !== APP_VERSION;
         state.lastCheck = nowMs();
-        state.lastCheckSource = useRaw ? 'raw' : 'cdn';
+        var primarySource = useRaw ? 'raw' : 'origin';
+        state.lastCheckSource = primarySource;
         result.session = str(remote.session);
         result.appVersion = str(remote.appVersion || remoteAppVer);
         result.appVersionChanged = appChanged;
         if (!sessionChanged && !settingsChanged && !newer && !appChanged) {
-          cb(null, { ok: true, error: null, changed: false, updated: false, session: result.session, appVersion: result.appVersion, source: state.lastCheckSource });
+          cb(null, { ok: true, error: null, changed: false, updated: false, session: result.session, appVersion: result.appVersion, source: primarySource });
           return;
         }
-        if (appChanged && sessionStorage.getItem('sdp_upgraded_to') !== remoteAppVer) {
-          appVersionChanged = true;
-          Sync.triggerVersionUpgrade(remoteAppVer);
+        if (appChanged) {
+          var already = '';
+          try { already = sessionStorage.getItem('sdp_upgraded_to') || ''; } catch (e) { already = ''; }
+          if (already !== remoteAppVer) {
+            appVersionChanged = true;
+            Sync.triggerVersionUpgrade(remoteAppVer);
+          }
         }
         /* D-S7: an envelope published a second ago must not be missed because
-           the CDN still serves yesterday's config.json. */
+           the CDN still serves yesterday's config.json — so a stale leg is
+           retried against the other source instead of being accepted. */
         var needSession = sessionChanged || newer;
         var needConfig = settingsChanged || newer || !state.config;
         var waiting = (needSession ? 1 : 0) + (needConfig ? 1 : 0) + 1;
         var got = { version: remote, session: null, config: null };
-        /* D-S7: always pull from the same source the winning version came from,
-           so a brand-new encVault is never mixed with a stale CDN session. */
-        function pull(path, assign) {
-          if (useRaw) {
-            Sync.fetchRawMainJson(path, function (err, data) {
-              if (!err && data) assign(data);
-              settle();
+        var failedLegs = [];
+        var usedSources = {};
+        function fetchLeg(source, path, done) {
+          if (source === 'raw') { Sync.fetchRawMainJson(path, done); return; }
+          fetchJSON('./' + path, done);
+        }
+        function pullVerified(path, kind, assign, done) {
+          var alternate = primarySource === 'raw' ? 'origin' : 'raw';
+          function attempt(source, retried) {
+            fetchLeg(source, path, function (err, data) {
+              if (!err && verifyPayloadLeg(data, kind, targetSyncRev, remote)) {
+                assign(data);
+                usedSources[kind] = source;
+                done(true);
+                return;
+              }
+              if (!retried) { attempt(alternate, true); return; }
+              done(false);
             });
-            return;
           }
-          fetchJSON('./' + path, function (err, data) {
-            if (!err && data) assign(data);
-            settle();
-          });
+          attempt(primarySource, false);
         }
         function settle() {
           waiting -= 1;
           if (waiting > 0) return;
+          if (failedLegs.length) {
+            /* D1: never advance the pointer past an undelivered payload. The
+               previous version stays, so the next tick retries this publish. */
+            state.lastCheckSource = primarySource;
+            cb(null, {
+              ok: true, error: 'stale_payload', changed: false, updated: false, deferred: true,
+              retry: failedLegs.slice(), session: str(local.session),
+              appVersion: result.appVersion, source: primarySource
+            });
+            return;
+          }
           applyPayloads(got.version, got.config, got.session);
-          notify('update', {
+          /* R7: the full chain, in one place. */
+          try { adoptRemoteSettings(got.config, Number(remote.settingsRev || 0)); } catch (e) {}
+          var chainState = adoptionChain();
+          var detail = {
             session: state.sessionNo, sessionChanged: sessionChanged,
             settingsChanged: settingsChanged, syncRev: remote.syncRev,
-            appVersionChanged: appChanged, source: state.lastCheckSource
-          });
+            appVersionChanged: appChanged, source: primarySource,
+            payloadSources: usedSources, chain: chainState
+          };
+          notify('update', detail);
           /* Student progress is never touched here (G8). */
           cb(null, {
             ok: true, error: null, changed: true, updated: true, session: state.sessionNo,
             sessionChanged: sessionChanged, settingsRev: remote.settingsRev,
-            appVersionChanged: appChanged, source: state.lastCheckSource
+            appVersionChanged: appChanged, source: primarySource,
+            payloadSources: usedSources, chain: chainState
           });
         }
-        if (needSession) pull('data/session.json', function (d) { got.session = d; });
-        if (needConfig) pull('data/config.json', function (d) { got.config = d; });
+        if (needSession) pullVerified('data/session.json', 'session', function (d) { got.session = d; }, function (ok) { if (!ok) failedLegs.push('data/session.json'); settle(); });
+        if (needConfig) pullVerified('data/config.json', 'config', function (d) { got.config = d; }, function (ok) { if (!ok) failedLegs.push('data/config.json'); settle(); });
         settle();
       }
     },
+
+    /* D2: the shared dual-source reader, used by the watcher, SDP.Speech's
+       manifest loader and the Studio voice pack loader. */
+    fetchFreshDataJson: fetchFreshDataJson,
+    verifyPayloadLeg: verifyPayloadLeg,
+    adoptionChain: adoptionChain,
+    /* Called by the engine at the end of every beat / on pause / on finish so
+       a deferred adoption lands exactly between words, never mid-word. */
+    flushDeferred: flushDeferredRefresh,
+    deferredCount: function () { return deferredRefresh.length; },
 
     /* D1: in-session version upgrade — honest badge, toast, cache purge,
        single reload, then the boot guard stops a second one. */
@@ -997,18 +1165,27 @@
       return true;
     },
 
-    /* SYNC-05 + D16: one cheap raw.githubusercontent.com read every 30 s; the
-       full reconciliation happens on a real pointer move or badge tap. */
+    /* SYNC-05 + D5: one cheap raw.githubusercontent.com read every 25 s; the
+       full reconciliation happens on a real pointer move or badge tap. A
+       returning tab or a regained window focus re-checks immediately, so a
+       board that slept through the lunch break catches up in one tick. */
     startWatch: function (ms) {
       Sync.stopWatch();
       liveTimer = global.setInterval(function () {
         if (doc && doc.visibilityState === 'hidden') return;
         Sync.checkForUpdates(Sync.handleWatchResult);
-      }, ms || 30000);
+      }, ms || 25000);
       if (doc && doc.addEventListener && !watchVisBound) {
         watchVisBound = true;
         doc.addEventListener('visibilitychange', function () {
           if (doc.visibilityState === 'visible') Sync.checkForUpdates(Sync.handleWatchResult);
+        }, false);
+      }
+      /* D5: window focus joins visibilitychange — bound exactly once. */
+      if (global.addEventListener && !watchFocusBound) {
+        watchFocusBound = true;
+        global.addEventListener('focus', function () {
+          Sync.checkForUpdates(Sync.handleWatchResult);
         }, false);
       }
     },

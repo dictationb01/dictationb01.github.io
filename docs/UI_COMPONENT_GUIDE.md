@@ -369,3 +369,59 @@ four short British-English lines played through the shared `<audio>` element
 
 `.lang-on`/`.lang-off` weight and the active side's accent + underline are
 driven by `body[data-lang]`; `#setLang option[value=en]` is bold.
+
+## §6 — v0.0.1.f components
+
+### §6.1 Studio: three outcome cards under one lock header
+
+`#studioBody` renders exactly one of two trees.
+
+Locked (R5): `#studioPin` (`maxlength="12"`, `minlength="4"`, `inputmode="numeric"`),
+`#pinDots` (12 spans, `data-dots` = `min(12, max(8, len))`, `.pin-dot-off` for the
+spare dots), the 56 px `#pinPad` (1–9, Clear, 0, Unlock), `#pinPadBack`, the status line
+and the "ask your lecturer" hint. No key field, no word editor, no publish control may
+exist in this tree.
+
+Unlocked: a `.studio-head` row with the title and `#btnLockStudio`, then
+
+1. `#studioCardKeys` — `#elKeyInput` (+ Show/Paste/Test), `#ghTokenInput` (+ Show/Paste/
+   Test), `#studioGasUrl`, `#studioAiProvider`, `#studioAiKey`, `#btnSaveKeys`,
+   `#btnCheckQuota`/`#btnRefreshQuota`, `#btnTestOneWord`, `#btnGenClips`,
+   `#studioForceRegen` (+ hidden `#chkForceRegen` mirror), `#btnOneClickMasterSetup`,
+   `#studioMasterSteps`, `#quotaInspectorCard` with `#quotaText` and
+   `#costPreviewLine`, `#clipPreviewTable`;
+2. `#studioCardWords` — `#studioBulkWords` (names only), `#studioWords` (`w|p|pos|m|si|s`
+   per line), `#studioCount`, `#btnEnrichWords`, `#btnPreviewWords`, `#btnPublishWords`,
+   `#btnPublishWordsAndVoice`, `#studioWordManager` (30 rows × 6 editable cells keyed
+   `data-wm="w|p|pos|m|si|s"`), `#studioPreview`;
+3. `#studioCardSettings` — `#studioNewPin` + `#studioConfirmPin` (both 4–12 digits),
+   `#btnStudioSyncSettings` (publishes the ten classroom keys with a bumped
+   `settingsRev`), the lecturer recorder (`#btnStudioRecord`, `#btnCommitClip`,
+   `#recPreviewAudio`).
+
+### §6.2 One-click master setup
+
+`#btnOneClickMasterSetup` ("One-Click Master Setup — Fix Everything") drives four
+`li[data-state]` rows in `#studioMasterSteps`: idle → active → done (or `bad`):
+
+1. verify the ElevenLabs key **and** the GitHub token;
+2. save the encrypted vault and recompute `config.pinVerifier`;
+3. delta-generate `_guide_1.._guide_4` + the 30 word clips (Alice);
+4. publish all four JSON files on one `syncRev`, `version.json` last.
+
+### §6.3 Cockpit and Home affordances
+
+* `#playerRepeatBadge` — `Repeat <n> / <total>` while a beat is live.
+* `#playerPausedBanner` — `Paused — resume word #k of 30`; `#btnPlayPause` relabels to
+  `Resume Dictation (Word #k)`.
+* `#homePresetBadge` — `Fast Exam · 5s · 2× · British English`, repainted from settings.
+* `#btnResumeDraft` inside `#resumeBanner` — `Resume Paused Dictation (Word #k/30)`.
+* `#guideAutoplayBanner` — 900 ms cold-boot affordance, `🔊 Tap Anywhere to Start Voice
+  Guide` / `🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න`; hidden the moment
+  `Speech.hasStarted()` or a real audio element is playing.
+
+### §6.4 Language law
+
+Every new string ships in `STRINGS_EN` and `STRINGS_SI` with identical keys; Sinhala
+text may only appear inside `.word-si` (word data) and the Sinhala string table. The
+credit pill `CREDITS GOES TO Hansana` and both credit lines are untouched.

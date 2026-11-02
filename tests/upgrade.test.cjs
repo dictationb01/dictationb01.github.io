@@ -64,38 +64,39 @@ function bootSync(seed) {
 }
 
 /* ── R1 ─────────────────────────────────────────────────────────────────── */
-test('R1: app, schema and service-worker constants are all 0.0.1.e', () => {
+test('R1: app, schema and service-worker constants are all 0.0.1.f', () => {
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R1 version & cache constants
   const { SDP } = bootSync();
-  assert.equal(SDP.version, '0.0.1.e');
+  assert.equal(SDP.version, '0.0.1.f');
   assert.equal(SDP.build, '2026-11-02');
-  assert.equal(SDP.ver, 5);
+  assert.equal(SDP.ver, 6);
   assert.equal(SDP.SDPCore, undefined); // alias lives on window, not inside SDP
   assert.equal(SDP.Sync.Vault.PREFIX, 'SDP_ENC_V2:');
   assert.equal(SDP.Sync.Vault.ITERATIONS, 250000);
 
   const version = readJSON('data/version.json');
-  assert.equal(version.ver, 5);
-  assert.equal(version.appVersion, '0.0.1.e');
-  assert.equal(version.version, '0.0.1.e');
-  assert.equal(version.schema, 5);
-  assert.equal(version.settingsRev, 5);
+  assert.equal(version.ver, 6);
+  assert.equal(version.appVersion, '0.0.1.f');
+  assert.equal(version.version, '0.0.1.f');
+  assert.equal(version.schema, 6);
+  assert.equal(version.settingsRev, 6);
+  assert.equal(Number(version.syncRev), 1793590000000);
   assert.equal(String(version.session), '8');
 
   const cfg = readJSON('data/config.json');
-  assert.equal(cfg.ver, 5);
-  assert.equal(cfg.appVersion, '0.0.1.e');
-  assert.equal(cfg.version, '0.0.1.e');
-  assert.equal(cfg.schema, 5);
-  assert.equal(cfg.settingsRev, 5);
+  assert.equal(cfg.ver, 6);
+  assert.equal(cfg.appVersion, '0.0.1.f');
+  assert.equal(cfg.version, '0.0.1.f');
+  assert.equal(cfg.schema, 6);
+  assert.equal(cfg.settingsRev, 6);
   assert.equal(cfg.encVault, 'SDP_ENC_V2:AAA=');
 
   const sw = read('sw.js');
-  assert.match(sw, /SW_VERSION = 'sdp-v0\.0\.1\.e'/);
-  assert.match(sw, /SHELL_CACHE = 'sdp-v0\.0\.1\.e-shell'/);
+  assert.match(sw, /SW_VERSION = 'sdp-v0\.0\.1\.f'/);
+  assert.match(sw, /SHELL_CACHE = 'sdp-v0\.0\.1\.f-shell'/);
   assert.match(sw, /PRESERVE_CACHES = \['sdp-youdao-v1', 'sdp-audio-clips'\]/);
   const index = read('index.html');
-  assert.match(index, /var TARGET = '0\.0\.1\.e'/);
+  assert.match(index, /var TARGET = '0\.0\.1\.f'/);
 });
 
 test('R1: the five localStorage keys and the settings default shape are exact', () => {
@@ -111,9 +112,10 @@ test('R1: the five localStorage keys and the settings default shape are exact', 
   // never clobber a field the student changed by hand).
   const defaults = SDP.Data.settings();
   assert.deepEqual(Object.keys(defaults).sort(), [
-    'appliedSettingsRev', 'autoAdvance', 'guideAutoPlay', 'hints', 'lang',
-    'langResetV001e', 'mode', 'pacingPreset', 'pauseSecs', 'rate', 'repeats',
-    'theme', 'touchedKeys', 'vaultLock', 'voiceLock', 'voiceSource', 'volume', 'writeSecs'
+    'appliedSettingsRev', 'autoAdvance', 'defaultsResetV001f', 'guideAutoPlay',
+    'hints', 'lang', 'langResetV001e', 'mode', 'pacingPreset', 'pauseSecs', 'rate',
+    'repeats', 'theme', 'touchedKeys', 'vaultLock', 'voiceLock', 'voiceSource',
+    'volume', 'writeSecs'
   ]);
   // D7: the one-time British English migration has run by the time settings()
   // first returns, and it lives INSIDE sdp.settings (never a sixth key).
@@ -124,8 +126,13 @@ test('R1: the five localStorage keys and the settings default shape are exact', 
   assert.deepEqual(defaults.vaultLock, { fails: 0, lockUntil: 0, strikes: 0 });
   assert.deepEqual(defaults.touchedKeys, {}, 'touchedKeys starts as an empty field map');
   assert.equal(defaults.mode, 'paper');
-  assert.equal(defaults.writeSecs, 8);
-  assert.equal(defaults.repeats, 3);
+  /* R3: the classroom defaults are EN · Fast Exam · 5 s · 2x · Unified voice. */
+  assert.equal(defaults.writeSecs, 5);
+  assert.equal(defaults.repeats, 2);
+  assert.equal(defaults.pacingPreset, 'exam');
+  assert.equal(defaults.voiceLock, 'unified');
+  assert.equal(defaults.voiceSource, 'auto');
+  assert.equal(defaults.defaultsResetV001f, true, 'the 0.0.1.f migration runs on first read');
   assert.equal(defaults.pauseSecs, 1.5);
   assert.equal(defaults.rate, 0.95);
   assert.equal(defaults.volume, 1);
@@ -144,18 +151,18 @@ test('R5: SDP_ENC_V2 round-trips a UTF-8 JSON payload with a fresh salt every ti
   const { SDP } = bootSync();
   const vault = SDP.Sync.Vault;
   const secret = { elevenKey: 'sk_test_123', ghToken: 'ghp_demo', note: 'සිංහල ✓' };
-  const first = await vault.encryptV2(secret, '246813');
-  const second = await vault.encryptV2(secret, '246813');
+  const first = await vault.encryptV2(secret, '78987898');
+  const second = await vault.encryptV2(secret, '78987898');
   assert.ok(first.startsWith('SDP_ENC_V2:'));
   assert.not_equal !== undefined; // keep linters calm about assert helpers
   assert.ok(first !== second, 'salt and IV must be random per envelope');
   const decoded = Buffer.from(first.slice('SDP_ENC_V2:'.length), 'base64');
   assert.ok(decoded.length >= 16 + 12 + 16, 'salt(16) + iv(12) + tag(16) at minimum');
-  assert.deepEqual(await vault.decryptV2(first, '246813'), secret);
-  assert.deepEqual(await vault.decryptV2(second, '246813'), secret);
+  assert.deepEqual(await vault.decryptV2(first, '78987898'), secret);
+  assert.deepEqual(await vault.decryptV2(second, '78987898'), secret);
   // a tampered ciphertext must not decrypt
   const broken = first.slice(0, 30) + (first.charAt(30) === 'A' ? 'B' : 'A') + first.slice(31);
-  await assert.rejects(() => vault.decryptV2(broken, '246813'));
+  await assert.rejects(() => vault.decryptV2(broken, '78987898'));
 });
 
 test('R5: the empty placeholder is an unconfigured vault, not an error', async () => {
@@ -164,8 +171,8 @@ test('R5: the empty placeholder is an unconfigured vault, not an error', async (
   const vault = SDP.Sync.Vault;
   assert.equal(vault.isEmptyEnvelope('SDP_ENC_V2:AAA='), true);
   assert.equal(vault.isEmptyEnvelope(''), true);
-  assert.deepEqual(await vault.decryptV2('SDP_ENC_V2:AAA=', '246813'), { empty: true });
-  assert.equal(vault.isEmptyEnvelope(await vault.encryptV2({ a: 1 }, '246813')), false);
+  assert.deepEqual(await vault.decryptV2('SDP_ENC_V2:AAA=', '78987898'), { empty: true });
+  assert.equal(vault.isEmptyEnvelope(await vault.encryptV2({ a: 1 }, '78987898')), false);
 });
 
 test('R5: five wrong PINs lock the vault for 60 seconds and a good PIN is still refused', async () => {
@@ -173,7 +180,7 @@ test('R5: five wrong PINs lock the vault for 60 seconds and a good PIN is still 
   const { SDP } = bootSync();
   const vault = SDP.Sync.Vault;
   vault.resetLock();
-  const envelope = await vault.encryptV2({ ghToken: 'ghp_x' }, '246813');
+  const envelope = await vault.encryptV2({ ghToken: 'ghp_x' }, '78987898');
   for (let i = 0; i < 4; i++) {
     await assert.rejects(() => vault.decryptV2(envelope, '000000'), (err) => {
       assert.equal(err.code, 'bad_pin');
@@ -184,9 +191,9 @@ test('R5: five wrong PINs lock the vault for 60 seconds and a good PIN is still 
   await assert.rejects(() => vault.decryptV2(envelope, '000000'), (err) => err.code === 'locked');
   assert.equal(vault.isLocked(), true);
   assert.ok(vault.lockRemaining() > 0 && vault.lockRemaining() <= 60);
-  await assert.rejects(() => vault.decryptV2(envelope, '246813'), (err) => err.code === 'locked');
+  await assert.rejects(() => vault.decryptV2(envelope, '78987898'), (err) => err.code === 'locked');
   vault.resetLock();
-  assert.deepEqual(await vault.decryptV2(envelope, '246813'), { ghToken: 'ghp_x' });
+  assert.deepEqual(await vault.decryptV2(envelope, '78987898'), { ghToken: 'ghp_x' });
 });
 
 /* ── R4 legacy migration ────────────────────────────────────────────────── */
@@ -233,7 +240,7 @@ test('R4: corrupt stored JSON resets to defaults instead of throwing', () => {
   assert.equal(progress.streak.count, 0);
   const settings = SDP.Data.settings();
   assert.equal(settings.mode, 'paper');
-  assert.equal(settings.writeSecs, 8);
+  assert.equal(settings.writeSecs, 5);
 });
 
 /* ── R2 reconciliation ──────────────────────────────────────────────────── */
@@ -249,15 +256,18 @@ test('R2: checkForUpdates detects a session and settingsRev bump and never touch
   SDP.Data.saveProgress({ mastered: { afraid: true }, attempts: {}, weakWords: ['cruel'], streak: { count: 3, lastDate: '2026-10-30' }, history: [], lastScore: null });
   const before = localStorage.getItem('sdp.progress');
 
-  const bumped = Object.assign({}, version, { settingsRev: 2, syncRev: version.syncRev + 1 });
+  const rev = version.syncRev + 1;
+  const bumped = Object.assign({}, version, { settingsRev: 2, syncRev: rev });
+  const newConfig = Object.assign({}, config, { syncRev: rev });
   const newSession = JSON.parse(JSON.stringify(session));
+  newSession.syncRev = rev;
   newSession.lists[0].words[0].w = 'adaptable';
   newSession.lists[0].words[0].audio = '';
   newSession.lists[0].words[0].p = 'əˈdæp.tə.bəl';
   const files = {
     'data/version.json': JSON.stringify(bumped),
     'data/session.json': JSON.stringify(newSession),
-    'data/config.json': JSON.stringify(config)
+    'data/config.json': JSON.stringify(newConfig)
   };
   setFetch((url) => {
     const clean = String(url).split('?')[0].replace(/^\.\//, '');
@@ -278,6 +288,72 @@ test('R2: checkForUpdates detects a session and settingsRev bump and never touch
   // a second check with identical files reports no update
   const second = await new Promise((resolve) => SDP.Sync.checkForUpdates((err, result) => resolve(result)));
   assert.equal(second.updated, false);
+});
+
+test('R1: a payload leg that never proves its syncRev is never adopted', async () => {
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R1 verified payload adoption
+  const { SDP, setFetch } = bootSync();
+  const session = readJSON('data/session.json');
+  const version = readJSON('data/version.json');
+  const config = readJSON('data/config.json');
+  SDP.Sync.boot({ data: { version, config, session } });
+  const beforeRev = SDP.Sync.state.version.syncRev;
+  const beforeWord = SDP.Sync.word(0).w;
+  /* a newer pointer, but the config leg stayed on yesterday's CDN copy */
+  const bumped = Object.assign({}, version, { syncRev: version.syncRev + 9, settingsRev: 4 });
+  const staleSession = JSON.parse(JSON.stringify(session));
+  staleSession.lists[0].words[0].w = 'never-applied';
+  const files = {
+    'data/version.json': JSON.stringify(bumped),
+    'data/session.json': JSON.stringify(staleSession),
+    'data/config.json': JSON.stringify(config)
+  };
+  setFetch((url) => {
+    const clean = String(url).split('?')[0].replace(/^\.\//, '');
+    if (!files[clean]) return Promise.resolve({ ok: false, status: 404, json: () => Promise.reject(new Error('404')) });
+    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(JSON.parse(files[clean])) });
+  });
+  const info = await new Promise((resolve) => SDP.Sync.checkForUpdates((err, result) => resolve(result)));
+  assert.equal(info.ok, true, 'the Never-Red law still holds');
+  assert.equal(info.error, 'stale_payload');
+  assert.equal(info.updated, false);
+  assert.equal(SDP.Sync.state.version.syncRev, beforeRev, 'the pointer must not advance');
+  assert.equal(SDP.Sync.word(0).w, beforeWord, 'a stale leg is never applied');
+  assert.ok(info.retry.indexOf('data/config.json') >= 0, 'the undelivered leg is queued for retry');
+});
+
+test('R2: fetchFreshDataJson keeps the higher syncRev and reports its source', async () => {
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R2 dual-source reader
+  const { SDP, setFetch } = bootSync();
+  const version = readJSON('data/version.json');
+  const originJson = Object.assign({}, version, { syncRev: 5, tag: 'origin' });
+  const rawJson = Object.assign({}, version, { syncRev: 9, tag: 'raw' });
+  setFetch((url) => {
+    const isRaw = String(url).indexOf('raw.githubusercontent.com') >= 0;
+    const body = isRaw ? rawJson : originJson;
+    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
+  });
+  const higher = await new Promise((resolve) => SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result)));
+  assert.equal(higher.ok, true);
+  assert.equal(higher.json.tag, 'raw', 'the higher syncRev wins');
+  assert.equal(higher.source, 'raw');
+  /* the CDN copy is fresher this time, so the same reader flips over */
+  const flipped = await new Promise((resolve) => {
+    setFetch((url) => {
+      const isRaw = String(url).indexOf('raw.githubusercontent.com') >= 0;
+      const body = isRaw ? originJson : rawJson;
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
+    });
+    SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result));
+  });
+  assert.equal(flipped.json.syncRev, 9, 'the freshest body wins whichever source carried it');
+  assert.equal(flipped.source, 'origin', 'and the winning source is reported honestly');
+  /* and when both sources die the caller is told, once */
+  const failed = await new Promise((resolve) => {
+    setFetch(() => Promise.reject(new Error('offline')));
+    SDP.Sync.fetchFreshDataJson('data/version.json', (err) => resolve(err ? 'err' : 'ok'));
+  });
+  assert.equal(failed, 'err');
 });
 
 /* ── R7 publishing payloads ─────────────────────────────────────────────── */
@@ -301,9 +377,9 @@ test('R7: GitHub Contents payload, CORS-simple GAS relay and 40K word chunking',
   // Apps Script and must never travel in the relay body, a URL or a log line.
   assert.deepEqual(Object.keys(parsed).sort(), ['action', 'app', 'ver']);
   assert.equal(parsed.pin, undefined, 'relay must not carry the PIN');
-  assert.equal(relay.indexOf('246813'), -1, 'the PIN must not appear anywhere in the body');
+  assert.equal(relay.indexOf(SDP.Studio ? '78987898' : '78987898'), -1, 'the PIN must not appear anywhere in the body');
   // contract: docs/CHANGELOG_LEDGER.md §Release ledger — relay pins the current build version
-  assert.equal(parsed.ver, '0.0.1.e');
+  assert.equal(parsed.ver, '0.0.1.f');
 
   const longWords = Array.from({ length: 1200 }, (_, i) => ({
     w: 'word' + i,

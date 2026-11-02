@@ -47,7 +47,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.e'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -56,11 +56,11 @@ function gitHubStub(opts) {
     const V = app.SDP.Sync.Vault;
     check('G11.1a the vault prefix is SDP_ENC_V2:', V.PREFIX === 'SDP_ENC_V2:');
     check('G11.1b PBKDF2-SHA256 runs 250,000 iterations', V.ITERATIONS === 250000);
-    const envelope = await V.encryptV2({ ghToken: 'ghp_secret_value', elevenKey: 'sk_secret_value' }, '246813');
+    const envelope = await V.encryptV2({ ghToken: 'ghp_secret_value', elevenKey: 'sk_secret_value' }, '78987898');
     check('G11.1c the envelope carries the frozen prefix', String(envelope).indexOf('SDP_ENC_V2:') === 0, String(envelope).slice(0, 18));
     const blob = Buffer.from(String(envelope).slice('SDP_ENC_V2:'.length), 'base64');
     check('G11.1d salt is 16 bytes', blob.length > 28);
-    const plain = await V.decryptV2(envelope, '246813');
+    const plain = await V.decryptV2(envelope, '78987898');
     check('G11.1e the round trip returns the exact secrets',
       plain && plain.ghToken === 'ghp_secret_value' && plain.elevenKey === 'sk_secret_value',
       JSON.stringify(plain));
@@ -101,7 +101,7 @@ function gitHubStub(opts) {
     check('G11.2g the publish body never carries the PIN or a bare key',
       stub.puts.every((p) => {
         const body = String((p.init && p.init.body) || '');
-        return body.indexOf('246813') < 0 && body.indexOf('"pin"') < 0;
+        return body.indexOf('78987898') < 0 && body.indexOf('"pin"') < 0;
       }));
     app.close();
   }
@@ -144,7 +144,7 @@ function gitHubStub(opts) {
     const app = await createApp(base);
     const secrets = { ghToken: 'ghp_secret_value', elevenKey: 'sk_secret_value' };
     const envelope = await new Promise((resolve) => {
-      app.SDP.Studio.setup('246813', secrets, (err, env) => resolve(env));
+      app.SDP.Studio.setup('78987898', secrets, (err, env) => resolve(env));
     });
     await app.settle(6);
     check('G11.5d setup() returns a sealed envelope', String(envelope).indexOf('SDP_ENC_V2:') === 0,
@@ -176,6 +176,68 @@ function gitHubStub(opts) {
       !!payload.branch && !!payload.message, JSON.stringify(Object.keys(payload)));
     check('G11.6d content round-trips through base64',
       Buffer.from(payload.content, 'base64').toString('utf8') === '{"ver":3}');
+    app.close();
+  }
+
+  /* ── 8. R8/W8: the third vault slot + ONE-clock four-file publish ────── */
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R8 aiKey slot, §W8 one syncRev
+  {
+    const stub = gitHubStub();
+    const app = await createApp(Object.assign({ fetch: stub.fetch }, base));
+    const secrets = { ghToken: 'ghp_secret_value', elevenKey: 'sk_secret_value', aiKey: 'gsk_free_ai', aiProvider: 'groq' };
+    const envelope = await new Promise((resolve) => {
+      app.SDP.Studio.setup('78987898', secrets, (err, env) => resolve(env));
+    });
+    await app.settle(6);
+    const plain = await app.SDP.Sync.Vault.decryptV2(envelope, '78987898');
+    check('G11.8a the vault carries the third AI slot (aiKey + aiProvider)',
+      plain.aiKey === 'gsk_free_ai' && plain.aiProvider === 'groq', JSON.stringify(Object.keys(plain)));
+    check('G11.8b the published config carries the vault, never the key',
+      stub.puts.filter((p) => p.path === 'data/config.json').every((p) => {
+        const body = Buffer.from(JSON.parse(String(p.init.body)).content, 'base64').toString('utf8');
+        return body.indexOf('gsk_free_ai') < 0 && body.indexOf('SDP_ENC_V2:') > 0;
+      }));
+
+    stub.puts.length = 0;
+    stub.gets.length = 0;
+    const words = app.SDP.Sync.words().slice(0, 30);
+    const published = await new Promise((resolve) => {
+      app.SDP.Studio.publishBundle(words, {}, (err, info) => resolve({ err, info }));
+    });
+    const order = stub.puts.map((p) => p.path);
+    check('G11.8c one publish commits exactly four files', order.length === 4 && !published.err, order.join(',') + ' err=' + (published.err && published.err.message));
+    check('G11.8d version.json is committed last', order[order.length - 1] === 'data/version.json', order.join(','));
+    check('G11.8e the voice pack is committed before the version',
+      order.indexOf('data/elevenlabs-audio.json') >= 0 && order.indexOf('data/elevenlabs-audio.json') < 3, order.join(','));
+    const bodies = stub.puts.map((p) => JSON.parse(Buffer.from(JSON.parse(String(p.init.body)).content, 'base64').toString('utf8')));
+    const revs = bodies.map((b) => Number(b.syncRev));
+    check('G11.8f all four bodies share ONE syncRev (W8)',
+      revs.length === 4 && new Set(revs).size === 1 && revs[0] > 0, revs.join(','));
+    check('G11.8g the publish reports the same syncRev it stamped',
+      Number(published.info && published.info.syncRev) === revs[0], JSON.stringify(published.info && published.info.syncRev));
+    check('G11.8h syncRev is strictly forward of the released pointer',
+      revs[0] > 1793590000000, revs[0]);
+    const sessionBody = bodies[order.indexOf('data/session.json')];
+    const activeWords = sessionBody.words || [];
+    check('G11.8i the published session carries all 30 words with audio URLs',
+      activeWords.length === 30 && activeWords.every((w) => !!w.audio), activeWords.length);
+    check('G11.8j no publish body carries the PIN or a bare API key',
+      stub.puts.every((p) => {
+        const body = Buffer.from(JSON.parse(String(p.init.body)).content, 'base64').toString('utf8');
+        return body.indexOf('78987898') < 0 && body.indexOf('sk_secret_value') < 0 && body.indexOf('ghp_secret_value') < 0;
+      }));
+    app.close();
+  }
+
+  /* ── 9. R5: a locked studio cannot publish even with a valid token ───── */
+  {
+    const stub = gitHubStub();
+    const app = await createApp(Object.assign({ fetch: stub.fetch }, base));
+    const outcome = await new Promise((resolve) => {
+      app.SDP.Studio.publishBundle([{ w: 'brave' }], {}, (err) => resolve(err));
+    });
+    check('G11.9a a locked studio refuses to publish', !!outcome && outcome.message === 'locked', outcome && outcome.message);
+    check('G11.9b a refused publish commits nothing', stub.puts.length === 0, stub.puts.length);
     app.close();
   }
 

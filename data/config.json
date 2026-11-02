@@ -28,7 +28,7 @@
   "defaults": {
     "sentence": false,
     "repeats": 2,
-    "rate": 0.96,
+    "rate": 0.95,
     "numbers": true,
     "mode": "paper",
     "writeMode": "fixed",
@@ -48,10 +48,16 @@
     "voice": "Amy",
     "liveSync": false,
     "volume": 1,
-    "readSentence": false
+    "readSentence": false,
+    "pacingPreset": "exam",
+    "writeSecs": 5,
+    "voiceLock": "unified",
+    "voiceSource": "auto",
+    "defaultsResetV001f": true,
+    "appliedSettingsRev": 6
   },
-  "ver": 5,
-  "version": "0.0.1.e",
+  "ver": 6,
+  "version": "0.0.1.f",
   "buildDate": "2026-10-31",
   "credits": {
     "createdBy": "Hansana",
@@ -85,8 +91,8 @@
     "community": "https://ntfy.sh/sdp_dictationb1_comm_v8",
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
-  "appVersion": "0.0.1.e",
-  "settingsRev": 5,
+  "appVersion": "0.0.1.f",
+  "settingsRev": 6,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -413,7 +419,7 @@
   },
   "updatedAt": "2026-10-31T12:00:00.000Z",
   "updatedAtMs": 1793448000000,
-  "schema": 5,
+  "schema": 6,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
   "sessionTitle": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "sessionCode": "Session 8",
@@ -688,17 +694,17 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793585000000,
+  "syncRev": 1793590000000,
   "versionFamily": "9.0.0",
   "encVault": "SDP_ENC_V2:AAA=",
   "classSettings": {
     "lang": "en",
     "mode": "paper",
-    "writeSecs": 8,
-    "repeats": 3,
+    "writeSecs": 5,
+    "repeats": 2,
     "pauseSecs": 1.5,
     "autoAdvance": true,
-    "pacingPreset": "standard",
+    "pacingPreset": "exam",
     "voiceLock": "unified",
     "voiceSource": "auto",
     "rate": 0.95,
@@ -708,6 +714,6 @@
     "algo": "PBKDF2-SHA256",
     "iterations": 250000,
     "salt": "ISzHPhxESOW/5ZOl5hO4Gg==",
-    "hash": "FGfMBoTfB4lRLsU4SYVqtWXwdKNJMZ0ch+7PEgnaOic="
+    "hash": "VlIxxCOF1uxtFMz5C1hPwqoe5gp5Tn/uUetPH2xCKsY="
   }
 }

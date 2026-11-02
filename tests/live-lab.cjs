@@ -88,7 +88,7 @@ const TARGET_VERSION = /var TARGET = '([^']+)'/.exec(fs.readFileSync(path.join(R
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
  * this pacing against a classSettings adoption; guideAutoPlay is off so a
  * resilience tap reaches the cockpit without the quick walkthrough. */
-const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, appliedSettingsRev: 5 };
+const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 6 };
 
 (async function main() {
   const server = await start({ root: ROOT });
@@ -270,7 +270,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           localStorage.setItem('sdp.guide_seen', seed.guide);
           localStorage.setItem('sdp.settings', JSON.stringify(seed.settings));
         } catch (e) {}
-      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 5 }) });
+      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 6 }) });
       const pageA = await ctxA.newPage();
       const errorsA = [];
       pageA.on('pageerror', (e) => errorsA.push(e.message));
@@ -291,9 +291,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       });
       await pageA.goto(server.origin + '/index.html', { waitUntil: 'domcontentloaded' });
       await pageA.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 30, null, { timeout: 10000 });
-      await pageA.evaluate(() => new Promise((resolve) => { SDP.Studio.unlock('246813', () => resolve()); }));
+      await pageA.evaluate(() => new Promise((resolve) => { SDP.Studio.unlock('78987898', () => resolve()); }));
       const unlocked = await pageA.evaluate(() => SDP.Studio.isUnlocked());
-      check('G8.6a the lecturer unlocks the studio with the bootstrap PIN 246813', unlocked === true, unlocked);
+      check('G8.6a the lecturer unlocks the studio with the bootstrap PIN 78987898', unlocked === true, unlocked);
       /* the GitHub token is a secret the lecturer types into the unlocked
          studio; the harness seeds it the same way, never in a shipped file. */
       const tokened = await pageA.evaluate(() => {

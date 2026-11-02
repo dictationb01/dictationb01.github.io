@@ -49,7 +49,7 @@ function installVoices(app, list) {
   /* ── 1. D-V1: the ReferenceError that killed v0.0.1.b ────────────────── */
   // contract: docs/CHANGELOG_LEDGER.md §D-V1 — pickVoice must always be a function
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.e'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } });
     check('G10.1a the speech module exports pickVoice as a function',
       typeof app.SDP.Speech.pickVoice === 'function');
     let picked = 'unset';
@@ -65,7 +65,7 @@ function installVoices(app, list) {
   /* ── 2. D-V2: one unified British female professor, male names banned ── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 male-name blacklist
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.e'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } });
     const list = fakeVoices();
     installVoices(app, list);
     await new Promise((resolve) => app.SDP.Speech.selectProfessorVoice((v) => { app.w.__picked = v; resolve(); }));
@@ -133,7 +133,7 @@ function installVoices(app, list) {
   {
     /* A device whose audio is blocked: playGuideStep accepts the call but never
        starts or completes, which is exactly what Chrome does before a gesture. */
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.e'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } });
     app.SDP.Speech.playGuideStep = function () { return false; };
     /* re-open the guide with a blocked engine: openGuide() arms the 600 ms
        watchdog, and nothing will ever report "speaking" */
@@ -161,14 +161,36 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.1.e');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.1.f');
         /* appliedSettingsRev pins the student's own lock against adoption. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ voiceLock: 'custom', voiceSource: 'native', lang: 'en', appliedSettingsRev: 5 }));
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 6 }));
       }
     });
     check('G10.5a a custom voice lock is preserved, not overwritten',
       app.SDP.Data.settings().voiceLock === 'custom', app.SDP.Data.settings().voiceLock);
     check('G10.5b the settings screen exposes the lock selector', !!app.byId('setVoiceLock'));
+    app.close();
+  }
+
+  /* ── 6. R9: the 900 ms cold-boot autoplay affordance ─────────────────── */
+  // contract: docs/CHANGELOG_LEDGER.md §R9 guideAutoplayBanner
+  {
+    const app = await createApp({ before(w) { w.localStorage.removeItem('sdp.guide_seen'); } });
+    const banner = app.byId('guideAutoplayBanner');
+    check('G10.6a the autoplay banner ships in the guide modal',
+      !!banner && app.byId('guideModal').hidden === false, !!banner);
+    check('G10.6b it starts hidden so it cannot nag a working device',
+      !!banner && (banner.hidden === true || banner.classList.contains('hidden')));
+    app.SDP.Views.showGuideAutoplayBanner();
+    check('G10.6c it can be shown with the translated affordance text',
+      app.SDP.Views.guideAutoplayBannerVisible() === true &&
+      /tap/i.test(banner.textContent), banner.textContent);
+    app.SDP.Views.hideGuideAutoplayBanner();
+    check('G10.6d and hidden again the moment speech starts',
+      app.SDP.Views.guideAutoplayBannerVisible() === false);
+    check('G10.6e both languages carry the string',
+      /tap/i.test(app.SDP.STRINGS_EN.guideAutoplayBanner) &&
+      /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.guideAutoplayBanner));
     app.close();
   }
 

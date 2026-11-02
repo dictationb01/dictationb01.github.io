@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — service worker (v0.0.1.e)
+/*! Smart Dictation Player — service worker (v0.0.1.f)
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 service worker policy
  * D2: a strict origin gate is the FIRST statement of the fetch handler — only
  * same-origin requests and dict.youdao.com dictionary audio are ever touched.
@@ -10,8 +10,8 @@
  * (lecturer/Alice). */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.1.e';
-var SHELL_CACHE = 'sdp-v0.0.1.e-shell';
+var SW_VERSION = 'sdp-v0.0.1.f';
+var SHELL_CACHE = 'sdp-v0.0.1.f-shell';
 var PRESERVE_CACHES = ['sdp-youdao-v1', 'sdp-audio-clips'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';

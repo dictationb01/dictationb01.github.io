@@ -92,7 +92,7 @@
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
   "appVersion": "0.0.1.i",
-  "settingsRev": 12,
+  "settingsRev": 13,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -417,7 +417,7 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-11-02T07:50:20.548Z",
+  "updatedAt": "2026-11-02T09:52:56.500Z",
   "updatedAtMs": 1793448000000,
   "schema": 9,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
@@ -694,9 +694,9 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793610000000,
+  "syncRev": 1793613176500,
   "versionFamily": "9.0.0",
-  "encVault": "SDP_ENC_V2:yvgcZofPauzvH4wz0EZNBhhhq9Vh+6kWeRGZSX+poxOYkE7qRanhMHcGthasajWc+Hfg5kKxw060ACF3ty849fNflFDURRUqKA8l7cWRAO5LEWieoa+A3HAXVtP520z2g3/rZL0toxg+i+UgbgQrO77I1cB/AqLD27Oy/9ClQ02OE9ny7Bm+ICJcf/gc7HmXMQ1FPUwcQe4plOHYw+SoDbtF44OhuTlz4qQuIhQaO/X0I0MTVsNv5/Wi9lhnAN/PzrDY6WMKRtKvTxdI5u9SAQQ3D0zh8lieymfGvw+9/1opFXzj8jztnau/JVyJE6nGmw7dkkd+WxMof4Ury+aLWUPH/jRzjiqVIT2W03Ep+qhFL/NnEijrqiD+HekL7etxTa7j2X7IVIQ3momOnarYGXeltZ5g4uS30dNC/Bf29ZIGoUFP+VuZ/HK27NyhAtb2e3lzRlW9HANqX8OPniqbIC5/",
+  "encVault": "SDP_ENC_V2:lqjtpE3ktay8H0uEIDE90a2CYWhYXQVifFDIL6KtAzu7B3XD+MN2brUjl7w4qD67qf54/IvqwZgRfQ3r8hAglXcYtbBaYX9sPe522WnTWHNYO0msoyhnw2tgq6ukWJx/PPPxmiR1D+NRhnlNfBFYBLSOT+Jx5ZO06YVfuFTCI8bFIxOIVI9ab+sAzPxuHUL4RIf7nNmwnPhWp4wLMiDZ3KWyNcpQHI3nXq16XFq0fKQDUljLWxr2DpNlk/AoI4ephuy4MglgNeE/QLl3tmt27+VHImxby2HHYZnk/0cUm7RMT+GrehUtaugrsHhTgpFWv99ytfXbkdOoUqFNmKSXXN3+/xBHPG7SCgrSXSUJSWMpltq9kn/js1Y7ISihpuBBsFtgcKBEwJXxcuTOWvu5mVuIYefBpwAH60eGfBV6PIBKHGxpgicrHicRP6T1ablVNJhOTrhsKuo0gPgFUe81p7MSVLIo",
   "classSettings": {
     "mode": "paper",
     "writeSecs": 5,

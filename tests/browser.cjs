@@ -256,10 +256,12 @@ async function bootSettings(page, settings) {
         };
       });
       const listening = await readRing();
-      check('G5.6a listening ring is sky (#38BDF8)', listening.stroke === '#38BDF8' && /Listening/.test(listening.state), JSON.stringify(listening));
+      check('G5.6a listening ring is sky (#38BDF8) with the verbatim phase line',
+        listening.stroke === '#38BDF8' && /Listen Carefully \(Repeat \d of \d\)/.test(listening.state), JSON.stringify(listening));
       await page.waitForTimeout(3400);
       const writing = await readRing();
-      check('G5.6b writing ring is emerald (#10B981)', writing.stroke === '#10B981' && /Write Now/.test(writing.state), JSON.stringify(writing));
+      check('G5.6b writing ring is emerald (#10B981) with the word + countdown line',
+        writing.stroke === '#10B981' && /Write Word #\d+ in Your Book!/.test(writing.state), JSON.stringify(writing));
       await page.waitForTimeout(5200);
       const warning = await readRing();
       check('G5.6c the last three seconds warn in amber (#F59E0B)', warning.stroke === '#F59E0B', JSON.stringify(warning));

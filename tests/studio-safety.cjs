@@ -97,8 +97,9 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
-    check('G12.3a the cost preview names words, guide steps and the total',
-      /30 words = 241 chars/.test(line) && /4 guide steps = 731 chars/.test(line) && /total 972 chars/.test(line), line);
+    check('G12.3a the cost preview names words, guide steps, the total and 34 clips',
+      /30 words = 241 chars/.test(line) && /4 guide steps = 829 chars/.test(line) &&
+      /total 1070 chars/.test(line) && /34 clips \(30 words \+ 4 guide steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
     check('G12.3d the delta generator exists and is the primary action',
@@ -369,13 +370,15 @@ async function unlockStudio(app) {
     const barButtons = bar ? Array.from(bar.querySelectorAll('button')).map((b) => b.id) : [];
     check('G12.9m the primary bar is exactly two buttons',
       JSON.stringify(barButtons) === JSON.stringify(['btnSaveKeys', 'btnOneClickMasterSetup']), barButtons.join(','));
-    check('G12.9n #btnSaveKeys carries the verbatim Step 1 label',
+    check('G12.9n #btnSaveKeys is the secondary vault-only action',
       app.byId('btnSaveKeys').textContent === app.SDP.STRINGS_EN.studioSave &&
-      /^Step 1: Save Keys Permanently \(Local Vault \+ GitHub Sync\)$/.test(app.byId('btnSaveKeys').textContent),
+      /^💾 Save Keys to Vault Only$/.test(app.byId('btnSaveKeys').textContent) &&
+      /btn-ghost/.test(app.byId('btnSaveKeys').className),
       app.byId('btnSaveKeys').textContent);
-    check('G12.9o #btnOneClickMasterSetup carries the verbatim Step 2 label',
+    check('G12.9o #btnOneClickMasterSetup is the primary 34-clip CTA',
       app.byId('btnOneClickMasterSetup').textContent === app.SDP.STRINGS_EN.studioOneClick &&
-      /^Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent),
+      /^🚀 Generate 34 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
+      app.byId('btnOneClickMasterSetup').getAttribute('data-primary-cta') === '1',
       app.byId('btnOneClickMasterSetup').textContent);
     check('G12.9p the legacy quota buttons stay in the DOM but hidden',
       !!app.byId('btnCheckQuota') && !!app.byId('btnRefreshQuota') &&

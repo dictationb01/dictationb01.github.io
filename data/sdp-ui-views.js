@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.1.i)
+/*! Smart Dictation Player — views, i18n & router (v0.0.2.a)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -7,15 +7,17 @@
 
   var SDP = global.SDP = global.SDP || {};
   var doc = global.document;
-  /* Single source of truth: SDP.version is published by sdp-data-sync.js. */
+  /* Single source of truth: SDP.version (sdp-data-sync.js). */
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.1.d';
+    return '0.0.2.a';
   })();
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
+  /* D14: the #01..#30 badge keeps two digits so the order never looks wrong. */
+  function pad2(n) { var v = Number(n) || 0; return (v < 10 ? '0' : '') + v; }
   function isObj(v) { return !!v && typeof v === 'object'; }
   function byId(id) { return doc && doc.getElementById ? doc.getElementById(id) : null; }
   function setText(el, text) { if (el) el.textContent = str(text); }
@@ -31,13 +33,13 @@
   }
 
   /* ══ STRINGS ════════════════════════════════════════════════════════════ */
-  /* contract: docs/UI_COMPONENT_GUIDE.md §Language purity (W7) */
+  
   var STRINGS_EN = {
     appName: 'Smart Dictation',
     guideBtn: '? Guide',
     tabHome: 'Home', tabPlayer: 'Dictation', tabPractice: 'Practice', tabWords: '30 Words', tabSettings: 'Settings',
     homeTitle: 'Smart Dictation', homeSub: 'Listen, write, and check 30 B1 words with your class.',
-    startDictation: 'Start Dictation', howToUse: 'How to Use',
+    startDictation: '▶ Start Dictation (Word #1 to #30)', howToUse: 'How to Use',
     paperMode: 'Paper', typingMode: 'Typing', resumeSession: 'Continue where you stopped',
     statMastered: 'Mastered', statAccuracy: 'Accuracy', statStreak: 'Day streak',
     quickPractice: 'Quick practice', flashcards: 'Flashcards', quiz: '4-Choice Quiz', listening: 'Listening Drill',
@@ -45,7 +47,7 @@
     weakWords: 'Weak Words', mastered: 'Mastered', announcements: 'Class announcement',
     creditsLine: 'Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)',
     creditsPill: 'CREDITS GOES TO Hansana',
-    btnPrev: 'Previous', btnPlayPause: 'Listen / Pause', btnNext: 'Next', btnRepeat: 'Repeat', btnHint: 'Hint',
+    btnPrev: '⏮ Prev', btnPlayPause: '⏸ Pause Dictation', btnNext: 'Next', btnRepeat: 'Repeat', btnHint: 'Hint',
     btnModeSwitch: 'Paper / Typing', btnFinish: 'Finish & check',
     readyBeat: 'Ready', listeningBeat: 'Listening', writeNowBeat: 'Write Now', pausedBeat: 'Paused',
     finishedBeat: 'Finished — check your answers', repeatWord: 'Repeat', remainingWord: 'remaining',
@@ -79,7 +81,7 @@
     dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
     syncBadgeSynced: 'Synced',
     syncShortSyncing: 'Syncing…',
-    lecturerSyncBar: '📡 Save & Sync Current Settings to All Classroom Devices',
+    lecturerSyncBar: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
     lecturerSyncLast: 'Last synced to the class',
     /* D19: a dedicated idle label — applyLang can never overwrite a real stamp. */
     lecturerSyncIdle: 'Not synced yet — press Save & Sync',
@@ -120,14 +122,14 @@
     pinPadClear: 'Clear',
     pinPadUnlock: 'Unlock',
     studioCommitClip: 'Commit Recorded Clip',
-    guideStep1Title: '1. Choose how you learn',
-    guideStep1Body: 'Paper Mode means writing each word in your exercise book as you hear it. Typing Mode means typing directly on your phone or laptop.',
-    guideStep2Title: '2. Listen and write against the timer',
-    guideStep2Body: 'Each word is read aloud in a British accent several times. Write it while the ring counts down; the player moves from 1 to 30 by itself.',
-    guideStep3Title: '3. Check all 30 words and see your score',
-    guideStep3Body: 'In Paper Mode you tick each word you wrote correctly against the IPA and Sinhala meaning. In Typing Mode spelling is graded automatically and missed words join your weak-word list.',
-    guideStep4Title: '4. Practise the words you missed',
-    guideStep4Body: 'Open the Words tab any time to review all 30 words. Train the weak ones in Practice with flashcards, four-choice questions and listening drills.',
+    guideStep1Title: '1 of 4 — Press Start Dictation',
+    guideStep1Body: 'One tap on the big blue Start Dictation button begins the whole thirty-word session at Word one. Nothing else has to be chosen first.',
+    guideStep2Title: '2 of 4 — Listen twice, write in five seconds, auto-pause',
+    guideStep2Body: 'Each word is spoken twice in a British professor voice and you get five seconds to write it in your book. If you leave this screen or open a dialog, the dictation pauses itself and waits for you.',
+    guideStep3Title: '3 of 4 — Check words one to thirty in order',
+    guideStep3Body: 'When the session ends, open the thirty-word list and check each word in order. Tap Listen to hear it again, then mark it Correct or Needs Practice.',
+    guideStep4Title: '4 of 4 — Automatic classroom sync and lecturer admin',
+    guideStep4Body: 'The word list and pacing chosen by Ms. Sumodya Sewmini sync automatically to every device. Your lecturer opens Lecturer Admin with the PIN to broadcast new settings.',
     toastLoaded: 'Loaded', toastOffline: 'Offline ready',
     updateChecking: 'Checking for a newer session…', updateNone: 'You already have the latest session',
     updateFound: 'New session downloaded', resetDone: 'Local stats cleared', exportReady: 'Backup downloaded',
@@ -140,7 +142,7 @@
     studioLockedOut: 'Too many wrong PINs. Try again in', seconds: 'seconds',
     studioBadPin: 'Wrong PIN', studioEditor: 'Session words (one per line: w | ipa | pos | meaning | sinhala | sentence)',
     studioPreview: 'Publish preview', studioPublish: 'Publish session', studioGenerate: 'Generate Alice clips',
-    studioRecord: 'Record word', studioSave: 'Step 1: Save Keys Permanently (Local Vault + GitHub Sync)', studioLock: 'Lock studio',
+    studioRecord: 'Record word', studioSave: '💾 Save Keys to Vault Only', studioLock: 'Lock studio',
     studioEnvelope: 'Encrypted vault envelope (SDP_ENC_V2)', studioCopy: 'Copy envelope',
     studioPublishOk: 'Session published', studioPublishFail: 'Publish failed',
     studioNoToken: 'Add a GitHub token (Contents API) in the vault first', studioWordsCount: 'words parsed',
@@ -153,7 +155,7 @@
     homeReadyBadge: 'Session 8 ready · 30 words',
     modePaperFull: '📒 Write in Exercise Book (Paper)',
     modeTypingFull: '⌨️ Type on Screen',
-    voiceGuideBtn: '🔊 Voice Guide',
+    voiceGuideBtn: '🔊 Interactive Voice Guide',
     boardShowWord: '👁️ Show Word on Board',
     boardHideWord: '🙈 Hide Word on Board',
     quotaHeading: 'ElevenLabs Character Quota (Zero-Cost Check)',
@@ -187,27 +189,25 @@
     pauseReasonVisibility: 'the app went to the background',
     pauseReasonUser: 'you tapped pause',
     guideAutoplayBanner: '🔊 Tap Anywhere to Start Voice Guide',
-    studioCardKeys: '1 · One-Click API Keys & Complete Voice Pack Setup',
-    studioCardWords: '2 · Easy 30-Word List Editor & Free AI Auto-Enricher',
-    studioCardSettings: '3 · Classroom Settings & PIN Broadcast',
+    studioCardKeys: 'STEP 1 — API KEYS & 34-CLIP VOICE PACK GENERATOR',
+    studioCardWords: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
+    studioCardSettings: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
     studioLockLecturer: 'Lock Lecturer Mode',
     studioAiProvider: 'Free AI / dictionary engine',
     studioAiKey: 'Free AI key (optional)',
     studioTestAi: 'Test Free AI / Dictionary Engine',
     studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
-    studioOneClick: 'Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices',
+    studioOneClick: '🚀 Generate 34 British Professor Voices & Sync All Devices',
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: 'Generate British Professor Voice & Publish Words + Settings to All Devices',
+    studioPublishWordsVoice: '🔊 Generate Voices & Publish 30 Words to All Devices',
     studioSyncSettings: '📡 Save & Sync Classroom Settings to All Devices',
     studioMasterSteps: 'Setup progress',
     studioEnriching: 'Enriching',
     studioEnriched: 'Enriched',
     studioAiOffline: 'offline B1 lexicon used',
     /* ── v0.0.1.h (D2, D6, D7, D10, D13, D14) ── */
-    studioSaveKeysStep1: 'Step 1: Save Keys Permanently (Local Vault + GitHub Sync)',
-    studioOneClickStep2: 'Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices',
     vaultBadgeLabel: 'Vault Saved & Protected Across Updates',
     studioFreeNoKey: '100% Free — No API Key Required!',
     studioQuotaScoped: 'Key accepted (scoped/free-tier key — quota read bypassed)',
@@ -222,17 +222,60 @@
     studioRestored: 'Studio restored from this tab',
     studioNoVaultWarn: 'No vault sealed yet — words publish without keys; seal the vault when you add your keys',
     studioAiOfflineFallback: 'AI offline — free dictionary used',
+    /* ── v0.0.2.a (D5–D16): 6-tab shell, 1-2-3 Home, tactile cues, Guide 3.0 ── */
+    tabStudio: 'Lecturer',
+    homeStep1Tag: 'STEP 1', homeStep2Tag: 'STEP 2', homeStep3Tag: 'STEP 3',
+    homeWordsTitle: 'Check & Study All 30 Session Words in Order #1–#30',
+    homeWordsSub: 'Every word in class order with its British IPA, Sinhala meaning and example sentence.',
+    homeWordsBtn: '☰ Open the 30-Word List (#1–#30)',
+    resumeMetaIdle: 'Paused at Word #1 of 30',
+    startOver: '↺ Start Over from Word #1',
+    cueStep1: 'STEP 1 — PRESS HERE',
+    cuePlayer: 'PAUSE OR RESUME HERE',
+    cueDict: 'TAP A WORD TO LISTEN',
+    cueStudio: 'ENTER YOUR PIN',
+    settingsLecturerActive: '🔓 Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
+    openStudioBtn: '🎓 Open Lecturer Admin Studio',
+    studioScreenTitle: '🎓 Lecturer Admin Studio',
+    studioScreenSub: 'Three numbered steps: keys and the 34-clip voice pack, the 30-word session editor, and the classroom settings broadcast.',
+    lecturerAdminLocked: '🔒 Lecturer Admin', lecturerAdminUnlocked: '🔓 Lecturer Admin',
+    btnReplay: '🔊 Replay Word',
+    btnPauseDictation: '⏸ Pause Dictation',
+    btnResumeWord: '▶ Resume Word #',
+    btnPrevNum: '⏮ Prev (#', btnNextNum: '⏭ Next (#',
+    listenCarefully: 'Listen Carefully (Repeat ', writeInBook: 'Write Word #',
+    inYourBook: ' in Your Book! (', countdownTail: 's countdown)',
+    pausedAtWord: 'Dictation Paused at Word #', pausedResumeTail: ' — Press Resume Below',
+    resumeMetaLine: 'Paused at Word #', ofWord: ' of 30 · Repeat ', secondsLeft: 's left',
+    progressWord: 'Word #', progressOf: ' of 30',
+    markCorrectWord: '✓ Correct', markWeakWord: '✗ Needs Practice', btnStartDictation: '▶ Start Dictation',
+    studioRetryNone: 'No failed clip to retry — every clip is already saved.',
+    studioRetryOne: '↻ Retry Only the Failed Clip',
+    studioStep1Head: 'STEP 1 — API KEYS & 34-CLIP VOICE PACK GENERATOR',
+    studioStep2Head: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
+    studioStep3Head: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
+    studioPackVault: 'Vault: Saved ✓', studioPackGithub: 'GitHub: Connected ✓', studioPackClips: 'Voice Pack: ',
+    studioClipsUnit: '/34 Clips', studioGenPrefix: 'Generating clip ',
+    studioGenCharsTail: ' chars used', studioClipsSaved: '/34 Clips Saved to GitHub · syncRev ',
+    studioRetryFailed: '🔁 Retry Only the Missing Clips',
+    studioOneClick34: '🚀 Generate 34 British Professor Voices & Sync All Devices',
+    studioSaveOnly: '💾 Save Keys to Vault Only',
+    studioPublishWordsVoice34: '🔊 Generate Voices & Publish 30 Words to All Devices',
+    studioBroadcast34: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
+    guideCard1Tag: '1 of 4 — Press ▶ Start Dictation', guideCard2Tag: '2 of 4 — Listen 2×, Write in 5s & Auto-Pause',
+    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
+    guideSkipStartNow: '▶ Start Dictation Now',
     studioSavedOk: '✓ Keys saved & protected across updates',
     studioPublishOkFull: '✓ Published & synced to all classroom devices'
   };
 
-  /* contract: docs/UI_COMPONENT_GUIDE.md §H7 verified Sinhala strings */
+  
   var STRINGS_SI = {
     appName: 'Smart Dictation',
     guideBtn: '? උපදෙස්',
     tabHome: 'මුල් පිටුව', tabPlayer: 'ඩික්ටේෂන්', tabPractice: 'අභ්‍යාස', tabWords: 'වචන 30', tabSettings: 'සැකසුම්',
     homeTitle: 'Smart Dictation', homeSub: 'ඔබේ පන්තියේ B1 වචන 30 අසමින් ලියන්න, පසුව පරීක්ෂා කරන්න.',
-    startDictation: 'ඩික්ටේෂන් ආරම්භ කරන්න', howToUse: 'භාවිතා කරන ආකාරය',
+    startDictation: '▶ ඩික්ටේෂන් ආරම්භ කරන්න (වචන #1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
     paperMode: 'පොතේ ලිවීම', typingMode: 'ටයිප් කිරීම', resumeSession: 'නැවැත්වූ තැනින් ඉදිරියට යන්න',
     statMastered: 'ප්‍රගුණ කළ වචන', statAccuracy: 'නිවැරදිභාවය', statStreak: 'දින පෙළ',
     quickPractice: 'ක්ෂණික අභ්‍යාස', flashcards: 'ෆ්ලෑෂ් කාඩ්', quiz: 'බහුවරණ ප්‍රශ්න', listening: 'ශ්‍රවණ අභ්‍යාස',
@@ -240,7 +283,7 @@
     weakWords: 'දුර්වල වචන', mastered: 'ප්‍රගුණ කළ', announcements: 'පන්ති දැනුම්දීම',
     creditsLine: 'නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini',
     creditsPill: 'CREDITS GOES TO Hansana',
-    btnPrev: 'පෙර වචනය', btnPlayPause: 'අසන්න / නවතන්න', btnNext: 'ඊළඟ වචනය', btnRepeat: 'නැවත අසන්න',
+    btnPrev: '⏮ පෙර', btnPlayPause: 'අසන්න / නවතන්න', btnNext: 'ඊළඟ වචනය', btnRepeat: 'නැවත අසන්න',
     btnHint: 'ඉඟියක්', btnModeSwitch: 'පොතේ / ටයිප් මාරුව', btnFinish: 'අවසන් කර පිළිතුරු බලන්න',
     readyBeat: 'සූදානම්', listeningBeat: 'අසන්න', writeNowBeat: 'දැන් ලියන්න', pausedBeat: 'තාවකාලිකව නවතා ඇත',
     finishedBeat: 'අවසන් — පිළිතුරු පරීක්ෂා කරන්න', repeatWord: 'වාරය', remainingWord: 'ඉතිරි',
@@ -274,7 +317,7 @@
     dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
     syncBadgeSynced: 'සමමුහුර්තයි',
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
-    lecturerSyncBar: '📡 සියලු උපකරණවලට සැකසුම් සුරැකීම හා සමමුහුර්ත කිරීම',
+    lecturerSyncBar: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
     lecturerSyncLast: 'පන්තියට සමමුහුර්ත කළ අවසන් වාරය',
     lecturerSyncIdle: 'තවම සමමුහුර්ත නොවීය — Save & Sync එබන්න',
     lecturerSyncedToast: '📡 ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
@@ -314,14 +357,14 @@
     pinPadClear: 'මකන්න',
     pinPadUnlock: 'විවෘත කරන්න',
     studioCommitClip: 'පටිගත කළ හඬපටය සුරකින්න',
-    guideStep1Title: '1. ඔබේ ඉගෙනුම් ආකාරය තෝරන්න',
-    guideStep1Body: 'පොතේ ලිවීම (Paper Mode) යනු අසන අතරේ වචන ඔබේ අභ්‍යාස පොතේ ලිවීමයි; ටයිප් කිරීම (Typing Mode) යනු දුරකථනයේ හෝ පරිගණකයේ කෙළින්ම ටයිප් කිරීමයි.',
-    guideStep2Title: '2. අසා කාල ගණකය අතරේ ලියන්න',
-    guideStep2Body: 'එක් එක් වචනය බ්‍රිතාන්‍ය උච්චාරණයෙන් වාර ගණනක් ඇසෙයි; කාල ගණකය ගණන් කරන අතරේ වචනය ලියන්න; 1 සිට 30 දක්වා ස්වයංක්‍රීයව ඉදිරියට යයි.',
-    guideStep3Title: '3. වචන 30 පරීක්ෂා කර ලකුණු බලන්න',
-    guideStep3Body: 'පොතේ ලිවීමේ ආකාරයේදී ඔබ ලියූ වචන 30 නිවැරදි උච්චාරණ සහ සිංහල තේරුම් සමඟ පරීක්ෂා කර ලකුණු කරන්න; ටයිප් කිරීමේදී අක්ෂර වින්‍යාසය ස්වයංක්‍රීයව ලකුණු වන අතර වැරදුණු වචන දුර්වල වචන ලැයිස්තුවට එකතු වේ.',
-    guideStep4Title: '4. දුර්වල වචන නැවත පුහුණු වන්න',
-    guideStep4Body: 'වචන පිටුවෙන් සියලු වචන 30 ඕනෑම වේලාවක නැවත බලන්න; දුර්වල වචන අභ්‍යාස පිටුවෙන් (ෆ්ලෑෂ් කාඩ්, බහුවරණ ප්‍රශ්න, ශ්‍රවණ අභ්‍යාස) පුහුණු වන්න.',
+    guideStep1Title: '4 න් 1 — ඩික්ටේෂන් ආරම්භ කරන්න ඔබන්න',
+    guideStep1Body: 'නිල් පැහැති ඩික්ටේෂන් ආරම්භ කරන්න බොත්තම එක් වරක් ඔබීමෙන් වචන 30 ඩික්ටේෂන් වාරය වචන එකෙන් ආරම්භ වේ; වෙනත් කිසිවක් තෝරාගැනීම අවශ්‍ය නැත.',
+    guideStep2Title: '4 න් 2 — දෙවරක් අසන්න, තත්පර පහකින් ලියන්න',
+    guideStep2Body: 'සෑම වචනයක්ම බ්‍රිතාන්‍ය මහාචාර්ය හඬින් දෙවරක් ඇසෙන අතර ලිවීමට තත්පර පහක් ලැබේ; තිරය මාරු කළහොත් ඩික්ටේෂන් ස්වයංක්‍රීයව නැවතී ඔබ එනතෙක් රැඳී සිටී.',
+    guideStep3Title: '4 න් 3 — වචන එකේ සිට තිහ දක්වා පිළිවෙලින් පරීක්ෂා කරන්න',
+    guideStep3Body: 'වාරය අවසන් වූ පසු වචන 30 ලැයිස්තුව විවෘත කර එකින් එක පිළිවෙලින් පරීක්ෂා කරන්න; නැවත ඇසීමට අසන්න ඔබා, නිවැරදි හෝ පුහුණුව අවශ්‍යයි ලෙස ලකුණු කරන්න.',
+    guideStep4Title: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
+    guideStep4Body: 'Ms. Sumodya Sewmini තෝරන වචන ලැයිස්තුව සහ වේගය සෑම උපාංගයකටම ස්වයංක්‍රීයව සමමුහුර්ත වේ; නව සැකසුම් විකාශනයට ඔබේ කථිකාචාර්යවරයා PIN සමඟ කථිකාචාර්ය පරිපාලනය විවෘත කරයි.',
     toastLoaded: 'පූරණය විය', toastOffline: 'නොබැඳිව සූදානම්',
     updateChecking: 'නව වාරයක් පරීක්ෂා කරමින්…', updateNone: 'ඔබ සතුව නවතම වාරය දැනටමත් ඇත',
     updateFound: 'නව වාරය බාගත විය', resetDone: 'දේශීය සංඛ්‍යාලේඛන මකා දමන ලදී', exportReady: 'උපස්ථය බාගත විය',
@@ -347,7 +390,7 @@
     homeReadyBadge: '8 වන වාරය සූදානම් · වචන 30',
     modePaperFull: '📒 අභ්‍යාස පොතේ ලිවීම (Paper)',
     modeTypingFull: '⌨️ තිරයේ ටයිප් කිරීම (Typing)',
-    voiceGuideBtn: '🔊 හඬ උපදෙස්',
+    voiceGuideBtn: '🔊 අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
     boardShowWord: '👁️ පුවරුවේ වචනය පෙන්වන්න',
     boardHideWord: '🙈 පුවරුවේ වචනය සඟවන්න',
     quotaHeading: 'ElevenLabs අක්ෂර සීමාව (ගාස්තු රහිත පරීක්ෂාව)',
@@ -381,27 +424,25 @@
     pauseReasonVisibility: 'යෙදුම පසුගිය තලයට ගියා',
     pauseReasonUser: 'ඔබ නැවැත්වීමට ස්පර්ශ කළා',
     guideAutoplayBanner: '🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
-    studioCardKeys: '1 · එක් ස්පර්ශයකින් API යතුරු සහ සම්පූර්ණ හඬ පැකේජය',
-    studioCardWords: '2 · පහසු වචන 30 ලැයිස්තු සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
-    studioCardSettings: '3 · පන්ති සැකසුම් සහ PIN විකාශනය',
+    studioCardKeys: 'පියවර 1 — API යතුරු සහ හඬපට 34 පැකේජය',
+    studioCardWords: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
+    studioCardSettings: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
     studioLockLecturer: 'කථිකාචාර්ය ප්‍රකාරය අගුළු දමන්න',
     studioAiProvider: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම',
     studioAiKey: 'නොමිලේ AI යතුර (අවශ්‍ය නැත)',
     studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
     studioAiNoKey: '1: ඉදිකළ නොමිලේ Oxford/Wikimedia ශබ්දකෝෂය සහ සිංහල පරිවර්තකය (100% නොමිලේ — යතුරක් අවශ්‍ය නැත)',
-    studioOneClick: 'පියවර 2: එක් ස්පර්ශයකින් බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා සියල්ල සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
+    studioOneClick: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 34 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: 'බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා වචන සහ සැකසුම් සියලු උපාංග වෙත පළ කරන්න',
+    studioPublishWordsVoice: '🔊 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
     studioSyncSettings: '📡 පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
     studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
     studioEnriching: 'පුරවමින්',
     studioEnriched: 'පුරවා අවසන්',
     studioAiOffline: 'නොබැඳි B1 ශබ්දකෝෂය භාවිතා විය',
     /* ── v0.0.1.h (D2, D6, D7, D10, D13, D14) ── */
-    studioSaveKeysStep1: 'පියවර 1: යතුරු ස්ථිරවම සුරකින්න (දේශීය බඳුන + GitHub සමමුහුර්තය)',
-    studioOneClickStep2: 'පියවර 2: එක් ස්පර්ශයකින් බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා සියල්ල සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
     vaultBadgeLabel: 'යතුරු බඳුන සුරකින ලදී · යාවත්කාලීනවලින් ආරක්ෂිතයි',
     studioFreeNoKey: '100% නොමිලේ — API යතුරක් අවශ්‍ය නැත!',
     studioQuotaScoped: 'යතුර පිළිගැනිණි (scoped/නොමිලේ මට්ටමේ යතුර — සීමා කියවීම මඟ හැරිණි)',
@@ -416,6 +457,49 @@
     studioRestored: 'මෙම ටැබයෙන් ස්ටූඩියෝව නැවත ලබා ගන්නා ලදි',
     studioNoVaultWarn: 'තවම බඳුනක් සකසා නැත — යතුරු නොමැතිව වචන ප්‍රකාශ වේ',
     studioAiOfflineFallback: 'AI අක්‍රියයි — නොමිලේ ශබ්දකෝෂය භාවිතා විය',
+    /* ── v0.0.2.a (සිංහල) ── */
+    tabStudio: 'කථිකාචාර්ය',
+    homeStep1Tag: 'පියවර 1', homeStep2Tag: 'පියවර 2', homeStep3Tag: 'පියවර 3',
+    homeWordsTitle: 'වචන 30 ම #1–#30 අනුපිළිවෙලින් පරීක්ෂා කර අධ්‍යයනය කරන්න',
+    homeWordsSub: 'සෑම වචනයක්ම පන්ති අනුපිළිවෙලින්, බ්‍රිතාන්‍ය උච්චාරණය, සිංහල තේරුම සහ උදාහරණ වාක්‍යය සමඟ.',
+    homeWordsBtn: '☰ වචන 30 ලැයිස්තුව විවෘත කරන්න (#1–#30)',
+    resumeMetaIdle: 'වචන #1 දී නවතා ඇත (වචන 30 න්)',
+    startOver: '↺ වචන #1 සිට නැවත අරඹන්න',
+    cueStep1: 'පියවර 1 — මෙතැන ඔබන්න',
+    cuePlayer: 'මෙතැනින් නවතන්න හෝ දිගටම යන්න',
+    cueDict: 'අසන්න වචනයක් ඔබන්න',
+    cueStudio: 'ඔබේ PIN ඇතුළත් කරන්න',
+    settingsLecturerActive: '🔓 කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — සැකසුම් විකාශනයට හෝ වචන 30 සංස්කරණයට කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
+    openStudioBtn: '🎓 කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
+    studioScreenTitle: '🎓 කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
+    studioScreenSub: 'අංකිත පියවර තුනක්: යතුරු සහ හඬපට 34 පැකේජය, වචන 30 සංස්කාරකය, සහ පන්ති සැකසුම් විකාශනය.',
+    lecturerAdminLocked: '🔒 කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: '🔓 කථිකාචාර්ය පරිපාලනය',
+    btnReplay: '🔊 වචනය නැවත අසන්න',
+    btnPauseDictation: '⏸ ඩික්ටේෂන් නවතන්න',
+    btnResumeWord: '▶ වචන # ට දිගටම යන්න',
+    btnPrevNum: '⏮ පෙර (#', btnNextNum: '⏭ ඊළඟ (#',
+    listenCarefully: 'හොඳින් අසන්න (වාරය ', writeInBook: 'වචන #',
+    inYourBook: ' ඔබේ පොතේ ලියන්න! (', countdownTail: ' තත්පර ගණන්)',
+    pausedAtWord: 'වචන #', pausedResumeTail: ' දී ඩික්ටේෂන් නවතා ඇත — පහතින් දිගටම යන්න ඔබන්න',
+    resumeMetaLine: 'වචන # දී නවතා ඇත · ඉතිරි ', ofWord: ' / 30 · වාරය ', secondsLeft: ' තත්පර',
+    progressWord: 'වචන #', progressOf: ' / 30',
+    markCorrectWord: '✓ නිවැරදි', markWeakWord: '✗ පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
+    studioRetryNone: 'නැවත උත්සාහ කිරීමට අසාර්ථක ක්ලිපයක් නැත — සියලු ක්ලිප සුරකිනු ලැබීය.',
+    studioRetryOne: '↻ අසාර්ථක වූ ක්ලිපය පමණක් නැවත උත්සාහ කරන්න',
+    studioStep1Head: 'පියවර 1 — API යතුරු සහ හඬපට 34 උත්පාදකය',
+    studioStep2Head: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
+    studioStep3Head: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
+    studioPackVault: 'බඳුන: සුරකින ලදී ✓', studioPackGithub: 'GitHub: සම්බන්ධයි ✓', studioPackClips: 'හඬ පැකේජය: ',
+    studioClipsUnit: '/හඬපට 34', studioGenPrefix: 'හඬපට සාදමින් ',
+    studioGenCharsTail: ' අක්ෂර භාවිතය', studioClipsSaved: '/හඬපට 34 GitHub වෙත සුරකින ලදී · syncRev ',
+    studioRetryFailed: '🔁 ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
+    studioOneClick34: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 34 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
+    studioSaveOnly: '💾 යතුරු බඳුනේ පමණක් සුරකින්න',
+    studioPublishWordsVoice34: '🔊 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioBroadcast34: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',
+    guideCard1Tag: '4 න් 1 — ▶ ඩික්ටේෂන් ආරම්භ කරන්න ඔබන්න', guideCard2Tag: '4 න් 2 — 2 වාරය අසන්න, තත් 5 කින් ලියන්න',
+    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
+    guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
     studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
     studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
@@ -502,7 +586,7 @@
     var wanted = str(next).toLowerCase();
     return THEMES.indexOf(wanted) >= 0 ? wanted : 'dark';
   }
-  /* D-UI2: 'board' must survive normalizeTheme, and 'name' must exist. */
+  /* D-UI2: 'board' must survive normalizeTheme. */
   function applyTheme(next, quiet) {
     theme = normalizeTheme(next);
     if (doc && doc.documentElement) doc.documentElement.setAttribute('data-theme', theme);
@@ -538,7 +622,7 @@
     out[key] = true;
     return out;
   }
-  /* ENG-05: ONE writer for classroom keys — marks touched, toasts, repaints the bar. */
+  /* ENG-05: ONE writer for classroom keys. */
   function saveTouched(patch, label) {
     var withTouch = {}, k, i;
     var keys = [];
@@ -567,8 +651,8 @@
   }
 
   /* ══ router ═════════════════════════════════════════════════════════════ */
-  /* contract: docs/ARCHITECTURE_MAP.md §R3 exactly one active screen */
-  var TABS = ['home', 'player', 'practice', 'dict', 'settings'];
+  
+  var TABS = ['home', 'player', 'practice', 'dict', 'settings', 'studio'];
   /* R6/D10: leaving the cockpit pauses the live beat; Settings is a modal surface. */
   function pauseForNavigation(target) {
     var engine = SDP.Engine;
@@ -593,7 +677,7 @@
         screen.setAttribute('aria-hidden', 'true');
       }
     }
-    var tabIds = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings'];
+    var tabIds = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
     for (i = 0; i < tabIds.length; i++) {
       var node = byId(tabIds[i]);
       if (node) node.setAttribute('aria-selected', String(tabIds[i] === 'tab-' + target));
@@ -604,6 +688,11 @@
     if (target === 'home') renderHome();
     if (target === 'practice') renderPractice();
     if (target === 'settings') renderSettings();
+    /* D6: the router owns mounting the studio screen (gate or 3 cards). */
+    if (target === 'studio') {
+      try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
+      try { if (SDP.Studio && SDP.Studio.paintQuickButton) SDP.Studio.paintQuickButton(); } catch (e2) {}
+    }
     if (target === 'player') { renderBoardJumper(); }
     renderBoardBar();
     if (target === 'player' && SDP.Engine && SDP.Engine.refreshEls) SDP.Engine.refreshEls();
@@ -622,8 +711,7 @@
     var s = stats();
     var bank = words().length;
     var total = bank || 30;
-    /* An empty bank is a real state (first run offline), so say so instead of
-       promising thirty words that do not exist. */
+    /* An empty bank is a real state (first run offline): say so. */
     var empty = byId('bankEmpty');
     if (empty) empty.hidden = bank > 0;
     var start = byId('btnStart');
@@ -641,6 +729,7 @@
     if (pill) setText(pill, 'CREDITS GOES TO Hansana');
     paintCredits();
     paintReadiness(bank);
+    /* D13/D15: giant resume card — word, repeat, seconds, resume or restart. */
     var banner = byId('resumeBanner');
     var draft = null;
     try { draft = SDP.Data.session(); } catch (e) {}
@@ -649,20 +738,36 @@
     var draftPaused = !!(draft && str(draft.status) === 'paused');
     var hasAnswers = !!(draft && draft.answers && Object.keys(draft.answers).length > 0);
     var resumable = !!(draft && typeof draft.index === 'number' && (draftPaused || hasAnswers)) || enginePaused;
-    var draftIndex = enginePaused ? Number(SDP.Engine.config ? SDP.Engine.config().index : 0) : (draft && typeof draft.index === 'number' ? draft.index : 0);
+    var cfg = {};
+    try { cfg = SDP.Engine && SDP.Engine.config ? (SDP.Engine.config() || {}) : {}; } catch (e) { cfg = {}; }
+    var draftIndex = enginePaused ? Number(cfg.index || 0) : (draft && typeof draft.index === 'number' ? draft.index : 0);
     var bankCount = bank || 30;
+    var repeatsTotal = Math.max(1, Number(cfg.repeats || (draft && draft.repeats) || (settings().repeats) || 2));
+    var repeatsDone = Math.max(0, Number(enginePaused ? cfg.repeatsDone : (draft && draft.repeatsDone) || 0));
+    var repeatsShown = Math.min(repeatsTotal, repeatsDone + 1);
+    var remainingMs = Math.max(0, Number(enginePaused ? cfg.remainingMs : (draft && draft.remainingMs) || 0));
+    var secondsLeft = (Math.ceil(remainingMs / 100) / 10).toFixed(1);
     if (banner) {
       banner.hidden = !resumable;
       if (resumable) {
         banner.setAttribute('data-state', (enginePaused || draftPaused) ? 'paused' : 'draft');
-        setText(byId('resumeText'), t('resumePaused') + ' (Word #' + (draftIndex + 1) + '/' + bankCount + ')');
+        setText(byId('resumeText'), '⏸ ' + t('resumeMetaLine') + (draftIndex + 1) + t('ofWord') +
+          repeatsShown + ' of ' + repeatsTotal + ' · ' + secondsLeft + t('secondsLeft'));
+        setText(byId('resumeMeta'), resumable ? t('resumePaused') : t('resumeMetaIdle'));
       }
     }
     var resumeBtn = byId('btnResume');
     if (resumeBtn) setText(resumeBtn, t('resumeSession'));
     var resumeDraftBtn = byId('btnResumeDraft');
-    if (resumeDraftBtn) resumeDraftBtn.hidden = !(enginePaused || draftPaused);
+    if (resumeDraftBtn) {
+      resumeDraftBtn.hidden = !(enginePaused || draftPaused);
+      setText(resumeDraftBtn, t('btnResumeWord') + (draftIndex + 1));
+    }
+    var startOverBtn = byId('btnStartOver');
+    if (startOverBtn) setText(startOverBtn, t('startOver'));
+    paintHomeWordsPreview();
     paintPresetBadge();
+    paintCues();
     var ann = byId('homeAnn');
     var announcement = null;
     try { announcement = SDP.Sync && SDP.Sync.announcement ? SDP.Sync.announcement() : null; } catch (e) {}
@@ -671,8 +776,48 @@
     setText(byId('homeAnnText'), annText);
     paintModePills();
   }
-  /* R1: all three credit lines stay verbatim, but only the active language is
-     rendered (G3.5c). */
+  /* D15: Home Step-2 previews #01..#03 in strict class order. */
+  function paintHomeWordsPreview() {
+    var host = byId('homeWordsPreview');
+    if (!host) return false;
+    var list = words();
+    var html = '', i, n = Math.min(3, list.length);
+    for (i = 0; i < n; i++) {
+      var w = list[i] || {};
+      html += '<div class="hp-row"><span class="hp-num">#' + pad2(i + 1) + '</span>' +
+        '<span class="hp-w">' + esc(w.w) + '</span>' +
+        '<span class="hp-si word-si">' + esc(w.si) + '</span></div>';
+    }
+    host.innerHTML = html;
+    return true;
+  }
+
+  /* D9: the amber STEP cue retires per screen via sdp.settings.cuesSeen. */
+  function cuesSeen() {
+    var conf = settings();
+    return isObj(conf.cuesSeen) ? conf.cuesSeen : {};
+  }
+  function paintCues() {
+    if (!doc || !doc.querySelectorAll) return false;
+    var seen = cuesSeen();
+    var nodes = doc.querySelectorAll('.cue[data-cue]');
+    for (var i = 0; i < nodes.length; i++) {
+      var screen = str(nodes[i].getAttribute('data-cue'));
+      nodes[i].hidden = seen[screen] === true;
+    }
+    return true;
+  }
+  function markCueSeen(screen) {
+    var key = str(screen) || 'home';
+    var seen = cuesSeen();
+    if (seen[key] === true) return false;
+    seen[key] = true;
+    try { SDP.Data.saveSettings({ cuesSeen: seen }); } catch (e) {}
+    paintCues();
+    return true;
+  }
+
+  /* R1: all three credit lines stay verbatim, but only the active language is… */
   function paintCredits() {
     if (!doc || !doc.querySelectorAll) return false;
     var enText = lang === 'si' ? '' : STRINGS_EN.creditsLine;
@@ -685,8 +830,7 @@
     return true;
   }
 
-  /* P5: "Session 8 ready · 30 words" — the student knows the bank is loaded
-     before they tap Start, instead of discovering an empty cockpit. */
+  /* P5: "Session 8 ready · 30 words" — the student knows the bank is loaded… */
   function paintReadiness(bank) {
     var badge = byId('homeReadyBadge');
     if (!badge) return false;
@@ -738,9 +882,7 @@
     if (segTyping) segTyping.setAttribute('aria-pressed', String(mode === 'typing'));
   }
 
-  /* VOX-07: the first Start of a session speaks a condensed two-step English
-     walkthrough with #btnGuideSkipStart, unless the student turned auto-play
-     off. The Cockpit opens as soon as the guide ends or is skipped. */
+  /* VOX-07: the first Start of a session speaks a condensed two-step English… */
   var sessionState = { introShown: false };
   function startDictation(mode) {
     var chosen = mode || settings().mode;
@@ -754,8 +896,7 @@
   function beginDictation(mode) {
     var chosen = mode || settings().mode;
     if (!words().length) {
-      /* Never open an empty cockpit: retry the boot, then tell the student
-         plainly what to do next. */
+      /* Never open an empty cockpit: retry boot, then say what to do. */
       try { SDP.Sync.boot({}, function () { startDictation(chosen); }); } catch (e) {}
       showToast(t('emptyBank'));
       showTab('home');
@@ -770,8 +911,7 @@
   function resumeDictation() {
     var draft = null;
     try { draft = SDP.Data.session(); } catch (e) {}
-    /* D11: Engine.resume() restores the exact beat (countdown for 'writing',
-       remaining repeats for 'listening'); a plain start() only restarts. */
+    /* D11: Engine.resume() restores the exact beat (countdown for 'writing',… */
     var resumed = false;
     try { resumed = !!(SDP.Engine && SDP.Engine.resume && SDP.Engine.resume()); } catch (e) { resumed = false; }
     if (!resumed) {
@@ -786,33 +926,71 @@
     }
   }
 
-  /* ══ Guide 2.0 — version-stamped, auto-narrating student guide (R3, D3) ══ */
+  /* ══ Guide 3.0 — version-stamped, auto-narrating student guide (R3, D16) ═ */
   var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, autoplayTimer: null, quickMode: false, pendingMode: null };
   var guidePaused = false;
 
+  /* D16: Guide 3.0 — four voice-transition cards with animated previews. */
+  function guideMockMarkup(step) {
+    if (step === 1) {
+      return '<div class="guide-mock">' +
+        '<span class="mock-btn">▶ ' + esc(t('startDictation')) + '</span>' +
+        '<span class="mock-cue">' + esc(t('cueStep1')) + '</span></div>';
+    }
+    if (step === 2) {
+      return '<div class="guide-mock">' +
+        '<div class="mock-row"><span class="mock-ring">5s</span>' +
+        '<span>⏸ ' + esc(t('btnPauseDictation')) + '</span></div>' +
+        '<div class="mock-row"><span class="mock-sync">2× · ' + esc(t('repeatBadge')) + ' 1 / 2</span></div></div>';
+    }
+    if (step === 3) {
+      var list = words(), rows = '', i, n = Math.min(3, list.length);
+      for (i = 0; i < n; i++) {
+        var w = list[i] || {};
+        rows += '<div class="mock-row"><span class="mock-num">#' + pad2(i + 1) + '</span>' +
+          '<span>' + esc(w.w) + '</span><span class="mock-cue">🔊</span>' +
+          '<span>' + esc(t('markCorrectWord')) + '</span><span>' + esc(t('markWeakWord')) + '</span></div>';
+      }
+      return '<div class="guide-mock">' + (rows || '<div class="mock-row">#01 · #02 · #03</div>') + '</div>';
+    }
+    return '<div class="guide-mock">' +
+      '<span class="mock-sync">📡 Ms. Sumodya Sewmini · ' + esc(t('lecturerSyncIdle')) + '</span>' +
+      '<span class="mock-btn mock-go">🎓 ' + esc(t('tabStudio')) + '</span></div>';
+  }
   function renderGuideSteps() {
     var host = byId('guideSteps');
     if (!host) return;
     var html = '', i;
     for (i = 1; i <= 4; i++) {
       html += '<li class="guide-step" data-step="' + (i - 1) + '">' +
-        '<h3>' + esc(t('guideStep' + i + 'Title')) + '</h3>' +
+        '<h3>' + esc(t('guideCard' + i + 'Tag')) + '</h3>' +
+        guideMockMarkup(i) +
         '<p>' + esc(t('guideStep' + i + 'Body')) + '</p>' +
         '</li>';
     }
     host.innerHTML = html;
     var steps = host.querySelectorAll ? host.querySelectorAll('.guide-step') : [];
-    for (i = 0; i < steps.length; i++) steps[i].classList.remove('guide-active');
-    if (steps[guideState.activeStep]) steps[guideState.activeStep].classList.add('guide-active');
+    for (i = 0; i < steps.length; i++) {
+      steps[i].classList.remove('guide-active');
+      steps[i].classList.remove('active-step');
+    }
+    if (steps[guideState.activeStep]) {
+      steps[guideState.activeStep].classList.add('guide-active');
+      steps[guideState.activeStep].classList.add('active-step');
+    }
   }
   function highlightGuideStep(idx) {
     var host = byId('guideSteps');
     if (!host) return;
     var steps = host.querySelectorAll ? host.querySelectorAll('.guide-step') : [];
     var j;
-    for (j = 0; j < steps.length; j++) steps[j].classList.remove('guide-active');
+    for (j = 0; j < steps.length; j++) {
+      steps[j].classList.remove('guide-active');
+      steps[j].classList.remove('active-step');
+    }
     if (steps[idx]) {
       steps[idx].classList.add('guide-active');
+      steps[idx].classList.add('active-step');
       guideState.activeStep = idx;
       /* D-G3: keep the spoken card inside the viewport on a 390px phone. */
       try {
@@ -842,10 +1020,8 @@
     if (banner.hidden) return false;
     return !(banner.classList && banner.classList.contains('hidden'));
   }
-  /* D11: 700 ms in, if no utterance REALLY started (onstart) and no <audio> plays,
-     ask for a tap — read state.speaking and a voiceless browser never showed it. */
-  /* D16/R9: 900 ms in, a cold-boot browser may still be un-gestured;
-     #guideAutoplayBanner asks for the one tap that unlocks audio. */
+  /* D11: 700 ms in, ask for a tap if no utterance really started. */
+  /* D16/R9: 900 ms in, a cold-boot browser may still be un-gestured;… */
   function showGuideAutoplayBanner() {
     var banner = byId('guideAutoplayBanner');
     if (!banner) return false;
@@ -931,8 +1107,7 @@
         });
         hideGuideTapBanner();
       } catch (e) {
-        /* D-G1: never swallow a narration failure — an empty catch hid the pickVoice
-     ReferenceError for a whole release. */
+        /* D-G1: never swallow a narration failure — an empty catch hid the pickVoice… */
         guideState.narrating = false;
         try { console.error('[SDP] guide narration failed:', e); } catch (e2) {}
         showToast(t('guideVoiceFailed'));
@@ -950,7 +1125,7 @@
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     clearGuideAutoplayWatch();
-    /* The first tap creates the media element and unlocks speechSynthesis. */
+    /* The first tap unlocks audio + speechSynthesis. */
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     if (fromBanner) { guideState.narrating = false; startGuideNarration(0); return true; }
     if (!guideState.narrating) startGuideNarration(guideState.activeStep);
@@ -1003,15 +1178,14 @@
     modal.setAttribute('aria-hidden', 'false');
     if (modal.classList) modal.classList.add('is-open');
     var conf = settings();
-    /* R3: Step 1 is attempted immediately, then a 600 ms watchdog decides
-       whether the browser blocked un-gestured audio (D-G2). */
+    /* R3: Step 1 is attempted immediately, then a 600 ms watchdog decides… */
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     if (conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
     armGuideWatchdog();
     /* D16: 900 ms cold-boot autoplay check, alongside the 700 ms tap watchdog. */
     armGuideAutoplayWatch();
-    /* R3/D-V6: the first tap unlocks speechSynthesis + <audio> and narrates 1 -> 4. */
+    /* R3/D-V6: the first tap unlocks audio and narrates 1 -> 4. */
     if (!modal._guideNarrationBound) {
       modal._guideNarrationBound = true;
       modal.addEventListener('click', onGuideGesture, false);
@@ -1048,8 +1222,7 @@
     clearGuideAutoplayWatch();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    /* W7/D-G5: write the stamp — dismissing still counts as seen (G7.1d), and
-     #btnGuide / #btnReplayGuide reopen the guide at any time. */
+    /* W7/D-G5: write the stamp — dismissing still counts as seen (G7.1d), and… */
     try { SDP.Data.markGuideSeen(); } catch (e) {}
     restoreGuideTitle();
     var opener = guideState.opener;
@@ -1059,12 +1232,12 @@
     return true;
   }
   /* ── VOX-07: Quick Walkthrough Mode ───────────────────────────────────── */
-  function quickSkipButton(show) {
+  function quickSkipButton(show, labelKey) {
     var btn = byId('btnGuideSkipStart');
     if (!btn) return false;
     btn.hidden = !show;
     btn.setAttribute('aria-hidden', show ? 'false' : 'true');
-    if (show) btn.textContent = t('guideSkipStart');
+    if (show) btn.textContent = t(labelKey || 'guideSkipStart');
     return show;
   }
   function restoreGuideTitle() {
@@ -1072,7 +1245,8 @@
     if (title) title.textContent = t('howToUse');
     guideState.quickMode = false;
     guideState.pendingMode = null;
-    quickSkipButton(false);
+    /* D16: the guide footer always carries ▶ Start Dictation Now. */
+    quickSkipButton(true, 'guideSkipStartNow');
     return true;
   }
   function openGuideQuick(mode) {
@@ -1104,7 +1278,7 @@
     return true;
   }
 
-  /* D-G4: "Listen to the steps (EN)" runs the same step machine as openGuide(). */
+  /* D-G4: "Listen to the steps (EN)" reuses the openGuide() step machine. */
   function speakGuide() {
     var modal = byId('guideModal');
     if (modal && modal.hidden) {
@@ -1162,21 +1336,51 @@
       if (filter === 'weak' && weak.indexOf(key) < 0) continue;
       if (filter === 'mastered' && !progress.mastered[key]) continue;
       shown += 1;
-      html += '<article class="dict-card" data-word="' + esc(w.w) + '">' +
+      /* D14: #01..#30 rows + per-word self-check into sdp.progress. */
+      var isMastered = !!progress.mastered[key];
+      var isWeak = weak.indexOf(key) >= 0;
+      var rowState = isMastered ? 'mastered' : (isWeak ? 'weak' : '');
+      html += '<article class="dict-card" data-word="' + esc(w.w) + '" data-state="' + rowState + '">' +
         '<div class="d-body">' +
-        '<div class="d-top"><span class="d-idx">#' + (i + 1) + '</span> <strong class="d-w">' + esc(w.w) + '</strong> <span class="d-pos">' + esc(w.pos) + '</span></div>' +
+        '<div class="d-top"><span class="d-index">#' + pad2(i + 1) + '</span> <strong class="d-w">' + esc(w.w) + '</strong> <span class="d-pos">' + esc(w.pos) + '</span></div>' +
         '<div class="d-p">/' + esc(w.p) + '/</div>' +
         '<div class="d-m">' + esc(w.m) + '</div>' +
         '<div class="word-si">' + esc(w.si) + '</div>' +
         '<div class="d-s">' + esc(w.s) + '</div>' +
         '</div>' +
-        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '">▶</button>' +
+        '<div class="d-side">' +
+        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '">🔊 Listen</button>' +
+        '<button type="button" class="btn btn-sm d-mark-correct" data-mark-word="mastered" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isMastered) + '">' + esc(t('markCorrectWord')) + '</button>' +
+        '<button type="button" class="btn btn-sm d-mark-weak" data-mark-word="weak" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isWeak) + '">' + esc(t('markWeakWord')) + '</button>' +
+        '</div>' +
         '</article>';
     }
     var dictEmpty = byId('dictEmpty');
     if (dictEmpty) dictEmpty.hidden = list.length > 0;
     host.innerHTML = shown ? html : (list.length ? '<p class="dict-empty">' + esc(t('noWordsFound')) + '</p>' : '');
     return shown;
+  }
+  /* D14: ✓ / ✗ write sdp.progress.mastered / weakWords and repaint. */
+  function markDictWord(wordName, state) {
+    var key = str(wordName).toLowerCase();
+    if (!key) return false;
+    var progress = {};
+    try { progress = SDP.Data.progress(); } catch (e) { return false; }
+    if (!isObj(progress.mastered)) progress.mastered = {};
+    var weak = Array.isArray(progress.weakWords) ? progress.weakWords.slice(0) : [];
+    var at = weak.indexOf(key);
+    if (state === 'mastered') {
+      progress.mastered[key] = true;
+      if (at >= 0) weak.splice(at, 1);
+    } else if (state === 'weak') {
+      delete progress.mastered[key];
+      if (at < 0) weak.push(key);
+    }
+    progress.weakWords = weak;
+    try { SDP.Data.saveProgress(progress); } catch (e) {}
+    renderWords();
+    renderHome();
+    return true;
   }
   function bindWords() {
     var search = byId('dictSearch');
@@ -1201,10 +1405,16 @@
       list._sdpBound = true;
       list.addEventListener('click', function (ev) {
         var node = ev && ev.target;
-        while (node && node !== list && !(node.getAttribute && node.getAttribute('data-play'))) node = node.parentNode;
+        var markNode = node;
+        while (markNode && markNode !== list && !(markNode.getAttribute && markNode.getAttribute('data-mark-word'))) markNode = markNode.parentNode;
+        if (markNode && markNode !== list && markNode.getAttribute) {
+          markDictWord(markNode.getAttribute('data-word-mark'), markNode.getAttribute('data-mark-word'));
+          return;
+        }
+        while (node && node !== list && !(node.getAttribute && (node.getAttribute('data-play') || node.getAttribute('data-play-word')))) node = node.parentNode;
         if (!node || node === list || !node.getAttribute) return;
         var word = null;
-        try { word = SDP.Sync.wordByName(node.getAttribute('data-play')); } catch (e) {}
+        try { word = SDP.Sync.wordByName(node.getAttribute('data-play') || node.getAttribute('data-play-word')); } catch (e) {}
         if (word && SDP.Speech) SDP.Speech.playWord(word, {}, noop);
       });
     }
@@ -1294,7 +1504,7 @@
         while (node && node !== modeHost && !(node.getAttribute && node.getAttribute('data-prac'))) node = node.parentNode;
         if (!node || node === modeHost || !node.getAttribute) return;
         practice.mode = str(node.getAttribute('data-prac')) || 'flash';
-        /* ENG-04: without this the first Listening Drill card stayed silent. */
+        /* ENG-04: without this the first drill card stayed silent. */
         practice.index = 0; practice.answered = ''; practice.flipped = false; practice.spoken = false;
         renderPractice();
       });
@@ -1353,7 +1563,7 @@
     select.innerHTML = html;
   }
   /* One call for every surface — used after a classroom settings adoption. */
-  /* D12/D18: skip re-rendering Studio while a Studio action is in flight. */
+  /* D12/D18: skip Studio re-render while an action is in flight. */
   function studioIsBusy() {
     try { return !!(SDP.Studio && SDP.Studio.isBusy && SDP.Studio.isBusy()); } catch (e) { return false; }
   }
@@ -1375,7 +1585,7 @@
     bar.setAttribute('aria-hidden', unlocked ? 'false' : 'true');
     if (unlocked) {
       var btn = byId('btnSyncClassSettings');
-      /* D2: never repaint the label of a button that is mid-action. */
+      /* D2: never repaint a mid-action button label. */
       if (btn && btn.getAttribute('data-busy') !== '1') btn.textContent = t('lecturerSyncBar');
       var hint = byId('lecturerSyncHint');
       if (hint) hint.textContent = t('studioAskLecturer');
@@ -1383,6 +1593,18 @@
     /* D19: the idle label is separate from the live status stamp. */
     var last = byId('lecturerSyncLast');
     if (last && !last.getAttribute('data-state')) last.textContent = t('lecturerSyncIdle');
+    return unlocked;
+  }
+  /* D7: Settings is student-only; one banner links into the studio. */
+  function paintLecturerBanner() {
+    var banner = byId('settingsLecturerBanner');
+    if (!banner) return false;
+    var unlocked = false;
+    try { unlocked = !!(SDP.Studio && SDP.Studio.isUnlocked && SDP.Studio.isUnlocked()); } catch (e) { unlocked = false; }
+    banner.hidden = !unlocked;
+    setText(byId('settingsLecturerText'), t('settingsLecturerActive'));
+    var btn = byId('btnOpenStudioFromSettings');
+    if (btn) btn.textContent = t('openStudioBtn');
     return unlocked;
   }
   function renderSettings() {
@@ -1412,6 +1634,7 @@
     if (themeSel) themeSel.value = theme;
     var voiceLock = byId('setVoiceLock');
     if (voiceLock) voiceLock.value = str(conf.voiceLock || 'unified');
+    paintLecturerBanner();
     var guideAuto = byId('setGuideAutoPlay');
     if (guideAuto) guideAuto.checked = conf.guideAutoPlay !== false;
     var pills = doc.querySelectorAll ? doc.querySelectorAll('#presetRow [data-preset]') : [];
@@ -1630,7 +1853,7 @@
               setUpdateStatus(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'), 'bad');
               showToast(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'));
             } else {
-              /* D19: Studio already stamped the exact Rev # on #lecturerSyncLast. */
+              /* D19: Studio stamped the exact Rev # on #lecturerSyncLast. */
               setUpdateStatus(t('lecturerSyncLast') + ' · ' + t('studioPublishOk'), 'ok');
             }
             finish();
@@ -1659,13 +1882,11 @@
     state = state || {};
     var session = str(state.session || '8');
     var badge = byId('syncBadge');
-    /* D-UI10: the badge owns #settingsSyncStatus only; the update line keeps
-     #settingsUpdateStatus. */
+    /* D-UI10: the badge owns #settingsSyncStatus only. */
     var status = byId('settingsSyncStatus');
     var label;
     if (state.state === 'synced') {
-      /* ENG-06: no version or session literal lives in the string tables —
-         the badge is assembled here from the live values. */
+      /* ENG-06: no version or session literal lives in the string tables — the… */
       var base = t('syncBadgeSynced');
       label = lang === 'si'
         ? base + ' · ' + session + ' වන වාරය · v' + APP_VERSION
@@ -1678,7 +1899,7 @@
       label = t('syncBadgeRetry');
     }
     if (badge) {
-      /* D-UI6: below 480 px the badge speaks a two-word summary. */
+      /* D-UI6: below 480 px the badge shows a two-word summary. */
       var vw = Number(global.innerWidth || 0);
       var shortLabel = label;
       if (vw > 0 && vw < 480) {
@@ -1693,8 +1914,7 @@
     }
     if (status) { status.textContent = label; status.setAttribute('data-state', state.state || 'synced'); status.setAttribute('title', label); }
   }
-  /* R2/D1: checkForUpdates(cb) is node-style, cb(err, result); v0.0.1.d read arg 1
-     (null) and painted "Check failed" on a healthy 200. One painter for both. */
+  /* R2/D1: checkForUpdates(cb) is node-style, cb(err, result); v0.0.1.d read… */
   function handleSyncCheckResult(err, result) {
     var res = (result && typeof result === 'object') ? result : ((err && typeof err === 'object' && 'ok' in err) ? err : {});
     var hasErr = (result !== undefined && !!err) || !res.ok;
@@ -1745,7 +1965,7 @@
     }
   }
 
-  /* ══ Quick pacing presets (settings section 1) ═════════════════════════════════════════════════════════════════════ */
+  /* ══ Quick pacing presets (settings section 1)… */
   var PRESETS = {
     beginner: { pacingPreset: 'beginner', writeSecs: 12, repeats: 4, pauseSecs: 2, autoAdvance: true },
     standard: { pacingPreset: 'standard', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true },
@@ -1886,7 +2106,7 @@
   }
 
   /* ══ Settings order guard (5 sections, studio last & collapsed) ═════════ */
-  /* contract: docs/UI_COMPONENT_GUIDE.md §Student-first settings order */
+  
   function settingsOrder() {
     var host = byId('settingsSections');
     if (!host) return [];
@@ -1897,7 +2117,7 @@
   }
 
   /* ══ Data toast ═════════════════════════════════════════════════════════ */
-  /* contract: docs/ARCHITECTURE_MAP.md §R9 whisper data toast */
+  
   var toastTimer = null;
   function toastBytes() {
     var meter = global.SDPDataMeter;
@@ -1934,11 +2154,40 @@
   }
 
   /* ══ wiring ═════════════════════════════════════════════════════════════ */
+  /* D13: the resume card's secondary route — a clean run from word #1. */
+  function startOver() {
+    try { SDP.Data.clearSession(); } catch (e) {}
+    try { SDP.Engine.start({ mode: settings().mode, fresh: true }); } catch (e) {}
+    showTab('player');
+    return true;
+  }
+  /* D9: any human tap on a [data-primary-cta] retires that screen's cue. */
+  function bindCueWatcher() {
+    if (!doc || !doc.addEventListener || bindCueWatcher._bound) return false;
+    bindCueWatcher._bound = true;
+    doc.addEventListener('click', function (ev) {
+      var node = ev && ev.target;
+      while (node && node !== doc && !(node.getAttribute && node.getAttribute('data-primary-cta'))) node = node.parentNode;
+      if (!node || node === doc || !node.getAttribute) return;
+      markCueSeen(currentTab());
+    }, false);
+    return true;
+  }
+
   function bindShell() {
     on('btnGuideTop', 'click', openGuide);
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
-    on('btnGuideSkipStart', 'click', function () { finishQuickGuide(true); });
+    on('btnGuideSkipStart', 'click', function () {
+      /* D16: the footer CTA starts the dictation from the full guide too. */
+      if (!guideState.quickMode) {
+        var mode = settings().mode;
+        closeGuide();
+        beginDictation(mode);
+        return;
+      }
+      finishQuickGuide(true);
+    });
     on('btnLang', 'click', toggleLang);
     on('guideLangPill', 'click', toggleLang);
     on('guideSpeak', 'click', speakGuide);
@@ -1946,9 +2195,13 @@
     on('guideNextStep', 'click', guideNextStep);
     on('guideReplayStep', 'click', guideReplayStep);
     on('btnTheme', 'click', toggleTheme);
-    on('btnStart', 'click', function () { startDictation(); });
+    on('btnStart', 'click', function () { markCueSeen('home'); startDictation(); });
     on('btnResume', 'click', resumeDictation);
-    var tabs = ['home', 'player', 'practice', 'dict', 'settings'];
+    on('btnHomeWords', 'click', function () { showTab('dict'); });
+    on('btnOpenStudioFromSettings', 'click', function () { openStudio(); });
+    on('btnStartOver', 'click', startOver);
+    on('btnResumeDraft', 'click', resumeDictation);
+    var tabs = ['home', 'player', 'practice', 'dict', 'settings', 'studio'];
     for (var i = 0; i < tabs.length; i++) {
       (function (name) {
         on('tab-' + name, 'click', function () { showTab(name); });
@@ -1986,8 +2239,7 @@
         node.addEventListener('click', function () { startPractice(str(node.getAttribute('data-prac'))); });
       })(quick[q]);
     }
-    /* D-L1: the header lock button opens Settings -> Lecturer Studio and mirrors
-     the lock state (locked / unlocked). */
+    /* D-L1: the header studio button mirrors the lock state. */
     var quickBtn = byId('btnStudioQuick');
     if (quickBtn && !quickBtn._sdpBound) {
       quickBtn._sdpBound = true;
@@ -2003,10 +2255,11 @@
     bindWords();
     bindPractice();
     bindSettings();
+    bindCueWatcher();
+    paintCues();
   }
 
-  /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys they
-     never touched are adopted. */
+  /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys… */
   function bindTeacherUpdates() {
     if (bindTeacherUpdates._bound || !doc || !doc.addEventListener) return false;
     bindTeacherUpdates._bound = true;
@@ -2025,8 +2278,7 @@
     if (global.addEventListener) {
       global.addEventListener('sdp:update', function () { renderAll(); }, false);
     }
-    /* D16: the 30 s tick and every visibilitychange repaint the badge from the
-     real (err, result) pair. */
+    /* D16: the 30 s tick and every visibilitychange repaint the badge from the… */
     doc.addEventListener('sdp:sync-status', function (ev) {
       var d = (ev && ev.detail) || {};
       handleSyncCheckResult(d.err, d.result);
@@ -2034,17 +2286,18 @@
     return true;
   }
 
+  /* D6: Studio is a top-level screen; focus the PIN (locked) or the key row. */
   function openStudio() {
-    try { showTab('settings'); } catch (e) {}
-    var acc = byId('studioAccordion');
-    if (acc) {
-      acc.open = true;
-      try { if (acc.scrollIntoView) acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { try { acc.scrollIntoView(); } catch (e2) {} }
-    }
+    try { showTab('studio'); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
-    var target = byId('studioPin') || byId('setupPin') || byId('pinPad');
+    var unlocked = false;
+    try { unlocked = !!(SDP.Studio && SDP.Studio.isUnlocked && SDP.Studio.isUnlocked()); } catch (e) { unlocked = false; }
+    var target = unlocked ? (byId('elKeyInput') || byId('btnOneClickMasterSetup')) : (byId('studioPin') || byId('pinPad'));
     if (target && target.focus) { try { target.focus({ preventScroll: true }); } catch (e) {} }
+    var acc = byId('studioAccordion');
+    if (acc && acc.scrollIntoView) { try { acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { try { acc.scrollIntoView(); } catch (e2) {} } }
     try { if (SDP.Studio && SDP.Studio.paintQuickButton) SDP.Studio.paintQuickButton(); } catch (e) {}
+    paintCues();
     return true;
   }
 
@@ -2076,6 +2329,7 @@
     bindTeacherUpdates();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
+    setText(byId('aboutVersion'), APP_VERSION);
     setText(byId('brandName'), 'Smart Dictation');
     renderHome();
     renderWords();
@@ -2130,6 +2384,13 @@
     beginDictation: beginDictation,
     sessionIntroShown: function () { return !!sessionState.introShown; },
     openStudio: openStudio,
+    startOver: startOver,
+    paintCues: paintCues,
+    cuesSeen: cuesSeen,
+    markCueSeen: markCueSeen,
+    paintHomeWordsPreview: paintHomeWordsPreview,
+    markDictWord: markDictWord,
+    paintLecturerBanner: paintLecturerBanner,
     renderBoardBar: renderBoardBar,
     renderBoardJumper: renderBoardJumper,
     toggleBoardWord: toggleBoardWord,

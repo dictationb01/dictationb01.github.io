@@ -198,7 +198,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     check('G7.3b the cockpit shows progress and the word class', cockpit.progress === '1 / 30' && cockpit.pos.length >= 2, JSON.stringify(cockpit));
     // contract: no spoilers — the target word may only appear after Finish
     check('G7.3c the target word is never printed during the beat', cockpit.inDom === false, cockpit.word);
-    check('G7.3d the beat starts listening and the ring is drawn', /Listening/.test(cockpit.state) && cockpit.ringVisible, JSON.stringify(cockpit));
+    check('G7.3d the beat starts listening and the ring is drawn',
+      /Listen Carefully/.test(cockpit.state) && cockpit.ringVisible, JSON.stringify(cockpit));
     check('G7.3e paper mode keeps the stage free of inputs', cockpit.hasInput === 0, cockpit.hasInput);
     check('G7.3f the word was spoken aloud (mocked media)', cockpit.spoken >= 1, cockpit.spoken);
 

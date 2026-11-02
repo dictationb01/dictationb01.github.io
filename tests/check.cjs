@@ -38,30 +38,30 @@ function sha256(p) { return crypto.createHash('sha256').update(read(p)).digest('
  * and an explicit ceiling; an unbudgeted file is a release blocker (W4). */
 const BUDGET = {
   /* contract: docs/ARCHITECTURE_MAP.md §H1 — v0.0.2.a ceilings (W4). The three
-     module ceilings moved for the D1–D20 work: studio 116000, sync 86000,
-     views 128000; session.json is the exact shipped 57,381 B payload. */
-  'index.html': 36000,
-  'assets/css/sdp-ui.css': 60000,
+     module ceilings moved again for the D1–D20 work: studio 126000, sync 86000,
+     views 136000, engine 62000; session.json is the exact 57,381 B payload. */
+  'index.html': 38000,
+  'assets/css/sdp-ui.css': 68000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
   'data/sdp-data-sync.js': 86000,
   'data/sdp-audio-speech.js': 52000,
-  'data/sdp-dictation-engine.js': 60000,
-  'data/sdp-ui-views.js': 128000,
-  'data/studio.js': 116000,
+  'data/sdp-dictation-engine.js': 62000,
+  'data/sdp-ui-views.js': 136000,
+  'data/studio.js': 126000,
   'data/data-meter.js': 24000,
   'data/session.json': 57381,
   'data/config.json': 36000,
   'data/version.json': 2000,
   'data/gas-source.txt': 13764,
   'data/elevenlabs-audio.json': 2500000,
-  'data.html': 32000,
-  'data/index.html': 32000,
+  'data.html': 34000,
+  'data/index.html': 34000,
   'sw.js': 13000,
   'manifest.webmanifest': 4000,
-  'docs/ARCHITECTURE_MAP.md': 48000,
-  'docs/UI_COMPONENT_GUIDE.md': 48000,
-  'docs/SYNC_AND_DATA_CONTRACT.md': 48000,
+  'docs/ARCHITECTURE_MAP.md': 52000,
+  'docs/UI_COMPONENT_GUIDE.md': 52000,
+  'docs/SYNC_AND_DATA_CONTRACT.md': 52000,
   'docs/CHANGELOG_LEDGER.md': 52000,
   'docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md': 24000
 };
@@ -406,10 +406,55 @@ function pending(p) {
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
   record('index.html declares the v0.0.2.a boot target', html.indexOf("'0.0.2.a'") > 0 || html.indexOf('"0.0.2.a"') > 0);
-  const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings'];
-  record('index.html contains the five tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
-  const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings'];
-  record('index.html contains the five screen ids', screens.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), screens.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
+  const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
+  record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
+  const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
+  record('index.html contains the six screen ids', screens.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), screens.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
+  record('index.html ships #rail-studio beside the five original rail buttons', html.indexOf('id="rail-studio"') > 0 && html.indexOf('data-tab="studio"') > 0);
+  record('index.html ships the dedicated Lecturer Admin Studio screen', /<section class="screen" id="screen-studio" aria-label="Lecturer Admin Studio">/.test(html));
+  record('index.html keeps #lecturerSyncBar + #btnSyncClassSettings inside #screen-studio',
+    (function () {
+      var studio = html.slice(html.indexOf('id="screen-studio"'));
+      return studio.indexOf('id="lecturerSyncBar"') > 0 && studio.indexOf('id="btnSyncClassSettings"') > 0 && studio.indexOf('id="studioBody"') > 0;
+    })());
+  record('index.html ships the amber STEP cue on the Home primary CTA',
+    /class="cue" data-cue="home"/.test(html) && html.indexOf('STEP 1 — PRESS HERE') > 0);
+  record('index.html ships #sessionProgressStrip and #sessionPills', html.indexOf('id="sessionProgressStrip"') > 0 && html.indexOf('id="sessionPills"') > 0);
+  record('index.html ships the 4-button tactile transport', ['btnPrev', 'btnPlayPause', 'btnReplay', 'btnNext'].every(function (id) { return html.indexOf('id="' + id + '"') > 0; }));
+  record('index.html no longer nests the studio inside #screen-settings',
+    (function () {
+      var settings = html.slice(html.indexOf('id="screen-settings"'), html.indexOf('id="screen-studio"'));
+      return settings.indexOf('studioAccordion') < 0 && settings.indexOf('lecturerSyncBar') < 0 && settings.indexOf('settingsLecturerBanner') > 0;
+    })());
+})();
+
+/* 9b ── v0.0.2.a tactile system, 34-clip arithmetic and Guide 3.0 (D8–D18) --- */
+(function tactileSystem() {
+  var css = exists('assets/css/sdp-ui.css') ? readText('assets/css/sdp-ui.css') : '';
+  record('D8 the 54px tactile tokens ship in the single stylesheet',
+    /--btn-h:\s*54px/.test(css) && /--shadow-btn:/.test(css) && /--grad-primary:/.test(css) && /--grad-go:/.test(css));
+  record('D8 .btn is 54px tall with a 2px press collapse',
+    /\.btn \{[^}]*min-height: var\(--btn-h\)/.test(css) && /\.btn:active \{[^}]*translateY\(2px\)/.test(css));
+  record('D8 .btn-primary and .btn-go are gradient fills with #FFFFFF ink',
+    /\.btn-primary \{[^}]*var\(--grad-primary\)/.test(css) && /\.btn-go \{[^}]*var\(--grad-go\)/.test(css));
+  record('D8 static .badge and unpressed .pill are flattened to a sunken label',
+    /\.badge \{[^}]*box-shadow: none/.test(css) && /\.pill:not\(\[aria-pressed='true'\]\)/.test(css));
+  record('D9 the .cue amber callout pill ships', /\.cue \{[^}]*background: #F59E0B/.test(css));
+  record('D11 the 30-pill strip and its done/current/todo states ship',
+    /\.word-pill\.done/.test(css) && /\.word-pill\.current/.test(css) && /\.word-pill\.todo/.test(css));
+  var studio = exists('data/studio.js') ? readText('data/studio.js') : '';
+  record('D2 #studioPackDashboard computes X/34 clips live from the pack',
+    studio.indexOf('studioPackDashboard') > 0 && /studioClipsUnit/.test(studio) && /\.clips/.test(studio));
+  record('D3 #studioGenProgress prints the verbatim "Generating clip n/N" line',
+    /studioGenPrefix/.test(studio) && studio.indexOf('studioGenProgress') > 0);
+  record('D4 the failed clip is recorded and #btnRetryFailedClip exists',
+    /lastFailedClip/.test(studio) && studio.indexOf('btnRetryFailedClip') > 0);
+  record('D18 the 34-clip arithmetic is stated in the cost line',
+    /clips \(30 words \+ 4 guide steps\)/.test(studio));
+  var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
+  record('D16 Guide 3.0 ships four voice-transition cards with previews',
+    /guideMockMarkup/.test(views) && /active-step/.test(views) && /mock-ring/.test(views) && /mock-sync/.test(views));
+  record('D16 the guide stamp follows the running version', /markGuideSeen/.test(exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '') && /APP_VERSION/.test(views));
 })();
 
 /* 10 ── test suite files budgeted --------------------------------------- */

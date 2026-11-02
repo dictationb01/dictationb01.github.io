@@ -112,7 +112,7 @@ test('R1: the five localStorage keys and the settings default shape are exact', 
   // never clobber a field the student changed by hand).
   const defaults = SDP.Data.settings();
   assert.deepEqual(Object.keys(defaults).sort(), [
-    'appliedSettingsRev', 'autoAdvance', 'defaultsResetV001f', 'guideAutoPlay',
+    'appliedSettingsRev', 'autoAdvance', 'cuesSeen', 'defaultsResetV001f', 'guideAutoPlay',
     'hints', 'lang', 'langResetV001e', 'mode', 'pacingPreset', 'pauseSecs', 'rate',
     'repeats', 'theme', 'touchedKeys', 'vaultLock', 'voiceLock', 'voiceSource',
     'volume', 'writeSecs'

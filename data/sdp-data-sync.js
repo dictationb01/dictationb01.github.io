@@ -61,6 +61,9 @@
       voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'dark',
       guideAutoPlay: true, pacingPreset: 'exam', voiceLock: 'unified',
       hints: { pos: true, first: false, si: false, sentence: false },
+      /* D9 (v0.0.2.a): which screens already showed their amber STEP cue. It
+         lives INSIDE sdp.settings, so the five-key localStorage law holds. */
+      cuesSeen: {},
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
       /* D5 (v0.0.1.h): Layer-1 — the encrypted vault backup and its PIN
@@ -189,6 +192,8 @@
       /* R7: which settings the student changed by hand. A remote settingsRev
          bump overrides touchedKeys for the ten classroom keys (R1/SYNC-01). */
       if (!isObj(s.touchedKeys)) s.touchedKeys = {};
+      /* D9: a malformed cuesSeen is healed to an empty map, never a sixth key. */
+      if (!isObj(s.cuesSeen) || Array.isArray(s.cuesSeen)) s.cuesSeen = {};
       s.appliedSettingsRev = Math.max(0, Number(s.appliedSettingsRev) || 0);
       if (!isObj(s.vaultLock)) s.vaultLock = { fails: 0, lockUntil: 0, strikes: 0 };
       return s;

@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.1.i)
+/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.2.a)
  * Strict ES5, dependency free. The ONLY module that touches a key (W5/W6).
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, §R7 */
 (function (global) {
@@ -799,6 +799,8 @@
   /* ══ Card 1 — rebuilt for */
   function keysCardMarkup() {
     return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4">' + T('studioCardKeys') + '</h4>' +
+      /* D2 (v0.0.2.a): the honest one-line status dashboard. */
+      '<p id="studioPackDashboard" class="studio-pack-dashboard" role="status" aria-live="polite">' + esc(packDashboardText()) + '</p>' +
       keyRowMarkup('elKeyInput', 'ElevenLabs API key', 'xi-api-key', 'ElKey') +
       keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… / github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
       '<label class="lbl" for="studioAiProvider">' + T('studioAiProvider') + '</label>' + aiProviderSelectMarkup() +
@@ -810,9 +812,12 @@
       btn('btnRefreshQuota', '🔄 ' + t('quotaHeading'), '', 'style="display:none"') +
       '</div>' +
       '<div class="studio-primary-bar">' +
-      btn('btnSaveKeys', t('studioSave'), 'btn-primary') +
-      btn('btnOneClickMasterSetup', t('studioOneClick'), 'btn-primary') +
+      btn('btnSaveKeys', t('studioSave'), 'btn-ghost') +
+      btn('btnOneClickMasterSetup', t('studioOneClick'), 'btn-primary', 'data-primary-cta="1"') +
       '</div>' +
+      /* D3/D4 (v0.0.2.a): verbatim live progress and a delta-only retry. */
+      '<p id="studioGenProgress" class="studio-gen-progress" role="status" aria-live="polite">' + esc(genProgressText()) + '</p>' +
+      '<div class="chip-row studio-retry-row"' + (ST.lastFailedClip ? '' : ' hidden') + '>' + btn('btnRetryFailedClip', t('studioRetryFailed'), 'btn-ghost') + '</div>' +
       '<label class="checkline" for="studioForceRegen"><input type="checkbox" id="studioForceRegen"> <span>' + T('forceRegenLabel') + '</span></label>' +
       '<input type="checkbox" id="chkForceRegen" style="display:none" aria-hidden="true" tabindex="-1">' +
       '<div class="chip-row studio-diagnostics-row">' +
@@ -835,35 +840,109 @@
       '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' + '<label class="lbl" for="studioWords">' + T('studioEditor') + '</label>' + '<textarea id="studioWords" spellcheck="false">' + esc(wordsToText(words)) + '</textarea>' +
       '<p id="studioCount" class="studio-msg">' + words.length + ' ' + T('studioWordsCount') + '</p>' +
       '<p id="studioEnrichStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
-      '<div class="chip-row">' + btn('btnEnrichWords', t('studioEnrich')) +
+      '<div class="chip-row">' + btn('btnEnrichWords', t('studioEnrich'), 'btn-ghost') +
       btn('btnPreviewWords', t('studioPreview')) + btn('btnPublishWords', t('studioPublish'), 'btn-primary') +
-      btn('btnPublishWordsAndVoice', t('studioPublishWordsVoice'), 'btn-primary') +
+      btn('btnPublishWordsAndVoice', t('studioPublishWordsVoice34'), 'btn-primary', 'data-primary-cta="1"') +
       btn('btnStudioLock', t('studioLock')) + '</div>' + '<h5 class="studio-h5">' + T('studioWordManager') + '</h5>' +
       '<div id="studioWordManager" class="studio-word-manager"></div>' + '<div id="studioPreview" class="studio-preview"></div>' + '<p class="muted">' + T('studioElevenNote') + '</p>' + '</section>';
   }
   /* ══ Card 3 — classroom settings */
   function settingsCardMarkup() {
-    return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + T('studioCardSettings') + '</h4>' + '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
+    return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + T('studioCardSettings') + '</h4>' +
+      /* D7: the ONE classroom broadcast bar is slotted here while unlocked. */
+      '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
+      '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
       '<input id="studioNewPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
       '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
-      '<p class="studio-hint">#lecturerSyncBar · #btnSyncClassSettings</p>' + '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
+      '<div class="studio-lock-row">' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-ghost') + '</div>' +
+      '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
       btn('btnCommitClip', t('studioCommitClip'), 'btn-primary', 'disabled') + '</div>' +
       '<audio id="recPreviewAudio" controls preload="none" class="rec-preview"></audio>' + '<p class="studio-hint" data-i18n="studioAskLecturer">' + T('studioAskLecturer') + '</p>' + '</section>';
   }
   /* D18: three outcome cards under */
   /* D19: compact sub-label, no */
   function unlockedMarkup() {
-    return '<div class="studio-head">' + '<span class="studio-mode-pill">Lecturer Mode Unlocked ✓</span>' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-primary') + '</div>' +
+    return '<div class="studio-head">' + '<span class="studio-mode-pill">Lecturer Mode Unlocked ✓</span>' + '</div>' +
       '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
       keysCardMarkup() + wordsCardMarkup() + settingsCardMarkup();
   }
   /* R5/SEC-01: while locked the body */
   function lockedMarkup() {
-    return '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
+    return '<div id="studioGate" class="studio-gate" role="group" aria-label="' + T('studioPinLabel') + '">' +
+      '<h4>' + T('studioScreenTitle') + '</h4>' +
+      '<p class="muted">' + T('studioLocked') + '</p>' +
+      '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
       '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
       pinDotsMarkup() +
       pinPadMarkup() +
-      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p class="studio-hint" data-i18n="studioAskLecturer">' + T('studioAskLecturer') + '</p>';
+      '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p class="studio-hint" data-i18n="studioAskLecturer">' + T('studioAskLecturer') + '</p>' +
+      '</div>';
+  }
+
+  /* ══ D2/D18 (v0.0.2.a): the honest 34-clip dashboard ═════════════════════
+   * Vault state, GitHub state and the TRUE clip count, computed live from
+   * ST.voicePack.clips — never a guess and never a cached number. */
+  function clipCount() {
+    var clips = isObj(ST.voicePack.clips) ? ST.voicePack.clips : {};
+    var n = 0, k;
+    for (k in clips) {
+      if (!Object.prototype.hasOwnProperty.call(clips, k)) continue;
+      if (clipExists(k)) n += 1;
+    }
+    return n;
+  }
+  function packDashboardText() {
+    var vault = vaultBadgeVisible() ? t('studioPackVault') : 'Vault: —';
+    var gh = str(ST.secrets.ghToken) ? t('studioPackGithub') : 'GitHub: —';
+    return vault + ' | ' + gh + ' | ' + t('studioPackClips') + clipCount() + t('studioClipsUnit');
+  }
+  function paintPackDashboard() {
+    var node = byId('studioPackDashboard');
+    if (!node) return false;
+    node.textContent = packDashboardText();
+    return true;
+  }
+  function genProgressText() {
+    return str(ST.genProgress) || (t('studioPackClips') + clipCount() + t('studioClipsUnit'));
+  }
+  /* D4: the retry row is visible only while a real failure is on record. */
+  function paintRetryRow() {
+    var btn = byId('btnRetryFailedClip');
+    var row = btn && btn.parentNode;
+    var shown = !!(ST.lastFailedClip && ST.lastFailedClip.key);
+    if (row && row.setAttribute) {
+      if (shown) row.removeAttribute('hidden'); else row.setAttribute('hidden', 'hidden');
+    }
+    if (shown && btn) btn.textContent = t('studioRetryOne') + ' ' + ST.lastFailedClip.key;
+    return shown;
+  }
+  function paintGenProgress(text) {
+    if (text !== undefined) ST.genProgress = str(text);
+    var node = byId('studioGenProgress');
+    if (node) node.textContent = genProgressText();
+    if (ST.unlocked) paintRetryRow();
+    return true;
+  }
+  /* D7: the single #lecturerSyncBar element hops into Card 3 while unlocked and
+     returns to its dock while locked, so it always exists in the DOM (G12.13g). */
+  function lecturerBarNode() {
+    var bar = byId('lecturerSyncBar');
+    if (bar) ST.lecturerBar = bar;
+    return ST.lecturerBar || null;
+  }
+  function stashLecturerBar() {
+    var bar = lecturerBarNode();
+    if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+    return bar;
+  }
+  function placeLecturerBar() {
+    var bar = lecturerBarNode();
+    if (!bar) return false;
+    var slot = byId('studioSyncSlot');
+    var dock = byId('studioSyncDock');
+    var target = (ST.unlocked && slot) ? slot : dock;
+    if (target && bar.parentNode !== target) target.appendChild(bar);
+    return true;
   }
 
   function mount() {
@@ -873,6 +952,8 @@
     try { restoreSessionStash(); } catch (e) {}
     var host = byId('studioBody');
     if (!host) return false;
+    /* D7: the ONE #lecturerSyncBar node survives every re-render. */
+    stashLecturerBar();
     host.innerHTML = ST.unlocked ? unlockedMarkup() : lockedMarkup();
     var msgNode = byId('studioMsg');
     if (msgNode && ST.message) {
@@ -891,6 +972,11 @@
     paintMasterSteps();
     paintWordManager();
     paintAiFields();
+    placeLecturerBar();
+    paintPackDashboard();
+    paintGenProgress();
+    try { if (SDP.Views && SDP.Views.paintLecturerBar) SDP.Views.paintLecturerBar(); } catch (e) {}
+    try { if (SDP.Views && SDP.Views.paintLecturerBanner) SDP.Views.paintLecturerBanner(); } catch (e) {}
     return true;
   }
   function paintAiFields() {
@@ -937,10 +1023,11 @@
   function paintQuickButton() {
     var btn = byId('btnStudioQuick');
     if (!btn) return false;
-    btn.textContent = ST.unlocked ? '🔓' : '🔒';
+    /* D5 (v0.0.2.a): icon + words, never a bare glyph. */
+    btn.textContent = ST.unlocked ? t('lecturerAdminUnlocked') : t('lecturerAdminLocked');
     btn.setAttribute('aria-label', ST.unlocked
-      ? 'Lecturer Studio is unlocked — open it'
-      : 'Open the Lecturer Studio from Settings');
+      ? t('lecturerAdminUnlocked') + ' — open the Lecturer Admin Studio'
+      : t('lecturerAdminLocked') + ' — open the Lecturer Admin Studio');
     btn.setAttribute('data-state', ST.unlocked ? 'unlocked' : 'locked');
     return true;
   }
@@ -1159,6 +1246,11 @@
     btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
     btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
     btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { saveClassSettings(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
+    btnRetryFailedClip: function () {
+      var failed = ST.lastFailedClip;
+      if (!failed || !failed.key) { msg(t('studioRetryNone'), ''); return; }
+      withBusy('btnRetryFailedClip', function (d) { generateClips({ keys: [failed.key] }, function () { d(); }); });
+    },
     btnSaveKeys: function () { withBusy('btnSaveKeys', function (d) { saveKeys(); global.setTimeout(function () { msg(T('studioSavedOk'), 'ok'); d(); }, 1500); }); }
   };
   function onStudioClick(ev) {
@@ -1730,7 +1822,10 @@
     function pub() { publishBundle(currentWords(), {}, function (err, info) {
       if (err) { clearBusy(); msg(t('studioPublishFail') + ' · ' + publishReason(err, info), 'bad'); cb(err, info); return; }
       try { if (SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {}); } catch (e) {}
-      msg(T('studioPublishOkFull'), 'ok'); toast(T('studioPublishOkFull')); cb(null, info);
+      var saved = clipCount() + t('studioClipsSaved') + (info && info.syncRev) + ' · data/elevenlabs-audio.json';
+      paintGenProgress(saved);
+      paintPackDashboard();
+      msg(saved, 'ok'); toast(T('studioPublishOkFull')); cb(null, info);
     }); }
     if (!str(ST.secrets.elevenKey)) return pub();
     generateClips({ noCommit: true }, function (e, i) { if (e && !(i && i.tierLimited)) { clearBusy(); msg(t('studioPublishFail'), 'bad'); cb(e, i); return; } pub(); });
@@ -1794,7 +1889,11 @@
         paintMasterSteps();
         paintVaultBadge();
         var made = genInfo && genInfo.made ? genInfo.made.length : 0;
-        msg(t('studioPublishOk') + ' · ' + made + ' clips · syncRev ' + (pubInfo && pubInfo.syncRev), 'ok');
+        var totalClips = clipCount();
+        var savedLine = totalClips + t('studioClipsSaved') + (pubInfo && pubInfo.syncRev) + ' · data/elevenlabs-audio.json';
+        msg(savedLine, 'ok');
+        paintGenProgress(savedLine);
+        paintPackDashboard();
         toast(t('studioPublishOk'));
         cb(null, {
           ok: true, clips: made,
@@ -1941,7 +2040,9 @@
   }
   function costPreviewLine(words) {
     var c = costPreview(words);
-    return c.count + ' words = ' + c.words + ' chars · 4 guide steps = ' + c.guide + ' chars · total ' + c.total + ' chars';
+    /* D18: the arithmetic is always stated as 34 clips = 30 words + 4 guides. */
+    return c.count + ' words = ' + c.words + ' chars · 4 guide steps = ' + c.guide +
+      ' chars · total ' + c.total + ' chars · ' + (c.count + 4) + ' clips (30 words + 4 guide steps)';
   }
   /* D2: 403 / missing_permissions / */
   /* D5/D16: human error sentences. */
@@ -2162,6 +2263,14 @@
     return queue;
   }
 
+  /* D4: the delta-retry queue — only the requested keys, never a paid clip. */
+  function queueFor(words, singleTest, keys) {
+    var queue = buildQueue(words, singleTest);
+    if (!Array.isArray(keys) || !keys.length) return queue;
+    var keep = [], i;
+    for (i = 0; i < queue.length; i++) if (keys.indexOf(queue[i].key) >= 0) keep.push(queue[i]);
+    return keep.length ? keep : queue;
+  }
   /* D-C1/C2/C5/C6/C7: generate ONLY the */
   function generateClips(a, b) {
     var opts = {}, cb = noop;
@@ -2178,21 +2287,36 @@
       msg(str(words.length) + ' words parsed, first 30 used', '');
       toast(str(words.length) + ' words parsed, first 30 used');
     }
-    var queue = buildQueue(words, !!opts.singleTest);
+    var queue = queueFor(words, !!opts.singleTest, opts.keys);
     var force = !!opts.force;
     var made = [], skipped = 0, index = 0, calls = 0, stopped = false, tierLimited = false;
+    /* D3/D18 (v0.0.2.a): the SAME character counter the preflight uses, so the
+       live line and the cost preview can never disagree. */
+    var runningChars = 0;
     ST.generating = true;
+    ST.lastFailedClip = null;
+    paintGenProgress(t('studioGenPrefix') + '0/' + queue.length + ' · ' + queue.length + ' ' + t('studioClipsUnit').replace('/', '') + ' queued');
     function finish(err) {
       if (stopped) return;
       stopped = true;
       ST.generating = false;
       paintClipTable();
+      paintPackDashboard();
       if (err) {
-        /* D18: a failure exit clears every busy */
+        /* D4/D18: a failure exit names the exact clip and clears every busy */
         clearBusy();
-        msg('❌ ' + quotaError(err), 'bad');
-        testStatus('❌ ' + quotaError(err), 'bad');
-        cb(err, { made: made, skipped: skipped, calls: calls, tierLimited: tierLimited });
+        var failed = ST.lastFailedClip;
+        var why = quotaError(err);
+        if (failed) {
+          var line = '❌ ' + failed.key + ' · ' + failed.reason;
+          msg(line, 'bad');
+          testStatus(line, 'bad');
+          paintGenProgress(line);
+        } else {
+          msg('❌ ' + why, 'bad');
+          testStatus('❌ ' + why, 'bad');
+        }
+        cb(err, { made: made, skipped: skipped, calls: calls, tierLimited: tierLimited, failed: failed });
         return;
       }
       /* D4: quota/tier exhaustion is a WARNING */
@@ -2200,6 +2324,7 @@
       msg(t('studioGenerate') + ' ✓ ' + made.length + ' · ' + skipped + ' skipped' + (warnLine ? ' · ' + warnLine : ''), 'ok');
       testStatus(warnLine ? '⚠️ ' + warnLine : '✅ ' + made.length + ' new · ' + skipped + ' already cached', warnLine ? '' : 'ok');
       if (made.length && !opts.noCommit) commitVoicePack();
+      paintGenProgress(t('studioPackClips') + (made.length + skipped) + t('studioClipsUnit') + ' · ' + runningChars + t('studioGenCharsTail'));
       cb(null, { made: made, skipped: skipped, calls: calls, tierLimited: tierLimited, warning: warnLine });
     }
     function next() {
@@ -2208,9 +2333,12 @@
       index += 1;
       if (!force && clipExists(item.key)) { skipped += 1; next(); return; } /* D-C2 delta */
       calls += 1;
+      var charsUsed = str(item.text).length;
       requestClip(item, apiKey, function (err, entry) {
         /* D1/D2/D13: ANY error is non-fatal… */
         if (err) {
+          /* D4: remember the exact clip and its mapped reason for the retry. */
+          ST.lastFailedClip = { key: item.key, status: Number((err && err.status) || 0), reason: quotaError(err) };
           tierLimited = true;
           skipped = Math.max(skipped, queue.length - made.length);
           index = queue.length;
@@ -2221,7 +2349,12 @@
         ST.voicePack.clips[item.key] = entry;
         made.push({ key: item.key, text: item.text, bytes: entry.bytes });
         ST.voicePack.loaded = true;
+        runningChars += charsUsed;
+        /* D3: verbatim live progress after every real clip. */
+        paintGenProgress(t('studioGenPrefix') + Math.min(queue.length, made.length + skipped) + '/' + queue.length +
+          ' · ' + item.key + ' · ' + runningChars + t('studioGenCharsTail'));
         paintClipTable(); /* D14: live row-by-row progress */
+        paintPackDashboard();
         next();
       }, 0);
     }
@@ -2494,6 +2627,7 @@
     publish: publish,
     generateClips: generateClips,
     commitVoicePack: commitVoicePack,
+    queueFor: queueFor,
     costPreview: costPreview,
     enrichWords: enrichWords,
     testAiEngine: testAiEngine,
@@ -2542,6 +2676,11 @@
     layerOneEnvelope: layerOneEnvelope,
     healFromLayerOne: healFromLayerOne,
     paintVaultBadge: paintVaultBadge,
+    paintPackDashboard: paintPackDashboard,
+    paintGenProgress: paintGenProgress,
+    clipCount: clipCount,
+    packDashboardText: packDashboardText,
+    placeLecturerBar: placeLecturerBar,
     audioForWord: audioForWord,
     vaultBadgeVisible: vaultBadgeVisible,
     testElevenLabsKey: testElevenLabsKey,

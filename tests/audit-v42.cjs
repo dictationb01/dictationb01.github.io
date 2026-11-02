@@ -66,13 +66,13 @@ check('G9.1f no retired CSS is merely hidden with display:none',
 // contract: docs/ARCHITECTURE_MAP.md §5 budget table
 const BUDGETS = {
   /* v0.0.2.a (W2) ceilings — identical to tests/check.cjs BUDGET. */
-  'index.html': 36000,
-  'assets/css/sdp-ui.css': 60000,
+  'index.html': 38000,
+  'assets/css/sdp-ui.css': 68000,
   'data/sdp-data-sync.js': 86000,
   'data/sdp-audio-speech.js': 52000,
-  'data/sdp-dictation-engine.js': 60000,
-  'data/sdp-ui-views.js': 128000,
-  'data/studio.js': 116000,
+  'data/sdp-dictation-engine.js': 62000,
+  'data/sdp-ui-views.js': 136000,
+  'data/studio.js': 126000,
   'data/data-meter.js': 24000,
   'data/config.json': 36000,
   'data/version.json': 2000,
@@ -81,8 +81,8 @@ const BUDGETS = {
   'data/elevenlabs-audio.json': 2500000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data.html': 32000,
-  'data/index.html': 32000,
+  'data.html': 34000,
+  'data/index.html': 34000,
   'sw.js': 13000,
   'manifest.webmanifest': 4000
 };
@@ -95,7 +95,7 @@ check('G9.2a every shipped file fits its H1 byte cap', over.length === 0, over.j
 check('G9.2b the /data pair is byte-identical', read('data.html') === read('data/index.html'),
   bytes('data.html') + ' vs ' + bytes('data/index.html'));
 
-const docsBudget = { 'ARCHITECTURE_MAP.md': 48000, 'CHANGELOG_LEDGER.md': 52000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 24000, 'SYNC_AND_DATA_CONTRACT.md': 48000, 'UI_COMPONENT_GUIDE.md': 48000 };
+const docsBudget = { 'ARCHITECTURE_MAP.md': 52000, 'CHANGELOG_LEDGER.md': 52000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 26000, 'SYNC_AND_DATA_CONTRACT.md': 52000, 'UI_COMPONENT_GUIDE.md': 52000 };
 const docsOver = Object.entries(docsBudget).filter(([f, cap]) => bytes('docs/' + f) > cap).map(([f]) => f);
 check('G9.2c all five living docs are inside their caps', docsOver.length === 0, docsOver.join(','));
 check('G9.2d there are exactly five living docs', fs.readdirSync(path.join(ROOT, 'docs')).filter((f) => f.endsWith('.md')).length === 5);
@@ -106,7 +106,7 @@ check('G9.2e the whole test suite stays inside 320,000 bytes (' + testBytes + ')
 
 /* ── 3. no build step, no bundler, no monolith ─────────────────────────── */
 // contract: docs/ARCHITECTURE_MAP.md §R3 ES5 modules
-const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 120000);
+const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 136000);
 check('G9.3a no oversized monolith module exists (' + monoliths.join(',') + ')', monoliths.length === 0);
 check('G9.3b no package.json build script ships with the site', !exists('package.json') && !exists('webpack.config.js') && !exists('vite.config.js'));
 

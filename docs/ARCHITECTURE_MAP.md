@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.g
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.h
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -21,7 +21,7 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
 | `data/sdp-dictation-engine.js` | ≤ 60,000 B | `SDP.Engine`: beat machine, ring/bar timer, Paper/Typing, hints, 30-row self-check |
 | `data/sdp-ui-views.js` | ≤ 125,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
-| `data/studio.js` | ≤ 108,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
+| `data/studio.js` | ≤ 112,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
 | `data/session.json` | exactly 46,403 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
@@ -30,8 +30,8 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
 | `data.html` | ≤ 32,000 B | `/data` transparency route |
 | `data/index.html` | ≤ 32,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.g` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.g` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.h` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.h` |
 | `docs/*.md` (5 files) | ≤ 48,000 B each (template ≤ 24,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
@@ -425,10 +425,10 @@ Every doc stays inside its cap: `CHANGELOG_LEDGER.md` 42763 B / 44,000 ·
 
 ---
 
-## §H4 — v0.0.1.g release tree, budgets and module deltas (2026-11-02)
+## §H4 — v0.0.1.h release tree, budgets and module deltas (2026-11-02)
 
-Pointer: `appVersion/version '0.0.1.g'` · `ver/schema/settingsRev 7` ·
-`syncRev 1793595000000` · `SW_VERSION 'sdp-v0.0.1.g'` / `SHELL_CACHE 'sdp-v0.0.1.g-shell'`.
+Pointer: `appVersion/version '0.0.1.h'` · `ver/schema/settingsRev 8` ·
+`syncRev 1793600000000` · `SW_VERSION 'sdp-v0.0.1.h'` / `SHELL_CACHE 'sdp-v0.0.1.h-shell'`.
 `tests/check.cjs` (W2 ceilings) and `tests/audit-v42.cjs` §G9.2 carry the same table.
 
 ### §H4.1 Bytes measured on the release tree
@@ -441,7 +441,7 @@ Pointer: `appVersion/version '0.0.1.g'` · `ver/schema/settingsRev 7` ·
 | `data/sdp-audio-speech.js` | 38,831 | 52,000 |
 | `data/sdp-dictation-engine.js` | 43,844 | 60,000 |
 | `data/sdp-ui-views.js` | 118,919 | 125,000 |
-| `data/studio.js` | 107,824 | 108,000 |
+| `data/studio.js` | 111,993 | 112,000 |
 | `data/data-meter.js` | 21,740 | 24,000 |
 | `data.html` = `data/index.html` | 27,905 each | 32,000 |
 | `sw.js` | 10,759 | 13,000 |
@@ -465,7 +465,7 @@ Pointer: `appVersion/version '0.0.1.g'` · `ver/schema/settingsRev 7` ·
 * **`data/sdp-ui-views.js` (Views).** `STRINGS_EN`/`STRINGS_SI` gained `studioSave`,
   `studioOneClick`, `studioQuotaScoped`, `studioElTierWarn`, `studioAiNoKey`,
   `studioAiSlot1..5`, `studioFreeNoKey`, `vaultBadgeLabel`.
-* **`data/sdp-dictation-engine.js` (Engine).** untouched by v0.0.1.g except the header
+* **`data/sdp-dictation-engine.js` (Engine).** untouched by v0.0.1.h except the header
   stamp; `renderResults()` still owns every result row.
 * **`data/data-meter.js` (transparency).** untouched, `METER_VERSION` unchanged.
 

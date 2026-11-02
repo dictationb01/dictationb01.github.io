@@ -323,7 +323,7 @@ zero occurrences of the retired PIN, verbatim EN + SI credit lines, all five doc
 
 ```
 Upgrade dictationb1/dictationb1.github.io from v0.0.1.f to v0.0.1.g in one autonomous pass.
-Target: appVersion/version 0.0.1.g, ver 7, schema 7, settingsRev 7, syncRev 1793595000000,
+Target: appVersion/version 0.0.1.g, ver 7, schema 7, settingsRev 7, syncRev 1793600000000,
 buildDate 2026-11-02, SW sdp-v0.0.1.g / sdp-v0.0.1.g-shell.
 
 D1/D2  Rule 1A — fetchSubscription 3-rung ladder (subscription -> /v1/voices -> format
@@ -355,7 +355,7 @@ D18    Re-stamp every versioned literal, re-baseline BUDGET (W2 ceilings below),
 
 W2 ceilings: index.html 36000, sdp-ui.css 60000, sdp-data-sync.js 82000,
 sdp-audio-speech.js 52000, sdp-dictation-engine.js 60000, sdp-ui-views.js 125000,
-studio.js 108000, data-meter.js 24000, data.html = data/index.html 32000, sw.js 13000,
+studio.js 112000, data-meter.js 24000, data.html = data/index.html 32000, sw.js 13000,
 config.json 36000, docs 48000 each (template 24000).
 
 Hard gates: 12 gates 0 FAIL — G1 88, G2 12, G3 81, G4 8, G5 46, G6 15, G7 52, G8 39,

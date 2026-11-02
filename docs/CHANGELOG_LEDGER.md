@@ -6,6 +6,58 @@ from the twelve gates.
 
 ---
 
+## v0.0.1.h — 2026-11-02 — Non-Fatal Voice Generation, withBusy Feedback & Human Error Sentences
+
+**Release type:** defect-fix release over v0.0.1.g (20 defects D1–D20 closed).
+**Stamp:** `appVersion '0.0.1.h'` · `ver/schema/settingsRev 8` · `syncRev 1793600000000` · `SW_VERSION 'sdp-v0.0.1.h'`.
+
+### The twenty defects (D1–D20)
+
+| # | Defect | Fix |
+| --- | --- | --- |
+| D1 | generateClips fatal on non-401/402/403/429 errors | First-error non-fatal law: ANY requestClip error sets tierLimited, skips queue, finish(null) |
+| D2 | Standalone diagnostics buttons painted raw tts_failed | Same non-fatal path; diagnostics paint studioElTierWarn |
+| D3 | No visual busy/spinner state on buttons | withBusy(btn, fn) helper: disabled + "Working…" + restore |
+| D4 | publishWordsAndVoice skipped generateClips | Now runs generateClips({ noCommit: true }) then publishBundle |
+| D5 | quotaError leaked raw error codes to DOM | Human-readable sentences for all error paths |
+| D6 | LLM fallback was silent | Immediate studioAiOfflineFallback notice in testStatus |
+| D7 | Gemini lacked strict JSON mode | generationConfig.responseMimeType: 'application/json' |
+| D8 | Provider auto-select only on key prefix | mergeSecretInputs persists aiProvider in vault |
+| D9 | Clearing a field didn't clear the secret | mergeSecretInputs reads mounted inputs explicitly (even "") |
+| D10 | Paste failed without focusing field | On clipboard failure, focus() + select() the input |
+| D11 | Language switch wiped unsaved edits | Stash/restore input values across onLangChange |
+| D12 | renderAll re-mounted Studio mid-action | SDP.Studio.isBusy() guard skips renderSettings when busy |
+| D13 | requestClip always sent use_speaker_boost (422 on free tier) | HTTP 422 retry with minimal {stability:0.5, similarity_boost:0.75} |
+| D14 | paintClipTable only called at finish | Live row-by-row paintClipTable after each requestClip |
+| D15 | Dead btnStudioUnlock in CLICK_ACTIONS | Removed |
+| D16 | Raw error literals reached DOM | All status outputs routed through human strings |
+| D17 | No spinner/completion affordances | withBusy + green ✓ completion + paintMasterSteps on transitions |
+| D18 | adoptRemoteSettings repainted mid-action | Same isBusy() guard as D12 |
+| D19 | Duplicate Studio heading | Removed inner h4; kept accordion summary as single heading |
+| D20 | settingsRev drift (9 vs 8) | Aligned to 8; nextSettingsRev = Math.max(8, current+1) |
+
+### Gate results
+- G1 check.cjs: 88 PASS / 0 FAIL
+- G2 upgrade.test.cjs: 12 PASS / 0 FAIL
+- G4 server.cjs: all PASS / 0 FAIL
+- G6 upgrade-browser.cjs: 15 PASS / 0 FAIL
+- G7 e2e.cjs: 52 PASS / 0 FAIL
+- G8 live-lab.cjs: 39 PASS / 0 FAIL
+- G9 audit-v42.cjs: 47 PASS / 0 FAIL
+- G10 voice-guide.cjs: 26 PASS / 0 FAIL
+- G11 vault-sync.cjs: 74 PASS / 0 FAIL
+- G12 studio-safety.cjs: 78 PASS / 0 FAIL
+
+### Byte counts
+- index.html: 30,170 B / 36,000 budget
+- sdp-ui.css: 45,066 B / 60,000 budget
+- sdp-data-sync.js: 79,178 B / 82,000 budget
+- sdp-ui-views.js: 119,893 B / 125,000 budget
+- studio.js: 111,993 B / 112,000 budget
+- data.html == data/index.html: 27,905 B / 32,000 budget
+
+---
+
 ## v0.0.1.g — 2026-11-02 — Scoped-Key Survival, Immortal Vault & the Free AI Ladder
 
 **Release type:** defect-fix release over v0.0.1.f (PR #118). No data migration: `sdp.progress` is never overwritten, `data/session.json` stays byte-identical, and a device that is already unlocked keeps its vault.

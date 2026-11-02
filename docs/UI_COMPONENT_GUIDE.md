@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.g
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.h
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -428,7 +428,7 @@ credit pill `CREDITS GOES TO Hansana` and both credit lines are untouched.
 
 ---
 
-## 10. Studio Card 1 after v0.0.1.g (D7, D10, D13, D14)
+## 10. Studio Card 1 after v0.0.1.h (D7, D10, D13, D14)
 
 Card 1 is the only card a teacher must touch. It reads top to bottom:
 

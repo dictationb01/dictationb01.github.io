@@ -10,8 +10,8 @@
  * (lecturer/Alice). */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.2.b';
-var SHELL_CACHE = 'sdp-v0.0.2.b-shell';
+var SW_VERSION = 'sdp-v0.0.3';
+var SHELL_CACHE = 'sdp-v0.0.3-shell';
 var PRESERVE_CACHES = ['sdp-youdao-v1', 'sdp-audio-clips'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';

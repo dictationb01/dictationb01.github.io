@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.2.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.3 — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -21,7 +21,7 @@
     </svg>
     <span id="brandName">Smart Dictation</span>
     <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.2.b</span>
+    <span id="sdpVerPill">v0.0.3</span>
     <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
     <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio">🔒 Lecturer Admin</button>
     <div id="quickJumper" class="quick-jumper" hidden>
@@ -60,21 +60,21 @@
           <p class="muted">Tap a symbol to hear its British English sound.</p>
         </div>
         <div class="deck-grid" id="symbolDeckGrid">
-          <button type="button" class="symbol-card" data-symbol="ˈæ"cat /ˈkæt/</button>
-          <button type="button" class="symbol-card" data-symbol="ˈɑː"father /ˈfɑːðə/</button>
+          <button type="button" class="symbol-card" data-symbol="ˈæ">cat /ˈkæt/</button>
+          <button type="button" class="symbol-card" data-symbol="ˈɑː">father /ˈfɑːðə/</button>
           <button type="button" class="symbol-card" data-symbol="ˈe">pen /pen/</button>
           <button type="button" class="symbol-card" data-symbol="ˈi">happy /ˈhæpi/</button>
-          <button type="button" class="symbol-card" data-symbol="ɒ"hot /hɒt/</button>
-          <button type="button" class="symbol-card" data-symbol="ɔː"saw /sɔː/</button>
-          <button type="button" class="symbol-card" data-symbol="ʊ"put /pʊt/</button>
-          <button type="button" class="symbol-card" data-symbol="uː"too /tuː/</button>
-          <button type="button" class="symbol-card" data-symbol="ʌ"cup /kʌp/</button>
-          <button type="button" class="symbol-card" data-symbol="ɜː"bird /bɜːd/</button>
-          <button type="button" class="symbol-card" data-symbol="ə"about /əˈbaʊt/</button>
-          <button type="button" class="symbol-card" data-symbol="ð"this /ðɪs/</button>
-          <button type="button" class="symbol-card" data-symbol="θ"think /θɪŋk/</button>
-          <button type="button" class="symbol-card" data-symbol="ʃ"ship /ʃɪp/</button>
-          <button type="button" class="symbol-card" data-symbol="ʒ"measure /ˈmeʒə/</button>
+          <button type="button" class="symbol-card" data-symbol="ɒ">hot /hɒt/</button>
+          <button type="button" class="symbol-card" data-symbol="ɔː">saw /sɔː/</button>
+          <button type="button" class="symbol-card" data-symbol="ʊ">put /pʊt/</button>
+          <button type="button" class="symbol-card" data-symbol="uː">too /tuː/</button>
+          <button type="button" class="symbol-card" data-symbol="ʌ">cup /kʌp/</button>
+          <button type="button" class="symbol-card" data-symbol="ɜː">bird /bɜːd/</button>
+          <button type="button" class="symbol-card" data-symbol="ə">about /əˈbaʊt/</button>
+          <button type="button" class="symbol-card" data-symbol="ð">this /ðɪs/</button>
+          <button type="button" class="symbol-card" data-symbol="θ">think /θɪŋk/</button>
+          <button type="button" class="symbol-card" data-symbol="ʃ">ship /ʃɪp/</button>
+          <button type="button" class="symbol-card" data-symbol="ʒ">measure /ˈmeʒə/</button>
         </div>
         <button id="btnSymbolDeckClose" type="button" class="btn btn-ghost">Close spotlight</button>
       </div>
@@ -168,12 +168,18 @@
 
     <section id="screen-player" class="screen" aria-labelledby="sessionTitle">
       <div id="sessionProgressStrip" class="card progress-strip" role="group" aria-label="Session progress">
-        <div class="strip-head">
-          <span id="sessionProgressCount" class="strip-count">Word #01 of 30</span>
-          <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 / 2</span>
-          <span id="playerPresetBadge" class="badge">Fast Exam 5s · 2×</span>
+        <!-- Phase 5: ONE header line — word, repeat and write window. -->
+        <p class="cockpit-line">
+          <span id="sessionProgressCount" class="strip-count" data-i18n="progressWordUpper">WORD #01 / 30</span>
+          <span class="line-sep" aria-hidden="true">·</span>
+          <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 of 2</span>
+          <span class="line-sep" aria-hidden="true">·</span>
+          <span id="playerPresetBadge" class="badge">5s Write · 2×</span>
+        </p>
+        <button id="pillsDrawerToggle" type="button" class="btn btn-sm pills-toggle" aria-expanded="false" aria-controls="pillsDrawer">Jump to Word 1–30 ▾</button>
+        <div id="pillsDrawer" class="pills-drawer" hidden>
+          <div id="sessionPills" class="word-pills"></div>
         </div>
-        <div id="sessionPills" class="word-pills"></div>
       </div>
       <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Smart Board classroom controls" hidden>
         <div class="board-transport">
@@ -217,17 +223,18 @@
           <button type="button" class="chip" data-hint="sentence" aria-pressed="false" data-i18n="hintSentence">Example sentence</button>
         </div>
 
-        <div class="cockpit-transport" id="cockpitTransport">
-          <button id="btnPrev" type="button" class="btn" data-i18n="btnPrev">⏮ Prev</button>
-          <button id="btnPlayPause" type="button" class="btn btn-primary btn-transport" data-primary-cta="1" data-i18n="btnPlayPause">⏸ Pause Dictation</button>
-          <button id="btnReplay" type="button" class="btn" data-i18n="btnReplay">🔊 Replay Word</button>
-          <button id="btnNext" type="button" class="btn" data-i18n="btnNext">⏭ Next</button>
+        <!-- Phase 5: a symbol-first transport deck — one glyph, one micro-caption. -->
+        <div class="cockpit-transport transport-deck" id="cockpitTransport">
+          <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn" aria-label="⏮ Prev">⏮</button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
+          <div class="deck-key deck-key-main"><button id="btnPlayPause" type="button" class="btn btn-primary btn-transport deck-btn deck-main" data-primary-cta="1" aria-label="⏸ Pause Dictation">⏸</button><span class="deck-cap" data-i18n="capPlay">Pause</span></div>
+          <div class="deck-key"><button id="btnReplay" type="button" class="btn deck-btn" aria-label="🔊 Replay Word">🔊</button><span class="deck-cap" data-i18n="capReplay">Replay</span></div>
+          <div class="deck-key"><button id="btnNext" type="button" class="btn deck-btn" aria-label="⏭ Next">⏭</button><span class="deck-cap" data-i18n="capNext">Next</span></div>
         </div>
         <div class="cockpit-controls secondary-controls">
-          <button id="btnRepeat" type="button" class="btn btn-ghost" data-i18n="btnRepeat">Repeat</button>
-          <button id="btnHint" type="button" class="btn btn-ghost" data-i18n="btnHint">Hint</button>
-          <button id="btnModeSwitch" type="button" class="btn btn-ghost" data-i18n="btnModeSwitch">Paper / Typing</button>
-          <button id="btnFinish" type="button" class="btn btn-ghost" data-i18n="btnFinish">Finish &amp; check</button>
+          <div class="deck-key"><button id="btnRepeat" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Repeat">🔁</button><span class="deck-cap" data-i18n="capRepeat">Repeat</span></div>
+          <div class="deck-key"><button id="btnHint" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Hint">💡</button><span class="deck-cap" data-i18n="capHint">Hint</span></div>
+          <div class="deck-key"><button id="btnModeSwitch" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Paper / Typing">📝</button><span class="deck-cap" data-i18n="capMode">Mode</span></div>
+          <div class="deck-key"><button id="btnFinish" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Finish and check">✅</button><span class="deck-cap" data-i18n="capFinish">Check</span></div>
         </div>
       </div>
 
@@ -406,7 +413,7 @@
           <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
           <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
           <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.2.b</span></li>
+            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.3</span></li>
             <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
             <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
           </ul>
@@ -455,14 +462,23 @@
     </div>
     <div id="guideTapBanner" class="guide-tap-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideTapToStart">🔊 Tap anywhere to start the voice guide</div>
     <div id="guideAutoplayBanner" class="guide-tap-banner guide-autoplay-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideAutoplayBanner">🔊 Tap Anywhere to Start Voice Guide</div>
-    <ol id="guideSteps" class="guide-steps"></ol>
+    <!-- R2 (F3): ONE compact spotlight card. Step N of 4, one clean sentence,
+         four dots and exactly two buttons. The hidden <ol> keeps the four steps
+         machine readable (and translated) without ever being read aloud. -->
+    <div id="guideSpotlight" class="guide-spotlight" role="group" aria-live="polite">
+      <p id="guideStepTag" class="guide-step-tag">Step 1 of 4</p>
+      <p id="guideStepText" class="guide-step-text">Press Start Dictation to begin.</p>
+      <div id="guideDots" class="guide-dots" aria-hidden="true">
+        <span class="guide-dot is-active" data-guide-dot="0" aria-current="step"></span>
+        <span class="guide-dot" data-guide-dot="1"></span>
+        <span class="guide-dot" data-guide-dot="2"></span>
+        <span class="guide-dot" data-guide-dot="3"></span>
+      </div>
+      <ol id="guideSteps" class="guide-steps-sr" hidden aria-hidden="true"></ol>
+    </div>
     <div class="modal-foot">
-      <button id="btnGuideSkipStart" type="button" class="btn btn-go" data-i18n="guideSkipStart" hidden>⏩ Skip Guide &amp; Start Immediately</button>
-      <button id="guidePauseVoice" type="button" class="btn" data-i18n="guidePauseVoice">⏸ Pause Voice</button>
-      <button id="guideNextStep" type="button" class="btn" data-i18n="guideNextStep">⏭ Next Step</button>
-      <button id="guideReplayStep" type="button" class="btn" data-i18n="guideReplayStep">🔁 Replay Step</button>
-      <button id="guideSpeak" type="button" class="btn" data-i18n="guideSpeakBtn">Listen to the steps (EN)</button>
-      <button id="btnGuideClose" type="button" class="btn btn-primary" data-i18n="guideCloseBtn">✅ Start Dictation Now</button>
+      <button id="btnGuideSkipStart" type="button" class="btn btn-go" data-i18n="guideSkipStartNow">▶ Start Dictation Now</button>
+      <button id="btnGuideClose" type="button" class="btn" data-i18n="guideExitBtn">✕ Exit</button>
     </div>
   </div>
 </div>
@@ -478,7 +494,7 @@
 
 <script>
 (function () {
-  var TARGET = '0.0.2.b';
+  var TARGET = '0.0.3';
   window.__SDP_BOOT_VERSION__ = TARGET;
   var doReload = function (remoteVersion) {
     try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

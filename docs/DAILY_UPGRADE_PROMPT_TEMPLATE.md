@@ -408,52 +408,31 @@ bytes; merge to main only with --no-ff.
 
 ```
 Upgrade dictationb1/dictationb1.github.io from v0.0.2.a to v0.0.2.b in one autonomous pass.
-Target: appVersion/version 0.0.2.b, ver 11, schema 11, settingsRev 17,
-syncRev 1793620000000, TARGET '0.0.2.b', SW sdp-v0.0.2.b / sdp-v0.0.2.b-shell.
-
-P1 Stamp every surface to 0.0.2.b/ver 11.
-P2 SDP.Speech speechEpoch on every async chain; stopAll() bumps it; handlers
-re-check before acting. Hard screen guard screenIsCovered() (#studioGate over active #screen-studio
-or hidden doc); #guideModal not a cover.
-P3 guideRunId bumped on openGuide; openGuideSpot()/closeGuideSpot() for #guideSpot;
-guideRunId() accessor; #symbolDeck in #screen-home.
-P4 screenIsCovered() guards enterListening.
-P5 #btnChangePin + btnChangePin -> saveKeys(); studioChangePin strings EN+SI.
-guideAutoPlay defaults false; Start opens cockpit directly.
-
-Legal: five localStorage keys; strict ES5 (G1/acorn); spoken guide en-GB;
-credits verbatim EN+SI on Home/About/Studio//data;
-preserved SHA-256 4/4.
-
+Target: 0.0.2.b, ver 11, schema 11, settingsRev 17, syncRev 1793620000000, SW sdp-v0.0.2.b.
+P1 Stamp every surface. P2 speechEpoch + stopAll() + screenIsCovered(). P3 guideRunId,
+#guideSpot, #symbolDeck. P4 guard enterListening. P5 #btnChangePin -> saveKeys().
 Hard gates: 12 gates 0 FAIL; shasum 4/4 OK.
 ```
 
-### Sequencing that worked
+## v0.0.3 upgrade prompt (copy/paste block, 2026-11-03)
 
-1. Stamp the release literals everywhere first (`version.json`, `config.json`, voice pack,
-   `sw.js`, manifest, both shells, `APP_VERSION`, `SCHEMA`, `SETTINGS_REV`) so G1/G2 flip.
-2. Land D5/D8/D9 in `sdp-data-sync.js` before anything in the Studio uses `writeLayerOne`.
-3. Land D15/D16/D17 in `sync()` and prove them early — G3 and G7 both depend on `settle()`.
-4. Rebuild Card 1 (`keysCardMarkup`) last, then re-check the strings in **both** languages.
-5. Update the gate literals in a dedicated `gate-align: v0.0.1.g` pass: BUDGET (W2),
-   version pins, `syncRev`, the `appliedSettingsRev` fixtures, `audit-v42.cjs` G9.2.
-6. Run all twelve gates, paste the real numbers into `CHANGELOG_LEDGER.md`, `shasum -c`,
-   then merge `--no-ff`.
+```
+Upgrade dictationb1/dictationb1.github.io from v0.0.2.b to v0.0.3 in one autonomous pass.
+Target: appVersion/version 0.0.3, ver 12, schema 12, settingsRev 20,
+syncRev 1793654400000, TARGET '0.0.3', SW sdp-v0.0.3 / sdp-v0.0.3-shell.
 
-### Traps seen last time
+P1 Ghost voice: speechEpoch on every async chain, stopAll() bumps it, named timers,
+   playUrl.finish(); sayCue('cmd.paused', true) is the only pause-permitted cue.
+P2 Cue chain: cmd.preparing -> num.N -> word x repeats -> 5 s write -> cmd.complete.
+P3 Guide 4.0 spotlight: #guideSpotlight/#guideStepTag/#guideStepText/#guideDots,
+   exactly #btnGuideSkipStart + #btnGuideClose; no watchdog, no tap-restart loop.
+P4 Glyph transport deck + aria-labels; #sessionProgressCount/#playerPresetBadge.
+P5 Studio: Words card first, #btnVerifyEleven, #btnChangePin atomic re-seal,
+   BOOTSTRAP_PIN master recovery (Studio.recoveryMode()).
+P6 Charlotte XB0fDUnXU5powFXDhCwa / eleven_flash_v2_5, 70 clips (829 chars), sha1Hex hash.
 
-* A bumped `settingsRev` (6 -> 7) re-adopts `classSettings`; every fixture that pins its own
-  pacing must raise `appliedSettingsRev` to 7 — G3, G7, G8, G10 and G12 all had one.
-* `tests/audit-v42.cjs` keeps a **second** budget table; bumping only `check.cjs` leaves
-  G9.2a red. Its §G9.3a monolith line (any `data/*.js` over 120,000 B) is a *third*
-  number that the 128,000 B ceiling does not exempt: the v0.0.1.i strings pushed
-  `sdp-ui-views.js` to 121,619 B, so 24 historical comment blocks were folded into
-  one-liners and the module shipped at 119,119 B. Trim, never raise.
-* Escaped-dot regexes survive a bulk `0.0.1.h → 0.0.1.i` replace: `/0\.0\.1\.h/` in
-  `audit-v42.cjs` G9.7a stayed on the old release until it was grepped separately.
-* `T(key, fallback)` must be `esc(t(key, fallback))`; a wrapper that calls itself recurses
-  until the stack dies and silently blanks the results table.
-* A `ReferenceError` inside `mount()` renders an empty `#resultsTable tbody`, which looks
-  like a selector bug. Assert on `renderResults()` output before blaming the selector.
-* G12 fails the release if any test file so much as *mentions* the paid TTS path — stub
-  `elevenlabs.io` generically instead.
+Legal: five localStorage keys; strict ES5 (G1/acorn); credits verbatim EN+SI;
+preserved SHA-256 4/4 (session.json c06e197c..., gas-source.txt, both fonts).
+Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52, G8 39,
+G9 47, G10 38, G11 74, G12 94 = 650 assertions.
+```

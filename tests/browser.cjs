@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.3'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.2.b');
+    localStorage.setItem('sdp.guide_seen', '0.0.3');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -258,11 +258,17 @@ async function bootSettings(page, settings) {
       const listening = await readRing();
       check('G5.6a listening ring is sky (#38BDF8) with the verbatim phase line',
         listening.stroke === '#38BDF8' && /Listen Carefully \(Repeat \d of \d\)/.test(listening.state), JSON.stringify(listening));
-      await page.waitForTimeout(3400);
+      /* R3: the classroom opening ("Preparing lesson." → "Number 1." → the
+         word) runs before the write window, so wait on the phase, not a timer. */
+      await page.waitForFunction(
+        () => /Write Word #/.test(document.getElementById('beatStateText').textContent),
+        null, { timeout: 20000 });
       const writing = await readRing();
       check('G5.6b writing ring is emerald (#10B981) with the word + countdown line',
         writing.stroke === '#10B981' && /Write Word #\d+ in Your Book!/.test(writing.state), JSON.stringify(writing));
-      await page.waitForTimeout(5200);
+      await page.waitForFunction(
+        () => document.getElementById('beatRing').getAttribute('stroke') === '#F59E0B',
+        null, { timeout: 20000 });
       const warning = await readRing();
       check('G5.6c the last three seconds warn in amber (#F59E0B)', warning.stroke === '#F59E0B', JSON.stringify(warning));
       await context.close();

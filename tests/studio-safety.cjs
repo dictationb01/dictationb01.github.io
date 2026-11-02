@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -97,9 +97,11 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
-    check('G12.3a the cost preview names words, guide steps, the total and 34 clips',
-      /30 words = 241 chars/.test(line) && /4 guide steps = 829 chars/.test(line) &&
-      /total 1070 chars/.test(line) && /34 clips \(30 words \+ 4 guide steps\)/.test(line), line);
+    check('G12.3a the cost preview names words, numbers, commands, guide steps, the total and 70 clips',
+      /30 words = 241 chars/.test(line) && /30 numbers = 291 chars/.test(line) &&
+      /6 commands = 163 chars/.test(line) && /4 guide steps = 134 chars/.test(line) &&
+      /total 829 chars/.test(line) &&
+      /70 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
     check('G12.3d the delta generator exists and is the primary action',
@@ -170,7 +172,7 @@ async function unlockStudio(app) {
     const required = [
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
-      'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
+      'creditsLine', 'creditsPill', 'howToUse', 'guideSkipStartNow',
       /* v0.0.2.b studio surface */
       'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
       'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
@@ -375,9 +377,9 @@ async function unlockStudio(app) {
       /^💾 Save Keys to Vault Only$/.test(app.byId('btnSaveKeys').textContent) &&
       /btn-ghost/.test(app.byId('btnSaveKeys').className),
       app.byId('btnSaveKeys').textContent);
-    check('G12.9o #btnOneClickMasterSetup is the primary 34-clip CTA',
+    check('G12.9o #btnOneClickMasterSetup is the primary 70-clip CTA',
       app.byId('btnOneClickMasterSetup').textContent === app.SDP.STRINGS_EN.studioOneClick &&
-      /^🚀 Generate 34 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
+      /^🚀 Generate 70 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
       app.byId('btnOneClickMasterSetup').getAttribute('data-primary-cta') === '1',
       app.byId('btnOneClickMasterSetup').textContent);
     check('G12.9p the legacy quota buttons stay in the DOM but hidden',

@@ -1,3 +1,30 @@
+## v0.0.3 — 2026-11-03 — Unified Voice System, Ghost-Voice Kill-Switch & Incremental UI Fix
+
+**Release type:** voice + UI release over v0.0.2.b (P1–P8, D1–D20). No classroom-data migration: `sdp.progress`, `sdp.session`, both Sinhala fonts, `data/session.json` and `data/gas-source.txt` stay byte-identical.
+
+**Stamp:** `appVersion/version '0.0.3'` · `ver 12` · `schema 12` · `settingsRev 20` · `syncRev 1793654400000` · `SW_VERSION 'sdp-v0.0.3'` / `SHELL_CACHE 'sdp-v0.0.3-shell'` · `TARGET='0.0.3'`.
+
+### Fixes
+
+* **Ghost voice (R1/F1)** — `stopAll()` bumps `speechEpoch`, clears every named timer and
+  finishes the shared `<audio>`; `sayCue('cmd.paused', …, true)` is the only cue allowed through a
+  pause. Pausing during listening speaks **Session paused.** once and **zero** late "Afraid." —
+  all four leak paths re-check the epoch/`live()` guard.
+* **Opening cue chain (R3)** — Start plays `cmd.preparing` → `num.N` → the word ×`repeats` with a 5 s write countdown, then `cmd.complete`; `cueGap = (E.writeSecs && E.writeSecs < 1) ? 15 : 400` keeps the test clock honest.
+* **Guide 4.0 spotlight (R2/F2/F3)** — one compact card: `#guideSpotlight` with `#guideStepTag`, `#guideStepText` and four `#guideDots`; exactly two buttons (`#btnGuideSkipStart` *▶ Start Dictation Now*, `#btnGuideClose` *✕ Exit*). The 700 ms Youdao watchdog and the tap-restart loop are gone; narration re-checks `guideRunId` and a banner tap resumes the CURRENT step.
+* **Transport glyph deck (P4)** — the 8 transport buttons render glyphs (`▶ ⏸ ⏮ ⏭ 🔊`) with `aria-label`s, so the deck stays 48 px tall; `#sessionProgressStrip` became the single-line cockpit (`#sessionProgressCount` `WORD #01 / 30`, `#playerRepeatBadge`, `#playerPresetBadge` `5s Write · 2×`) plus the `#pillsDrawerToggle` / `#sessionPills` drawer.
+* **Studio (P3/P5)** — Words card first (`#studioCardWords` → `#studioCardSettings` → `#studioCardKeys`), `#btnVerifyEleven` + `#elVerifyStatus` verify a `sk_…` key with a zero-character `GET /v1/user/subscription` and play Charlotte's `cmd.sample`; `#btnChangePin` performs an atomic fresh-salt re-seal; `BOOTSTRAP_PIN` is the documented master recovery that opens a session even while locked out (`Studio.recoveryMode()`).
+* **Unified voice pack (R4/R5)** — Charlotte `XB0fDUnXU5powFXDhCwa` on `eleven_flash_v2_5`:
+  **70 clips** (30 words + 30 numbers + 6 commands + 4 guide steps) = 829 chars ≈ 414 credits.
+  `sha1Hex`/`clipContentHash` give a synchronous ES5 content hash (`hashAlgo: 'sha1'`) so an
+  unchanged clip is never re-bought; `#studioForceRegen` is the only way to force a re-generation.
+* Every versioned literal re-stamped to 0.0.3 / ver 12 / schema 12 / settingsRev 20 / syncRev 1793654400000; all 12 gates updated.
+
+### Preserved, byte for byte
+
+`session.json` 57,381 `c06e197c6e90620c` · `gas-source.txt` 13,764 `591b9b086f6d3723` · both
+Sinhala `.woff2` `23f1503e1e754139` / `bf59c1487b0a88a0`. Appendix A is the source of truth.
+
 ## v0.0.2.b — 2026-11-02 — Hard Screen Guard, Guide Spots, Symbol Deck & Studio PIN Change
 
 **Release type:** guard + defect-fix release over v0.0.2.a (P1–P5, D1–D20). No classroom-data migration: `sdp.progress`, `sdp.session`, both Sinhala fonts, `data/session.json` and `data/gas-source.txt` stay byte-identical.
@@ -233,18 +260,28 @@ See the *Release verification* block at the end of this file — filled by the r
 
 Forty-two verified defects (D-V1–D-V6, D-G1–D-G5, D-S1–D-S12, D-C1–D-C7, D-L1–D-L9, D-UI1–D-UI12, D-E1–D-E5, D-M1–D-M4) closed across five priority workstreams. The headline fixes:
 
-1. **P1 — the voice works at all.** `pickVoice` was referenced but never defined, so the first utterance threw `ReferenceError` and every spoken word, the whole guide and the voice test died silently. It now exists, caches one British Female Professor (en-GB, rate 0.92, pitch 1.03) and scores every male name (`david|mark|george|daniel|fred|james|richard|oliver|thomas|male|man|guy`) at −100 so a board laptop can never switch the class to a male voice between lessons. Guide 2.0 auto-opens once per release, speaks step 1 immediately, and a 600 ms watchdog reveals `#guideTapBanner` when the browser blocks un-gestured audio; the tap primes `speechSynthesis.resume()` plus the shared `<audio>` element and narrates 1→4.
-2. **P2 — the vault survives and syncs in about a second.** `SDP.Sync.publishFilesSequential` commits one file at a time, re-reading a fresh SHA before each PUT, always publishing `version.json` last; `fetchRawGitHubJson` reads the public Contents API so a second device never waits out the Pages CDN; the GAS relay body carries `{action, app, ver}` and no PIN.
-3. **P3 — credit-safe audio.** The Quota Inspector is a zero-character `GET /v1/user/subscription`; the run is preflighted at `30 words = 241 chars · 4 guide steps = 731 chars · total 972 chars`; only missing clips are generated (`_guide_1.._guide_4` are reusable keys); a 1-word test button exists for cheap dry runs. No gate, test or script ever calls `/v1/text-to-speech`.
-4. **P4 — the studio cannot be misused.** A real 56 px twelve-key `#pinPad` (1–9, Clear, 0, Unlock) with ⌫ outside the pad, Show/Hide and Paste helpers on the key field, live `ghp_`/`github_pat_` test buttons, and a per-clip Commit button that writes to the permanent voice vault.
-5. **P5 — a student can see what to do.** Home carries a 1-2-3 journey card and a `Session 8 ready · 30 words` badge; the Smart Board Classroom Bar appears at ≥1024 px with 1..N chips, 64 px transport controls and a spoiler-safe word toggle that defaults to `••••••`; `data-theme="board"` is a real token set (pure black, 18 px base type, 48 px beat clock); and the 390 px header clips nothing at all (verified at 320/360/390/414/480/768/1024/1440).
+1. **P1 — the voice works at all.** `pickVoice` was referenced but never defined, so the first
+utterance threw `ReferenceError` and every spoken word, the whole guide and the voice test died
+silently. It now exists, caches one British Female Professor (en-GB, rate 0.92, pitch 1.03) and
+scores every male name (`david|mark|george|daniel|fred|james|richard|oliver|thomas|male|man|guy`)
+at −100, so a board laptop can never switch the class to a male voice. (Guide 2.0's 600 ms
+watchdog was superseded by the Guide 4.0 spotlight in v0.0.3.)
+2. **P2 — the vault survives and syncs in about a second.** `publishFilesSequential` commits one
+file at a time, re-reading a fresh SHA before each PUT, always publishing `version.json` last;
+`fetchRawGitHubJson` reads the Contents API so a second device never waits out the Pages CDN;
+the GAS relay body carries `{action, app, ver}` and no PIN.
+3. **P3 — credit-safe audio.** The Quota Inspector is a zero-character `GET /v1/user/subscription`; the run is preflighted at `30 words = 241 chars · 4 guide steps = 731 chars · total 972 chars`; only missing clips are generated (`_guide_1.._guide_4` are reusable keys); a 1-word test button exists for cheap dry runs. No gate, test or script ever calls the TTS endpoint.
+4. **P4 — the studio cannot be misused.** A real 56 px twelve-key `#pinPad` (1–9, Clear, 0,
+Unlock) with ⌫ outside the pad, Show/Hide and Paste helpers, live `ghp_`/`github_pat_` test
+buttons, and a per-clip Commit button that writes to the permanent voice vault.
+5. **P5 — a student can see what to do.** Home carries a 1-2-3 journey card and a `Session 8 ready · 30 words` badge; the Smart Board Classroom Bar appears at ≥1024 px with 1..N chips, 64 px transport controls and a spoiler-safe word toggle (`••••••`); `data-theme="board"` is a real token set; the 390 px header clips nothing (verified 320→1440).
 
 ### Preserved, byte for byte (Appendix A lock)
 
-Same four hashes as v0.0.1.a (see above): `session.json` `e0e86c807fc6`, `gas-source.txt`
-`591b9b086f6d`, both Sinhala `.woff2` files `23f1503e1e75` / `bf59c1487b0a`.
-
-`data/elevenlabs-audio.json` left the frozen table in this release: the studio now writes it on every publish, so it is budgeted at ≤ 2,500,000 B and its release header is asserted instead of being hash-frozen (D-UI11). It still contains zero rendered clips in the repository, so publishing costs nothing until a lecturer presses a generate button.
+Same four hashes as v0.0.1.a (see above). `data/elevenlabs-audio.json` left the frozen table
+here: the studio writes it on every publish, so it is budgeted at ≤ 2,500,000 B and its release
+header is asserted instead of hash-frozen (D-UI11). It ships zero rendered clips, so publishing
+costs nothing until a lecturer presses a generate button.
 
 ### Version bump set
 
@@ -269,7 +306,9 @@ Same four hashes as v0.0.1.a (see above): `session.json` `e0e86c807fc6`, `gas-so
 
 ### Byte budgets actually used
 
-`index.html` 28,1xx / 35,000 · `sdp-ui.css` 36,6xx / 60,000 · `sdp-data-sync.js` 54,983 / 65,000 · `sdp-audio-speech.js` 23,6xx / 48,000 · `sdp-dictation-engine.js` 33,759 / 58,000 · `sdp-ui-views.js` 91,7xx / 110,000 · `studio.js` 56,5xx / 85,000 · `data-meter.js` 21,740 / 22,000 · `data.html` = `data/index.html` 27,5xx / 60,000 · `sw.js` 7,3xx / 12,000.
+`index.html` 28,1xx · `sdp-ui.css` 36,6xx · `sdp-data-sync.js` 54,983 · `sdp-audio-speech.js`
+23,6xx · `sdp-dictation-engine.js` 33,759 · `sdp-ui-views.js` 91,7xx · `studio.js` 56,5xx ·
+`data-meter.js` 21,740 · `data.html` 27,5xx · `sw.js` 7,3xx — all inside the release ceilings.
 
 ---
 ## v0.0.1.b — 2026-11-01 — Defect Fixes & Classroom Priorities
@@ -280,34 +319,27 @@ Same four hashes as v0.0.1.a (see above): `session.json` `e0e86c807fc6`, `gas-so
 
 ### What this release is
 
-Thirty-nine tracked defects (D1–D10, E1–E5, F1–F3, G1–G10, H1–H8, I1–I3, J1) fixed: an in-session version watcher plus a visibility-change guard so a board or phone left open across the school day still reloads to 0.0.1.b within two minutes, exactly once; Youdao/CORS dictionary audio no longer kills the shared audio element; a British Female Professor voice persona as the unified Tier 1 (en-GB) default with per-tier voice source and voice lock; beat/resume integrity (writing remount preserves typed text, listening restarts at repeat 1, speech-wait hard cap 2 s); honest four-state sync badge with structured sync errors and zero fake audio; a 12-key honest storage audit; and Classroom Priorities P1–P5 (in-session upgrade, voice + beat integrity, Guide 2.0 narration with Settings 2.0 pacing presets and the Smart Board quick-word jumper, gate-align tests, this ledger).
+Thirty-nine tracked defects (D1–D10, E1–E5, F1–F3, G1–G10, H1–H8, I1–I3, J1) fixed: an
+in-session version watcher plus a visibility-change guard (a board left open reloads to 0.0.1.b
+within two minutes, exactly once); Youdao/CORS dictionary audio no longer kills the shared audio
+element; a British Female Professor persona as the unified Tier 1 (en-GB) default with voice lock;
+beat/resume integrity (typed text survives a remount, listening restarts at repeat 1, 2 s speech
+cap); an honest four-state sync badge; a 12-key storage audit; and Classroom Priorities P1–P5.
 
 ### Preserved, byte for byte (Appendix A lock)
 
-| File | Bytes | SHA-256 (first 12) |
-| --- | --- | --- |
-| `data/session.json` | 46,403 | `e0e86c807fc6` |
-| `data/gas-source.txt` | 13,764 | `591b9b086f6d` |
-| `data/elevenlabs-audio.json` | 717 | `72b2b7db5deb` |
-| `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e75` |
-| `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a` |
-
-Verified with `shasum -a 256 -c /tmp/sdp-preserve.sha256` at the end of P0–P6 — all `OK`. The four true classroom payloads (`session.json`, `gas-source.txt`, both fonts) are untouched; `elevenlabs-audio.json` was deliberately re-issued with v0.0.1.b voice-pack metadata (Alice, `eleven_flash_v2_5`) and its lock entry was re-pinned in the same release.
+`session.json` 46,403 `e0e86c807fc6` · `gas-source.txt` 13,764 `591b9b086f6d` ·
+`elevenlabs-audio.json` 717 `72b2b7db5deb` · both fonts unchanged. Verified with
+`shasum -a 256 -c /tmp/sdp-preserve.sha256` at the end of P0–P6 — all `OK`. The four true
+classroom payloads are untouched; `elevenlabs-audio.json` was deliberately re-issued with
+v0.0.1.b voice-pack metadata (Alice, `eleven_flash_v2_5`) and re-pinned in the same release.
 
 ### Changed files (v0.0.1.a → v0.0.1.b)
 
-| File | Before | After | Budget | Gates |
-| --- | --- | --- | --- | --- |
-| `index.html` | 20,270 | 23,626 | 35,000 | G1, G5 |
-| `data/sdp-data-sync.js` | 38,705 | 44,878 | 48,000 | G1, G2 |
-| `data/sdp-audio-speech.js` | 12,034 | 15,250 | 40,000 | G1, G9 |
-| `data/sdp-dictation-engine.js` | 26,254 | 29,381 | 48,000 | G1, G3 |
-| `data/sdp-ui-views.js` | 52,360 | 72,635 | 90,000 | G1, G3 |
-| `sw.js` | 5,090 | 6,128 | 12,000 | G1, G6 |
-| `manifest.webmanifest` | 2,030 | 2,019 | 4,000 | G1, G9 |
-| `data/version.json` | 289 | 289 | 2,000 | G1, G2, G4 |
-| `data/config.json` | 34,388 | 34,388 | 36,000 | G1, G2, G4 |
-| `data.html` = `data/index.html` | 23,854 | 27,004 each | 60,000 | G1, G5 |
+`index.html` 20,270 → 23,626 · `sdp-data-sync.js` 38,705 → 44,878 · `sdp-audio-speech.js`
+12,034 → 15,250 · `sdp-dictation-engine.js` 26,254 → 29,381 · `sdp-ui-views.js` 52,360 →
+72,635 · `sw.js` 5,090 → 6,128 · `manifest.webmanifest` 2,030 → 2,019 · `version.json` 289 ·
+`config.json` 34,388 · `data.html` = `data/index.html` 23,854 → 27,004 each.
 
 `data/sdp-ui-views.js` ceiling raised 56,000 → 90,000 B (W3) to carry Guide 2.0 narration controls, Settings 2.0 presets and the Smart Board jumper; 72,635 B shipped, under ceiling.
 
@@ -351,9 +383,9 @@ Released under: `Release Smart Dictation Player v0.0.1.b (Defect Fixes & Classro
 
 ### What this release is
 
-The v1–v60 single-file app (485 KB `index.html` + a 365 KB minified `data/app-core.js`)
-was retired. v0.0.1.a is a clean, unminified, strictly ES5 six-module application whose
-classroom data, fonts and backend contracts stayed byte-identical.
+The v1–v60 single-file app (485 KB `index.html` + a 365 KB minified `data/app-core.js`) was
+retired. v0.0.1.a is a clean, unminified, strictly ES5 six-module application whose classroom
+data, fonts and backend contracts stayed byte-identical.
 
 ### Preserved, byte for byte (Appendix A lock)
 
@@ -364,12 +396,11 @@ classroom data, fonts and backend contracts stayed byte-identical.
 
 ### Deleted
 
-Legacy application (`index.html` 485,175 B, `data.html`, `data/studio.js`, `sw.js`,
-`data/learning-tools.js`, `data/media-manifest.json`), 12.9 MB of video wallpapers and
-posters, six fake `guide-si-*.mp3` stubs, `scripts/` (23 build scripts), `qa/`,
-`CHANGELOG.md` (146,743 B), `PHASE1_QA.md`, `QA_REPORT.md`, and every retired v42–v60
-feature (video wallpapers, focus dimmer, rupee badge, data/ready sheets, community tab,
-Material Mixer). Deleted, never hidden — G1 greps the shipped bytes, G5 the live DOM.
+Legacy application (`index.html` 485,175 B, `data.html`, ``data/studio.js`, `sw.js`, `data/learning-tools.js`, `data/media-manifest.json`), 12.9 MB of
+wallpapers and posters, six fake `guide-si-*.mp3` stubs, `scripts/` (23 build scripts), `qa/`,
+`CHANGELOG.md` (146,743 B), `PHASE1_QA.md`, `QA_REPORT.md`, and every retired v42–v60 feature
+(video wallpapers, focus dimmer, rupee badge, data/ready sheets, community tab, Material Mixer).
+Deleted, never hidden — G1 greps the shipped bytes, G5 the live DOM.
 
 ### Added (v0.0.1.a sizes at release)
 
@@ -410,51 +441,32 @@ repeat visit is served from `sdp-v0.0.1.a-shell` and costs ≈ 0 KB.
 
 ### Gate ledger (release run)
 
-| Gate | Suite | Result |
-| --- | --- | --- |
-| G1 | `tests/check.cjs` | 51 PASS / 0 FAIL (strict, every H1 file) |
-| G2 | `tests/upgrade.test.cjs` | see runtime log |
-| G3 | `tests/phase1.cjs` | see runtime log |
-| G4 | `tests/server.cjs` | 8 PASS / 0 FAIL (7 untouched Apps Script + 1 rebased metadata) |
-| G5 | `tests/browser.cjs` | see runtime log |
-| G6 | `tests/upgrade-browser.cjs` | see runtime log |
-| G7 | `tests/e2e.cjs` | see runtime log |
-| G8 | `tests/live-lab.cjs` | see runtime log |
-| G9 | `tests/audit-v42.cjs` | see runtime log |
-
-> The exact PASS counts are appended by the release commit that ran all nine
-> gates on a bare checkout (see the "Release verification" section at the bottom
-> of this file).
+G1 51 PASS / 0 FAIL (strict, every H1 file); G4 8 PASS / 0 FAIL (7 untouched Apps
+Script + 1 rebased metadata); G2, G3, G5–G9 see their runtime logs. Exact counts are
+appended by the release commit that ran all nine gates on a bare checkout.
 
 ### Known, deliberate deviations
 
-1. **G4 keeps only its seven Apps Script tests unchanged.** Its eighth test was a
-   v58 release-metadata assertion (it literally required `appVersion === '9.0.0.4'`
-   and `sdp.v57_secure_local` inside `index.html`). That cannot coexist with a new
-   version, so the block — and the loader that required a 13 KB inline Apps Script
-   copy — was rebased in a dedicated `gate-align:` commit, with the seven backend
-   behaviour tests left byte-identical.
-2. **`data/config.json` keeps legacy data fields** (`wallpaper`, `videoDim`,
-   `activeVideoSrc`, …) because W9 forbids trimming the preserved payload.
-   Nothing reads them; no DOM id or string from the retired features survives.
-3. **`/data` fonts use root-absolute URLs** (`/assets/fonts/…`) so that one
-   byte-identical file works both at `/data.html` and `/data/index.html`.
-4. **The app stylesheet resolves `../fonts/`**, not `./assets/fonts/`, because
-   the `@font-face` URL is relative to `assets/css/sdp-ui.css`. It points at the
-   same preserved files.
+1. **G4's eight test was rebased.** Its old v58 metadata assertion required
+   `appVersion === '9.0.0.4'` and `sdp.v57_secure_local` inside `index.html`; that
+   cannot coexist with a new version, so the block and its 13 KB inline loader were
+   rebased in a `gate-align:` commit, leaving the seven backend tests byte-identical.
+2. **`data/config.json` keeps legacy fields** (`wallpaper`, `videoDim`, …): W9 forbids
+   trimming the preserved payload. Nothing reads them.
+3. **`/data` fonts use root-absolute URLs** and the stylesheet resolves `../fonts/`,
+   so one byte-identical `data.html` serves both routes.
 
 ---
 
 ## Gate archaeology — P6b, P7 and the v0.0.1.a release verification
 
-The nine gates were first rebased onto 0.0.1.a, then onto 0.0.1.b in one pass, and again
-at every release since; the per-release counts live in each entry above. Two shared helpers
-keep them honest — `tests/static-server.cjs` (one HTTP server with per-test overrides) and
+The nine gates were first rebased onto 0.0.1.a, then onto 0.0.1.b in one pass, and again at
+every release since; the per-release counts live in each entry above. Two shared helpers keep
+them honest — `tests/static-server.cjs` (one HTTP server with per-test overrides) and
 `tests/app-harness.cjs` (jsdom + fake timers + WebCrypto + deterministic fetch). That
-re-baseline surfaced seven real defects (UTF-8 chunk accounting, a sixth localStorage probe
-key, dishonest accuracy after self-check, a missing About block, a dead Enter key, a
-self-linking `/data` back button and a lying empty state) — all fixed in the app, never
-asserted around.
+re-baseline surfaced seven real defects (UTF-8 chunk accounting, a sixth storage probe key,
+dishonest accuracy after self-check, a missing About block, a dead Enter key, a self-linking
+`/data` back button and a lying empty state) — all fixed in the app, never asserted around.
 
 ---
 
@@ -589,14 +601,12 @@ node tests/studio-safety.cjs                → G12 33 PASS / 0 FAIL
 
 ### Byte budgets actually used
 
-`index.html` 29,348 / 35,000 · `sdp-ui.css` 41,201 / 60,000 · `sdp-data-sync.js`
-64,924 / 65,000 · `sdp-audio-speech.js` 36,513 / 48,000 ·
-`sdp-dictation-engine.js` 36,597 / 58,000 · `sdp-ui-views.js` 103,620 / 110,000 ·
-`studio.js` 71,851 / 85,000 · `data-meter.js` 21,740 / 22,000 ·
-`data.html` = `data/index.html` 27,905 / 60,000 · `sw.js` 10,759 / 12,000 ·
-`docs/*.md` 34,609 / 18,660 / 18,310 / 16,064 / 11,878 (cap 40,000, template 18,000).
+`index.html` 29,348 · `sdp-ui.css` 41,201 · `sdp-data-sync.js` 64,924 ·
+`sdp-audio-speech.js` 36,513 · `sdp-dictation-engine.js` 36,597 · `sdp-ui-views.js` 103,620 ·
+`studio.js` 71,851 · `data-meter.js` 21,740 · `data/index.html` 27,905 · `sw.js` 10,759 —
+all inside the v0.0.1.e ceilings.
 
-Released under: `Release Smart Dictation Player v0.0.1.e (Honest Sync, British English Default, Guaranteed Voice & Bento UI)`.
+Released under: `Smart Dictation Player v0.0.1.e (Honest Sync, British English Default, Guaranteed Voice & Bento UI)`.
 
 ## v0.0.1.f — Honest Adoption, One-Click Setup & Free Enrichment (2026-11-02)
 
@@ -606,29 +616,24 @@ publish clock: no device may ever read a config newer than the version that name
 
 ### Requirements shipped
 
-* **R1/R2 dual-source adoption.** `SDP.Sync.fetchFreshDataJson(relPath, cb)` races the
-  same-origin Pages copy (`cache:'no-store'`, 6 s) against `raw.githubusercontent.com`
-  (5 s), keeps the higher `syncRev` (raw breaks a tie) and reports `source`. A payload
-  leg must now *prove* it belongs to the winning pointer (`json.syncRev >= targetSyncRev`,
-  or the preserved 30-word baseline session number); a leg that fails, times out or comes
-  back stale is retried once on the other source and, if it still cannot deliver, the
-  pointer is **not** advanced (`{error:'stale_payload', deferred:true, retry:[...]}`).
-  The watcher, `SDP.Speech`'s manifest loader and Studio's `loadVoicePack()` all read
-  through this one reader.
+* **R1/R2 dual-source adoption.** `fetchFreshDataJson(relPath, cb)` races the same-origin
+  Pages copy (`cache:'no-store'`, 6 s) against `raw.githubusercontent.com` (5 s), keeps the
+  higher `syncRev` (raw breaks a tie) and reports `source`. A payload leg must *prove* it
+  belongs to the winning pointer (`json.syncRev >= targetSyncRev`, or the preserved 30-word
+  baseline session number); a stale leg is retried once on the other source and otherwise the
+  pointer is **not** advanced (`{error:'stale_payload', deferred:true, retry:[...]}`). The
+  watcher, the manifest loader and `loadVoicePack()` all read through this one reader.
 * **R3 classroom defaults + one-time migration.** `en` · `exam` · 5 s · 2× · unified ·
   `voiceSource:'auto'` · `rate:0.95`. `defaultsResetV001f` lives **inside** `sdp.settings`
-  (the five-key localStorage law is untouched) and clears only the pacing `touchedKeys`.
+  (five-key law untouched) and clears only the pacing `touchedKeys`.
 * **R4 PIN.** `78987898` (4–12 digits) verified with PBKDF2-SHA256 × 250,000 against
-  `config.pinVerifier` (salt `ISzHPhxESOW/5ZOl5hO4Gg==`, hash `VlIxxCOF...CKsY=`).
-  Every PIN input is `maxlength="12" minlength="4"`; the dot row renders
-  `min(12, max(8, len))` dots. The retired PIN string is scrubbed from shipped code,
-  tests and docs.
+  `config.pinVerifier`. Every PIN input is `maxlength="12" minlength="4"`; the dot row renders
+  `min(12, max(8, len))` dots. The retired PIN string is scrubbed from shipped code, tests and docs.
 * **R5 locked Studio + auto-lock.** The locked DOM is PIN-only; the unlocked header adds
-  `#btnLockStudio`, and `pagehide` / `beforeunload` lock the board automatically.
-* **R6 pause/resume.** `SDP.Engine.isActive()` is true only in `listening`/`writing`;
-  `pause(reason)` records `status`, `pausedPhase`, `remainingMs`, `repeatsDone`,
-  `pauseReason`; `resume()` restores the exact beat (same word, same repeat, same
-  write-window remainder) and can pick a paused draft up after a reload.
+  `#btnLockStudio`; `pagehide`/`beforeunload` lock the board automatically.
+* **R6 pause/resume.** `isActive()` is true only in `listening`/`writing`; `pause(reason)`
+  records `status`, `pausedPhase`, `remainingMs`, `repeatsDone`, `pauseReason`; `resume()`
+  restores the exact beat and can pick a paused draft up after a reload.
 * **R7 adoption chain.** `applyPayloads → adoptRemoteSettings → Speech.reloadManifest →
   Views.refreshAll`, deferred to the end of a live beat ("beat deferral"). One 25 s watch,
   a `focus` listener, and a `sdp:update` listener that repaints every view.

@@ -63,7 +63,7 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.2.b'); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.3'); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -101,7 +101,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     await page.click('#btnGuideClose');
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.2.b', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.3', afterGuide);
 
     /* ── 2. credits: on Home and in About, never floating ─────────────── */
     // contract: docs/ARCHITECTURE_MAP.md §R7 attribution placement
@@ -159,7 +159,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       }));
       check('G7.2g Start opens the quick voice guide before the cockpit', quick.open === true && quick.screen === 'screen-home', JSON.stringify(quick));
       check('G7.2h the quick guide is titled and offers the skip button',
-        /Quick Voice Guide/.test(quick.title) && quick.skipVisible && /Skip Guide & Start Immediately/.test(quick.skipLabel),
+        /Quick Voice Guide/.test(quick.title) && quick.skipVisible && /▶ Start Dictation Now/.test(quick.skipLabel),
         JSON.stringify(quick));
       await page.click('#btnGuideSkipStart');
       await page.waitForTimeout(350);
@@ -352,11 +352,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.2\.[a-z]\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.3\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.2.b', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.3', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

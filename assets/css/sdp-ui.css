@@ -1602,89 +1602,95 @@ html[lang='si'] .studio-card { font-family: var(--font-si); }
 .paper-notice { font-size: 12px; color: var(--text-muted); }
 .badge-retry { color: #09090B; background: var(--warn); }
 
-/* ── P5: Guide 3.0 voice-transition cards with animated previews ──────── */
-.guide-steps { display: grid; gap: 10px; margin: 10px 0; padding-left: 0; list-style: none; }
-.guide-step {
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-card);
-  transition: border-color .2s ease;
-}
-.guide-step h3 { margin: 0 0 4px; font-size: 14px; }
-.guide-step p { margin: 0 0 8px; font-size: 13px; color: var(--text-muted); }
-.guide-step.active-step {
-  border: 2px solid var(--accent);
+
+/* ── v0.0.3 (R2 / F3): the compact four-step spotlight ───────────────────
+ * One viewport, one sentence, four dots, two buttons. The hidden <ol> keeps
+ * the four steps machine readable for the language pill and assistive tech. */
+.guide-spotlight {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 12px;
+  padding: 16px 14px;
+  text-align: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
   background: var(--bg-elev);
 }
-.guide-mock {
-  display: grid;
-  gap: 6px;
-  padding: 8px;
-  border: 1px dashed var(--border-strong);
-  border-radius: 10px;
-  background: var(--bg-sunken, #0D0D11);
-}
-.guide-mock .mock-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 14px;
-  min-height: 40px;
-  font-size: 13px;
+.guide-step-tag {
+  margin: 0;
+  font-size: 11px;
   font-weight: 800;
-  border-radius: 10px;
-  color: #FFFFFF;
-  background: var(--grad-primary);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-.guide-mock .mock-btn.mock-go { background: var(--grad-go); }
-.guide-mock .mock-cue {
-  display: inline-block;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  border-radius: 999px;
-  color: #09090B;
-  background: #F59E0B;
-}
-.guide-mock .mock-ring {
-  width: 54px;
-  height: 54px;
+.guide-step-text { margin: 0; font-size: 16px; line-height: 1.45; font-weight: 600; color: var(--text); }
+html[lang='si'] .guide-step-text { font-family: var(--font-si); }
+.guide-dots { display: flex; justify-content: center; gap: 8px; }
+.guide-dot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  border: 5px solid var(--accent);
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text);
+  background: var(--border-strong);
+  transition: transform .2s ease, background-color .2s ease;
 }
-.guide-step.active-step .mock-ring { animation: sdpRing 2.4s linear infinite; }
-@keyframes sdpRing {
-  0% { transform: scale(1); border-color: #38BDF8; }
-  60% { transform: scale(.86); border-color: #F59E0B; }
-  100% { transform: scale(1); border-color: #38BDF8; }
+.guide-dot.is-active { background: var(--accent); transform: scale(1.35); }
+.guide-steps-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .guide-step.active-step .mock-ring { animation: none; }
+  .guide-dot { transition: none; }
+  .guide-dot.is-active { transform: none; }
 }
-.guide-mock .mock-row {
+
+/* ── v0.0.3 (Phase 5): one-line cockpit header, pills drawer, symbol deck ─ */
+.cockpit-line {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
-  color: var(--text);
-}
-.guide-mock .mock-num { font-weight: 800; color: var(--accent); }
-.guide-mock .mock-sync {
-  display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #86EFAC;
-  border: 1px solid rgba(134, 239, 172, .45);
-  background: rgba(34, 197, 94, .12);
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  letter-spacing: .02em;
 }
+.cockpit-line .strip-count { font-weight: 800; color: var(--text); }
+.line-sep { color: var(--text-muted); }
+.pills-toggle { min-height: 48px; margin: 0; }
+.pills-drawer { margin-top: 8px; }
+.transport-deck,
+.secondary-controls { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 10px; }
+.deck-key { display: grid; justify-items: center; gap: 4px; flex: 0 0 auto; }
+.deck-cap {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+  text-align: center;
+}
+.transport-deck .deck-btn,
+.secondary-controls .deck-btn {
+  width: 56px;
+  min-width: 56px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+}
+.transport-deck .deck-main {
+  width: 72px;
+  min-width: 72px;
+  height: 72px;
+  min-height: 72px;
+  font-size: 26px;
+}
+.secondary-controls .deck-btn-sm { width: 48px; min-width: 48px; height: 48px; min-height: 48px; font-size: 18px; }

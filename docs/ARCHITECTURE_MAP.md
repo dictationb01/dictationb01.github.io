@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.2.b
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.3
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -14,24 +14,24 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | File | Budget | Owner / role |
 | --- | --- | --- |
 | `index.html` | ≤ 38,000 B | Shell: 54px header, **6 screens** (`home/player/practice/dict/settings/studio`), guide modal, `#resumeBanner`, toast, boot check, 6 deferred modules |
-| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.2.b tactile tokens). No runtime CSS injection, ever |
+| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.3 tactile tokens). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
 | `data/sdp-data-sync.js` | ≤ 86,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
 | `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
-| `data/sdp-dictation-engine.js` | ≤ 62,000 B | `SDP.Engine`: beat machine, ring/bar timer, 30-pill `#sessionProgressStrip`, verbatim phase lines, Paper/Typing, hints, 30-row self-check |
-| `data/sdp-ui-views.js` | ≤ 136,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 3.0, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
-| `data/studio.js` | ≤ 126,000 B | `SDP.Studio`: PIN vault, 3-card studio, 34-clip pack dashboard + one-click flow, delta retry, session editor, recorder, ElevenLabs, publish |
+| `data/sdp-dictation-engine.js` | ≤ 62,000 B | `SDP.Engine`: beat machine, ring/bar timer, glyph transport deck + 30-pill `#sessionPills`, verbatim phase lines, Paper/Typing, hints, 30-row self-check |
+| `data/sdp-ui-views.js` | ≤ 136,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 4.0 spotlight, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
+| `data/studio.js` | ≤ 140,000 B | `SDP.Studio`: PIN vault (`BOOTSTRAP_PIN` recovery + atomic re-seal), 3-card studio, **70-clip** pack dashboard + one-click flow, `sha1Hex` clip hashes, `#btnVerifyEleven`, delta retry, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
 | `data/session.json` | exactly 57,381 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
-| `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
+| `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Charlotte voice pack (D-UI11, `hashAlgo: 'sha1'`); header asserted, clips travel with the repo |
 | `data.html` | ≤ 34,000 B | `/data` transparency route |
 | `data/index.html` | ≤ 34,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 13,000 B | `sdp-v0.0.2.b` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.2.b` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.3` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.3` |
 | `docs/*.md` (5 files) | ≤ 52,000 B each (template ≤ 26,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
@@ -46,7 +46,7 @@ on every publish (D-UI11), so freezing it would have made publishing impossible.
 
 ```js
 window.SDP = {
-  version: '0.0.2.b', build: '2026-11-02', ver: 11,
+  version: '0.0.3', build: '2026-11-02', ver: 12, schema: 12, settingsRev: 20,
   Data:   { /* storage + migration */ },
   Sync:   { /* fetchers, reconciliation, publishing, Service Worker, Vault */ },
   Speech: { /* utterances + audio tiers */ },

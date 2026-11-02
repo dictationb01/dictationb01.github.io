@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.2.a)
+/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.3)
  * Strict ES5, dependency free. The ONLY module that touches a key (W5/W6).
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, §R7 */
 (function (global) {
@@ -6,8 +6,12 @@
 
   var SDP = global.SDP = global.SDP || {};
   var doc = global.document;
-  var VOICE_ID = 'Xb7hH8MSUJpSbSDYk0k2';
+  /* R5 (F6): Charlotte — 25-35 British English female professor. */
+  var VOICE_ID = 'XB0fDUnXU5powFXDhCwa';
+  var VOICE_NAME = 'Charlotte';
   var VOICE_MODEL = 'eleven_flash_v2_5';
+  var VOICE_PERSONA = '25-35 British English female professor';
+  var HASH_ALGO = 'sha1';
   var EL_SUBSCRIPTION = 'https://api.elevenlabs.io/v1/user/subscription';
   /* D1/D2 (Rule 1A): rung 2 — a scoped */
   var EL_VOICES = 'https://api.elevenlabs.io/v1/voices';
@@ -39,6 +43,91 @@
     openrouter: { url: 'https://openrouter.ai/api/v1/chat/completions', model: 'meta-llama/llama-3.3-70b-instruct:free' },
     gemini: { url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', model: 'gemini-2.5-flash' }
   };
+
+  /* ══ R5: synchronous pure-ES5 SHA-1 (no async, no build step) ══════════
+   * Every generated clip carries `hashAlgo: 'sha1'` and a content hash of
+   * text|voice|model, so the delta generator can prove a clip still matches
+   * what it was paid for BEFORE it spends another credit. */
+  function utf8Bytes(text) {
+    var out = [], s = str(text), i, c, c2, cp;
+    for (i = 0; i < s.length; i++) {
+      c = s.charCodeAt(i);
+      if (c < 0x80) { out.push(c); continue; }
+      if (c < 0x800) { out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); continue; }
+      if (c >= 0xD800 && c <= 0xDBFF && i + 1 < s.length) {
+        c2 = s.charCodeAt(i + 1);
+        if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
+          i += 1;
+          cp = 0x10000 + ((c - 0xD800) << 10) + (c2 - 0xDC00);
+          out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
+          continue;
+        }
+      }
+      out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));
+    }
+    return out;
+  }
+  function hex8(n) {
+    var v = (n >>> 0).toString(16);
+    while (v.length < 8) v = '0' + v;
+    return v;
+  }
+  function sha1Hex(text) {
+    var bytes = utf8Bytes(text);
+    var len = bytes.length, i, j, x;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    var hi = Math.floor(len / 536870912);
+    var lo = (len * 8) >>> 0;
+    bytes.push((hi >>> 24) & 0xFF, (hi >>> 16) & 0xFF, (hi >>> 8) & 0xFF, hi & 0xFF);
+    bytes.push((lo >>> 24) & 0xFF, (lo >>> 16) & 0xFF, (lo >>> 8) & 0xFF, lo & 0xFF);
+    var h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0;
+    var w = [], a, b, c, d, e, f, k, tmp;
+    for (i = 0; i < bytes.length; i += 64) {
+      for (j = 0; j < 16; j++) {
+        w[j] = (bytes[i + j * 4] << 24) | (bytes[i + j * 4 + 1] << 16) |
+          (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3];
+      }
+      for (j = 16; j < 80; j++) {
+        x = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+        w[j] = (x << 1) | (x >>> 31);
+      }
+      a = h0; b = h1; c = h2; d = h3; e = h4;
+      for (j = 0; j < 80; j++) {
+        if (j < 20) { f = (b & c) | ((~b) & d); k = 0x5A827999; }
+        else if (j < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1; }
+        else if (j < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; }
+        else { f = b ^ c ^ d; k = 0xCA62C1D6; }
+        tmp = ((((a << 5) | (a >>> 27)) + f + e + k + w[j]) | 0);
+        e = d; d = c; c = (b << 30) | (b >>> 2); b = a; a = tmp;
+      }
+      h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0;
+      h3 = (h3 + d) | 0; h4 = (h4 + e) | 0;
+    }
+    return hex8(h0) + hex8(h1) + hex8(h2) + hex8(h3) + hex8(h4);
+  }
+  function clipContentHash(text, voiceId, modelId) {
+    return 'sha1:' + sha1Hex(str(text) + '|' + str(voiceId || VOICE_ID) + '|' + str(modelId || VOICE_MODEL));
+  }
+
+  /* R5 (F6): the whole 70-clip pack — 30 words, 30 numbers, 6 commands, 4
+     guide steps — 829 characters ≈ 414 credits on flash_v2_5 (8.3% of a free
+     month). Nothing here is ever generated without a human click. */
+  var CMD_CLIPS = [
+    { key: 'cmd.preparing', text: 'Preparing lesson. Listen carefully.' },
+    { key: 'cmd.paused', text: 'Session paused.' },
+    { key: 'cmd.resumed', text: 'Session resumed.' },
+    { key: 'cmd.hint', text: 'Hint shown.' },
+    { key: 'cmd.complete', text: "Dictation complete. Let's check your thirty words." },
+    { key: 'cmd.sample', text: 'British female lecturer voice ready.' }
+  ];
+  var GUIDE_CLIP_TEXTS = [
+    'Press Start Dictation to begin.',
+    'Listen twice, then write in five seconds.',
+    'Check all thirty words in order.',
+    'Practise the words you missed.'
+  ];
+  function numberClipText(n) { return 'Number ' + n + '.'; }
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -120,7 +209,9 @@
     publishing: false,
     /* D4/D5: the non-fatal tier warning */
     tierWarn: '',
-    layerOneRestored: false
+    layerOneRestored: false,
+    /* R7 (F7): a master recovery unlock must prompt a fresh PIN immediately. */
+    recoveryMode: false
   };
   var autoLockBound = false;
 
@@ -329,7 +420,11 @@
     try { remote = SDP.Speech && SDP.Speech.state ? SDP.Speech.state.manifest : null; } catch (e) { remote = null; }
     if (isObj(remote)) for (var k in remote) if (Object.prototype.hasOwnProperty.call(remote, k) && base[k] === undefined) base[k] = remote[k];
     base.voiceId = VOICE_ID;
+    base.voiceName = VOICE_NAME;
     base.modelId = VOICE_MODEL;
+    base.voiceModel = VOICE_MODEL;
+    base.persona = VOICE_PERSONA;
+    base.hashAlgo = HASH_ALGO;
     base.clips = ST.voicePack.clips || {};
     base.updatedAt = new Date().toISOString();
     /* D19: same publish clock as */
@@ -491,7 +586,11 @@
       cb(null, ST.secrets);
     }
     v.verifyPinVerifier(pin, verifier).then(function (ok) {
-      if (!ok) { msg(t('studioBadPin'), 'bad'); cb(new Error('bad_pin')); return; }
+      if (!ok) {
+        /* R7 (F7): BOOTSTRAP_PIN is the documented master recovery code. */
+        if (isBootstrapPin(pin)) { recoveryOpen(cb); return; }
+        msg(t('studioBadPin'), 'bad'); cb(new Error('bad_pin')); return;
+      }
       ST.unlocked = true;
       ST.pin = str(pin);
       clearVaultLock();
@@ -503,6 +602,7 @@
       }
       opened({}, '');
     }, function (err) {
+      if (isBootstrapPin(pin)) { recoveryOpen(cb); return; }
       if (err && err.code === 'locked') msg(t('studioLockedOut') + ' ' + str(err.retrySec || 60) + ' ' + t('seconds'), 'bad');
       else msg(t('studioBadPin') + (err && err.triesLeft !== undefined ? ' · ' + err.triesLeft : ''), 'bad');
       cb(err || new Error('bad_pin'));
@@ -517,6 +617,7 @@
     if (!attempt) { msg(t('studioBadPin'), 'bad'); cb(new Error('bad_pin')); return; }
     /* SEC-04: the persisted lockout is */
     if (v.isLocked && v.isLocked()) {
+      if (isBootstrapPin(attempt)) { recoveryOpen(cb); return; }
       msg(t('studioLockedOut') + ' ' + v.lockRemaining() + ' ' + t('seconds'), 'bad');
       var early = new Error('locked');
       early.code = 'locked';
@@ -548,6 +649,8 @@
         autoPublishVault(envelope);
         cb(null, ST.secrets);
       }, function (err) {
+        /* R7: a forgotten PIN is never a dead end. */
+        if (isBootstrapPin(attempt)) { recoveryOpen(cb); return; }
         if (err && err.code === 'locked') {
           msg(t('studioLockedOut') + ' ' + str(err.retrySec || 60) + ' ' + t('seconds'), 'bad');
         } else {
@@ -777,7 +880,7 @@
     var labels = [
       'Save vault &amp; verify GitHub token',
       'Non-fatal ElevenLabs key check',
-      'Delta-generate guide + 30 clips',
+      'Delta-generate all 70 clips',
       'Inject clips &amp; publish, ONE syncRev'
     ];
     var html = '<ol id="studioMasterSteps" class="studio-steps" aria-label="' +
@@ -801,7 +904,11 @@
     return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4">' + T('studioCardKeys') + '</h4>' +
       /* D2 (v0.0.2.a): the honest one-line status dashboard. */
       '<p id="studioPackDashboard" class="studio-pack-dashboard" role="status" aria-live="polite">' + esc(packDashboardText()) + '</p>' +
-      keyRowMarkup('elKeyInput', 'ElevenLabs API key', 'xi-api-key', 'ElKey') +
+      keyRowMarkup('elKeyInput', 'ElevenLabs API key (sk_…)', 'sk_…', 'ElKey') +
+      /* R4 (F5): one click proves the key AND the voice, before a single
+         character is billed for a real clip. */
+      '<div class="chip-row studio-verify-row">' + btn('btnVerifyEleven', t('studioVerifyEl'), 'btn-primary') + '</div>' +
+      '<p id="elVerifyStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
       keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… / github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
       '<label class="lbl" for="studioAiProvider">' + T('studioAiProvider') + '</label>' + aiProviderSelectMarkup() +
       '<p id="studioFreeNoKey" class="studio-free-badge"' + (freeNoKeyVisible() ? '' : ' hidden') + '>' + T('studioFreeNoKey') + '</p>' +
@@ -853,7 +960,7 @@
       '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
       '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
       '<input id="studioNewPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
-      '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnChangePin', t('studioChangePin'), 'btn-ghost') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
+      '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnChangePin', t('studioChangePinBtn'), 'btn-ghost', 'data-atomic-pin="1"') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
       '<div class="studio-lock-row">' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-ghost') + '</div>' +
       '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
       btn('btnCommitClip', t('studioCommitClip'), 'btn-primary', 'disabled') + '</div>' +
@@ -864,7 +971,9 @@
   function unlockedMarkup() {
     return '<div class="studio-head">' + '<span class="studio-mode-pill">Lecturer Mode Unlocked ✓</span>' + '</div>' +
       '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
-      keysCardMarkup() + wordsCardMarkup() + settingsCardMarkup();
+      /* R7 (F7): words first — editing vocabulary is the daily job; keys are
+         a once-a-term chore. Card order is part of the contract. */
+      wordsCardMarkup() + settingsCardMarkup() + keysCardMarkup();
   }
   /* R5/SEC-01: while locked the body */
   function lockedMarkup() {
@@ -1249,7 +1358,8 @@
     /* E8: atomic PIN change — validate 4–12 digits, confirm match, re-seal the
        vault with the new PIN, publish config.json then version.json last, and
        clear every busy flag on any failure exit. The studio stays unlocked. */
-    btnChangePin: function () { saveKeys(); },
+    btnChangePin: function () { withBusy('btnChangePin', function (d) { changePin(function () { d(); }); }); },
+    btnVerifyEleven: function () { withBusy('btnVerifyEleven', function (d) { verifyElevenKey(); d(); }); },
     btnRetryFailedClip: function () {
       var failed = ST.lastFailedClip;
       if (!failed || !failed.key) { msg(t('studioRetryNone'), ''); return; }
@@ -1314,6 +1424,15 @@
   }
   function saveKeys() {
     if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); return false; }
+    /* R4 (F5): never seal a key ID. e1b… is 64 hex chars and ElevenLabs
+       rejects it with HTTP 400 invalid_api_key; say so, in words. */
+    var typed = trimmedKey(fieldValue('elKeyInput'));
+    if (typed && !looksLikeElevenKey(typed)) {
+      msg(elevenKeyHint(), 'bad');
+      testStatus('❌ ' + elevenKeyHint(), 'bad');
+      paintElVerify(elevenKeyHint(), 'bad');
+      return false;
+    }
     /* SEC-02 / R4: a new 4–12 digit PIN */
     var wantPin = newPinValue();
     var confirmPin = confirmPinValue();
@@ -2026,27 +2145,45 @@
   /* ══ D-C1..C7: credit-safe Alice */
   function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + VOICE_ID; }
   function guideSteps() {
-    var out = [], i, title, body;
-    for (i = 1; i <= 4; i++) {
-      title = en('guideStep' + i + 'Title') || ('Step ' + i);
-      body = en('guideStep' + i + 'Body');
-      out.push({ key: '_guide_' + i, text: (title + '. ' + body).replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '') });
-    }
+    /* R5: the four reusable guide clips. The frozen legacy keys stay readable
+       by the speech module (guide.en.N wins, _guide_N+1 is the fallback). */
+    var out = [], i;
+    for (i = 1; i <= 4; i++) out.push({ key: '_guide_' + i, text: GUIDE_CLIP_TEXTS[i - 1] });
+    return out;
+  }
+  function commandClips() {
+    var out = [], i;
+    for (i = 0; i < CMD_CLIPS.length; i++) out.push({ key: CMD_CLIPS[i].key, text: CMD_CLIPS[i].text });
+    return out;
+  }
+  function numberClips() {
+    var out = [], i;
+    for (i = 1; i <= WORD_CAP; i++) out.push({ key: 'num.' + i, text: numberClipText(i) });
     return out;
   }
   function costPreview(words) {
     var list = Array.isArray(words) ? words : currentWords();
-    var wordChars = 0, i;
-    for (i = 0; i < Math.min(WORD_CAP, list.length); i++) wordChars += str((list[i] || {}).w).length;
+    var wordChars = 0, i, count = Math.min(WORD_CAP, list.length);
+    for (i = 0; i < count; i++) wordChars += str((list[i] || {}).w).length;
+    var numbers = numberClips(), numsChars = 0;
+    for (i = 0; i < numbers.length; i++) numsChars += numbers[i].text.length;
+    var cmds = commandClips(), cmdChars = 0;
+    for (i = 0; i < cmds.length; i++) cmdChars += cmds[i].text.length;
     var steps = guideSteps(), guideChars = 0;
     for (i = 0; i < steps.length; i++) guideChars += steps[i].text.length;
-    return { words: wordChars, guide: guideChars, total: wordChars + guideChars, count: Math.min(WORD_CAP, list.length) };
+    var clips = count + numbers.length + cmds.length + steps.length;
+    return {
+      words: wordChars, numbers: numsChars, commands: cmdChars, guide: guideChars,
+      total: wordChars + numsChars + cmdChars + guideChars, count: count, clips: clips
+    };
   }
   function costPreviewLine(words) {
     var c = costPreview(words);
-    /* D18: the arithmetic is always stated as 34 clips = 30 words + 4 guides. */
-    return c.count + ' words = ' + c.words + ' chars · 4 guide steps = ' + c.guide +
-      ' chars · total ' + c.total + ' chars · ' + (c.count + 4) + ' clips (30 words + 4 guide steps)';
+    /* R5: the 70-clip arithmetic, always stated, never guessed. */
+    return c.count + ' words = ' + c.words + ' chars · 30 numbers = ' + c.numbers +
+      ' chars · 6 commands = ' + c.commands + ' chars · 4 guide steps = ' + c.guide +
+      ' chars · total ' + c.total + ' chars · ' + c.clips +
+      ' clips (30 words + 30 numbers + 6 commands + 4 guide steps)';
   }
   /* D2: 403 / missing_permissions / */
   /* D5/D16: human error sentences. */
@@ -2102,12 +2239,117 @@
     return '';
   }
   /* D1 (Rule 1A) — the 3-rung */
+  function trimmedKey(key) { return str(key).replace(/^\s+|\s+$/g, ''); }
+  /* R4 (F5): ONLY an sk_… secret is an API key. The 64-char e1b… value is the
+     key ID and ElevenLabs answers HTTP 400 'API key ID used as API key'. */
   function looksLikeElevenKey(key) {
-    var k = str(key);
-    if (!k) return false;
-    if (/^sk_[A-Za-z0-9_]{20,}$/.test(k)) return true;
-    return /^[A-Za-z0-9]{28,}$/.test(k);
+    return /^sk_[A-Za-z0-9_]{20,}$/.test(trimmedKey(key));
   }
+  function elevenKeyHint() { return t('studioVerifyHint', 'INVALID KEY — paste the sk_… secret from ElevenLabs'); }
+
+  /* ══ R4: the live ElevenLabs key verifier ══════════════════════════════
+   * A zero-character GET /v1/user/subscription proves the key. Only a VALID
+   * key then generates ONE sample sentence and plays it through the shared
+   * <audio> element — that is the cheapest possible end-to-end voice test. */
+  function paintElVerify(text, state) {
+    var node = byId('elVerifyStatus');
+    if (!node) return false;
+    node.textContent = str(text);
+    if (state) node.setAttribute('data-state', state);
+    else node.removeAttribute('data-state');
+    return true;
+  }
+  function playVaultClip(key) {
+    var entry = ST.voicePack.clips ? ST.voicePack.clips[key] : null;
+    var url = '';
+    if (typeof entry === 'string') url = entry;
+    else if (isObj(entry)) url = str(entry.url) || (str(entry.b64) ? 'data:audio/mpeg;base64,' + str(entry.b64) : '');
+    if (!url) return false;
+    try { if (SDP.Speech && SDP.Speech.playUrl) { SDP.Speech.playUrl(url, { timeoutMs: 15000 }, noop); return true; } } catch (e) {}
+    return false;
+  }
+  function verifyElevenKey() {
+    var key = trimmedKey(fieldValue('elKeyInput') || str(ST.secrets.elevenKey));
+    if (!looksLikeElevenKey(key)) {
+      paintElVerify(elevenKeyHint(), 'bad');
+      msg(elevenKeyHint(), 'bad');
+      return false;
+    }
+    paintElVerify(t('studioWorking', 'Working…'), '');
+    elevenGet(EL_SUBSCRIPTION, key, function (err, res) {
+      if (!res || !res.ok) {
+        var status = Number((res && res.status) || 0);
+        var line = t('studioVerifyBad') + status + ' — ' + t('studioVerifyHint') + ')';
+        paintElVerify(line, 'bad');
+        return;
+      }
+      var b = isObj(res.body) ? res.body : {};
+      var used = Number(b.character_count), lim = Number(b.character_limit);
+      if (isNaN(used)) used = 0;
+      if (isNaN(lim)) lim = 0;
+      var left = Math.max(0, lim - used);
+      paintElVerify(t('studioVerifyOk') + left + ' / ' + lim + ' chars)', 'ok');
+      testStatus('✅ ' + t('studioVerifyOk') + left + ' / ' + lim + ' chars)', 'ok');
+      /* VALID: prove the voice. A cached sample is free; otherwise ONE 36-char
+         clip is generated and replayed forever from the vault. */
+      ST.secrets = isObj(ST.secrets) ? ST.secrets : {};
+      ST.secrets.elevenKey = key;
+      if (clipExists('cmd.sample')) { playVaultClip('cmd.sample'); return true; }
+      generateClips({ keys: ['cmd.sample'] }, function () { playVaultClip('cmd.sample'); });
+      return true;
+    });
+    return true;
+  }
+
+  /* ══ R7 (F7): the atomic fresh-salt PIN re-seal ═════════════════════════
+   * New salt, new verifier, re-encrypted envelope, config.json then
+   * version.json last. A master-recovery session is closed by this call. */
+  function isBootstrapPin(pin) { return trimmedKey(pin) === BOOTSTRAP_PIN; }
+  function recoveryOpen(cb) {
+    cb = cb || noop;
+    ST.recoveryMode = true;
+    ST.unlocked = true;
+    ST.bootstrapMode = true;
+    ST.pin = '';
+    ST.envelope = '';
+    ST.secrets = isObj(ST.secrets) ? ST.secrets : {};
+    msg(t('studioChangePinBtn') + ' — ' + t('studioRecoveryUsed'), 'warn');
+    try { mount(); } catch (e) {}
+    try { paintLecturerBar(); } catch (e) {}
+    try { loadVoicePack(noop); } catch (e) {}
+    cb(null, ST.secrets);
+    return true;
+  }
+  function changePin(cb) {
+    cb = cb || noop;
+    var want = newPinValue(), confirm = confirmPinValue();
+    if (want.length < PIN_MIN || want.length > PIN_MAX) { msg(t('studioBadPin'), 'bad'); cb(new Error('bad_pin')); return false; }
+    if (want !== confirm) { msg(t('studioPinMismatch'), 'bad'); cb(new Error('pin_mismatch')); return false; }
+    var v = vault();
+    if (!v || !v.computePinVerifier || !v.encryptV2) { msg(t('studioPublishFail') + ' · crypto_unavailable', 'bad'); cb(new Error('crypto_unavailable')); return false; }
+    var plain = isObj(ST.secrets) ? ST.secrets : {};
+    /* A FRESH salt every time — never reuse the old verifier's salt. */
+    v.computePinVerifier(want).then(function (verifier) {
+      return v.encryptV2(plain, want).then(function (envelope) {
+        ST.pin = want;
+        ST.envelope = envelope;
+        ST.recoveryMode = false;
+        writeLayerOne(envelope, verifier);
+        var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
+        cfgBody.encVault = envelope;
+        cfgBody.pinVerifier = verifier;
+        publishConfigAndVersion(cfgBody, envelope, 'Lecturer PIN change ' + appVersion(), function (err) {
+          if (err) { msg(t('studioPublishFail'), 'bad'); cb(err); return; }
+          msg(t('studioPublishOk') + ' · ' + t('studioChangePinBtn'), 'ok');
+          try { mount(); } catch (e) {}
+          cb(null, true);
+        });
+        return true;
+      });
+    }, function (err) { msg(t('studioPublishFail') + ' · encrypt_failed', 'bad'); cb(err || new Error('encrypt_failed')); });
+    return true;
+  }
+
   function detailCode(body) {
     if (!isObj(body)) return '';
     var d = isObj(body.detail) ? body.detail : null;
@@ -2258,12 +2500,16 @@
       var w = list[i] || {};
       var text = str(w.w);
       if (!text) continue;
-      queue.push({ key: text.toLowerCase(), text: text });
+      /* R5: the new key is words.<w>; the bare legacy key stays readable. */
+      queue.push({ key: 'words.' + text.toLowerCase(), legacyKey: text.toLowerCase(), text: text });
       if (singleTest) return queue; /* 1-Word Test: ~8 chars, ~1 credit unit */
     }
     if (singleTest) return queue;
-    var steps = guideSteps();
-    for (i = 0; i < steps.length; i++) queue.push(steps[i]);
+    var numbers = numberClips();
+    for (i = 0; i < numbers.length; i++) queue.push(numbers[i]);
+    var cmds = commandClips();
+    for (i = 0; i < cmds.length; i++) queue.push(cmds[i]);
+    for (i = 0; i < GUIDE_CLIP_TEXTS.length; i++) queue.push({ key: 'guide.en.' + i, text: GUIDE_CLIP_TEXTS[i] });
     return queue;
   }
 
@@ -2335,7 +2581,14 @@
       if (index >= queue.length) { finish(null); return; }
       var item = queue[index];
       index += 1;
-      if (!force && clipExists(item.key)) { skipped += 1; next(); return; } /* D-C2 delta */
+      /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash
+         still matches text|voice|model is never paid for twice. */
+      var itemHash = clipContentHash(item.text, VOICE_ID, VOICE_MODEL);
+      var existing = ST.voicePack.clips[item.key];
+      if (!force && clipExists(item.key)) {
+        var storedHash = isObj(existing) ? str(existing.hash) : '';
+        if (!storedHash || storedHash === itemHash) { skipped += 1; next(); return; }
+      }
       calls += 1;
       var charsUsed = str(item.text).length;
       requestClip(item, apiKey, function (err, entry) {
@@ -2380,7 +2633,11 @@
           if (!buffer) throw new Error('empty_audio');
           var b64 = arrayBufferToBase64(buffer);
           if (!b64) throw new Error('encode_failed');
-          done(null, { b64: b64, url: 'data:audio/mpeg;base64,' + b64, bytes: buffer.byteLength, at: Date.now() });
+          done(null, {
+            b64: b64, url: 'data:audio/mpeg;base64,' + b64, bytes: buffer.byteLength,
+            at: Date.now(), voiceId: VOICE_ID, modelId: VOICE_MODEL,
+            hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, VOICE_ID, VOICE_MODEL)
+          });
         }, function (err) { done(err || new Error('tts_failed')); });
       } catch (e) { done(e || new Error('tts_failed')); }
     }
@@ -2696,7 +2953,19 @@
     commitClip: commitClip,
     elevenUrl: elevenUrl,
     voiceId: VOICE_ID,
+    voiceName: VOICE_NAME,
     voiceModel: VOICE_MODEL,
+    persona: VOICE_PERSONA,
+    sha1Hex: sha1Hex,
+    clipContentHash: clipContentHash,
+    buildQueue: buildQueue,
+    commandClips: commandClips,
+    numberClips: numberClips,
+    guideClips: guideSteps,
+    verifyElevenKey: verifyElevenKey,
+    changePin: changePin,
+    recoveryOpen: recoveryOpen,
+    recoveryMode: function () { return !!ST.recoveryMode; },
     appVersion: appVersion,
     appendPin: appendPin,
     backspacePin: backspacePin,

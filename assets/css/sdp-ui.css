@@ -141,8 +141,11 @@ a { color: var(--accent); }
 .si, .word-si, [lang='si'] { font-family: var(--font-si); }
 
 /* ── Single-active-screen law ─────────────────────────────────────────────
- * contract: docs/ARCHITECTURE_MAP.md §R3 */
+ * contract: docs/ARCHITECTURE_MAP.md §R3 (D8: an ID rule may never outrank
+ * this guard — every display rule that names a #screen-* id must also require
+ * .active, so exactly one screen is ever visible at every viewport width). */
 .screen { display: none !important; }
+.screen:not(.active) { display: none !important; }
 .screen.active { display: block !important; }
 
 /* No blur anywhere: flat matte only. */
@@ -1013,8 +1016,9 @@ body[data-lang='si'] #guideLangPill .lang-off {
 /* R7: the desktop Bento board — hero + stats in the wide left column,
    journey + quick practice in the right, credits spanning the full row. */
 @media (min-width: 1024px) {
-  #screen-home {
-    /* !important: .screen.active sets display:block !important above. */
+  #screen-home.active {
+    /* !important: .screen.active sets display:block !important above, and the
+       .active guard (D8) keeps the desktop Bento grid off every other screen. */
     display: grid !important;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: 16px;

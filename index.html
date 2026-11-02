@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.1.h — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.1.i — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -21,7 +21,7 @@
     </svg>
     <span id="brandName">Smart Dictation</span>
     <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.1.h</span>
+    <span id="sdpVerPill">v0.0.1.i</span>
     <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
     <button id="btnStudioQuick" class="hbtn hbtn-icon" type="button" aria-label="Open the Lecturer Studio from Settings">🔒</button>
     <div id="quickJumper" class="quick-jumper" hidden>
@@ -242,7 +242,7 @@
           <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
           <div id="lecturerSyncBar" class="lecturer-sync-bar" role="region" aria-live="polite" hidden>
             <button type="button" class="btn btn-primary" id="btnSyncClassSettings" data-i18n="lecturerSyncBar">📡 Save &amp; Sync Current Settings to All Classroom Devices</button>
-            <p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncLast">Last synced to the class</p>
+            <p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncIdle" aria-live="polite" data-state="idle">Not synced yet — press Save &amp; Sync</p>
           </div>
           <div class="field">
             <span class="lbl" data-i18n="modeLabel">Mode</span>
@@ -349,7 +349,7 @@
           <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
           <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
           <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.1.h</span></li>
+            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.1.i</span></li>
             <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
             <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
           </ul>
@@ -404,7 +404,7 @@
 
 <script>
 (function () {
-  var TARGET = '0.0.1.h';
+  var TARGET = '0.0.1.i';
   window.__SDP_BOOT_VERSION__ = TARGET;
   var doReload = function (remoteVersion) {
     try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

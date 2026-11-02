@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.1.h)
+/*! Smart Dictation Player — views, i18n & router (v0.0.1.i)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -81,6 +81,8 @@
     syncShortSyncing: 'Syncing…',
     lecturerSyncBar: '📡 Save & Sync Current Settings to All Classroom Devices',
     lecturerSyncLast: 'Last synced to the class',
+    /* D19: a dedicated idle label — applyLang can never overwrite a real stamp. */
+    lecturerSyncIdle: 'Not synced yet — press Save & Sync',
     lecturerSyncedToast: '📡 Synced teacher\'s latest classroom settings (Rev #',
     lecturerSyncNoToken: 'Add a GitHub token in Lecturer Studio to sync the class',
     guideQuickTitle: 'Quick Voice Guide — How This Dictation Works',
@@ -216,6 +218,9 @@
     studioAiSlotOpenrouter: '4: OpenRouter Free Models · Llama-3.3-70B:free (sk-or-… — Free Tier)',
     studioAiSlotGemini: '5: Google Gemini Free Tier · gemini-2.5-flash (AIza… — Optional)',
     studioWorking: 'Working…',
+    studioClear: 'Clear',
+    studioRestored: 'Studio restored from this tab',
+    studioNoVaultWarn: 'No vault sealed yet — words publish without keys; seal the vault when you add your keys',
     studioAiOfflineFallback: 'AI offline — free dictionary used',
     studioSavedOk: '✓ Keys saved & protected across updates',
     studioPublishOkFull: '✓ Published & synced to all classroom devices'
@@ -271,6 +276,7 @@
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
     lecturerSyncBar: '📡 සියලු උපකරණවලට සැකසුම් සුරැකීම හා සමමුහුර්ත කිරීම',
     lecturerSyncLast: 'පන්තියට සමමුහුර්ත කළ අවසන් වාරය',
+    lecturerSyncIdle: 'තවම සමමුහුර්ත නොවීය — Save & Sync එබන්න',
     lecturerSyncedToast: '📡 ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
     lecturerSyncNoToken: 'පන්තිය සමමුහුර්ත කිරීමට කථිකාචාර්ය ස්ටූඩියෝවේ GitHub ටෝකනය එක් කරන්න',
     guideQuickTitle: 'ක්ෂණික හඬ උපදෙස් — ඩික්ටේෂන් ක්‍රියා කරන ආකාරය',
@@ -406,6 +412,9 @@
     studioAiSlotOpenrouter: '4: OpenRouter නොමිලේ ආකෘති · Llama-3.3-70B:free (sk-or-… — නොමිලේ මට්ටම)',
     studioAiSlotGemini: '5: Google Gemini නොමිලේ මට්ටම · gemini-2.5-flash (AIza… — අමතර)',
     studioWorking: 'ක්‍රියාත්මක වෙමින්…',
+    studioClear: 'හිස් කරන්න',
+    studioRestored: 'මෙම ටැබයෙන් ස්ටූඩියෝව නැවත ලබා ගන්නා ලදි',
+    studioNoVaultWarn: 'තවම බඳුනක් සකසා නැත — යතුරු නොමැතිව වචන ප්‍රකාශ වේ',
     studioAiOfflineFallback: 'AI අක්‍රියයි — නොමිලේ ශබ්දකෝෂය භාවිතා විය',
     studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
     studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
@@ -1385,10 +1394,14 @@
     bar.setAttribute('aria-hidden', unlocked ? 'false' : 'true');
     if (unlocked) {
       var btn = byId('btnSyncClassSettings');
-      if (btn) btn.textContent = t('lecturerSyncBar');
+      /* D2: never repaint the label of a button that is mid-action. */
+      if (btn && btn.getAttribute('data-busy') !== '1') btn.textContent = t('lecturerSyncBar');
       var hint = byId('lecturerSyncHint');
       if (hint) hint.textContent = t('studioAskLecturer');
     }
+    /* D19: the idle label is separate from the live status stamp. */
+    var last = byId('lecturerSyncLast');
+    if (last && !last.getAttribute('data-state')) last.textContent = t('lecturerSyncIdle');
     return unlocked;
   }
   function renderSettings() {
@@ -1629,16 +1642,28 @@
       syncBtn._sdpBound = true;
       syncBtn.addEventListener('click', function () {
         if (!SDP.Studio || !SDP.Studio.saveClassSettings) return;
-        var result = SDP.Studio.saveClassSettings(function (err) {
-          if (err) {
-            setUpdateStatus(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'), 'bad');
-            showToast(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'));
-            return;
+        /* D2: no double-click can ever start two publishes. */
+        if (syncBtn.getAttribute('data-busy') === '1') return;
+        var work = function (finish) {
+          var result = SDP.Studio.saveClassSettings(function (err) {
+            if (err) {
+              setUpdateStatus(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'), 'bad');
+              showToast(err.message === 'no_token' ? t('lecturerSyncNoToken') : t('studioPublishFail'));
+            } else {
+              /* D19: Studio already stamped the exact Rev # on #lecturerSyncLast. */
+              setUpdateStatus(t('lecturerSyncLast') + ' · ' + t('studioPublishOk'), 'ok');
+            }
+            finish();
+          });
+          if (result && result.ok === false && result.reason === 'no_token') {
+            showToast(t('lecturerSyncNoToken'));
           }
-          setUpdateStatus(t('lecturerSyncLast'), 'ok');
-        });
-        if (result && result.ok === false && result.reason === 'no_token') {
-          showToast(t('lecturerSyncNoToken'));
+        };
+        if (SDP.Studio.withBusy) SDP.Studio.withBusy(syncBtn, work);
+        else {
+          syncBtn.setAttribute('data-busy', '1');
+          syncBtn.disabled = true;
+          work(function () { syncBtn.removeAttribute('data-busy'); syncBtn.disabled = false; });
         }
       });
     }

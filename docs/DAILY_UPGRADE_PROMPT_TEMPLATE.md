@@ -353,13 +353,14 @@ D17    needSession also true when the session no. differs, state.deferredSession
 D18    Re-stamp every versioned literal, re-baseline BUDGET (W2 ceilings below), extend
        G11 (74) and G12 (78), bump the appliedSettingsRev fixtures 6 -> 7.
 
-W2 ceilings: index.html 36000, sdp-ui.css 60000, sdp-data-sync.js 82000,
-sdp-audio-speech.js 52000, sdp-dictation-engine.js 60000, sdp-ui-views.js 125000,
-studio.js 112000, data-meter.js 24000, data.html = data/index.html 32000, sw.js 13000,
-config.json 36000, docs 48000 each (template 24000).
+W2 ceilings (v0.0.1.i): index.html 36000, sdp-ui.css 60000, sdp-data-sync.js 86000,
+sdp-audio-speech.js 52000, sdp-dictation-engine.js 60000, sdp-ui-views.js 128000,
+studio.js 116000, data-meter.js 24000, session.json exactly 57381,
+data.html = data/index.html 32000, sw.js 13000, manifest 4000, config.json 36000,
+version.json 2000, docs 48000 each (CHANGELOG 52000, template 24000).
 
-Hard gates: 12 gates 0 FAIL — G1 88, G2 12, G3 81, G4 8, G5 46, G6 15, G7 52, G8 39,
-G9 47, G10 26, G11 74, G12 78 = 566 assertions; shasum -a 256 -c 4/4 OK;
+Hard gates: 12 gates 0 FAIL — G1 89, G2 12, G3 81, G4 8, G5 60, G6 15, G7 52, G8 39,
+G9 47, G10 26, G11 74, G12 94 = 597 assertions; shasum -a 256 -c 4/4 OK;
 data/session.json and gas-source.txt byte-identical; zero occurrences of the retired PIN;
 verbatim EN + SI credit lines on Home, About and /data; all five docs updated with real
 bytes; merge to main only with --no-ff.
@@ -382,7 +383,12 @@ bytes; merge to main only with --no-ff.
 * A bumped `settingsRev` (6 -> 7) re-adopts `classSettings`; every fixture that pins its own
   pacing must raise `appliedSettingsRev` to 7 — G3, G7, G8, G10 and G12 all had one.
 * `tests/audit-v42.cjs` keeps a **second** budget table; bumping only `check.cjs` leaves
-  G9.2a red.
+  G9.2a red. Its §G9.3a monolith line (any `data/*.js` over 120,000 B) is a *third*
+  number that the 128,000 B ceiling does not exempt: the v0.0.1.i strings pushed
+  `sdp-ui-views.js` to 121,619 B, so 24 historical comment blocks were folded into
+  one-liners and the module shipped at 119,126 B. Trim, never raise.
+* Escaped-dot regexes survive a bulk `0.0.1.h → 0.0.1.i` replace: `/0\.0\.1\.h/` in
+  `audit-v42.cjs` G9.7a stayed on the old release until it was grepped separately.
 * `T(key, fallback)` must be `esc(t(key, fallback))`; a wrapper that calls itself recurses
   until the stack dies and silently blanks the results table.
 * A `ReferenceError` inside `mount()` renders an empty `#resultsTable tbody`, which looks

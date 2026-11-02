@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.h
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.i
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the
@@ -10,13 +10,13 @@ code is the bug.
 
 | Constant | Value | Where |
 | --- | --- | --- |
-| `APP_VERSION` / `SDP.version` | `0.0.1.h` | `index.html`, every module |
-| `ver` | `7` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
-| `schema` | `7` | same |
-| `settingsRev` | `7` | same |
-| `syncRev` | `1793595000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
-| `SW_VERSION` | `sdp-v0.0.1.h` | `sw.js` |
-| `SHELL_CACHE` | `sdp-v0.0.1.h-shell` | `sw.js` |
+| `APP_VERSION` / `SDP.version` | `0.0.1.i` | `index.html`, every module |
+| `ver` | `9` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
+| `schema` | `9` | same |
+| `settingsRev` | `12` | same, and `SETTINGS_REV` in `data/sdp-data-sync.js:17` |
+| `syncRev` | `1793610000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
+| `SW_VERSION` | `sdp-v0.0.1.i` | `sw.js` |
+| `SHELL_CACHE` | `sdp-v0.0.1.i-shell` | `sw.js` |
 | `PRESERVE_CACHES` | `['sdp-youdao-v1', 'sdp-audio-clips']` | `sw.js` |
 
 There is exactly one version file: `data/version.json`. Never a root `/version.json`.
@@ -215,7 +215,7 @@ Only `ver: 3`, `appVersion: "0.0.1.d"`, `version: "0.0.1.d"`, `schema: 3`,
 ## Appendix A — Preservation locks (this release)
 
 ```
-e0e86c807fc667475dad43de7848d3b231642c99f913bdab8c48e24834b86a5f  data/session.json                 46,403 B
+4e80cd952fbab7cda27c4b965ef5adade079d7c74b2270add7e8ae224e861c69  data/session.json                 57,381 B
 591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  data/gas-source.txt              13,764 B
 23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  assets/fonts/NotoSansSinhala-Regular.woff2  48,520 B
 bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  assets/fonts/NotoSansSinhala-Bold.woff2     48,748 B
@@ -540,11 +540,88 @@ wants a rejection must send a 0-word list or a different session number (G11.15a
 `needSession` is false only when the session number is unchanged **and** `payloadFiles`
 names no session file (D17, legacy headers excluded) and no device state asked for a
 retry. A settings-only publish therefore costs 3 small requests and never re-downloads the
-46,403 B `data/session.json` (G11.13a–d). A device that lost its session still pulls it on
+57,381 B `data/session.json` (G11.13a–d). A device that lost its session still pulls it on
 the next tick because `state.deferredSession` survives the adoption (G11.14c).
 
 ### R13.5 The publish contract did not move
 
-`publishFilesSequential()` is unchanged: fresh SHA → PUT → await → next file, exactly one
-409 retry, `data/version.json` committed last, one `nextSyncRev() = max(Date.now(), prev+1)`
-across all four files (G11.11c–e). A locked Studio still refuses to publish at all.
+`publishFilesSequential()` still does fresh SHA → PUT → await → next file with
+`data/version.json` last and one `nextSyncRev() = max(Date.now(), prev+1)` across all four
+files (G11.11c–e); a locked Studio still refuses to publish at all. v0.0.1.i adds exactly
+one delayed retry and the reader-facing error text — see R14.
+
+---
+
+## R14 — v0.0.1.i: one clock, one retry, one honest sentence
+
+### R14.1 D14/W8 — a publish has exactly one clock
+
+`publishConfigAndVersion()` and `publishBundle()` each call `nextSyncRev()` **once**
+(`data/studio.js:1661`, `:1687`); the value is stamped into `version.json`,
+`config.json`, `session.json` and `elevenlabs-audio.json` before the first PUT. A second
+call would move the pointer after the bodies were built, which is how two devices could
+disagree about which release they had. G11 asserts the four bodies share one `syncRev`
+(G11.11c–e); G2 asserts the shipped `syncRev` is above both payload clocks.
+
+`nextSettingsRev()` stays `Math.max(schemaVer(), current + 1)` (`data/studio.js:82`), so
+`settingsRev` only ever moves forward. Shipped value: **12**; the module constant
+`SETTINGS_REV` (`data/sdp-data-sync.js:17`) is **12** to match. They were 9 and 9 while
+the data said 12 — that mismatch is what D10 allowed a device to "fix" by re-adopting
+stale `classSettings`.
+
+### R14.2 D10 — no release literal decides adoption
+
+The v0.0.1.h clamp
+
+```js
+if (APP_VERSION === '0.0.1.h' && appliedRev > state.settingsRev && state.settingsRev === 8)
+```
+
+is gone. Adoption is monotonic in the payload itself (`data/sdp-data-sync.js:976`):
+remote settings are adopted when the remote `settingsRev` is greater than the applied
+one, whatever the release is called. A test fixture that pins its own
+`appliedSettingsRev` must therefore pin **99**, not 7 or 8, or the adoption overwrites
+it (G3.1j, G10.5a were both caught this way).
+
+### R14.3 D11 — `stale_payload` is a report, not a verdict
+
+When the session leg fails but config + version verified, `settle()` still adopts the
+config and the callback receives:
+
+```js
+{ ok:false, error:'stale_payload', changed:true, updated:true, deferred:true,
+  deferredSession:true, retry:['data/session.json'], session, settingsRev,
+  appVersion, source, payloadSources, chain }
+```
+
+So "the teacher's settings landed" and "the session is stale" are both true at once
+(G11.14a–c). `ok:false` keeps the retry queued; `changed:true` is what repaints the UI.
+Adopting nothing is reserved for a failed **config** leg, which is the only way a
+half-published tree could brick a device.
+
+### R14.4 D7 — every failure is one sentence
+
+`SDP.Sync.publishErrorText(status, ghMsg)` (`data/sdp-data-sync.js:1430`) maps
+401 → expired token, 403 → no permission, 404 → repo/path missing, 409 → conflict
+retried, 422 → rejected payload, 5xx → GitHub trouble, status 0 → offline, and appends
+GitHub's own `message` when the API supplied one. The Studio wraps it with the clock:
+`"Publish failed · hhmm · reason"` (`data/studio.js:1974`, `:1989`). No raw code and no
+`rev N` may appear on a failed publish (G12.13k–n).
+
+### R14.5 D16 — one retry, fresh SHA, and only once
+
+`publishFilesSequential(files, token, onFileStatus, cb, opts)` retries a failed PUT
+**once** when the status is `0` or `>= 500`, after `opts.retryDelayMs` (default
+2,000 ms, gates pass 50 ms) and after re-reading the SHA — never with the stale one.
+A 409 keeps its own single fresh-SHA retry and does not consume the network retry
+(G11.3a–b, G11.11c–e). If the retry also fails the publish ends `publish_partial` with
+`.reason`, `.status` and `.errors`, and the files already committed stay committed.
+
+### R14.6 D17/D5/D6 — the checklist and the failure strings
+
+`publishChecklist(payloads, opts)` (`data/studio.js:1873`) requires a real
+`config.encVault` and `config.pinVerifier` **only** when the device has a vault
+(`hasVault()`); a keys-less bundle publishes without them and warns instead of failing.
+When it does fail, each step reports its own sentence from `publishReason()`
+(`data/studio.js:1979`) — never a shared "failed" — and `clearBusy()` (`:1994`) clears
+`generating`/`publishing`/`enriching` on every exit (G12.13j, G12.13p).

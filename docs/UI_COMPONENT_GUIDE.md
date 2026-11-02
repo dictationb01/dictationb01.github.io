@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.h
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.i
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -497,3 +497,74 @@ type `1 · ` into the label, or the card reads `1.1 · …` (that was a v0.0.1.f
 
 Every Sinhala string above ships in `STRINGS_SI` in the same commit; `G12.9t/u` fail if
 either language is missing for the scoped-key note or the tier warning.
+
+---
+
+## 11. What v0.0.1.i changed on screen (D1, D2, D3, D4, D8, D9, D18, D19)
+
+Five surfaces moved. None of them changed the palette, the radius, the 54 px header or
+the tab/rail layout; the flat Zinc + Sky matte law still holds and there is still no
+runtime CSS injection.
+
+### 11.1 The single-active-screen law (D8)
+
+`.screen { display: none !important }` has a guard beside it
+(`assets/css/sdp-ui.css:148`):
+
+```css
+.screen:not(.active) { display: none !important; }
+```
+
+and the desktop Bento rule names the state it needs (`:1019`, inside
+`@media (min-width: 1024px)`): `#screen-home.active { display: grid !important; }`.
+An id rule can no longer outrank the law, so exactly one screen is visible at
+390×844 and at 1366×768 (G5.3c/G5.3d walk home → player → practice → dict →
+settings → home at both widths and count the visible `.screen` nodes).
+
+### 11.2 Credential fields: pristine, dirty, cleared (D1, D9)
+
+Every credential row (`#elKeyInput`, `#ghTokenInput`, `#studioAiKey`,
+`#studioGasUrl`) is rendered by `keyRowMarkup()` with
+
+```html
+<input id="…" class="input" type="password" data-pristine="1" …>
+<button type="button" class="btn btn-sm" id="btnClearElKey">Clear</button>
+```
+
+* a keystroke removes `data-pristine` and sets `data-dirty="1"` (`data/studio.js:1039`);
+* `mergeSecretInputs()` (`:1205`) reads that attribute, so an **empty dirty** field means
+  "clear this secret" and an **empty pristine** field means "I never touched it";
+* the four `#btnClear*` handlers (`:1137`–`:1140`) call `clearSecretField()` (`:756`),
+  which empties the input, the vault slot and the AI mirror in one step;
+* `guardSecretMerge()` (`:746`) restores a pristine field's old value before any save,
+  which is the belt-and-braces half of D1 for `saveKeys()` and `oneClickMasterSetup()`.
+
+A Clear that only blanked the DOM would have been a lost key on the next publish; G12.13c–f
+pins the behaviour (clear one field, keep the other three).
+
+### 11.3 The lecturer sync line (D4, D19)
+
+`#lecturerSyncLast` is a polite live region, never a raw code:
+
+```html
+<p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncIdle"
+   aria-live="polite" data-state="idle">Not synced yet — press Save &amp; Sync</p>
+```
+
+`data-state` is `idle` | `ok` | `bad`; `SDP.Views.paintLecturerBar()`
+(`data/sdp-ui-views.js:1388`, exported at `:2150`) repaints it from `unlock()`,
+`unlockWithVerifier()` and `lock()` (`:1441`), so the stamp can never outlive the vault.
+A success reads `"<last sync> · hhmm · Rev #N"`, a failure reads
+`"Publish failed · hhmm · reason"` — the clock is always `HH:MM`, never `rev N` on a
+failure (G12.13g–m). `lecturerSyncIdle` ships in EN (`:85`) and SI (`:279`).
+
+### 11.4 Busy states that always end (D2, D3, D18)
+
+* `#btnSyncClassSettings` runs inside `SDP.Studio.withBusy` (`data/sdp-ui-views.js:1662`),
+  so a second click cannot start a second publish.
+* `#btnEnrichWords` prints live progress into `#studioEnrichStatus`: `n/30` as each word
+  lands, then a completion line. A 45,000 ms aggregate cap stops a hung dictionary from
+  pinning the spinner forever (`data/studio.js:1487`).
+* Every failure exit calls `clearBusy()` (`:1994`), which resets `generating`,
+  `publishing` and `enriching` and repaints the bar — no button is left disabled and no
+  spinner survives a crash (G12.13j, G12.13p).

@@ -4,11 +4,11 @@
   "version": "0.0.1.h",
   "buildDate": "2026-11-02",
   "schema": 8,
-  "settingsRev": 8,
+  "settingsRev": 9,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-  "updatedAt": "2026-11-02T07:19:01.985Z",
-  "syncRev": 1793600000000,
+  "updatedAt": "2026-11-02T07:43:07.821Z",
+  "syncRev": 1793605387821,
   "payloadFiles": [
     "data/config.json",
     "data/version.json"

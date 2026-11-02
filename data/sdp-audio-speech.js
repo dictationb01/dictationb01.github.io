@@ -487,26 +487,82 @@
     } catch (e) { return u; }
   }
 
+  function applyManifest(data) {
+    state.manifest = data && isObj(data) ? data : { clips: {} };
+    if (!isObj(state.manifest.clips)) state.manifest.clips = {};
+    state.manifestSyncRev = Number(state.manifest.syncRev || 0);
+    state.manifestRequested = false;
+    return state.manifest;
+  }
+  /* D2 / R2: the manifest is read through SDP.Sync.fetchFreshDataJson, so a
+     freshly published Alice pack is heard from raw.githubusercontent.com even
+     while the Pages CDN still serves yesterday's clips. A same-origin-only
+     read kept the old word pack alive for minutes after a publish. */
   function loadManifest(cb, force) {
     cb = cb || noop;
     if (state.manifest && !force) { cb(null, state.manifest); return; }
     if (state.manifestRequested && !force) { cb(null, null); return; }
     state.manifestRequested = true;
+    var s = sync();
+    if (s && s.fetchFreshDataJson) {
+      try {
+        s.fetchFreshDataJson('data/elevenlabs-audio.json', function (err, result) {
+          if (err || !result || !result.json) {
+            /* SYNC-10: a failed manifest never blocks a later retry. */
+            state.manifestRequested = false;
+            bindManifestRetry();
+            cb(err || new Error('manifest_failed'));
+            return;
+          }
+          var manifest = applyManifest(result.json);
+          manifest.manifestSource = str(result.source);
+          cb(null, manifest);
+        });
+        return;
+      } catch (e) {
+        state.manifestRequested = false;
+        bindManifestRetry();
+        cb(new Error('manifest_failed'));
+        return;
+      }
+    }
     if (typeof global.fetch !== 'function') { state.manifestRequested = false; bindManifestRetry(); cb(new Error('no_fetch')); return; }
     try {
       global.fetch('./data/elevenlabs-audio.json?t=' + nowMs(), { cache: 'no-store' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
-        .then(function (data) {
-          state.manifest = data && isObj(data) ? data : { clips: {} };
-          state.manifestSyncRev = Number(state.manifest.syncRev || 0);
-          cb(null, state.manifest);
-        }, function () {
-          /* SYNC-10: a failed manifest never blocks a later retry. */
+        .then(function (data) { cb(null, applyManifest(data)); }, function () {
           state.manifestRequested = false;
           bindManifestRetry();
           cb(new Error('manifest_failed'));
         });
     } catch (e) { state.manifestRequested = false; bindManifestRetry(); cb(new Error('manifest_failed')); }
+  }
+  /* D15 / R9: generated clips are injected into live memory the moment they
+     are paid for, so the very next tap plays the Alice recording with 0 API
+     calls — no reload, no second publish. */
+  function injectClips(clipsMap) {
+    if (!isObj(clipsMap)) return 0;
+    if (!isObj(state.manifest)) state.manifest = { clips: {} };
+    if (!isObj(state.manifest.clips)) state.manifest.clips = {};
+    var added = 0, k;
+    for (k in clipsMap) {
+      if (!Object.prototype.hasOwnProperty.call(clipsMap, k)) continue;
+      var entry = clipsMap[k];
+      if (entry === null || entry === undefined || entry === '') continue;
+      state.manifest.clips[str(k).toLowerCase()] = entry;
+      added += 1;
+    }
+    state.manifestSyncRev = Math.max(Number(state.manifestSyncRev || 0), Number(state.manifest.syncRev || 0));
+    state.manifestRequested = false;
+    return added;
+  }
+  /* The adoption chain calls this after every adopted publish. */
+  function reloadManifest(cb) {
+    cb = cb || noop;
+    state.manifest = null;
+    state.manifestRequested = false;
+    loadManifest(cb, true);
+    return true;
   }
   /* One-shot listeners: the next online / visible moment reloads the pack. */
   function bindManifestRetry() {
@@ -784,6 +840,8 @@
     playableUrl: playableUrl,
     scoreVoice: scoreVoice,
     loadManifest: loadManifest,
+    reloadManifest: reloadManifest,
+    injectClips: injectClips,
     sharedAudio: sharedAudio,
     lastTier: function () { return state.lastTier; },
     lastTierName: lastTierName,

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.1.e — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.1.f — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -21,7 +21,7 @@
     </svg>
     <span id="brandName">Smart Dictation</span>
     <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.1.e</span>
+    <span id="sdpVerPill">v0.0.1.f</span>
     <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
     <button id="btnStudioQuick" class="hbtn hbtn-icon" type="button" aria-label="Open the Lecturer Studio from Settings">🔒</button>
     <div id="quickJumper" class="quick-jumper" hidden>
@@ -60,9 +60,11 @@
           <button type="button" class="pill" data-mode="paper" aria-pressed="true" data-i18n="modePaperFull">📒 Write in Exercise Book (Paper)</button>
           <button type="button" class="pill" data-mode="typing" aria-pressed="false" data-i18n="modeTypingFull">⌨️ Type on Screen</button>
         </div>
+        <p id="homePresetBadge" class="preset-badge" role="status" data-i18n="homePresetBadge">Fast Exam · 5s · 2× · British English</p>
         <div id="resumeBanner" class="resume" hidden>
           <span id="resumeText" data-i18n="resumeSession">Continue where you stopped</span>
           <button id="btnResume" type="button" class="btn btn-sm" data-i18n="resumeSession">Resume</button>
+          <button id="btnResumeDraft" type="button" class="btn btn-sm btn-primary" data-i18n="resumePaused" hidden>Resume Paused Dictation</button>
         </div>
       </div>
 
@@ -149,7 +151,11 @@
           </div>
         </div>
 
+        <div class="cockpit-badges">
+          <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 / 2</span>
+        </div>
         <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
+        <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
         <div id="beatStage" class="beat-stage"></div>
         <div id="hintChips" class="chip-row hint-chips">
           <button type="button" class="chip" data-hint="pos" aria-pressed="false" data-i18n="hintPos">Word type</button>
@@ -343,7 +349,7 @@
           <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
           <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
           <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.1.e</span></li>
+            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.1.f</span></li>
             <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-01</span></li>
             <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
           </ul>
@@ -381,6 +387,7 @@
       <button id="guideLangPill" type="button" class="pill"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
     </div>
     <div id="guideTapBanner" class="guide-tap-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideTapToStart">🔊 Tap anywhere to start the voice guide</div>
+    <div id="guideAutoplayBanner" class="guide-tap-banner guide-autoplay-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideAutoplayBanner">🔊 Tap Anywhere to Start Voice Guide</div>
     <ol id="guideSteps" class="guide-steps"></ol>
     <div class="modal-foot">
       <button id="btnGuideSkipStart" type="button" class="btn btn-primary" data-i18n="guideSkipStart" hidden>⏩ Skip Guide &amp; Start Immediately</button>
@@ -397,7 +404,7 @@
 
 <script>
 (function () {
-  var TARGET = '0.0.1.e';
+  var TARGET = '0.0.1.f';
   window.__SDP_BOOT_VERSION__ = TARGET;
   var doReload = function (remoteVersion) {
     try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

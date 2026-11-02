@@ -173,7 +173,36 @@
     homeJourneyTitle: 'Your 3 steps today',
     settingsSyncLabel: 'Sync',
     settingsUpdateLabel: 'Update',
-    guiding: 'Guide'
+    guiding: 'Guide',
+    /* v0.0.1.f additions (D9, D13, D14, D17, D18) */
+    resumePaused: 'Resume Paused Dictation',
+    homePresetBadge: 'Fast Exam · 5s · 2× · British English',
+    repeatBadge: 'Repeat',
+    pausedBanner: 'Paused — Tap Resume to Continue',
+    btnResumeDictation: 'Resume Dictation',
+    pauseReasonNavigation: 'you switched screens',
+    pauseReasonModal: 'a dialog opened',
+    pauseReasonVisibility: 'the app went to the background',
+    pauseReasonUser: 'you tapped pause',
+    guideAutoplayBanner: '🔊 Tap Anywhere to Start Voice Guide',
+    studioCardKeys: '1 · One-Click API Keys & Complete Voice Pack Setup',
+    studioCardWords: '2 · Easy 30-Word List Editor & Free AI Auto-Enricher',
+    studioCardSettings: '3 · Classroom Settings & PIN Broadcast',
+    studioLockLecturer: 'Lock Lecturer Mode',
+    studioAiProvider: 'Free AI / dictionary engine',
+    studioAiKey: 'Free AI key (optional)',
+    studioTestAi: 'Test Free AI / Dictionary Engine',
+    studioAiNoKey: '1: Built-in Free Dictionary + Sinhala Translator — No Key Needed',
+    studioOneClick: 'Save Keys, Generate Complete British Professor Voice Pack (Guide + 30 Words) & Sync to All Devices',
+    studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
+    studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
+    studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
+    studioPublishWordsVoice: 'Generate British Professor Voice & Publish Words + Settings to All Devices',
+    studioSyncSettings: '📡 Save & Sync Classroom Settings to All Devices',
+    studioMasterSteps: 'Setup progress',
+    studioEnriching: 'Enriching',
+    studioEnriched: 'Enriched',
+    studioAiOffline: 'offline B1 lexicon used'
   };
 
   /* contract: docs/UI_COMPONENT_GUIDE.md §H7 verified Sinhala strings */
@@ -318,7 +347,36 @@
     homeJourneyTitle: 'අද ඔබේ පියවර 3',
     settingsSyncLabel: 'සමමුහුර්තය',
     settingsUpdateLabel: 'යාවත්කාලීනය',
-    guiding: 'උපදෙස්'
+    guiding: 'උපදෙස්',
+    /* v0.0.1.f additions (D9, D13, D14, D17, D18) */
+    resumePaused: 'නැවැත්වූ ඩික්ටේෂන් දිගටම කරගෙන යන්න',
+    homePresetBadge: 'වේගවත් විභාග අඩවිය · තත්පර 5 · 2 වාරය · බ්‍රිතාන්‍ය ඉංග්‍රීසි',
+    repeatBadge: 'වාරය',
+    pausedBanner: 'තාවකාලිකව නවතා ඇත — දිගටම කරගෙන යාමට ස්පර්ශ කරන්න',
+    btnResumeDictation: 'ඩික්ටේෂන් දිගටම කරගෙන යන්න',
+    pauseReasonNavigation: 'ඔබ තිරය මාරු කළා',
+    pauseReasonModal: 'කවුළුවක් විවෘත විය',
+    pauseReasonVisibility: 'යෙදුම පසුගිය තලයට ගියා',
+    pauseReasonUser: 'ඔබ නැවැත්වීමට ස්පර්ශ කළා',
+    guideAutoplayBanner: '🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
+    studioCardKeys: '1 · එක් ස්පර්ශයකින් API යතුරු සහ සම්පූර්ණ හඬ පැකේජය',
+    studioCardWords: '2 · පහසු වචන 30 ලැයිස්තු සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
+    studioCardSettings: '3 · පන්ති සැකසුම් සහ PIN විකාශනය',
+    studioLockLecturer: 'කථිකාචාර්ය ප්‍රකාරය අගුළු දමන්න',
+    studioAiProvider: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම',
+    studioAiKey: 'නොමිලේ AI යතුර (අවශ්‍ය නැත)',
+    studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
+    studioAiNoKey: '1: ඉදිකළ නොමිලේ ශබ්දකෝෂය සහ සිංහල පරිවර්තකය — යතුරක් අවශ්‍ය නැත',
+    studioOneClick: 'යතුරු සුරකා සම්පූර්ණ බ්‍රිතාන්‍ය මහාචාර්ය හඬ පැකේජය (උපදෙස් + වචන 30) සාදා සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
+    studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
+    studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
+    studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
+    studioPublishWordsVoice: 'බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා වචන සහ සැකසුම් සියලු උපාංග වෙත පළ කරන්න',
+    studioSyncSettings: '📡 පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
+    studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
+    studioEnriching: 'පුරවමින්',
+    studioEnriched: 'පුරවා අවසන්',
+    studioAiOffline: 'නොබැඳි B1 ශබ්දකෝෂය භාවිතා විය'
   };
 
   var lang = 'en';
@@ -474,9 +532,21 @@
   /* ══ router ═════════════════════════════════════════════════════════════ */
   /* contract: docs/ARCHITECTURE_MAP.md §R3 exactly one active screen */
   var TABS = ['home', 'player', 'practice', 'dict', 'settings'];
+  /* R6 / D10: leaving the cockpit pauses the live beat. The cockpit tabs keep
+     the session running; every other destination (and Settings, which is a
+     modal-equivalent surface) pauses it and silences speech first. */
+  function pauseForNavigation(target) {
+    var engine = SDP.Engine;
+    if (!engine || !engine.isActive || !engine.isActive()) return false;
+    var reason = target === 'settings' ? 'modal' : 'navigation';
+    try { if (engine.pause) engine.pause(reason); } catch (e) {}
+    try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
+    return true;
+  }
   function showTab(name) {
     var target = TABS.indexOf(name) >= 0 ? name : 'home';
     var i;
+    if (target !== 'player' && target !== 'dict' && target !== 'dictation') pauseForNavigation(target);
     for (i = 0; i < TABS.length; i++) {
       var screen = byId('screen-' + TABS[i]);
       if (!screen) continue;
@@ -539,9 +609,25 @@
     var banner = byId('resumeBanner');
     var draft = null;
     try { draft = SDP.Data.session(); } catch (e) {}
-    var resumable = draft && typeof draft.index === 'number' && draft.answers && Object.keys(draft.answers).length > 0;
-    if (banner) banner.hidden = !resumable;
-    if (resumable) setText(byId('resumeText'), t('resumeAt') + ' ' + (draft.index + 1));
+    var enginePaused = false;
+    try { enginePaused = !!(SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()); } catch (e) { enginePaused = false; }
+    var draftPaused = !!(draft && str(draft.status) === 'paused');
+    var hasAnswers = !!(draft && draft.answers && Object.keys(draft.answers).length > 0);
+    var resumable = !!(draft && typeof draft.index === 'number' && (draftPaused || hasAnswers)) || enginePaused;
+    var draftIndex = enginePaused ? Number(SDP.Engine.config ? SDP.Engine.config().index : 0) : (draft && typeof draft.index === 'number' ? draft.index : 0);
+    var bankCount = bank || 30;
+    if (banner) {
+      banner.hidden = !resumable;
+      if (resumable) {
+        banner.setAttribute('data-state', (enginePaused || draftPaused) ? 'paused' : 'draft');
+        setText(byId('resumeText'), t('resumePaused') + ' (Word #' + (draftIndex + 1) + '/' + bankCount + ')');
+      }
+    }
+    var resumeBtn = byId('btnResume');
+    if (resumeBtn) setText(resumeBtn, t('resumeSession'));
+    var resumeDraftBtn = byId('btnResumeDraft');
+    if (resumeDraftBtn) resumeDraftBtn.hidden = !(enginePaused || draftPaused);
+    paintPresetBadge();
     var ann = byId('homeAnn');
     var announcement = null;
     try { announcement = SDP.Sync && SDP.Sync.announcement ? SDP.Sync.announcement() : null; } catch (e) {}
@@ -581,6 +667,24 @@
       .replace('වචන 30', 'වචන ' + count);
     badge.textContent = label;
     badge.setAttribute('data-ready', count > 0 ? 'true' : 'false');
+    return true;
+  }
+  /* D17: the active classroom preset is visible on Home, so a student always
+     knows the pacing their lecturer published (Fast Exam · 5s · 2× · British). */
+  function presetLabel(conf) {
+    var s = isObj(conf) ? conf : settings();
+    var preset = str(s.pacingPreset || 'exam');
+    var secs = Number(s.writeSecs || s.intervalSec) || 5;
+    var repeats = Math.min(5, Math.max(1, Number(s.repeats) || 2));
+    var name = preset === 'beginner' ? 'Beginner Slow'
+      : (preset === 'board' ? 'Smart Board Class' : (preset === 'standard' ? 'CCBE B1 Standard' : 'Fast Exam'));
+    return name + ' · ' + secs + 's · ' + repeats + '× · British English';
+  }
+  function paintPresetBadge() {
+    var badge = byId('homePresetBadge');
+    if (!badge) return false;
+    badge.textContent = presetLabel(settings());
+    badge.setAttribute('data-preset', str(settings().pacingPreset || 'exam'));
     return true;
   }
   function paintModePills() {
@@ -633,15 +737,24 @@
   function resumeDictation() {
     var draft = null;
     try { draft = SDP.Data.session(); } catch (e) {}
-    if (!draft) { startDictation(); return; }
-    try {
-      SDP.Engine.start({ mode: draft.mode || settings().mode, startIndex: draft.index || 0, answers: draft.answers || {} });
-    } catch (e) {}
+    /* D11: Engine.resume() restores the exact beat (countdown for 'writing',
+       remaining repeats for 'listening'); a plain start() only restarts. */
+    var resumed = false;
+    try { resumed = !!(SDP.Engine && SDP.Engine.resume && SDP.Engine.resume()); } catch (e) { resumed = false; }
+    if (!resumed) {
+      if (!draft) { startDictation(); return; }
+      try {
+        SDP.Engine.start({ mode: draft.mode || settings().mode, startIndex: draft.index || 0, answers: draft.answers || {} });
+      } catch (e) {}
+    }
     showTab('player');
+    if (!resumed && SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) {
+      try { SDP.Engine.resume(); } catch (e) {}
+    }
   }
 
   /* ══ Guide 2.0 — version-stamped, auto-narrating student guide (R3, D3) ══ */
-  var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, quickMode: false, pendingMode: null };
+  var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, autoplayTimer: null, quickMode: false, pendingMode: null };
   var guidePaused = false;
 
   function renderGuideSteps() {
@@ -701,6 +814,53 @@
      tap. The v0.0.1.d watchdog read the synchronous state.speaking flag, which
      is true the moment say() is called — so the banner never showed on
      voiceless browsers like Brave Desktop even though nothing was audible. */
+  /* D16 / R9: a cold-boot browser may refuse the very first un-gestured
+     utterance. 900 ms after the guide opens, if no utterance has really
+     started (onstart) and no <audio> is playing, the prominent
+     #guideAutoplayBanner asks for the one gesture that unlocks audio. */
+  function showGuideAutoplayBanner() {
+    var banner = byId('guideAutoplayBanner');
+    if (!banner) return false;
+    if (banner.classList) banner.classList.remove('hidden');
+    banner.hidden = false;
+    banner.textContent = t('guideAutoplayBanner', '🔊 Tap Anywhere to Start Voice Guide');
+    return true;
+  }
+  function hideGuideAutoplayBanner() {
+    var banner = byId('guideAutoplayBanner');
+    if (!banner) return false;
+    if (banner.classList) banner.classList.add('hidden');
+    banner.hidden = true;
+    return true;
+  }
+  function guideAutoplayBannerVisible() {
+    var banner = byId('guideAutoplayBanner');
+    if (!banner) return false;
+    if (banner.hidden) return false;
+    return !(banner.classList && banner.classList.contains('hidden'));
+  }
+  function clearGuideAutoplayWatch() {
+    if (guideState.autoplayTimer) {
+      try { global.clearTimeout(guideState.autoplayTimer); } catch (e) {}
+      guideState.autoplayTimer = null;
+    }
+    return true;
+  }
+  function armGuideAutoplayWatch() {
+    clearGuideAutoplayWatch();
+    guideState.autoplayTimer = global.setTimeout(function () {
+      guideState.autoplayTimer = null;
+      var modal = byId('guideModal');
+      if (!modal || modal.hidden) return;
+      var started = false;
+      try {
+        started = !!(SDP.Speech && SDP.Speech.hasStarted && SDP.Speech.hasStarted()) ||
+          !!(SDP.Speech && SDP.Speech.isAudioPlaying && SDP.Speech.isAudioPlaying());
+      } catch (e) { started = false; }
+      if (!started) showGuideAutoplayBanner();
+    }, 900);
+    return true;
+  }
   function armGuideWatchdog() {
     if (guideState.watchdog) { try { global.clearTimeout(guideState.watchdog); } catch (e) {} }
     guideState.watchdog = global.setTimeout(function () {
@@ -758,8 +918,12 @@
   function onGuideGesture() {
     var modal = byId('guideModal');
     if (!modal || modal.hidden) return false;
-    var fromBanner = guideTapBannerVisible();
+    var fromBanner = guideTapBannerVisible() || guideAutoplayBannerVisible();
     hideGuideTapBanner();
+    hideGuideAutoplayBanner();
+    clearGuideAutoplayWatch();
+    /* The first tap creates the media element, unlocks speechSynthesis and
+       restarts Step 1 in the unified British female professor voice. */
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     if (fromBanner) { guideState.narrating = false; startGuideNarration(0); return true; }
     if (!guideState.narrating) startGuideNarration(guideState.activeStep);
@@ -799,6 +963,8 @@
     opts = opts || {};
     var modal = byId('guideModal');
     if (!modal) return false;
+    /* R6 / D10: opening the guide is a modal event — pause the beat first. */
+    pauseForNavigation('settings');
     if (!opts.quick && !guideState.quickMode) restoreGuideTitle();
     /* An event object is never a focus target. */
     guideState.opener = opener && typeof opener.focus === 'function' ? opener : null;
@@ -813,8 +979,11 @@
     /* R3: Step 1 is attempted immediately, then a 600 ms watchdog decides
        whether the browser blocked un-gestured audio (D-G2). */
     hideGuideTapBanner();
+    hideGuideAutoplayBanner();
     if (conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
     armGuideWatchdog();
+    /* D16: 900 ms cold-boot autoplay check, alongside the 700 ms tap watchdog. */
+    armGuideAutoplayWatch();
     /* R3/D-V6: the student's first tap anywhere in the modal unlocks
        speechSynthesis + the shared <audio> element and narrates 1 -> 4. */
     if (!modal._guideNarrationBound) {
@@ -850,7 +1019,9 @@
     }
     stopGuideNarration();
     clearGuideWatchdog();
+    clearGuideAutoplayWatch();
     hideGuideTapBanner();
+    hideGuideAutoplayBanner();
     /* W7: write the version stamp so the guide re-opens on the next upgrade.
        D-G5: dismissing still counts as seen (G7.1d), so the replay affordance
        stays prominent instead: #btnGuide on Home and #btnReplayGuide in
@@ -924,6 +1095,7 @@
     guideState.narrating = false;
     startGuideNarration(0);
     armGuideWatchdog();
+    armGuideAutoplayWatch();
     return 4;
   }
   function trapGuideKeys() {
@@ -1162,6 +1334,7 @@
   function renderAll() {
     renderHome(); renderWords(); renderPractice(); renderSettings();
     renderGuideSteps(); renderBoardBar(); renderBoardJumper();
+    paintPresetBadge();
     try { paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') }); } catch (e) {}
     return true;
   }
@@ -1806,6 +1979,17 @@
       showToast(rev ? t('lecturerSyncedToast') + rev + ')' : t('teacherUpdatedToast'));
       renderAll();
     }, false);
+    /* D3: every adopted publish repaints the views. v0.0.1.e emitted
+       'sdp:update' and nobody listened, so an adopted session/title/word list
+       stayed invisible until the student switched tabs by hand. */
+    doc.addEventListener('sdp:update', function () {
+      renderAll();
+      if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    }, false);
+    /* The same event on window, for harnesses that dispatch on window. */
+    if (global.addEventListener) {
+      global.addEventListener('sdp:update', function () { renderAll(); }, false);
+    }
     /* D16: SDP.Sync publishes every 30 s watcher tick and every
        visibilitychange check on this event; the badge repaints from the real
        (err, result) pair instead of being frozen at boot-time optimism. */
@@ -1842,10 +2026,10 @@
     try { if (SDP.Speech && SDP.Speech.loadManifest) SDP.Speech.loadManifest(noop); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.onDataReady) SDP.Studio.onDataReady(); } catch (e) {}
     if (!err && global.__SDP_NO_LIVE__ !== true) {
-      /* D18: this is the ONLY background poller. startWatch(30000) owns the
-         30-second cadence and feeds every tick into the honest sync badge;
+      /* D18 / D5: this is the ONLY background poller. startWatch(25000) owns
+         the 25-second cadence and feeds every tick into the honest badge;
          index.html keeps just its one-shot boot version check. */
-      try { SDP.Sync.startWatch(30000); } catch (e) {}
+      try { SDP.Sync.startWatch(25000); } catch (e) {}
     }
     return true;
   }
@@ -1889,12 +2073,18 @@
     toggleLang: toggleLang,
     toggleTheme: toggleTheme,
     showTab: showTab,
+    /* R6: showScreen is the documented alias of the one router (D10). */
+    showScreen: showTab,
     currentTab: currentTab,
+    pauseForNavigation: pauseForNavigation,
+    paintPresetBadge: paintPresetBadge,
+    presetLabel: presetLabel,
     renderHome: renderHome,
     renderWords: renderWords,
     renderPractice: renderPractice,
     renderSettings: renderSettings,
     renderAll: renderAll,
+    refreshAll: renderAll,
     paintLecturerBar: paintLecturerBar,
     renderGuideSteps: renderGuideSteps,
     settingsOrder: settingsOrder,
@@ -1917,6 +2107,10 @@
     startGuideNarration: startGuideNarration,
     showGuideTapBanner: showGuideTapBanner,
     hideGuideTapBanner: hideGuideTapBanner,
+    showGuideAutoplayBanner: showGuideAutoplayBanner,
+    hideGuideAutoplayBanner: hideGuideAutoplayBanner,
+    guideAutoplayBannerVisible: guideAutoplayBannerVisible,
+    armGuideAutoplayWatch: armGuideAutoplayWatch,
     showToast: showToast,
     toastText: toastText,
     checkForUpdate: checkForUpdate,

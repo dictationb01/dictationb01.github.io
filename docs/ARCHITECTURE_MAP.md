@@ -354,3 +354,71 @@ New structural classes (H2 additions): `.step-badge` (28 px circular journey num
 ≥ 1024 px (`minmax(0,7fr) minmax(0,5fr)`, gap 16 px; `#creditFoot` spans the full
 row). Behavioural contracts live in `docs/SYNC_AND_DATA_CONTRACT.md` §R13 and
 `docs/UI_COMPONENT_GUIDE.md` §v0.0.1.e.
+
+## §H3 — v0.0.1.f release tree, budgets and module deltas (2026-11-02)
+
+ver 6 · schema 6 · settingsRev 6 · `SDP.version` `0.0.1.f` · release `syncRev`
+1793590000000. No file was added and no build step was introduced.
+
+| file | v0.0.1.f bytes | cap |
+|---|---|---|
+| `index.html` | 30,170 | 40,000 |
+| `assets/css/sdp-ui.css` | 43,383 | 68,000 |
+| `data/sdp-data-sync.js` | 73,761 | 74,000 |
+| `data/sdp-audio-speech.js` | 38,831 | 54,000 |
+| `data/sdp-dictation-engine.js` | 43,844 | 64,000 |
+| `data/sdp-ui-views.js` | 115,546 | 120,000 |
+| `data/studio.js` | 97,706 | 98,000 |
+| `data/data-meter.js` | 21,740 | 22,000 |
+| `data.html` = `data/index.html` | 27,905 | 60,000 |
+| `sw.js` | 10,759 | 12,000 |
+| `data/config.json` | 35,001 | 36,000 |
+| `data/version.json` | 289 | 2,000 |
+| `docs/*.md` | see §H3.4 | 44,000 (template 22,000) |
+
+### §H3.1 Module responsibilities after v0.0.1.f
+
+* `data/sdp-data-sync.js` — the five storage keys, the `SDP_ENC_V2` vault, and the
+  **single** reconciliation entry point `fetchFreshDataJson(relPath, cb)`
+  (`{ok, json, source:'origin'|'raw'}`). `checkForUpdates()` verifies every payload leg
+  against the winning pointer, retries it once on the alternate source, refuses to
+  advance `state.version` when a leg stays undelivered, and never returns `ok:false`
+  while either version source answered.
+* `data/sdp-dictation-engine.js` — beat machine with an explicit `paused` phase:
+  `isActive()`, `isPaused()`, `pause(reason)`, `resume()`, `saveDraft()`,
+  `restorePausedDraft()`, `renderBadges()`, `bindLifecycle()`. `pause()` stops the ticker
+  *and* the speech backend, stores `pausedPhase`/`remainingMs`/`repeatsDone`/
+  `pauseReason`, and `resume()` restores the same word, the same repeat index and the
+  exact write-window remainder.
+* `data/sdp-ui-views.js` — one router (`showTab`, aliased `showScreen`), `renderAll`
+  (aliased `refreshAll`), the 25 s watcher hand-off, the `sdp:update` repaint listener,
+  `paintPresetBadge()` → `Fast Exam · 5s · 2× · British English`, the Resume banner and
+  the 900 ms `#guideAutoplayBanner`.
+* `data/sdp-audio-speech.js` — `loadManifest`/`reloadManifest` through the shared reader,
+  `injectClips()` for an instance-level refresh without a page reload.
+* `data/studio.js` — three outcome cards (keys/voice, words publisher, settings/PIN),
+  the 4-step `#btnOneClickMasterSetup`, `enrichWords()`, `publishBundle()`,
+  `sealVaultNow()` and the auto-lock bindings. ES5 only, no new file, one publish clock.
+
+### §H3.2 Locked vs unlocked Studio
+
+Locked: `#studioPin` (`maxlength="12" minlength="4"`), `#pinDots`
+(`min(12, max(8, len))` dots, `data-dots`), the 12-key `#pinPad`, `#pinPadBack`, the
+status line and the lecturer hint — nothing else. Unlocked: `#studioCardKeys`,
+`#studioCardWords`, `#studioCardSettings`, `#btnLockStudio`, `#studioMasterSteps`
+(4 × `li[data-state]`), `#studioAiProvider`, `#studioAiKey`, `#studioWordManager`
+(30 rows × 6 editable cells), `#btnEnrichWords`, `#btnPublishWords`,
+`#btnPublishWordsAndVoice`, `#btnSaveKeys`, `#btnTestAi`, `#btnCheckQuota`,
+`#btnGenClips`, `#btnTestOneWord`, `#studioForceRegen`/`#chkForceRegen`.
+
+### §H3.3 Publish order (unchanged law, new clock)
+
+`session.json → config.json → elevenlabs-audio.json → version.json` — one
+`nextSyncRev()` stamps all four bodies, `version.json` is always committed last, and a
+locked or token-less studio commits nothing.
+
+### §H3.4 Docs budget used at release
+
+Every doc stays inside its cap: `CHANGELOG_LEDGER.md` 42763 B / 44,000 ·
+`SYNC_AND_DATA_CONTRACT.md` 22338 B / 44,000 · `UI_COMPONENT_GUIDE.md` 19141 B / 44,000 ·
+`DAILY_UPGRADE_PROMPT_TEMPLATE.md` 15124 B / 22,000 · this file 22395 B / 44,000.

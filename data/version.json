@@ -1,12 +1,12 @@
 {
-  "ver": 5,
-  "appVersion": "0.0.1.e",
-  "version": "0.0.1.e",
+  "ver": 6,
+  "appVersion": "0.0.1.f",
+  "version": "0.0.1.f",
   "buildDate": "2026-11-02",
-  "schema": 5,
-  "settingsRev": 5,
+  "schema": 6,
+  "settingsRev": 6,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "updatedAt": "2026-11-02T00:00:00Z",
-  "syncRev": 1793585000000
+  "syncRev": 1793590000000
 }

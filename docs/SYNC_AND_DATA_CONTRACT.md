@@ -130,7 +130,7 @@ key     = await crypto.subtle.deriveKey(
   cleared by `Vault.clear()` / the studio lock button. They never reach
   `localStorage`, a cookie, or the DOM.
 
-Test vector (G2): `encryptV2({elevenKey:'sk_test', ghToken:'ghp_demo'}, '246813')`
+Test vector (G2): `encryptV2({elevenKey:'sk_test', ghToken:'ghp_demo'}, '78987898')`
 must round-trip, must differ on every run (fresh salt/iv), and must decrypt to
 the identical object.
 
@@ -332,7 +332,7 @@ while the Studio resolves its vault envelope.
 "pinVerifier": { "algo": "PBKDF2-SHA256", "iterations": 250000, "salt": "…", "hash": "…" }
 ```
 
-for the bootstrap lecturer PIN `246813`. While locked, the Studio renders only
+for the bootstrap lecturer PIN `78987898`. While locked, the Studio renders only
 `#studioPin`, `#pinDots`, `#pinPad` (12 keys, 56 px), `#studioMsg` and the
 ask-your-lecturer hint. When `encVault` is the placeholder `SDP_ENC_V2:AAA=`
 the PIN is proved against `pinVerifier`; otherwise the real envelope is
@@ -394,3 +394,84 @@ ALWAYS recomputes `config.pinVerifier` from the salt already published in
 can never go stale after a PIN change. `session.clips` (word→clip URLs) survive
 `buildSessionPayload()`, and `Studio.publishChecklist()` refuses a publish whose
 words, envelope, verifier or syncRev are incoherent — in plain language.
+
+## §R12 — v0.0.1.f verified adoption, one clock and the third vault slot
+
+### §R12.1 `SDP.Sync.fetchFreshDataJson(relPath, cb)`
+
+```
+fetchFreshDataJson('data/version.json', function (err, result) {
+  // err   — only when BOTH sources failed (never a red screen for one blocked host)
+  // result.ok        === true
+  // result.json      — the winning payload
+  // result.source    — 'origin' | 'raw'
+});
+```
+
+Both legs start in parallel: same-origin `./<relPath>?t=<ms>` with `cache:'no-store'`
+and a 6 s timeout, and `raw.githubusercontent.com/dictationb1/dictationb1.github.io/main/<relPath>`
+with a 5 s timeout. The higher `payload.syncRev` wins; `raw` breaks an exact tie. A
+failed leg can never win, so a Brave-Shields-blocked CDN still delivers the truth.
+
+### §R12.2 Payload verification (the load-bearing rule)
+
+For every publish tick, the winning `version.json` defines `targetSyncRev`. A payload
+leg is usable only when `Number(json.syncRev) >= targetSyncRev`, **or** — for
+`data/session.json` only — it is the preserved classroom baseline: same session number
+as the pointer and ≥ 30 words. A leg that fails this test is refetched once from the
+other source; if it still fails, the result is
+
+```
+{ ok: true, error: 'stale_payload', changed: false, updated: false,
+  deferred: true, retry: ['data/config.json', ...] }
+```
+
+and `SDP.Sync.state.version` keeps pointing at the last fully delivered publish. The
+next watch tick retries the same publish, so nothing is silently skipped. `ok:false` is
+reserved for "both version sources are unreachable".
+
+### §R12.3 Adoption chain and beat deferral
+
+`applyPayloads(version, config, session)` → `adoptRemoteSettings(cfg, settingsRev)` →
+`SDP.Speech.reloadManifest()` → `SDP.Views.renderAll()` (alias `refreshAll`). When
+`SDP.Engine.isActive()` is true (`listening`/`writing`) the chain is queued and replayed
+by `SDP.Sync.flushDeferred()` at the end of the beat, so a lecturer publish never cuts a
+word off mid-speech. `sdp:update` is dispatched for anything that listens outside the
+core (Home badge, preset pill, Studio).
+
+### §R12.4 One publish clock (W8)
+
+`nextSyncRev() = Math.max(Date.now(), previous + 1)` is called exactly once per publish
+path (`publishBundle()`, `publishWordsAndVoice()`, `sealVaultNow()`-driven vault save,
+`saveClassSettings()`). The same integer is stamped into `session.json`, `config.json`,
+`elevenlabs-audio.json` and `version.json`; `version.json` is committed last by
+`publishFilesSequential()`, so a device that reads a new pointer can always fetch bodies
+that belong to it.
+
+### §R12.5 Third vault slot (`aiKey` / `aiProvider`)
+
+`SDP_ENC_V2` now seals three secrets: `elevenKey`, `ghToken` and the free-AI pair
+`aiKey` + `aiProvider` (`free_dict` | `groq` | `gemini` | `openrouter`). Nothing new is
+written to disk: the ciphertext still lives in `config.encVault` and the local cache
+inside `sdp.settings.cachedVault`. `config.json` never carries a key — only the
+envelope and `pinVerifier`.
+
+### §R12.6 Free enrichment contract
+
+`SDP.Studio.enrichWords(wordsOrText, opts, cb)`:
+
+* `free_dict` (default, zero keys) → `api.dictionaryapi.dev` (`p`, `pos`, `m`, `s`) and
+  `api.mymemory.translated.net?langpair=en|si` (`si`);
+* `groq` / `gemini` / `openrouter` → one batch JSON call for the whole list, validated
+  row by row;
+* every path ends in the deterministic offline B1 lexicon, so a dead tower still
+  yields a complete six-field record (`enrichSource:'lexicon'`);
+* it never calls ElevenLabs — extraction and synthesis are separate concerns (W5).
+
+### §R12.7 Defaults and the one-time migration
+
+`lang:'en'`, `pacingPreset:'exam'`, `writeSecs:5`, `repeats:2`, `voiceLock:'unified'`,
+`voiceSource:'auto'`, `rate:0.95`. On the first read after upgrading, `sdp.settings`
+gains `defaultsResetV001f:true`, the seven defaults above are re-applied once and the
+`touchedKeys` entries for `pacingPreset`/`writeSecs`/`repeats`/`voiceLock` are cleared.
+No sixth localStorage key is ever created (W4).

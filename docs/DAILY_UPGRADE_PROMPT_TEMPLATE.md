@@ -266,3 +266,55 @@ Every gate must print `0 FAIL`; the release commit records the counts in
 `https://api.elevenlabs.io/v1/text-to-speech/...`. Only a human tapping
 `#btnGenClips` or `#btnTestOneWord` inside the PIN-unlocked Studio may spend a
 credit. G12 fails the release if any test file contains a live TTS call.
+
+## v0.0.1.f upgrade prompt (copy/paste block, 2026-11-02)
+
+```
+Upgrade dictationb1/dictationb1.github.io from v0.0.1.e to v0.0.1.f in one autonomous pass.
+Target: ver 6, schema 6, settingsRev 6, appVersion 0.0.1.f, release syncRev 1793590000000,
+buildDate 2026-11-02.
+
+R1/R2  SDP.Sync.fetchFreshDataJson(relPath, cb) — same-origin (6 s, no-store) vs raw (5 s);
+       higher syncRev wins, raw breaks ties, one retry on the alternate source, never
+       advance state.version on an undelivered leg. Wire checkForUpdates(), the Speech
+       manifest loader and Studio.loadVoicePack() onto it.
+R3     Defaults = en / exam / 5 s / 2x / unified / auto / 0.95, plus the one-time
+       defaultsResetV001f migration INSIDE sdp.settings (five-key law intact).
+R4     PIN 78987898, PBKDF2-SHA256 x 250k, inputs maxlength=12 minlength=4, 12-key pad,
+       dots min(12, max(8, len)), scrub the retired PIN everywhere.
+R5     Locked Studio = PIN-only DOM; #btnLockStudio in the unlocked header; auto-lock on
+       pagehide / beforeunload.
+R6     Engine.isActive()/pause(reason)/resume() with status, pausedPhase, remainingMs,
+       repeatsDone, pauseReason and an exact beat-preserving resume.
+R7     applyPayloads -> adoptRemoteSettings -> Speech.reloadManifest -> Views.refreshAll,
+       beat deferral, 25 s watch + focus listener, sdp:update repaint.
+R8     Third vault slot aiKey/aiProvider (free_dict default, groq/gemini/openrouter) and
+       Studio.enrichWords() — dictionaryapi.dev + mymemory en|si + offline B1, never TTS.
+R9     Speech.injectClips()/reloadManifest(), #btnOneClickMasterSetup 4-step tracker,
+       900 ms #guideAutoplayBanner, ONE nextSyncRev() per publish, version.json last.
+R10    Version bump in version.json, config.json, elevenlabs-audio.json, sw.js, manifest,
+       #sdpVerPill, About, and byte-identical data.html == data/index.html.
+
+Hard gates: 12 gates 0 FAIL, shasum -a 256 -c 4/4 OK, data/session.json byte-identical,
+zero occurrences of the retired PIN, verbatim EN + SI credit lines, all five docs updated.
+```
+
+### Sequencing that worked
+
+1. Bump the payload headers first (`version.json`, `config.json`, `elevenlabs-audio.json`,
+   `sw.js`, manifest, `#sdpVerPill`, About, `data.html` pair) so G1's literals can flip.
+2. Land the data/sync contract (`fetchFreshDataJson`, verified legs, one clock), then the
+   engine pause/resume, then the views affordances, then the Studio cards.
+3. Update the gate literals in a dedicated `gate-align: v0.0.1.f` commit — budgets,
+   version literals, guide stamps, `appliedSettingsRev` pins, PIN string.
+4. Re-run all twelve gates, write the real numbers into `CHANGELOG_LEDGER.md`, then
+   `shasum -a 256 -c` the four preserved payloads and merge `--no-ff`.
+
+### Traps seen last time
+
+* `defaultsResetV001f` overwrites any seeded pacing — test seeds that pin their own
+  `writeSecs`/`repeats` must also seed `defaultsResetV001f:true`.
+* a bumped `settingsRev` re-adopts `classSettings`; raise the test's `appliedSettingsRev`
+  to the release value when the test pins its own pacing.
+* `enrichWords()` must decide what needs enrichment from the *provided/prior* record, not
+  from the merged fallback, otherwise the lexicon short-circuits the dictionary call.

@@ -56,8 +56,8 @@
     "defaultsResetV001f": true,
     "appliedSettingsRev": 6
   },
-  "ver": 11,
-  "version": "0.0.2.b",
+  "ver": 10,
+  "version": "0.0.2.a",
   "buildDate": "2026-11-02",
   "credits": {
     "createdBy": "Hansana",
@@ -91,8 +91,8 @@
     "community": "https://ntfy.sh/sdp_dictationb1_comm_v8",
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
-  "appVersion": "0.0.2.b",
-  "settingsRev": 17,
+  "appVersion": "0.0.2.a",
+  "settingsRev": 18,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -417,9 +417,9 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-11-02T09:58:11.031Z",
+  "updatedAt": "2026-11-02T18:44:19.761Z",
   "updatedAtMs": 1793448000000,
-  "schema": 11,
+  "schema": 10,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
   "sessionTitle": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "sessionCode": "Session 8",
@@ -694,9 +694,9 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793620000000,
+  "syncRev": 1793645059740,
   "versionFamily": "10.0.0",
-  "encVault": "SDP_ENC_V2:lqjtpE3ktay8H0uEIDE90a2CYWhYXQVifFDIL6KtAzu7B3XD+MN2brUjl7w4qD67qf54/IvqwZgRfQ3r8hAglXcYtbBaYX9sPe522WnTWHNYO0msoyhnw2tgq6ukWJx/PPPxmiR1D+NRhnlNfBFYBLSOT+Jx5ZO06YVfuFTCI8bFIxOIVI9ab+sAzPxuHUL4RIf7nNmwnPhWp4wLMiDZ3KWyNcpQHI3nXq16XFq0fKQDUljLWxr2DpNlk/AoI4ephuy4MglgNeE/QLl3tmt27+VHImxby2HHYZnk/0cUm7RMT+GrehUtaugrsHhTgpFWv99ytfXbkdOoUqFNmKSXXN3+/xBHPG7SCgrSXSUJSWMpltq9kn/js1Y7ISihpuBBsFtgcKBEwJXxcuTOWvu5mVuIYefBpwAH60eGfBV6PIBKHGxpgicrHicRP6T1ablVNJhOTrhsKuo0gPgFUe81p7MSVLIo",
+  "encVault": "SDP_ENC_V2:iycmf8WT72caeXibBQLi7TFtk8W8APJlBmC3PJ3tMzvqKKou9Ufz9mlsafNqAtFhmE51sGqW2X8ww2k0Skv6j6yr1vFO98UiRB+GBTzWv8byrnoLn8N8ubiDMQA7M63pLZiW8o9r21TmJ5wFTSBT1BNI7w6LvIoSHloIo60KaiT7oa/qF8R/02rK2P8ZvvpwauxuusuqM6MMdvTSLN7E6ND7xkvlqdBitoNonzKnGT0kgnA1UYUhrWvnEdgP4SikloazNaMJBBKyR83VWMPXhtKpz06B+167ZF32m/tjRjSVSpmlB5QoOhHPskw5Zzn7Fa73cCjWmt7wFkyc7Hhn10a+bheP2Zlta06wGnEC3hawn1WuilDXlZIJsj5uFRdbkCdbBCD1NlTF7ZO2cgm1NjtiL91vqopjot6Oou7/oUi2OU5V2+BXo0T8V7NV8pDhtIEZRtUyyWFimq7TtP0LKVMmlaVC",
   "classSettings": {
     "mode": "paper",
     "writeSecs": 5,

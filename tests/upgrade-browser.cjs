@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.1.g-shell';
+const SHELL = 'sdp-v0.0.1.h-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -72,7 +72,7 @@ async function launch() {
       await navigator.serviceWorker.ready;
       await new Promise((r) => setTimeout(r, 1200));
       const names = (await caches.keys()).sort();
-      const shell = await caches.open('sdp-v0.0.1.g-shell');
+      const shell = await caches.open('sdp-v0.0.1.h-shell');
       const shellNames = (await shell.keys()).map((req) => new URL(req.url).pathname);
       return { names, shellNames, controller: !!navigator.serviceWorker.controller };
     }, null);

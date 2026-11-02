@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.g)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.h)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.g';
+  SDP.version = '0.0.1.h';
   SDP.build = '2026-11-02';
-  SDP.ver = 7;
+  SDP.ver = 8;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.g';
-  var SCHEMA = 7;
-  var SETTINGS_REV = 7;
+  var APP_VERSION = '0.0.1.h';
+  var SCHEMA = 8;
+  var SETTINGS_REV = 8;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -63,7 +63,7 @@
       hints: { pos: true, first: false, si: false, sentence: false },
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
-      /* D5 (v0.0.1.g): Layer-1 — the encrypted vault backup and its PIN
+      /* D5 (v0.0.1.h): Layer-1 — the encrypted vault backup and its PIN
          verifier live INSIDE sdp.settings.vaultLock (W4: still five keys). */
       vaultLock: {
         fails: 0, lockUntil: 0, strikes: 0, until: 0,
@@ -708,7 +708,7 @@
     pastSessions: [],
     clips: {},
     lastCheck: 0,
-    /* D15/D17 (v0.0.1.g): the syncRev of the session.json actually adopted, and
+    /* D15/D17 (v0.0.1.h): the syncRev of the session.json actually adopted, and
        the retry flag for a publish whose session leg could not be delivered. */
     sessionRev: 0,
     deferredSession: false,
@@ -781,7 +781,7 @@
     var rev = Number(payload.syncRev);
     if (!isNaN(rev) && rev >= target) return true;
     if (kind !== 'session') return false;
-    /* D16 (v0.0.1.g): a settings-only or keys-only publish never rewrites
+    /* D16 (v0.0.1.h): a settings-only or keys-only publish never rewrites
        session.json, so an absent / older syncRev must not hold sync hostage.
        Two proofs are accepted: */
     var want = isObj(remoteVersion) ? str(remoteVersion.session) : '';
@@ -973,6 +973,11 @@
        never gated on a previous revision being present. */
     var appliedRev = 0;
     try { appliedRev = Number(Data.settings().appliedSettingsRev) || 0; } catch (e) { appliedRev = 0; }
+    /* D20: align appliedSettingsRev to remote.settingsRev on 0.0.1.h upgrade
+       so devices stuck at appliedSettingsRev > 8 don't ignore settingsRev: 8. */
+    if (APP_VERSION === '0.0.1.h' && appliedRev > state.settingsRev && state.settingsRev === 8) {
+      try { Data.saveSettings({ appliedSettingsRev: 8 }); appliedRev = 8; } catch (e) {}
+    }
     if (state.settingsRev > appliedRev) adoptRemoteSettings(cfg, state.settingsRev);
     state.clips = {};
     var clipMap = (ses && ses.clips) || (list && list.clips) || null;
@@ -1132,7 +1137,7 @@
         /* D-S7: an envelope published a second ago must not be missed because
            the CDN still serves yesterday's config.json — so a stale leg is
            retried against the other source instead of being accepted. */
-        /* D17 (v0.0.1.g): a settings-only / keys-only publish touches only
+        /* D17 (v0.0.1.h): a settings-only / keys-only publish touches only
            config.json + version.json, so the 46 KB session.json must NOT be
            re-pulled on a 3G student phone. The publisher stamps
            version.payloadFiles, which lets the reader prove the case; a legacy
@@ -1172,7 +1177,7 @@
         function settle() {
           waiting -= 1;
           if (waiting > 0) return;
-          /* D15 (v0.0.1.g): config.json is SOVEREIGN. If config + version were
+          /* D15 (v0.0.1.h): config.json is SOVEREIGN. If config + version were
              delivered, this publish is adopted even when the session leg failed
              — one missing 46 KB file can no longer hold settings, keys and the
              encrypted vault hostage behind a stale_payload loop. */

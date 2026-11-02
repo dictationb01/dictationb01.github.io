@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* G12 — Lecturer Studio: real DOM widgets, zero-credit quota, delta clips (P3/P4).
- * v0.0.1.g adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
+ * v0.0.1.h adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
  * contract: docs/UI_COMPONENT_GUIDE.md §5 studio widgets
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §W5 CREDIT SAFETY
  * CREDIT SAFETY: this gate never calls /v1/text-to-speech. The only network
@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.g'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.h'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -170,7 +170,7 @@ async function unlockStudio(app) {
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
       'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
-      /* v0.0.1.g studio surface */
+      /* v0.0.1.h studio surface */
       'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
       'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
       'studioAiKey', 'studioAiNoKey', 'studioPublishWordsVoice', 'studioLock',
@@ -190,7 +190,7 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 7. v0.0.1.g: three cards, the one-click setup, the PIN and the dots ─ */
+  /* ── 7. v0.0.1.h: three cards, the one-click setup, the PIN and the dots ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio cards · §R4 PIN · §R5 lock
   {
     const app = await createApp(base);
@@ -309,7 +309,7 @@ async function unlockStudio(app) {
     offlineApp.close();
   }
 
-  /* ── 9. v0.0.1.g: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
+  /* ── 9. v0.0.1.h: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio Card 1 · §R8 free ladder
   {
     const app = await createApp(base);

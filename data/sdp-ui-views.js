@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.1.g)
+/*! Smart Dictation Player — views, i18n & router (v0.0.1.h)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -203,7 +203,7 @@
     studioEnriching: 'Enriching',
     studioEnriched: 'Enriched',
     studioAiOffline: 'offline B1 lexicon used',
-    /* ── v0.0.1.g (D2, D6, D7, D10, D13, D14) ── */
+    /* ── v0.0.1.h (D2, D6, D7, D10, D13, D14) ── */
     studioSaveKeysStep1: 'Step 1: Save Keys Permanently (Local Vault + GitHub Sync)',
     studioOneClickStep2: 'Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices',
     vaultBadgeLabel: 'Vault Saved & Protected Across Updates',
@@ -214,7 +214,11 @@
     studioAiSlotPollinations: '2: Pollinations Free Open-Source AI (Llama/Mistral — 100% Free, No API Key Needed!)',
     studioAiSlotGroq: '3: Groq Cloud Free Tier · Llama-3.3-70B Open-Source (gsk_… — Free, No Credit Card)',
     studioAiSlotOpenrouter: '4: OpenRouter Free Models · Llama-3.3-70B:free (sk-or-… — Free Tier)',
-    studioAiSlotGemini: '5: Google Gemini Free Tier · gemini-2.5-flash (AIza… — Optional)'
+    studioAiSlotGemini: '5: Google Gemini Free Tier · gemini-2.5-flash (AIza… — Optional)',
+    studioWorking: 'Working…',
+    studioAiOfflineFallback: 'AI offline — free dictionary used',
+    studioSavedOk: '✓ Keys saved & protected across updates',
+    studioPublishOkFull: '✓ Published & synced to all classroom devices'
   };
 
   /* contract: docs/UI_COMPONENT_GUIDE.md §H7 verified Sinhala strings */
@@ -389,7 +393,7 @@
     studioEnriching: 'පුරවමින්',
     studioEnriched: 'පුරවා අවසන්',
     studioAiOffline: 'නොබැඳි B1 ශබ්දකෝෂය භාවිතා විය',
-    /* ── v0.0.1.g (D2, D6, D7, D10, D13, D14) ── */
+    /* ── v0.0.1.h (D2, D6, D7, D10, D13, D14) ── */
     studioSaveKeysStep1: 'පියවර 1: යතුරු ස්ථිරවම සුරකින්න (දේශීය බඳුන + GitHub සමමුහුර්තය)',
     studioOneClickStep2: 'පියවර 2: එක් ස්පර්ශයකින් බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා සියල්ල සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
     vaultBadgeLabel: 'යතුරු බඳුන සුරකින ලදී · යාවත්කාලීනවලින් ආරක්ෂිතයි',
@@ -400,7 +404,11 @@
     studioAiSlotPollinations: '2: Pollinations නොමිලේ විවෘත මූලාශ්‍ර AI (Llama/Mistral — 100% නොමිලේ, යතුරක් අවශ්‍ය නැත!)',
     studioAiSlotGroq: '3: Groq Cloud නොමිලේ මට්ටම · Llama-3.3-70B (gsk_… — නොමිලේ, කාඩ්පතක් අවශ්‍ය නැත)',
     studioAiSlotOpenrouter: '4: OpenRouter නොමිලේ ආකෘති · Llama-3.3-70B:free (sk-or-… — නොමිලේ මට්ටම)',
-    studioAiSlotGemini: '5: Google Gemini නොමිලේ මට්ටම · gemini-2.5-flash (AIza… — අමතර)'
+    studioAiSlotGemini: '5: Google Gemini නොමිලේ මට්ටම · gemini-2.5-flash (AIza… — අමතර)',
+    studioWorking: 'ක්‍රියාත්මක වෙමින්…',
+    studioAiOfflineFallback: 'AI අක්‍රියයි — නොමිලේ ශබ්දකෝෂය භාවිතා විය',
+    studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
+    studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
 
   var lang = 'en';
@@ -1355,8 +1363,13 @@
     select.innerHTML = html;
   }
   /* One call for every surface — used after a classroom settings adoption. */
+  /* D12/D18: skip re-rendering Studio while a Studio action is in flight. */
+  function studioIsBusy() {
+    try { return !!(SDP.Studio && SDP.Studio.isBusy && SDP.Studio.isBusy()); } catch (e) { return false; }
+  }
   function renderAll() {
-    renderHome(); renderWords(); renderPractice(); renderSettings();
+    renderHome(); renderWords(); renderPractice();
+    if (!studioIsBusy()) { renderSettings(); }
     renderGuideSteps(); renderBoardBar(); renderBoardJumper();
     paintPresetBadge();
     try { paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') }); } catch (e) {}

@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.g
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.h
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the
@@ -10,13 +10,13 @@ code is the bug.
 
 | Constant | Value | Where |
 | --- | --- | --- |
-| `APP_VERSION` / `SDP.version` | `0.0.1.g` | `index.html`, every module |
+| `APP_VERSION` / `SDP.version` | `0.0.1.h` | `index.html`, every module |
 | `ver` | `7` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
 | `schema` | `7` | same |
 | `settingsRev` | `7` | same |
 | `syncRev` | `1793595000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
-| `SW_VERSION` | `sdp-v0.0.1.g` | `sw.js` |
-| `SHELL_CACHE` | `sdp-v0.0.1.g-shell` | `sw.js` |
+| `SW_VERSION` | `sdp-v0.0.1.h` | `sw.js` |
+| `SHELL_CACHE` | `sdp-v0.0.1.h-shell` | `sw.js` |
 | `PRESERVE_CACHES` | `['sdp-youdao-v1', 'sdp-audio-clips']` | `sw.js` |
 
 There is exactly one version file: `data/version.json`. Never a root `/version.json`.
@@ -478,7 +478,7 @@ No sixth localStorage key is ever created (W4).
 
 ---
 
-## R13 — v0.0.1.g: Rule 1A, Rule 1B, Layer 1 and the session trap
+## R13 — v0.0.1.h: Rule 1A, Rule 1B, Layer 1 and the session trap
 
 ### R13.1 Rule 1A — the key ladder (D1, D2)
 

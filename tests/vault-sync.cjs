@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* G11 — the encrypted vault, the scoped-key ladder and the sequential publisher
- * (P2/P3/P5 for v0.0.1.i: D1–D5, D15–D17).
+ * (P2/P3/P5 for v0.0.2.a: D1–D5, D15–D17).
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 SDP_ENC_V2, §R6 publish order, §W6 secrets
  * contract: docs/CHANGELOG_LEDGER.md §D-S2, §D-S5, §D-S7, §D-S8, §D-S9
  * Deterministic: jsdom + fake timers + a recording fetch stub. No network calls
@@ -48,7 +48,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.i'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.a'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -389,13 +389,13 @@ function gitHubStub(opts) {
     app.w.fetch = function (url, init) { seen.push(String(url)); return inner(url, init); };
     /* D10: the published revision must exceed the shipped settingsRev. */
     const cfgOnly = Object.assign({}, live, {
-      settingsRev: 13, syncRev: 1793600100000,
+      settingsRev: 17, syncRev: 1793616000000,
       classSettings: Object.assign({}, live.classSettings, { writeSecs: 9, repeats: 3 })
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 9, appVersion: '0.0.1.i', version: '0.0.1.i', schema: 9, settingsRev: 13,
-      session: '8', title: 'Session 8', syncRev: 1793600100000,
+      ver: 10, appVersion: '0.0.2.a', version: '0.0.2.a', schema: 10, settingsRev: 17,
+      session: '8', title: 'Session 8', syncRev: 1793616000000,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
     });
@@ -411,7 +411,7 @@ function gitHubStub(opts) {
       app.SDP.Data.settings().writeSecs === 9 && app.SDP.Data.settings().repeats === 3,
       JSON.stringify([app.SDP.Data.settings().writeSecs, app.SDP.Data.settings().repeats]));
     check('G11.13d the pointer advanced to the published syncRev',
-      Number(app.SDP.Sync.version().syncRev) === 1793600100000, app.SDP.Sync.version().syncRev);
+      Number(app.SDP.Sync.version().syncRev) === 1793616000000, app.SDP.Sync.version().syncRev);
     app.close();
   }
 
@@ -430,12 +430,12 @@ function gitHubStub(opts) {
     }, base));
     failSession = true;
     app.files['data/config.json'] = JSON.stringify(Object.assign({}, liveCfg, {
-      settingsRev: 13, syncRev: 1793600200000,
+      settingsRev: 18, syncRev: 1793616000001,
       classSettings: Object.assign({}, liveCfg.classSettings, { writeSecs: 8 })
     }));
     app.files['data/version.json'] = JSON.stringify({
-      ver: 9, appVersion: '0.0.1.i', version: '0.0.1.i', schema: 9, settingsRev: 13,
-      session: '9', title: 'Session 9', syncRev: 1793600200000,
+      ver: 10, appVersion: '0.0.2.a', version: '0.0.2.a', schema: 10, settingsRev: 18,
+      session: '9', title: 'Session 9', syncRev: 1793616000001,
       payloadFiles: ['data/session.json', 'data/config.json', 'data/version.json']
     });
     const before = app.SDP.Sync.wordCount();
@@ -446,7 +446,7 @@ function gitHubStub(opts) {
     check('G11.14a a failed session leg reports stale_payload while config lands',
       !!result && result.error === 'stale_payload' && result.changed === true, JSON.stringify(result && result.error));
     check('G11.14b config.json + version.json are adopted anyway',
-      app.SDP.Sync.config().syncRev === 1793600200000 && app.SDP.Data.settings().writeSecs === 8,
+      app.SDP.Sync.config().syncRev === 1793616000001 && app.SDP.Data.settings().writeSecs === 8,
       app.SDP.Sync.config().syncRev);
     check('G11.14c the retry is deferred, not lost', !!result && result.deferredSession === true,
       JSON.stringify(result && result.deferredSession));

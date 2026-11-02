@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.i)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.2.a)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,14 +6,14 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.i';
+  SDP.version = '0.0.2.a';
   SDP.build = '2026-11-02';
-  SDP.ver = 9;
+  SDP.ver = 10;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.i';
-  var SCHEMA = 9;
+  var APP_VERSION = '0.0.2.a';
+  var SCHEMA = 10;
   var SETTINGS_REV = 12;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
@@ -973,7 +973,7 @@
        never gated on a previous revision being present. */
     var appliedRev = 0;
     try { appliedRev = Number(Data.settings().appliedSettingsRev) || 0; } catch (e) { appliedRev = 0; }
-    /* D10 (v0.0.1.i): the adoption test is MONOTONIC — no release literal and
+    /* D10 (v0.0.2.a): the adoption test is MONOTONIC — no release literal and
        no settingsRev clamp may ever pin appliedSettingsRev to one number. */
     if (state.settingsRev > appliedRev) adoptRemoteSettings(cfg, state.settingsRev);
     state.clips = {};

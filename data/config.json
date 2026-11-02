@@ -92,7 +92,7 @@
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
   "appVersion": "0.0.1.g",
-  "settingsRev": 7,
+  "settingsRev": 8,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -417,7 +417,7 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-11-02T00:00:00.000Z",
+  "updatedAt": "2026-11-02T05:53:18.534Z",
   "updatedAtMs": 1793448000000,
   "schema": 7,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
@@ -694,9 +694,9 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793595000000,
+  "syncRev": 1793598798534,
   "versionFamily": "9.0.0",
-  "encVault": "SDP_ENC_V2:AAA=",
+  "encVault": "SDP_ENC_V2:vSEZ1d1tAErTW/+5yOMFvVVZBn93+jouO8jnmZEQTX9t8+vb4XCeBtzdKZ0Bjnpo4lTuyxN5wtY7VZ6ogph3ytAW7t3xcO7bgqEVhpLNfR1QSP9e05MLvSAtm7qh3paI6UNjbIVTCDS3Op03aHTl4ixqMeeJb6Q7ZpNXvu2zZHUPr72EmKfC34FOVHybgv5MZYei5W3gHwEq7m7/DVn+YhLAtTbZYTbIFrst8aC5ZlDKCJObIOiQdipYNqRRWQtGVGt1i/ckFjBcMST4i0l3PFg84M3/Vgeuot40RRhPBSaCzqdNUb8+NS/yUkvCNBwEBH6WZuGGvRN98zrIx+zUX4nHRoLiEpVVeVAKCVeZcKqVeAXMXwqaqIpBFWSOnEY/qh8aa2cRuPK5icm134ScsnENVXPjT63F2m211ICXVbogbf62YVNiZESM25pgZptfcCgjFbVd",
   "classSettings": {
     "lang": "en",
     "mode": "paper",

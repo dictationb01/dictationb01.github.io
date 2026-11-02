@@ -22,12 +22,12 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 async function unlockStudio(app) {
   app.byId('btnStudioQuick').click();
   await app.settle(6);
-  await new Promise((resolve) => app.SDP.Studio.setup('246813', { ghToken: 'ghp_x', elevenKey: 'sk_x' }, () => resolve()));
+  await new Promise((resolve) => app.SDP.Studio.setup('78987898', { ghToken: 'ghp_x', elevenKey: 'sk_x' }, () => resolve()));
   await app.settle(8);
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.e'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -168,7 +168,12 @@ async function unlockStudio(app) {
     const required = [
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
-      'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn'
+      'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
+      /* v0.0.1.f studio surface */
+      'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
+      'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
+      'studioAiKey', 'studioAiNoKey', 'studioPublishWordsVoice', 'studioLock',
+      'studioSyncSettings', 'studioBulkWords'
     ];
     const missingEn = required.filter((k) => !en[k]);
     const missingSi = required.filter((k) => !si[k]);
@@ -182,6 +187,125 @@ async function unlockStudio(app) {
       en.creditsLine === 'Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)',
       en.creditsLine);
     app.close();
+  }
+
+  /* ── 7. v0.0.1.f: three cards, the one-click setup, the PIN and the dots ─ */
+  // contract: docs/UI_COMPONENT_GUIDE.md §5 studio cards · §R4 PIN · §R5 lock
+  {
+    const app = await createApp(base);
+    app.byId('btnStudioQuick').click();
+    await app.settle(8);
+    const pin = app.byId('studioPin');
+    check('G12.7a the locked PIN field accepts 4–12 digits',
+      !!pin && pin.getAttribute('maxlength') === '12' && pin.getAttribute('minlength') === '4',
+      pin && pin.outerHTML.slice(0, 90));
+    check('G12.7b the locked DOM is PIN-only — no keys, words or publish control',
+      !app.byId('elKeyInput') && !app.byId('ghTokenInput') && !app.byId('studioWords') &&
+      !app.byId('btnOneClickMasterSetup'));
+    const dots = app.byId('pinDots');
+    check('G12.7c the dot indicator ships twelve dots', !!dots && dots.querySelectorAll('span').length === 12,
+      dots && dots.querySelectorAll('span').length);
+    check('G12.7d an empty PIN shows eight dots', !!dots && dots.getAttribute('data-dots') === '8',
+      dots && dots.getAttribute('data-dots'));
+    for (const digit of '123456789012') {
+      const key = app.q('#pinPad [data-pin="' + digit + '"]');
+      if (key) key.click();
+    }
+    check('G12.7e a twelve-digit PIN grows the dots to twelve',
+      app.byId('pinDots').getAttribute('data-dots') === '12', app.byId('pinDots').getAttribute('data-dots'));
+    app.byId('pinPadClear').click();
+    check('G12.7f Clear resets the dots to eight', app.byId('pinDots').getAttribute('data-dots') === '8',
+      app.byId('pinDots').getAttribute('data-dots'));
+
+    await unlockStudio(app);
+    check('G12.7g the unlocked studio is three outcome cards',
+      !!app.byId('studioCardKeys') && !!app.byId('studioCardWords') && !!app.byId('studioCardSettings'));
+    const oneClick = app.byId('btnOneClickMasterSetup');
+    check('G12.7h the one-click master setup carries the verbatim label',
+      !!oneClick && oneClick.textContent === app.SDP.STRINGS_EN.studioOneClick,
+      oneClick && oneClick.textContent);
+    const steps = app.byId('studioMasterSteps');
+    check('G12.7i the master setup tracks four steps',
+      !!steps && steps.querySelectorAll('li').length === 4, steps && steps.querySelectorAll('li').length);
+    check('G12.7j the unlocked header carries an explicit lock control', !!app.byId('btnLockStudio'));
+    const prov = app.byId('studioAiProvider');
+    const options = prov ? Array.from(prov.querySelectorAll('option')).map((o) => o.value) : [];
+    check('G12.7k the free provider is the default and all four ship',
+      JSON.stringify(options) === JSON.stringify(['free_dict', 'groq', 'gemini', 'openrouter']) &&
+      prov.value === 'free_dict', options.join(','));
+    check('G12.7l free_dict needs no key at all',
+      app.SDP.Studio.aiProviderName() === 'free_dict' && app.SDP.Studio.aiProviderKey() === '',
+      app.SDP.Studio.aiProviderName());
+    const wm = app.byId('studioWordManager');
+    check('G12.7m the word manager renders the full 30-word table',
+      !!wm && wm.querySelectorAll('tbody tr').length === 30, wm && wm.querySelectorAll('tbody tr').length);
+    check('G12.7n every row is editable in all six fields',
+      !!wm && wm.querySelectorAll('[data-wm]').length === 180, wm && wm.querySelectorAll('[data-wm]').length);
+    check('G12.7o the publish / enrich controls all exist',
+      !!app.byId('btnEnrichWords') && !!app.byId('btnPreviewWords') &&
+      !!app.byId('btnPublishWords') && !!app.byId('btnPublishWordsAndVoice') && !!app.byId('btnTestAi'));
+    check('G12.7p pagehide auto-locks the studio',
+      (app.w.dispatchEvent(new app.w.Event('pagehide')), app.SDP.Studio.isUnlocked() === false),
+      app.SDP.Studio.isUnlocked());
+    app.close();
+  }
+
+  /* ── 8. R8: the free enricher works with zero keys and never bills ───── */
+  // contract: docs/CHANGELOG_LEDGER.md §R8 free enrichment
+  {
+    const hits = [];
+    const tts = [];
+    const app = await createApp(Object.assign({
+      fetch(url, init) {
+        const u = String(url);
+        if (u.indexOf('elevenlabs.io') >= 0) { tts.push(u); return undefined; }
+        if (u.indexOf('dictionaryapi.dev') >= 0) {
+          hits.push(u);
+          return Promise.resolve({
+            ok: true, status: 200,
+            json: () => Promise.resolve([{
+              word: 'brave', phonetic: '/breɪv/',
+              meanings: [{ partOfSpeech: 'adjective', definitions: [{ definition: 'ready to face danger', example: 'She was brave.' }] }]
+            }])
+          });
+        }
+        if (u.indexOf('mymemory.translated.net') >= 0) {
+          hits.push(u);
+          return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ responseData: { translatedText: 'නිර්භීත' } }) });
+        }
+        return undefined;
+      }
+    }, base));
+    await unlockStudio(app);
+    const report = await new Promise((resolve) => app.SDP.Studio.enrichWords('brave\ncalm', {}, (err, rep) => resolve(rep)));
+    const first = report && report.words && report.words[0] ? report.words[0] : {};
+    check('G12.8a the free enricher fills IPA, meaning and Sinhala',
+      first.p === '/breɪv/' && first.m === 'ready to face danger' && first.si === 'නිර්භීත' &&
+      first.pos === 'adjective.', JSON.stringify(first).slice(0, 140));
+    check('G12.8b enrichment enriches every word in the list',
+      !!report && report.words.length === 2 && report.provider === 'free_dict', report && report.words.length);
+    check('G12.8c enrichment touched only the two free dictionaries',
+      hits.length === 4 && hits.every((u) => u.indexOf('dictionaryapi') >= 0 || u.indexOf('mymemory') >= 0),
+      hits.length);
+    check('G12.8d enrichment never reaches ElevenLabs', tts.length === 0, tts.join(','));
+    check('G12.8e the enriched words land back in the editor',
+      /brave/.test(app.byId('studioWords').value) && app.SDP.Studio.state.words.length === 2);
+    app.close();
+
+    /* a dead tower must still produce a usable six-field record */
+    const offlineApp = await createApp(Object.assign({
+      fetch(url) {
+        const u = String(url);
+        if (u.indexOf('dictionaryapi.dev') >= 0 || u.indexOf('mymemory') >= 0) return Promise.reject(new Error('offline'));
+        return undefined;
+      }
+    }, base));
+    await unlockStudio(offlineApp);
+    const off = await new Promise((resolve) => offlineApp.SDP.Studio.enrichWords('brave', {}, (err, rep) => resolve(rep)));
+    const f = off && off.words && off.words[0] ? off.words[0] : {};
+    check('G12.8f offline the deterministic B1 lexicon still fills all six fields',
+      !!f.w && !!f.p && !!f.pos && !!f.m && !!f.si && !!f.s && off.offline === 1, JSON.stringify(f).slice(0, 140));
+    offlineApp.close();
   }
 
   const failed = results.filter((r) => r.status === 'FAIL');

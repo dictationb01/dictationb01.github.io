@@ -786,7 +786,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "9.0.0.4",
-  "updatedAt": "2026-11-02T18:44:19.753Z",
+  "updatedAt": "2026-11-02T18:44:43.447Z",
   "version": "9.0.0.4",
   "buildDate": "2026-10-31",
   "settingsRev": 18,
@@ -1098,7 +1098,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793645059740,
+  "syncRev": 1793645083445,
   "words": [
     {
       "w": "afraid",

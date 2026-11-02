@@ -1,9 +1,9 @@
 {
-  "version": "0.0.2.b",
-  "appVersion": "0.0.2.b",
-  "ver": 11,
-  "schema": 11,
-  "settingsRev": 17,
+  "version": "0.0.2.a",
+  "appVersion": "0.0.2.a",
+  "ver": 10,
+  "schema": 10,
+  "settingsRev": 18,
   "voiceId": "Xb7hH8MSUJpSbSDYk0k2",
   "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
@@ -14,9 +14,9 @@
   "creditLock": "student playback replays saved clips only",
   "voiceModel": "eleven_flash_v2_5",
   "generatedAt": "2026-11-01T00:00:00.000Z",
-  "syncRev": 1793620000000,
+  "syncRev": 1793645059740,
   "buildDate": "2026-11-02",
-  "updatedAt": "2026-11-02T09:53:24.373Z",
+  "updatedAt": "2026-11-02T18:44:19.762Z",
   "versionFamily": "0.0.1",
   "manifestSource": "raw"
 }

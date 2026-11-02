@@ -14,9 +14,9 @@
   "creditLock": "student playback replays saved clips only",
   "voiceModel": "eleven_flash_v2_5",
   "generatedAt": "2026-11-01T00:00:00.000Z",
-  "syncRev": 1793645059740,
+  "syncRev": 1793645083445,
   "buildDate": "2026-11-02",
-  "updatedAt": "2026-11-02T18:44:19.762Z",
+  "updatedAt": "2026-11-02T18:44:43.450Z",
   "versionFamily": "0.0.1",
   "manifestSource": "raw"
 }

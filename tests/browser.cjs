@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.1.i'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.2.a'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.1.i');
+    localStorage.setItem('sdp.guide_seen', '0.0.2.a');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -256,10 +256,12 @@ async function bootSettings(page, settings) {
         };
       });
       const listening = await readRing();
-      check('G5.6a listening ring is sky (#38BDF8)', listening.stroke === '#38BDF8' && /Listening/.test(listening.state), JSON.stringify(listening));
+      check('G5.6a listening ring is sky (#38BDF8) with the verbatim phase line',
+        listening.stroke === '#38BDF8' && /Listen Carefully \(Repeat \d of \d\)/.test(listening.state), JSON.stringify(listening));
       await page.waitForTimeout(3400);
       const writing = await readRing();
-      check('G5.6b writing ring is emerald (#10B981)', writing.stroke === '#10B981' && /Write Now/.test(writing.state), JSON.stringify(writing));
+      check('G5.6b writing ring is emerald (#10B981) with the word + countdown line',
+        writing.stroke === '#10B981' && /Write Word #\d+ in Your Book!/.test(writing.state), JSON.stringify(writing));
       await page.waitForTimeout(5200);
       const warning = await readRing();
       check('G5.6c the last three seconds warn in amber (#F59E0B)', warning.stroke === '#F59E0B', JSON.stringify(warning));

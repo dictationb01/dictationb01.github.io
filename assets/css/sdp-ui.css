@@ -49,6 +49,17 @@
   --gap: 10px;
   --tap: 48px;
   --shadow: none;
+  /* ── v0.0.2.a tactile design tokens (D8) ───────────────────────────────
+   * High-contrast 3D buttons for a classroom thumb and a Smart Board: every
+   * interactive control sits at --btn-h (54px) with a 2px press collapse, while
+   * static labels (.badge/.pill when not pressed) are flattened so they can
+   * never be mistaken for something to tap. */
+  --shadow-btn: 0 2px 0 rgba(0, 0, 0, .45), 0 6px 14px rgba(0, 0, 0, .35);
+  --grad-primary: linear-gradient(180deg, #2563EB, #1D4ED8);
+  --grad-go: linear-gradient(180deg, #059669, #10B981);
+  --btn-h: 54px;
+  --cue-bg: #F59E0B;
+  --cue-ink: #09090B;
   /* W7: the Sinhala face is a fallback, so Latin keeps Inter and any Sinhala
    * glyph inside an English string still renders on a fontless device. */
   --font-ui: Inter, 'Segoe UI', system-ui, -apple-system, sans-serif, 'Noto Sans Sinhala';
@@ -71,6 +82,7 @@ body[data-theme='light'] {
   --ok: #059669;
   --warn: #B45309;
   --danger: #DC2626;
+  --grad-primary: linear-gradient(180deg, #0284C7, #0369A1);
   color-scheme: light;
 }
 
@@ -335,33 +347,57 @@ html[data-theme='light'] #appHeader { background: #FFFFFF; }
   box-shadow: var(--shadow);
 }
 .card-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+/* D8 (v0.0.2.a): the tactile 54px button system. Every tap target answers
+ * with a real 2px press and a hard drop shadow, so a student can find the one
+ * primary action at a glance on a 360px phone or from the back of the class. */
 .btn {
-  min-height: var(--tap);
+  min-height: var(--btn-h);
   min-width: var(--tap);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 0 14px;
+  gap: 8px;
+  padding: 0 16px;
   font: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text);
   background: var(--bg-elev);
-  border: 1px solid var(--border-strong);
+  border: 1.5px solid var(--border-strong);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-btn);
   cursor: pointer;
   text-decoration: none;
 }
 .btn:hover { border-color: var(--accent); }
-.btn:active { transform: translateY(1px); }
-.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:active { transform: translateY(2px); box-shadow: none; }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.btn-primary {
+  background: var(--grad-primary);
+  color: #FFFFFF;
+  border-color: #60A5FA;
+  box-shadow: var(--shadow-btn), 0 0 0 3px rgba(37, 99, 235, .25);
+}
+.btn-primary:active { box-shadow: none; }
+.btn-go {
+  background: var(--grad-go);
+  color: #FFFFFF;
+  border-color: #34D399;
+  box-shadow: var(--shadow-btn), 0 0 0 3px rgba(16, 185, 129, .25);
+}
+.btn-go:active { box-shadow: none; }
 .btn-accent { background: var(--ok); border-color: var(--ok); color: #04120C; }
 .btn-danger { color: #FFE4E4; border-color: var(--danger); background: #2A1114; }
 html[data-theme='light'] .btn-danger { color: #7F1D1D; background: #FEE2E2; }
-.btn-sm { min-height: 44px; font-size: 13px; padding: 0 11px; }
-.btn-ghost { background: transparent; }
+.btn-sm { min-height: 48px; font-size: 13px; padding: 0 12px; }
+/* D9: a secondary action is dashed and flat, so it can never win the eye. */
+.btn-ghost {
+  background: transparent;
+  border: 1.5px dashed var(--border-strong);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+.btn-ghost:active { transform: translateY(2px); box-shadow: none; }
 .pill-row, .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .pill, .chip {
   min-height: var(--tap);
@@ -376,6 +412,15 @@ html[data-theme='light'] .btn-danger { color: #7F1D1D; background: #FEE2E2; }
   border-radius: 999px;
   cursor: pointer;
 }
+/* D8: a static filter chip that is NOT pressed is flattened to a sunken label. */
+.pill:not([aria-pressed='true']):not([aria-selected='true']),
+.chip:not([aria-pressed='true']) {
+  background: var(--bg-sunken, #0D0D11);
+  color: #A1A1AA;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+.pill[aria-pressed='true'], .chip[aria-pressed='true'] { box-shadow: var(--shadow-btn); }
 .pill[aria-pressed='true'], .pill[aria-selected='true'], .chip[aria-pressed='true'] {
   color: var(--accent-ink);
   background: var(--accent);
@@ -383,14 +428,34 @@ html[data-theme='light'] .btn-danger { color: #7F1D1D; background: #FEE2E2; }
 }
 html[data-theme='light'] .chip[aria-pressed='true'],
 html[data-theme='light'] .pill[aria-pressed='true'] { color: #FFFFFF; }
+/* D8: badges are labels, never buttons — flat, sunken and shadowless. */
 .badge {
-  font-size: 12px;
+  display: inline-block;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
-  border: 1px solid var(--border-strong);
+  color: #A1A1AA;
+  background: var(--bg-sunken, #0D0D11);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 3px 9px;
+  box-shadow: none;
+  letter-spacing: 0.02em;
 }
+/* D9: the amber "STEP 1 — PRESS HERE" cue on each screen's primary CTA. */
+.cue {
+  background: #F59E0B;
+  color: #09090B;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  display: inline-block;
+  line-height: 1.4;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cue[hidden] { display: none !important; }
 .input {
   width: 100%;
   min-height: var(--tap);
@@ -1247,4 +1312,348 @@ html[lang='si'] .studio-card { font-family: var(--font-si); }
 .studio-free-badge[hidden], .studio-vault-badge[hidden] { display: none !important; }
 @media (max-width: 420px) {
   .studio-primary-bar > .btn { font-size: 12.5px; min-height: 52px; }
+}
+
+/* ══ v0.0.2.a — tactile hierarchy, giant resume card, 30-pill strip ═══════
+ * contract: docs/UI_COMPONENT_GUIDE.md §1 tactile 1-2-3 order (D8–D15)
+ * Every rule below is a plain stylesheet rule: no runtime injection (W3). */
+
+/* ── D13/D15: the giant resume card on Home ────────────────────────────── */
+.resume-card {
+  display: grid;
+  gap: 6px;
+  border: 2px solid var(--accent);
+  border-left-width: 8px;
+  background: var(--bg-elev);
+}
+.resume-card[hidden] { display: none !important; }
+.resume-title { margin: 0; font-size: 16px; font-weight: 800; color: var(--text); }
+.resume-meta {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.resume-actions { display: grid; gap: 8px; margin-top: 4px; }
+.resume-actions .btn { width: 100%; text-align: left; }
+@media (min-width: 620px) {
+  .resume-actions { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── D15: the numbered 1-2-3 step tags on the Home cards ───────────────── */
+.step-tag {
+  display: inline-block;
+  margin: 0 0 4px;
+  padding: 2px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #09090B;
+  background: var(--accent);
+  border-radius: 999px;
+}
+.hero-actions { display: grid; gap: 10px; }
+@media (min-width: 620px) {
+  .hero-actions { grid-template-columns: 1.4fr 1fr; align-items: start; }
+}
+.cta-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.cta-wrap .btn { width: 100%; }
+.home-words-card .btn { width: 100%; text-align: left; }
+.home-words-preview { display: grid; gap: 4px; margin-top: 8px; }
+.home-words-preview .hp-row {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 4px 8px; border-radius: 8px; background: var(--bg-sunken, #0D0D11);
+}
+.home-words-preview .hp-num { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.home-words-preview .hp-w { font-weight: 700; color: var(--text); }
+
+/* ── D11: the 30-pill session progress strip ────────────────────────────── */
+.progress-strip { display: grid; gap: 8px; }
+.strip-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.strip-count {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.word-pills {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+}
+@media (max-width: 420px) {
+  .word-pills { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+.word-pill {
+  min-height: 32px;
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: #A1A1AA;
+  background: var(--bg-sunken, #0D0D11);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.word-pill.done { color: #04120C; background: var(--ok); border-color: var(--ok); }
+.word-pill.current {
+  color: #FFFFFF;
+  background: var(--grad-primary);
+  border-color: #60A5FA;
+  animation: sdpPulse 1.4s ease-in-out infinite;
+}
+.word-pill.todo { color: #A1A1AA; }
+@keyframes sdpPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, .55); }
+  50% { box-shadow: 0 0 0 4px rgba(37, 99, 235, .12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .word-pill.current { animation: none; }
+}
+
+/* ── D10: the 4-button tactile cockpit transport ────────────────────────── */
+.cockpit-transport {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 8px;
+  margin: 8px 0 6px;
+}
+.cockpit-transport .btn { width: 100%; }
+.btn-transport {
+  grid-column: span 2;
+  min-height: 56px;
+  font-size: 16px;
+}
+@media (min-width: 620px) {
+  .cockpit-transport { grid-template-columns: 1fr 1.6fr 1fr 1fr; }
+  .btn-transport { grid-column: auto; }
+}
+.secondary-controls { margin-top: 4px; }
+.secondary-controls .btn { flex: 1 1 auto; }
+
+/* ── D14: the ordered #01..#30 word sheet ──────────────────────────────── */
+.dict-list { display: grid; gap: 8px; }
+.dict-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elev);
+}
+.dict-card[data-state='mastered'] { border-left: 6px solid var(--ok); }
+.dict-card[data-state='weak'] { border-left: 6px solid var(--warn); }
+.dict-card .d-body { display: grid; gap: 3px; min-width: 0; }
+.dict-card .d-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.d-index {
+  display: inline-block;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #09090B;
+  background: var(--accent);
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.dict-card .d-w { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+.dict-card .d-pos {
+  font-size: 11px;
+  font-weight: 700;
+  color: #A1A1AA;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.dict-card .d-p { font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.dict-card .d-m { font-size: 13px; color: var(--text); }
+.dict-card .word-si {
+  font-family: var(--font-si);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--warn);
+}
+.dict-card .d-s { font-size: 12.5px; color: var(--text-muted); font-style: italic; }
+.dict-card .d-side { display: grid; gap: 6px; align-content: start; }
+.dict-card .d-side .btn { width: 100%; min-width: 112px; font-size: 12.5px; }
+.dict-card .d-play { font-size: 13px; }
+.dict-card .d-mark-correct { border-color: rgba(16, 185, 129, .6); color: #86EFAC; }
+.dict-card .d-mark-weak { border-color: rgba(245, 158, 11, .55); color: #FCD34D; }
+
+/* ── P2: the dedicated Lecturer Admin Studio screen ────────────────────── */
+#screen-studio { padding-bottom: 20px; }
+.studio-shell {
+  display: block;
+  margin: 8px 0 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+}
+.studio-body { display: block; }
+.studio-sync-dock { display: block; }
+.lecturer-sync-bar { display: grid; gap: 6px; margin: 8px 0; }
+.lecturer-sync-bar .btn { width: 100%; text-align: left; }
+.lecturer-banner { display: grid; gap: 8px; border: 1.5px solid var(--accent); }
+.lecturer-banner .btn { width: 100%; text-align: left; }
+.studio-gate {
+  display: grid;
+  gap: 8px;
+  max-width: 360px;
+  margin: 6px auto;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--bg-elev);
+}
+.studio-gate h4 { margin: 0; font-size: 15px; }
+.studio-card { gap: 10px; }
+.studio-h4 {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #FFFFFF;
+  background: var(--grad-primary);
+}
+.studio-actions { display: grid; gap: 8px; }
+.studio-actions .btn { width: 100%; text-align: left; }
+#studioPackDashboard {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(134, 239, 172, .45);
+  border-radius: 10px;
+  background: rgba(34, 197, 94, .12);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #86EFAC;
+}
+#studioGenProgress {
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.studio-quick { font-weight: 800; }
+/* ── P2/P3: the dedicated studio screen, its 3 cards and the 34-clip flow ─ */
+.studio-shell { display: grid; gap: 10px; }
+.studio-sync-slot { display: block; }
+.studio-sync-slot:empty { display: none; }
+.studio-card-keys { border-left: 4px solid var(--accent); }
+.studio-card-words { border-left: 4px solid var(--ok); }
+.studio-card-settings { border-left: 4px solid var(--warn); }
+.studio-card .studio-h4 + .studio-pack-dashboard { margin-top: 0; }
+.studio-mode-pill {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 800; color: #052E16; background: #86EFAC;
+}
+.studio-hint { margin: 0; font-size: 12px; color: var(--text-muted); }
+.studio-lock-row { display: grid; gap: 8px; margin: 4px 0 0; }
+.studio-lock-row .btn { width: 100%; text-align: left; }
+.studio-retry-row { margin: 2px 0; }
+.studio-retry-row[hidden] { display: none !important; }
+.studio-word-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.studio-word-table th, .studio-word-table td { padding: 3px 5px; border-bottom: 1px solid var(--border); text-align: left; }
+.studio-word-table th { color: var(--text-muted); font-weight: 700; }
+.hp-si { font-family: var(--font-si); }
+.paper-notice { font-size: 12px; color: var(--text-muted); }
+.badge-retry { color: #09090B; background: var(--warn); }
+
+/* ── P5: Guide 3.0 voice-transition cards with animated previews ──────── */
+.guide-steps { display: grid; gap: 10px; margin: 10px 0; padding-left: 0; list-style: none; }
+.guide-step {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  transition: border-color .2s ease;
+}
+.guide-step h3 { margin: 0 0 4px; font-size: 14px; }
+.guide-step p { margin: 0 0 8px; font-size: 13px; color: var(--text-muted); }
+.guide-step.active-step {
+  border: 2px solid var(--accent);
+  background: var(--bg-elev);
+}
+.guide-mock {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  background: var(--bg-sunken, #0D0D11);
+}
+.guide-mock .mock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  min-height: 40px;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 10px;
+  color: #FFFFFF;
+  background: var(--grad-primary);
+}
+.guide-mock .mock-btn.mock-go { background: var(--grad-go); }
+.guide-mock .mock-cue {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  color: #09090B;
+  background: #F59E0B;
+}
+.guide-mock .mock-ring {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 5px solid var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+.guide-step.active-step .mock-ring { animation: sdpRing 2.4s linear infinite; }
+@keyframes sdpRing {
+  0% { transform: scale(1); border-color: #38BDF8; }
+  60% { transform: scale(.86); border-color: #F59E0B; }
+  100% { transform: scale(1); border-color: #38BDF8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-step.active-step .mock-ring { animation: none; }
+}
+.guide-mock .mock-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text);
+}
+.guide-mock .mock-num { font-weight: 800; color: var(--accent); }
+.guide-mock .mock-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #86EFAC;
+  border: 1px solid rgba(134, 239, 172, .45);
+  background: rgba(34, 197, 94, .12);
 }

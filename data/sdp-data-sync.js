@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.1.i)
+/*! Smart Dictation Player — storage, sync & SDP_ENC_V2 vault (v0.0.2.a)
  * Strict ES5, dependency free, no build step.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R1, §R7, §R8, §R9
  * contract: docs/ARCHITECTURE_MAP.md §R6 two-layer sync */
@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.1.i';
+  SDP.version = '0.0.2.a';
   SDP.build = '2026-11-02';
-  SDP.ver = 9;
+  SDP.ver = 10;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.1.i';
-  var SCHEMA = 9;
-  var SETTINGS_REV = 12;
+  var APP_VERSION = '0.0.2.a';
+  var SCHEMA = 10;
+  var SETTINGS_REV = 16;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -61,6 +61,9 @@
       voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'dark',
       guideAutoPlay: true, pacingPreset: 'exam', voiceLock: 'unified',
       hints: { pos: true, first: false, si: false, sentence: false },
+      /* D9 (v0.0.2.a): which screens already showed their amber STEP cue. It
+         lives INSIDE sdp.settings, so the five-key localStorage law holds. */
+      cuesSeen: {},
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
       /* D5 (v0.0.1.h): Layer-1 — the encrypted vault backup and its PIN
@@ -189,6 +192,8 @@
       /* R7: which settings the student changed by hand. A remote settingsRev
          bump overrides touchedKeys for the ten classroom keys (R1/SYNC-01). */
       if (!isObj(s.touchedKeys)) s.touchedKeys = {};
+      /* D9: a malformed cuesSeen is healed to an empty map, never a sixth key. */
+      if (!isObj(s.cuesSeen) || Array.isArray(s.cuesSeen)) s.cuesSeen = {};
       s.appliedSettingsRev = Math.max(0, Number(s.appliedSettingsRev) || 0);
       if (!isObj(s.vaultLock)) s.vaultLock = { fails: 0, lockUntil: 0, strikes: 0 };
       return s;
@@ -973,7 +978,7 @@
        never gated on a previous revision being present. */
     var appliedRev = 0;
     try { appliedRev = Number(Data.settings().appliedSettingsRev) || 0; } catch (e) { appliedRev = 0; }
-    /* D10 (v0.0.1.i): the adoption test is MONOTONIC — no release literal and
+    /* D10 (v0.0.2.a): the adoption test is MONOTONIC — no release literal and
        no settingsRev clamp may ever pin appliedSettingsRev to one number. */
     if (state.settingsRev > appliedRev) adoptRemoteSettings(cfg, state.settingsRev);
     state.clips = {};

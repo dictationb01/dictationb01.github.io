@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.i
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.2.a
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -13,26 +13,26 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 
 | File | Budget | Owner / role |
 | --- | --- | --- |
-| `index.html` | ≤ 36,000 B | Shell: 54px header, 5 screens, guide modal, toast, boot check, 6 deferred modules |
-| `assets/css/sdp-ui.css` | ≤ 60,000 B | The single stylesheet (Zinc + Sky flat matte). No runtime CSS injection, ever |
+| `index.html` | ≤ 38,000 B | Shell: 54px header, **6 screens** (`home/player/practice/dict/settings/studio`), guide modal, `#resumeBanner`, toast, boot check, 6 deferred modules |
+| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.2.a tactile tokens). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
 | `data/sdp-data-sync.js` | ≤ 86,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
 | `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
-| `data/sdp-dictation-engine.js` | ≤ 60,000 B | `SDP.Engine`: beat machine, ring/bar timer, Paper/Typing, hints, 30-row self-check |
-| `data/sdp-ui-views.js` | ≤ 128,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
-| `data/studio.js` | ≤ 116,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
+| `data/sdp-dictation-engine.js` | ≤ 62,000 B | `SDP.Engine`: beat machine, ring/bar timer, 30-pill `#sessionProgressStrip`, verbatim phase lines, Paper/Typing, hints, 30-row self-check |
+| `data/sdp-ui-views.js` | ≤ 136,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 3.0, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
+| `data/studio.js` | ≤ 126,000 B | `SDP.Studio`: PIN vault, 3-card studio, 34-clip pack dashboard + one-click flow, delta retry, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
 | `data/session.json` | exactly 57,381 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
 | `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
-| `data.html` | ≤ 32,000 B | `/data` transparency route |
-| `data/index.html` | ≤ 32,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.i` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.i` |
-| `docs/*.md` (5 files) | ≤ 48,000 B each (template ≤ 24,000 B) | This ledger |
+| `data.html` | ≤ 34,000 B | `/data` transparency route |
+| `data/index.html` | ≤ 34,000 B | Byte-identical twin of `data.html` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.2.a` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.2.a` |
+| `docs/*.md` (5 files) | ≤ 52,000 B each (template ≤ 26,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
 byte count *and* SHA-256; the hashes live in its `PRESERVED_SHA` table and in
@@ -46,7 +46,7 @@ on every publish (D-UI11), so freezing it would have made publishing impossible.
 
 ```js
 window.SDP = {
-  version: '0.0.1.i', build: '2026-11-02', ver: 9,
+  version: '0.0.2.a', build: '2026-11-02', ver: 10,
   Data:   { /* storage + migration */ },
   Sync:   { /* fetchers, reconciliation, publishing, Service Worker, Vault */ },
   Speech: { /* utterances + audio tiers */ },
@@ -81,15 +81,16 @@ day still reloads to 0.0.1.b within two minutes, exactly once.
 Any id below is a public interface: tests, CSS and the engine depend on it.
 
 - **Shell:** `#appHeader`, `#sdpBrand`, `#brandName`, `#sdpVerPill`, `#btnGuideTop`, `#btnLang`, `#btnTheme`, `#sdpScreens`, `#tabbar`, `#sdpSideRail`
-- **Tabs:** `#tab-home`, `#tab-player`, `#tab-practice`, `#tab-dict`, `#tab-settings` (rail twins: `#rail-*`)
-- **Screens:** `#screen-home`, `#screen-player`, `#screen-practice`, `#screen-dict`, `#screen-settings`
-- **Home:** `#homeHero`, `#homeTitle`, `#homeSub`, `#btnStart`, `#btnGuide`, `#homeStatsRow`, `#homeQuickPractice`, `#homeAnn`, `#creditFoot`
-- **Cockpit:** `#cockpitBar`, `#sessionTitle`, `#wordPosBadge`, `#cockpitProgress`, `#beatRing`, `#beatBar`, `#beatSeconds`, `#beatStage`, `#beatStateText`, `#hintChips`, `#typeInput` (**typing mode only**), `#btnPrev`, `#btnPlayPause`, `#btnNext`, `#btnRepeat`, `#btnHint`, `#btnModeSwitch`, `#btnFinish`
+- **Tabs:** `#tab-home`, `#tab-player`, `#tab-practice`, `#tab-dict`, `#tab-settings`, `#tab-studio` (rail twins: `#rail-*`)
+- **Screens:** `#screen-home`, `#screen-player`, `#screen-practice`, `#screen-dict`, `#screen-settings`, `#screen-studio`
+- **Home:** `#homeHero`, `#homeTitle`, `#homeSub`, `#btnStart`, `#btnGuide`, `#homeStatsRow`, `#homeQuickPractice`, `#homeAnn`, `#homeWordsPreview`, `#resumeBanner`, `#btnResumeWord`, `#btnStartOver`, `.cue[data-cue="home"]`, `#creditFoot`
+- **Cockpit:** `#sessionProgressStrip`, `#sessionPills` (30 `.word-pill`), `#sessionProgressCount`, `#playerRepeatBadge`, `#playerPresetBadge`, `#cockpitBar`, `#sessionTitle`, `#wordPosBadge`, `#cockpitProgress`, `#beatRing`, `#beatBar`, `#beatSeconds`, `#beatStage`, `#beatStateText`, `#playerPausedBanner`, `#hintChips`, `#typeInput` (**typing mode only**), `#btnPrev`, `#btnPlayPause`, `#btnReplay`, `#btnNext`, `#btnRepeat`, `#btnHint`, `#btnModeSwitch`, `#btnFinish`
 - **Results:** `#resultsPanel`, `#resultsTable`, `#scoreValue`, `#scorePct`, `#btnMarkAll`, `#btnToggleMissed`, `#btnRetryMissed`, `#btnNewSession`
-- **Guide:** `#guideModal`, `#guideSteps`, `#guideLangPill`, `#guideSpeak`, `#btnGuideClose`
-- **Words:** `#dictSearch`, `#dictFilterRow`, `#dictList`
+- **Guide:** `#guideModal`, `#guideSteps` (4 `.guide-step` cards, each with a `.guide-mock`), `#btnGuideSkipStart`, `#guideLangPill`, `#guideSpeak`, `#btnGuideClose`
+- **Words:** `#dictSearch`, `#dictFilterRow`, `#dictList` (30 `.dict-card`, `#01..#30`, each with `[data-play-word]`, `[data-mark-word="mastered"]`, `[data-mark-word="weak"]`), `#dictEmpty`
 - **Practice:** `#pracMode`, `#pracStage`, `#pracWeakOnly`
-- **Settings:** `#settingsSections`, `#studioAccordion`, `#studioBody`
+- **Settings (student-only):** `#settingsSections`, `#aboutCard`, `#aboutVersion`, `#settingsLecturerBanner`, `#btnOpenStudioFromSettings`
+- **Studio (6th screen, PIN-only body):** `#studioAccordion`, `#studioBody`, `#studioGate`, `#studioPin`, `#pinDots`, `#pinPad`, `#pinPadBack`, `#studioSyncDock`, `#lecturerSyncBar`, `#btnSyncClassSettings`, `#lecturerSyncLast`, `#studioSyncSlot`, `#studioCardKeys`, `#studioCardWords`, `#studioCardSettings`, `#studioPackDashboard`, `#studioGenProgress`, `#btnRetryFailedClip`, `#btnSaveKeys`, `#btnOneClickMasterSetup`, `#studioMasterSteps`, `#studioWordManager`, `#btnLockStudio`
 - **Toast:** `#sdpDataToast`
 
 ### Retired ids and strings (must never reappear)
@@ -113,7 +114,7 @@ retired feature is deleted, never hidden with `display:none`.
 ```
 
 `SDP.Views.showTab(name)` is the only function allowed to add/remove `.active`.
-It also sets `aria-selected` on the five bottom tabs and the five rail buttons.
+It also sets `aria-selected` on the six bottom tabs and the six rail buttons.
 
 | Tab | Screen | Rendered by |
 | --- | --- | --- |
@@ -121,7 +122,8 @@ It also sets `aria-selected` on the five bottom tabs and the five rail buttons.
 | `player` | `#screen-player` | `Views.startDictation()` → `Engine.start()` |
 | `practice` | `#screen-practice` | `Views.renderPractice()` |
 | `dict` | `#screen-dict` | `Views.renderWords()` (30 cards immediately) |
-| `settings` | `#screen-settings` | `Views.renderSettings()` |
+| `settings` | `#screen-settings` | `Views.renderSettings()` (student-only + `#settingsLecturerBanner`) |
+| `studio` | `#screen-studio` | `Views.showTab('studio')` → `SDP.Studio.mount()` + `paintQuickButton()` (gate when locked) |
 
 Responsive navigation: `< 1024px` → bottom `#tabbar` (60px); `>= 1024px` →
 232px `#sdpSideRail`. Both are in the DOM at all times; CSS decides which one is
@@ -402,9 +404,11 @@ ver 6 · schema 6 · settingsRev 6 · `SDP.version` `0.0.1.f` · release `syncRe
 
 ### §H3.2 Locked vs unlocked Studio
 
-Locked: `#studioPin` (`maxlength="12" minlength="4"`), `#pinDots`
-(`min(12, max(8, len))` dots, `data-dots`), the 12-key `#pinPad`, `#pinPadBack`, the
-status line and the lecturer hint — nothing else. Unlocked: `#studioCardKeys`,
+Locked (the whole studio is its own screen, `#screen-studio`): `#studioPin`
+(`maxlength="12" minlength="4"`), `#pinDots` (`min(12, max(8, len))` dots, `data-dots`),
+the 12-key `#pinPad`, `#pinPadBack`, the status line and the lecturer hint — nothing else.
+`#lecturerSyncBar` stays in `#studioSyncDock`; `#studioAccordion`/`#studioBody` never
+contain a card while locked. Unlocked: `#studioCardKeys`,
 `#studioCardWords`, `#studioCardSettings`, `#btnLockStudio`, `#studioMasterSteps`
 (4 × `li[data-state]`), `#studioAiProvider`, `#studioAiKey`, `#studioWordManager`
 (30 rows × 6 editable cells), `#btnEnrichWords`, `#btnPublishWords`,
@@ -419,8 +423,8 @@ locked or token-less studio commits nothing.
 
 ### §H3.4 Docs budget used at release
 
-Caps only (the bytes move every release; the v0.0.1.i measurements are §H5.6):
-`CHANGELOG_LEDGER.md` ≤ 52,000 · every other doc ≤ 48,000 · this template file ≤ 24,000.
+Caps only (the bytes move every release; the v0.0.2.a measurements are §H6.4):
+`CHANGELOG_LEDGER.md` ≤ 52,000 · every other doc ≤ 52,000 · this template file ≤ 26,000.
 G1 and G9.2c both enforce them, so a doc that grows past its cap fails the release the
 same way an oversized module does.
 
@@ -571,7 +575,7 @@ G1 89/0 · G2 12/0 · G3 81/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 3
 G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 597 assertions, 0 FAIL
 (`cd tests && npm run gates`).
 
-### §H5.6 Bytes measured on the five living docs (`wc -c`)
+### §H5.6 Bytes measured on the five living docs at v0.0.1.i (`wc -c`)
 
 | Doc | Bytes | Cap |
 | --- | --- | --- |
@@ -584,3 +588,81 @@ G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 597 assertions, 0 FAIL
 The changelog is the only doc near its cap; the old duplicate block in its P7 section
 and the duplicated P6b/P7 gate tables were folded into one line each to make room for
 the v0.0.1.i register rather than raising the cap.
+
+---
+
+## §H6 — v0.0.2.a release tree, budgets and module deltas (2026-11-02)
+
+Pointer: `appVersion/version '0.0.2.a'` · `ver 10` · `schema 10` · `settingsRev 16` ·
+`syncRev 1793615000000` · `SW_VERSION 'sdp-v0.0.2.a'` / `SHELL_CACHE 'sdp-v0.0.2.a-shell'` ·
+`TARGET '0.0.2.a'`. `tests/check.cjs` (G1 `BUDGET`) and `tests/audit-v42.cjs` §G9.2 carry the
+same ceilings; a ceiling that exists in only one of them fails the release.
+
+### §H6.1 Bytes measured on the release tree (`wc -c`, this checkout)
+
+| File | Bytes | Ceiling |
+| --- | --- | --- |
+| `index.html` | 33,381 | 38,000 |
+| `assets/css/sdp-ui.css` | 59,197 | 68,000 |
+| `data/sdp-data-sync.js` | 84,004 | 86,000 |
+| `data/sdp-audio-speech.js` | 38,831 | 52,000 |
+| `data/sdp-dictation-engine.js` | 47,685 | 62,000 |
+| `data/sdp-ui-views.js` | 135,328 | 136,000 |
+| `data/studio.js` | 122,792 | 126,000 |
+| `data/data-meter.js` | 22,845 | 24,000 |
+| `data/session.json` | 57,381 (exact, SHA `c96dbe6d…`) | 57,381 |
+| `data/config.json` | 35,477 | 36,000 |
+| `data/version.json` | 369 | 2,000 |
+| `data/elevenlabs-audio.json` | 747 | 2,500,000 |
+| `data.html` = `data/index.html` | 27,967 each | 34,000 |
+| `sw.js` | 10,759 | 13,000 |
+| `manifest.webmanifest` | 2,029 | 4,000 |
+
+### §H6.2 Module ownership of the v0.0.2.a register
+
+* **`index.html` (Shell).** sixth `#screen-studio` (`#studioSyncDock`, `#lecturerSyncBar`,
+  `#studioAccordion`, `#studioBody`), `#settingsLecturerBanner` in Settings, 30-pill
+  `#sessionProgressStrip`, 4-button `.cockpit-transport`, `#resumeBanner`, `.cue` on the Home
+  CTA, `TARGET = '0.0.2.a'`.
+* **`assets/css/sdp-ui.css` (Style).** the tactile tokens (`--btn-h`, `--shadow-btn`,
+  `--grad-primary`, `--grad-go`, `--cue-bg`), `.btn/.btn-sm/.btn-ghost/.btn-transport`,
+  `.cue`, `.progress-strip`/`.word-pill.done|current|todo`, `.dict-card[data-state]`,
+  `.resume-card`, `.guide-steps/.guide-step/.guide-mock`, the studio card + gate block.
+  No runtime `<style>`, ever (W3).
+* **`data/sdp-ui-views.js` (Views).** `STRINGS_EN`/`STRINGS_SI` (every new string in both),
+  6-tab router, `pad2()`, ordered `#01..#30` sheet + `markDictWord()`, Guide 3.0
+  (`guideMockMarkup()`, `.active-step`, footer `▶ Start Dictation Now`), `paintCues()` /
+  `markCueSeen()` (`sdp.settings.cuesSeen`), `paintHomeWordsPreview()`,
+  `paintLecturerBanner()`, `startOver()`, `#aboutVersion`.
+* **`data/sdp-dictation-engine.js` (Engine).** `paintProgressStrip()` (30 pill buttons, click
+  jumps, `#sessionProgressCount`, `⏮ Prev (#k)`/`⏭ Next (#k)`, `#btnReplay`,
+  `#playerPresetBadge`), verbatim phase sentences, `⏸ Pause Dictation` / `▶ Resume Word #k` /
+  `▶ Start Dictation`, one `paint()` path that repaints the strip and the badges every tick.
+* **`data/studio.js` (Studio).** `clipCount()`/`packDashboardText()` (`#studioPackDashboard`
+  X/34), `genProgressText()`/`paintGenProgress()` (`#studioGenProgress`), `queueFor(words,
+  singleTest, keys)` for delta retry, `paintRetryRow()` (`#btnRetryFailedClip` hidden until a
+  real failure), `lecturerBarNode()`/`stashLecturerBar()`/`placeLecturerBar()` (ONE bar, dock
+  → slot), `paintQuickButton()` (`Lecturer Admin Locked/Unlocked`).
+* **`data/sdp-data-sync.js` (Data).** `cuesSeen` lives inside `sdp.settings` and is healed on
+  read; the five localStorage keys are unchanged.
+
+### §H6.3 What a release must never move
+
+`config.encVault` (`SDP_ENC_V2:…`, 487 chars) and `config.pinVerifier` (`VlIxxCOF1…`, PIN
+`78987898`) are never rewritten; `data/session.json` (57,381 B), `data/gas-source.txt`
+(13,764 B) and both Sinhala fonts stay byte-identical; the five localStorage keys stay five;
+strict ES5 with no build step; `/v1/text-to-speech` only from a human click inside
+`data/studio.js`; `version.json` commits last, off one monotonic `syncRev`.
+
+### §H6.4 Gate results and doc bytes on this tree
+
+G1 109/0 · G2 12/0 · G3 100/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 ·
+G10 26/0 · G11 74/0 · G12 94/0 — 636 assertions, 0 FAIL (`cd tests && npm run gates`).
+
+| Doc | Bytes | Cap |
+| --- | --- | --- |
+| `docs/ARCHITECTURE_MAP.md` | 36,991 | 52,000 |
+| `docs/CHANGELOG_LEDGER.md` | 51,966 | 52,000 |
+| `docs/SYNC_AND_DATA_CONTRACT.md` | 32,323 | 52,000 |
+| `docs/UI_COMPONENT_GUIDE.md` | 31,180 | 52,000 |
+| `docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md` | 23,070 | 26,000 |

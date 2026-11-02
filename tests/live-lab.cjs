@@ -305,20 +305,22 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         SDP.Data.saveSettings({ writeSecs: 12, repeats: 4, mode: 'paper', pauseSecs: 2 });
         SDP.Views.renderSettings();
       });
-      await pageA.click('#tab-settings');
-      await pageA.waitForTimeout(200);
+      await pageA.click('#tab-studio');
+      await pageA.waitForTimeout(250);
       const barVisible = await pageA.evaluate(() => {
         const bar = document.getElementById('lecturerSyncBar');
         return {
           hidden: bar.hidden,
           height: bar.getBoundingClientRect().height,
+          inStudio: !!document.getElementById('screen-studio').contains(bar),
           label: document.getElementById('btnSyncClassSettings').textContent,
           last: document.getElementById('lecturerSyncLast').textContent
         };
       });
-      check('G8.6b the lecturer-only sync bar is visible and labelled',
+      check('G8.6b the lecturer-only sync bar is visible and labelled inside #screen-studio',
         barVisible.hidden === false && barVisible.height > 0 &&
-        /Save & Sync Current Settings to All Classroom Devices/.test(barVisible.label),
+        /Broadcast Current Pacing & Settings/.test(barVisible.label) &&
+        barVisible.inStudio === true,
         JSON.stringify(barVisible));
       await pageA.click('#btnSyncClassSettings');
       for (let i = 0; i < 60 && !remote.files['data/version.json']; i++) await pageA.waitForTimeout(100);

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* G12 — Lecturer Studio: real DOM widgets, zero-credit quota, delta clips (P3/P4).
- * v0.0.1.i adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
+ * v0.0.2.a adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
  * contract: docs/UI_COMPONENT_GUIDE.md §5 studio widgets
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §W5 CREDIT SAFETY
  * CREDIT SAFETY: this gate never calls /v1/text-to-speech. The only network
@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.i'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.2.a'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -97,8 +97,9 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
-    check('G12.3a the cost preview names words, guide steps and the total',
-      /30 words = 241 chars/.test(line) && /4 guide steps = 731 chars/.test(line) && /total 972 chars/.test(line), line);
+    check('G12.3a the cost preview names words, guide steps, the total and 34 clips',
+      /30 words = 241 chars/.test(line) && /4 guide steps = 829 chars/.test(line) &&
+      /total 1070 chars/.test(line) && /34 clips \(30 words \+ 4 guide steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
     check('G12.3d the delta generator exists and is the primary action',
@@ -170,7 +171,7 @@ async function unlockStudio(app) {
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
       'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
-      /* v0.0.1.i studio surface */
+      /* v0.0.2.a studio surface */
       'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
       'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
       'studioAiKey', 'studioAiNoKey', 'studioPublishWordsVoice', 'studioLock',
@@ -190,7 +191,7 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 7. v0.0.1.i: three cards, the one-click setup, the PIN and the dots ─ */
+  /* ── 7. v0.0.2.a: three cards, the one-click setup, the PIN and the dots ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio cards · §R4 PIN · §R5 lock
   {
     const app = await createApp(base);
@@ -309,7 +310,7 @@ async function unlockStudio(app) {
     offlineApp.close();
   }
 
-  /* ── 9. v0.0.1.i: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
+  /* ── 9. v0.0.2.a: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio Card 1 · §R8 free ladder
   {
     const app = await createApp(base);
@@ -369,13 +370,15 @@ async function unlockStudio(app) {
     const barButtons = bar ? Array.from(bar.querySelectorAll('button')).map((b) => b.id) : [];
     check('G12.9m the primary bar is exactly two buttons',
       JSON.stringify(barButtons) === JSON.stringify(['btnSaveKeys', 'btnOneClickMasterSetup']), barButtons.join(','));
-    check('G12.9n #btnSaveKeys carries the verbatim Step 1 label',
+    check('G12.9n #btnSaveKeys is the secondary vault-only action',
       app.byId('btnSaveKeys').textContent === app.SDP.STRINGS_EN.studioSave &&
-      /^Step 1: Save Keys Permanently \(Local Vault \+ GitHub Sync\)$/.test(app.byId('btnSaveKeys').textContent),
+      /^💾 Save Keys to Vault Only$/.test(app.byId('btnSaveKeys').textContent) &&
+      /btn-ghost/.test(app.byId('btnSaveKeys').className),
       app.byId('btnSaveKeys').textContent);
-    check('G12.9o #btnOneClickMasterSetup carries the verbatim Step 2 label',
+    check('G12.9o #btnOneClickMasterSetup is the primary 34-clip CTA',
       app.byId('btnOneClickMasterSetup').textContent === app.SDP.STRINGS_EN.studioOneClick &&
-      /^Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent),
+      /^🚀 Generate 34 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
+      app.byId('btnOneClickMasterSetup').getAttribute('data-primary-cta') === '1',
       app.byId('btnOneClickMasterSetup').textContent);
     check('G12.9p the legacy quota buttons stay in the DOM but hidden',
       !!app.byId('btnCheckQuota') && !!app.byId('btnRefreshQuota') &&
@@ -406,9 +409,9 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 13. v0.0.1.i: per-field secrets (D1/D9), the lecturer bar (D19)
+  /* ── 13. v0.0.2.a: per-field secrets (D1/D9), the lecturer bar (D19)
    *        and the busy flags on a failure exit (D18) ────────────────────── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.1.i · docs/UI_COMPONENT_GUIDE.md §11
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.2.a · docs/UI_COMPONENT_GUIDE.md §11
   {
     const app = await createApp(base);
     await unlockStudio(app);

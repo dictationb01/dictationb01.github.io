@@ -1,3 +1,53 @@
+## v0.0.2.a — 2026-11-02 — Tactile Classroom UI, Dedicated Studio, 34-Clip Pack & Honest Cockpit
+
+**Release type:** major UI/UX + functional overhaul over v0.0.1.i (P0–P6, defects D1–D20).
+**Stamp:** `appVersion/version '0.0.2.a'` · `ver 10` · `schema 10` · `settingsRev 16` · `syncRev 1793615000000` · `SW_VERSION 'sdp-v0.0.2.a'` / `SHELL_CACHE 'sdp-v0.0.2.a-shell'` · `TARGET='0.0.2.a'`.
+
+### The five release blockers, and their fixes
+
+| # | Blocker the Creator reported | Fix |
+| --- | --- | --- |
+| B1 | Buttons looked like flat text on a projector; nobody could see where to tap | 54 px tactile system: `--btn-h`, `--shadow-btn`, `--grad-primary`, `--grad-go`, 2 px press collapse, `.btn-sm` 48 px, amber `.cue` callouts on each screen's primary CTA (`assets/css/sdp-ui.css`) |
+| B2 | The lecturer's studio hid **inside** student Settings — students saw PIN plumbing, the lecturer scrolled past student options | sixth screen `#screen-studio` + `#tab-studio` + `#rail-studio`; Settings is student-only and carries one `#settingsLecturerBanner` button into the studio (`index.html`, `data/sdp-ui-views.js`) |
+| B3 | Generating the 34 voice clips was a hunt through five buttons with no progress or cost | `#studioPackDashboard` (X/34 live), `#studioGenProgress` (verbatim `Generating clip n/N · key · chars used`), one primary CTA `#btnOneClickMasterSetup`, delta-only `queueFor()` retry that never re-bills a saved clip |
+| B4 | The cockpit was unreadable from the back of the room and the student could not see the session as a map | 30-pill `#sessionProgressStrip`, 4-button transport (`⏮ Prev (#k)`, `⏸ Pause Dictation`/`▶ Resume Word #k`, `🔊 Replay Word`, `⏭ Next (#k)`), verbatim phase sentences, giant `#resumeBanner`, ordered `#01..#30` word sheet with per-word self-check |
+| B5 | The guide read like a manual and never showed the control it described | Guide 3.0: four voice-transition cards, each with an animated preview of the real button (`guideMockMarkup`, `.active-step`, `sdpRing`), footer CTA `▶ Start Dictation Now` |
+
+### Added
+
+| Surface | Contract |
+| --- | --- |
+| `#screen-studio` | 6th screen and 6th tab; three numbered cards (`#studioCardKeys`, `#studioCardWords`, `#studioCardSettings`) mount into `#studioBody`; `#studioGate` when locked |
+| Locked studio | strictly PIN-only: 12-dot `#pinDots`, 8 visible digits max, 56 px 12-key `#pinPad`; `#studioAccordion`/`#studioBody` never render cards while locked |
+| `#lecturerSyncBar` | ONE node, always in the DOM: `#studioSyncDock` while locked, `#studioSyncSlot` inside Card 3 once unlocked |
+| 34-clip arithmetic | 30 words + 4 guide steps = 34; `costPreviewLine()` states it; `queueFor()` builds it |
+| Cockpit | `#sessionPills` paints 30 pills at boot (done / current / todo), pill click jumps, `#sessionProgressCount` reads `Word #NN of 30` |
+| Word sheet | strict class order `#01..#30`, Listen button, IPA + POS, Sinhala/English/example on separate lines, `✓ Correct` / `✗ Needs Practice` → `sdp.progress.mastered` + `weakWords` |
+| Cues | `sdp.settings.cuesSeen` (inside the settings object, never a sixth key) retires a `.cue` once its screen is used |
+| Strings | every new string ships in **both** `STRINGS_EN` and `STRINGS_SI` (R10) |
+| Version pill | `#aboutVersion`, `#sdpVerPill`, `data/version.json`, `data/config.json`, `sw.js`, `manifest.webmanifest`, `data.html` = `data/index.html` all read `0.0.2.a` |
+
+### Preserved, byte for byte
+
+| File | Bytes | SHA-256 (first 16) |
+| --- | --- | --- |
+| `data/session.json` | 57,381 | `c96dbe6de02d7d6d` |
+| `data/gas-source.txt` | 13,764 | `591b9b086f6d3723` |
+| `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e754139` |
+| `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a88a0` |
+
+`config.encVault` (`SDP_ENC_V2:…`, 487 chars) and `config.pinVerifier` (`VlIxxCOF1…`, PIN `78987898`) survived every JSON rewrite; PBKDF2 250,000, five localStorage keys, strict ES5, no build step, no runtime `<style>`, and both credit lines unchanged.
+
+### Gate results (`cd tests && npm run gates`)
+
+G1 109/0 · G2 12/0 · G3 100/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 636 assertions, 0 FAIL.
+
+### Bytes (`wc -c`)
+
+`index.html` 33,381/38,000 · `sdp-ui.css` 59,197/68,000 · `sdp-data-sync.js` 84,004/86,000 · `sdp-audio-speech.js` 38,831/52,000 · `sdp-dictation-engine.js` 47,685/62,000 · `sdp-ui-views.js` 135,328/136,000 · `studio.js` 122,792/126,000 · `data-meter.js` 22,845/24,000 · `data.html` = `data/index.html` 27,967/34,000 · `sw.js` 10,759/13,000 · `config.json` 35,477/36,000 · `version.json` 369/2,000.
+
+---
+
 ## v0.0.1.i — 2026-11-02 — Per-Field Secrets, Honest Publish Errors & One Live Screen
 
 **Release type:** defect-fix release over v0.0.1.h (twenty defects D1–D20).
@@ -66,25 +116,11 @@ index.html 30,223/36,000 · sdp-ui.css 45,402/60,000 · sdp-data-sync.js 83,666/
 | D19 | Duplicate Studio heading | Removed inner h4; kept accordion summary as single heading |
 | D20 | settingsRev drift (9 vs 8) | Aligned to 8; nextSettingsRev = Math.max(8, current+1) |
 
-### Gate results
-- G1 check.cjs: 88 PASS / 0 FAIL
-- G2 upgrade.test.cjs: 12 PASS / 0 FAIL
-- G4 server.cjs: all PASS / 0 FAIL
-- G6 upgrade-browser.cjs: 15 PASS / 0 FAIL
-- G7 e2e.cjs: 52 PASS / 0 FAIL
-- G8 live-lab.cjs: 39 PASS / 0 FAIL
-- G9 audit-v42.cjs: 47 PASS / 0 FAIL
-- G10 voice-guide.cjs: 26 PASS / 0 FAIL
-- G11 vault-sync.cjs: 74 PASS / 0 FAIL
-- G12 studio-safety.cjs: 78 PASS / 0 FAIL
+### Gate results & bytes (v0.0.1.h)
 
-### Byte counts
-- index.html: 30,170 B / 36,000 budget
-- sdp-ui.css: 45,066 B / 60,000 budget
-- sdp-data-sync.js: 79,178 B / 82,000 budget
-- sdp-ui-views.js: 119,893 B / 125,000 budget
-- studio.js: 111,993 B / 112,000 budget
-- data.html == data/index.html: 27,905 B / 32,000 budget
+G1 88/0 · G2 12/0 · G4 all · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 · G10 26/0 · G11 74/0 · G12 78/0.
+`index.html` 30,170/36,000 · `sdp-ui.css` 45,066/60,000 · `sdp-data-sync.js` 79,178/82,000 ·
+`sdp-ui-views.js` 119,893/125,000 · `studio.js` 111,993/112,000 · `/data` 27,905/32,000.
 
 ---
 
@@ -181,12 +217,8 @@ Forty-two verified defects (D-V1–D-V6, D-G1–D-G5, D-S1–D-S12, D-C1–D-C7,
 
 ### Preserved, byte for byte (Appendix A lock)
 
-| File | Bytes | SHA-256 (first 12) |
-| --- | --- | --- |
-| `data/session.json` | 46,403 | `e0e86c807fc6` |
-| `data/gas-source.txt` | 13,764 | `591b9b086f6d` |
-| `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e75` |
-| `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a` |
+Same four hashes as v0.0.1.a (see above): `session.json` `e0e86c807fc6`, `gas-source.txt`
+`591b9b086f6d`, both Sinhala `.woff2` files `23f1503e1e75` / `bf59c1487b0a`.
 
 `data/elevenlabs-audio.json` left the frozen table in this release: the studio now writes it on every publish, so it is budgeted at ≤ 2,500,000 B and its release header is asserted instead of being hash-frozen (D-UI11). It still contains zero rendered clips in the repository, so publishing costs nothing until a lecturer presses a generate button.
 
@@ -290,62 +322,38 @@ Released under: `Release Smart Dictation Player v0.0.1.b (Defect Fixes & Classro
 
 ## v0.0.1.a — 2026-11-01 — Clean-Slate Reset & Student-First Rebuild
 
-**Release type:** full rebuild (not a patch).
-**Audience:** CCBE Galle Branch — B1 English Class.
-**Attribution:** Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana ·
-Concept: Ayya01 (Lesandu).
+**Release type:** full rebuild. **Audience:** CCBE Galle Branch — B1 English.
+**Attribution:** Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu).
 
 ### What this release is
 
-The v1–v60 single-file application (a 485 KB `index.html` plus a 365 KB minified
-`data/app-core.js` in the abandoned rebuild branch) was retired. v0.0.1.a is a
-clean, unminified, strictly ES5 six-module application whose classroom data,
-fonts and backend contracts are byte-identical to the previous release.
+The v1–v60 single-file app (485 KB `index.html` + a 365 KB minified `data/app-core.js`)
+was retired. v0.0.1.a is a clean, unminified, strictly ES5 six-module application whose
+classroom data, fonts and backend contracts stayed byte-identical.
 
 ### Preserved, byte for byte (Appendix A lock)
 
-| File | Bytes | SHA-256 (first 12) |
-| --- | --- | --- |
-| `data/session.json` | 46,403 | `e0e86c807fc6` |
-| `data/gas-source.txt` | 13,764 | `591b9b086f6d` |
-| `data/elevenlabs-audio.json` | 920 | `153111d6ace4` |
-| `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e75` |
-| `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a` |
-
-Verified with `shasum -a 256 -c /tmp/sdp-preserve.sha256` at the end of P0, P1,
-P2, P3, P4, P5 and P6 — all `OK`.
+`session.json` 46,403 `e0e86c807fc6` · `gas-source.txt` 13,764 `591b9b086f6d` ·
+`elevenlabs-audio.json` 920 `153111d6ace4` · `NotoSansSinhala-Regular.woff2` 48,520
+`23f1503e1e75` · `NotoSansSinhala-Bold.woff2` 48,748 `bf59c1487b0a`. Verified with
+`shasum -a 256 -c` at the end of P0–P6 — all `OK`.
 
 ### Deleted
 
-- Legacy application: `index.html` (485,175 B), `data.html` (59,845 B),
-  `data/index.html`, `data/studio.js` (106,144 B), `sw.js` (7,100 B),
-  `data/learning-tools.js`, `data/media-manifest.json`.
-- 12.9 MB of video wallpapers and posters: three `.mp4` files and three
-  `-poster.webp` files.
-- Six 11-byte fake `assets/audio/guide-si-*.mp3` stubs.
-- `scripts/` (23 build/patch scripts), `qa/` (automated results),
-  `CHANGELOG.md` (146,743 B), `PHASE1_QA.md`, `QA_REPORT.md`.
-- Retired test drivers `tests/v50-browser.cjs` and `tests/profile.cjs`.
-- Every retired v42–v60 feature: video wallpapers, focus dimmer, top-bar rupee
-  badge, data sheet, ready sheet, community tab, Material Mixer. Deleted, never
-  hidden — G1 greps the shipped bytes and G5 greps the live DOM.
+Legacy application (`index.html` 485,175 B, `data.html`, `data/studio.js`, `sw.js`,
+`data/learning-tools.js`, `data/media-manifest.json`), 12.9 MB of video wallpapers and
+posters, six fake `guide-si-*.mp3` stubs, `scripts/` (23 build scripts), `qa/`,
+`CHANGELOG.md` (146,743 B), `PHASE1_QA.md`, `QA_REPORT.md`, and every retired v42–v60
+feature (video wallpapers, focus dimmer, rupee badge, data/ready sheets, community tab,
+Material Mixer). Deleted, never hidden — G1 greps the shipped bytes, G5 the live DOM.
 
-### Added
+### Added (v0.0.1.a sizes at release)
 
-| File | Bytes | Budget | Role |
-| --- | --- | --- | --- |
-| `index.html` | 20,270 | 35,000 | 54px flat header, 5 screens, guide, toast, boot check |
-| `assets/css/sdp-ui.css` | 26,047 | 60,000 | Zinc + Sky flat-matte system |
-| `data/sdp-data-sync.js` | 38,705 | 48,000 | `SDP.Data`, `SDP.Sync`, `SDP.Sync.Vault` |
-| `data/sdp-audio-speech.js` | 12,034 | 40,000 | 4-tier audio chain, utterance normaliser |
-| `data/sdp-dictation-engine.js` | 26,254 | 48,000 | Beat machine, Paper/Typing, 30-row self-check |
-| `data/sdp-ui-views.js` | 52,360 | 56,000 | EN/SI strings, router, Home/Words/Practice/Settings |
-| `data/studio.js` | 22,910 | 60,000 | PIN vault, editor, recorder, ElevenLabs, publish |
-| `data/version.json` | 289 | 2,000 | Slim H3 pointer schema |
-| `data.html` = `data/index.html` | 23,854 + 23,854 | 60,000 each | `/data` transparency routes (byte identical) |
-| `sw.js` | 5,090 | 12,000 | `sdp-v0.0.1.a` network-first service worker |
-| `manifest.webmanifest` | 2,030 | 4,000 | PWA manifest pinned to `0.0.1.a` |
-| `docs/*.md` (5 files) | 5 files | 20,000 each | This living ledger |
+`index.html` 20,270 · `sdp-ui.css` 26,047 · `sdp-data-sync.js` 38,705 ·
+`sdp-audio-speech.js` 12,034 · `sdp-dictation-engine.js` 26,254 ·
+`sdp-ui-views.js` 52,360 · `studio.js` 22,910 · `data/version.json` 289 ·
+`data.html` = `data/index.html` 23,854 each · `sw.js` 5,090 ·
+`manifest.webmanifest` 2,030. Six modules, one stylesheet, no build step.
 
 Hand-loaded first paint is **≈ 118 KB** including the two Sinhala fonts; the
 repeat visit is served from `sdp-v0.0.1.a-shell` and costs ≈ 0 KB.
@@ -413,57 +421,16 @@ repeat visit is served from `sdp-v0.0.1.a-shell` and costs ≈ 0 KB.
 
 ---
 
-## P6b — the nine gates rebased onto 0.0.1.a (gate-align)
+## Gate archaeology — P6b, P7 and the v0.0.1.a release verification
 
-All nine gates were rewritten onto the new app in that commit, ending the v60 era
-(`G1` 55 assertions, `G2` 10, `G3` 61, `G4` 8/8, `G5` 44, `G6` 15, `G7` 48, `G8` 26,
-`G9` 46 — every one 0 FAIL; the v60 columns they replaced were 61/9-FAIL, an inline
-QUnit shim, a jsdom v50 shell, v58 metadata, axe + v50 layout, a v60→v60 cache walk,
-a 21-step v58 playthrough, a live-relay soak and the v42 retirement audit).
-
-Two shared helpers were added so the gates cannot drift apart:
-`tests/static-server.cjs` (one HTTP server with per-test overrides) and
-`tests/app-harness.cjs` (jsdom + fake timers + WebCrypto + deterministic fetch).
-
-Defects the new gates surfaced — all fixed in the app, never asserted around:
-
-1. **UTF-8 chunk accounting.** `Sync.publishWordsChunked` measured the Apps
-   Script 40 KB cell limit in UTF-16 characters, so a Sinhala-heavy chunk
-   encoded to 50,279 bytes. It now measures `utf8Encode(line).length`.
-2. **A sixth localStorage write.** The store capability probe wrote
-   `__sdp_probe__`, breaking the five-key promise (R4). Detection is now
-   shape-only; the app writes nothing until it has a real value.
-3. **Dishonest accuracy after self-check.** Flipping a row to *missed* changed
-   `lastScore` but left the lifetime counters at 30/30, so Home claimed 100%
-   after a 24/30 session. Attempts now move by an exact delta.
-4. **No About block.** The mandated attribution existed only on Home. Settings
-   gained a fifth card (`#aboutCard`, studio stays the sixth and last) that
-   repeats the exact credit line plus the pill.
-5. **A missing Enter key.** Typing mode only advanced when the writing window
-   expired. `Enter` now submits the typed word and advances.
-6. **A self-linking `/data` back button.** `href=\"./\"` resolved to `/data/` on
-   the directory route; it now points at `../index.html`.
-7. **A lying empty state.** With no session payload the hero still promised
-   "30 B1 words" and Start opened an empty cockpit. The bank note, the disabled
-   Start button and the `—` denominator say what is actually true.
-
----
-
-## P7 — the nine gates rebased onto 0.0.1.b (gate-align)
-
-Every constant was rebased to ver 2 / `0.0.1.b` in one pass: `G1` 71 assertions,
-`G2` 10, `G3` 61 (`sdp.guide_seen` stamped `0.0.1.b`), `G4` 8/8, `G5` 44 (storage audit
-expects 12 honest keys), `G6` 15 (`sdp-v0.0.1.b-shell` precache + one reload), `G7` 48,
-`G8` 26, `G9` 46 (hashes re-pinned for the re-issued voice pack) — all 0 FAIL.
-
----
-
-## Release verification (filled by the release commit)
-
-`shasum -a 256 -c /tmp/sdp-preserve.sha256` → 5 × OK. Nine gates: G1 71/0, G2 10/0,
-G3 61/0, G4 8/0, G5 44/0, G6 15/0, G7 48/0, G8 26/0, G9 46/0 — 329 assertions, 0 FAIL.
-Chromium gates ran on real Chromium 138 over `http://127.0.0.1` with every non-local host
-aborted and media mocked. Released as `Release Smart Dictation Player v0.0.1.a (Clean-Slate Rebuild)`.
+The nine gates were first rebased onto 0.0.1.a, then onto 0.0.1.b in one pass, and again
+at every release since; the per-release counts live in each entry above. Two shared helpers
+keep them honest — `tests/static-server.cjs` (one HTTP server with per-test overrides) and
+`tests/app-harness.cjs` (jsdom + fake timers + WebCrypto + deterministic fetch). That
+re-baseline surfaced seven real defects (UTF-8 chunk accounting, a sixth localStorage probe
+key, dishonest accuracy after self-check, a missing About block, a dead Enter key, a
+self-linking `/data` back button and a lying empty state) — all fixed in the app, never
+asserted around.
 
 ---
 

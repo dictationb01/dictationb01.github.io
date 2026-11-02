@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.i
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.2.a
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the
@@ -10,13 +10,13 @@ code is the bug.
 
 | Constant | Value | Where |
 | --- | --- | --- |
-| `APP_VERSION` / `SDP.version` | `0.0.1.i` | `index.html`, every module |
-| `ver` | `9` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
-| `schema` | `9` | same |
-| `settingsRev` | `12` | same, and `SETTINGS_REV` in `data/sdp-data-sync.js:17` |
-| `syncRev` | `1793610000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
-| `SW_VERSION` | `sdp-v0.0.1.i` | `sw.js` |
-| `SHELL_CACHE` | `sdp-v0.0.1.i-shell` | `sw.js` |
+| `APP_VERSION` / `SDP.version` | `0.0.2.a` | `index.html` (`TARGET`), every module |
+| `ver` | `10` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
+| `schema` | `10` | same |
+| `settingsRev` | `16` | same, and `SETTINGS_REV` in `data/sdp-data-sync.js:17` |
+| `syncRev` | `1793615000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
+| `SW_VERSION` | `sdp-v0.0.2.a` | `sw.js` |
+| `SHELL_CACHE` | `sdp-v0.0.2.a-shell` | `sw.js` |
 | `PRESERVE_CACHES` | `['sdp-youdao-v1', 'sdp-audio-clips']` | `sw.js` |
 
 There is exactly one version file: `data/version.json`. Never a root `/version.json`.
@@ -57,16 +57,16 @@ The watch runs `checkForUpdates` every 120,000 ms and on `visibilitychange`
 
 ```json
 {
-  "ver": 5,
-  "appVersion": "0.0.1.e",
-  "version": "0.0.1.e",
+  "ver": 10,
+  "appVersion": "0.0.2.a",
+  "version": "0.0.2.a",
   "buildDate": "2026-11-02",
-  "schema": 5,
-  "settingsRev": 5,
+  "schema": 10,
+  "settingsRev": 16,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-  "updatedAt": "2026-11-02T00:00:00Z",
-  "syncRev": 1793585000000
+  "updatedAt": "2026-11-02T09:58:11.030Z",
+  "syncRev": 1793615000000
 }
 ```
 
@@ -80,9 +80,9 @@ pointer file back in.
 | Key | Shape |
 | --- | --- |
 | `sdp.progress` | `{mastered:{}, attempts:{}, weakWords:[], streak:{count,lastDate}, history:[], lastScore:null}` |
-| `sdp.settings` | `{mode:"paper", writeSecs:8, repeats:3, pauseSecs:1.5, autoAdvance:true, voiceSource:"auto", rate:0.95, volume:1, lang:"en", theme:"dark", hints:{pos:true,first:false,si:false,sentence:false}}` |
+| `sdp.settings` | `{mode:"paper", writeSecs:5, repeats:2, pauseSecs:1.5, autoAdvance:true, voiceSource:"auto", rate:0.95, volume:1, lang:"en", theme:"dark", guideAutoPlay:true, pacingPreset:"exam", voiceLock:"unified", hints:{…}, cuesSeen:{}, appliedSettingsRev:0, defaultsResetV001f:false, vaultLock:{…}}` — **`cuesSeen` lives inside this object** (v0.0.2.a), never a sixth key |
 | `sdp.session` | `{sessionId:"8", index:0, mode:"paper", answers:{}, updatedAt:0}` — deleted on finish |
-| `sdp.guide_seen` | `"0.0.1.b"` once the student closes `#guideModal` (version stamp, not a boolean) |
+| `sdp.guide_seen` | `"0.0.2.a"` once the student closes `#guideModal` (a version stamp, so a new release re-opens it) |
 | `sdp.migrated_from_legacy` | `"1"` after the one-time import |
 
 **Corruption policy.** `Data.read()` wraps `JSON.parse` in try/catch. A corrupt
@@ -207,15 +207,15 @@ Must keep, untouched: `credits`, `tts`, `voice`, `live` (ntfy state/community/in
 `voiceId: "Xb7hH8MSUJpSbSDYk0k2"`, `voiceName: "Alice"`,
 `modelId: "eleven_flash_v2_5"`.
 
-Only `ver: 3`, `appVersion: "0.0.1.d"`, `version: "0.0.1.d"`, `schema: 3`,
-`settingsRev: 3` are ours to change.
+Only `ver: 10`, `appVersion: "0.0.2.a"`, `version: "0.0.2.a"`, `schema: 10`,
+`settingsRev: 16` are ours to change.
 
 ---
 
 ## Appendix A — Preservation locks (this release)
 
 ```
-4e80cd952fbab7cda27c4b965ef5adade079d7c74b2270add7e8ae224e861c69  data/session.json                 57,381 B
+c96dbe6de02d7d6d6a1a92ac0409d2c1745f24629b8ae8375a2a88ad10651db9  data/session.json                 57,381 B
 591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  data/gas-source.txt              13,764 B
 23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  assets/fonts/NotoSansSinhala-Regular.woff2  48,520 B
 bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  assets/fonts/NotoSansSinhala-Bold.woff2     48,748 B
@@ -547,8 +547,9 @@ the next tick because `state.deferredSession` survives the adoption (G11.14c).
 
 `publishFilesSequential()` still does fresh SHA → PUT → await → next file with
 `data/version.json` last and one `nextSyncRev() = max(Date.now(), prev+1)` across all four
-files (G11.11c–e); a locked Studio still refuses to publish at all. v0.0.1.i adds exactly
-one delayed retry and the reader-facing error text — see R14.
+files (G11.11c–e); a locked Studio still refuses to publish at all. v0.0.2.a adds no
+second clock: the studio's delta retry (`queueFor(words, singleTest, keys)`) re-bills
+nothing and re-publishes through the same single-clock path.
 
 ---
 
@@ -563,9 +564,10 @@ call would move the pointer after the bodies were built, which is how two device
 disagree about which release they had. G11 asserts the four bodies share one `syncRev`
 (G11.11c–e); G2 asserts the shipped `syncRev` is above both payload clocks.
 
-`nextSettingsRev()` stays `Math.max(schemaVer(), current + 1)` (`data/studio.js:82`), so
-`settingsRev` only ever moves forward. Shipped value: **12**; the module constant
-`SETTINGS_REV` (`data/sdp-data-sync.js:17`) is **12** to match. They were 9 and 9 while
+`nextSettingsRev()` stays `Math.max(schemaVer(), current + 1)` (`data/studio.js`), so
+`settingsRev` only ever moves forward. Shipped value in v0.0.2.a: **16**; the module
+constant `SETTINGS_REV` (`data/sdp-data-sync.js:17`) is **16** to match — they must never
+disagree, or a device re-adopts stale `classSettings` (the D10 trap). They were 9 and 9 while
 the data said 12 — that mismatch is what D10 allowed a device to "fix" by re-adopting
 stale `classSettings`.
 
@@ -625,3 +627,22 @@ A 409 keeps its own single fresh-SHA retry and does not consume the network retr
 When it does fail, each step reports its own sentence from `publishReason()`
 (`data/studio.js:1979`) — never a shared "failed" — and `clearBusy()` (`:1994`) clears
 `generating`/`publishing`/`enriching` on every exit (G12.13j, G12.13p).
+
+---
+
+## R15 — v0.0.2.a: UI state that must never become a sixth key
+
+v0.0.2.a moved a lot of pixels without moving a byte of student data.
+
+| New UI state | Where it lives | Why it is safe |
+| --- | --- | --- |
+| `cuesSeen` (which amber `.cue` the student has already acted on) | inside `sdp.settings` | a sixth localStorage key would break R8; a malformed value is healed to `{}` on read (`sdp-data-sync.js:196`) |
+| `#sessionPills` done/current/todo | DOM only | repainted from `E.items` + `E.index` on every tick; never persisted |
+| `pendingGen`, `lastFailedClip`, `genProgress` | `SDP.Studio.state` (memory) | a failed clip is retried with a fresh request, never resumed from a stale pointer |
+| `#studioPackDashboard` X/34 | computed by `clipCount()` | counts only keys that `clipExists()`; never a cached number |
+| `#resumeBanner` | `sdp.session` draft | `{index, repeatsDone, remainingMs, pausedPhase, pauseReason}` — the same draft R5 already guarantees |
+| `guide_seen` stamp | `sdp.guide_seen` | still one of the five keys; value is the release string `0.0.2.a` |
+
+The publish order is unchanged: `session.json → config.json → elevenlabs-audio.json →
+version.json`, one `syncRev` for all four, `version.json` last. A locked studio or a
+token-less studio still commits nothing.

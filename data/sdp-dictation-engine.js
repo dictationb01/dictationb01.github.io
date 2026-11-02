@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — dictation engine (v0.0.1.h)
+/*! Smart Dictation Player — dictation engine (v0.0.2.a)
  * Strict ES5, dependency free.
  * contract: docs/ARCHITECTURE_MAP.md §R2 priority #3 single integrated cockpit
  * contract: docs/ARCHITECTURE_MAP.md §R4 focus & input law
@@ -118,23 +118,68 @@
     }
     var secs = el('beatSeconds');
     if (secs) setText(secs, pad2(Math.max(0, Math.ceil(E.remainingMs / 1000))) + 's');
+    /* P4: the strip tracks the live word on every tick, done/current/todo. */
+    paintProgressStrip();
+    renderBadges();
   }
 
+  /* D12 (v0.0.2.a): the phase line spells out the student action verbatim —
+     "Listen Carefully (Repeat 1 of 2)…", "Write Word #12 in Your Book! (5s
+     countdown)" and the paused sentence with the exact word and repeat. */
   function setStateText() {
     var node = el('beatStateText');
     if (!node) return;
-    if (E.phase === 'paused') { setText(node, t('pausedBeat', 'Paused')); return; }
+    var total = Math.max(1, Number(E.repeats) || 1);
+    var rep = Math.min(total, Math.max(1, Number(E.repeatShown || E.repeatsDone || 1)));
+    if (E.phase === 'paused') {
+      setText(node, t('pausedAtWord', 'Dictation Paused at Word #') + (E.index + 1) +
+        ' (' + t('repeatWord', 'Repeat') + ' ' + rep + ' of ' + total + ')' + t('pausedResumeTail', ' — Press Resume Below'));
+      return;
+    }
     if (E.phase === 'finished') { setText(node, t('finishedBeat', 'Finished — check your answers')); return; }
     if (E.phase === 'idle') { setText(node, t('readyBeat', 'Ready')); return; }
     if (E.phase === 'listening') {
-      var rep = E.repeatShown || 1;
-      setText(node, t('listeningBeat', 'Listening') + ' · ' + t('repeatWord', 'Repeat') + ' ' + rep + ' / ' + E.repeats);
+      setText(node, t('listenCarefully', 'Listen Carefully (Repeat ') + rep + ' of ' + total + ')…');
     } else if (E.phase === 'writing') {
       var left = Math.max(0, Math.ceil(E.remainingMs / 1000));
-      setText(node, t('writeNowBeat', 'Write Now') + ' · ' + left + 's ' + t('remainingWord', 'remaining'));
+      setText(node, t('writeInBook', 'Write Word #') + (E.index + 1) +
+        t('inYourBook', ' in Your Book! (') + left + t('countdownTail', 's countdown)'));
     }
   }
 
+  /* D11 (v0.0.2.a): the 30-pill progress map. Completed words are green,
+     the live word pulses, the rest stay slate, and a completed pill replays
+     that word. The strip never invents a word count: it uses E.items.length. */
+  function paintProgressStrip() {
+    var host = byId('sessionPills');
+    var total = E.items.length || 30;
+    var i, pill;
+    if (host && host.querySelectorAll) {
+      pill = host.querySelectorAll('.word-pill');
+      if (!pill.length || pill.length !== total) {
+        var html = '';
+        for (i = 1; i <= total; i++) {
+          html += '<button type="button" class="word-pill todo" data-word-pill="' + i + '" aria-label="Word ' + i + '">' + i + '</button>';
+        }
+        host.innerHTML = html;
+        pill = host.querySelectorAll('.word-pill');
+      }
+      for (i = 0; i < pill.length; i++) {
+        var live = !!(E.items.length && !E.finished && E.phase !== 'idle');
+        var state = i < E.index ? 'done' : (i === E.index && live ? 'current' : 'todo');
+        pill[i].className = 'word-pill ' + state;
+        pill[i].setAttribute('aria-current', i === E.index ? 'true' : 'false');
+      }
+    }
+    setText(byId('sessionProgressCount'), t('progressWord', 'Word #') + pad2(E.index + 1) + t('progressOf', ' of 30'));
+    setText(byId('btnPrev'), t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')');
+    setText(byId('btnNext'), t('btnNextNum', '⏭ Next (#') + Math.min(total, E.index + 2) + ')');
+    var replay = byId('btnReplay');
+    if (replay) setText(replay, t('btnReplay', '🔊 Replay Word'));
+    var preset = byId('playerPresetBadge');
+    if (preset) setText(preset, 'Fast Exam 5s · 2×');
+    return total;
+  }
   function updateMeta() {
     var item = current();
     setText(el('cockpitProgress'), (E.index + 1) + ' / ' + (E.items.length || 30));
@@ -152,6 +197,7 @@
     }
     var title = el('sessionTitle');
     if (title && SDP.Sync && SDP.Sync.sessionTitle) setText(title, SDP.Sync.sessionTitle());
+    paintProgressStrip();
     renderBadges();
   }
 
@@ -518,9 +564,11 @@
     var btn = byId('btnPlayPause');
     if (btn) {
       if (E.phase === 'paused') {
-        btn.textContent = t('btnResumeDictation', 'Resume Dictation') + ' (Word #' + (E.index + 1) + ')';
+        btn.textContent = t('btnResumeWord', '▶ Resume Word #') + (E.index + 1);
+      } else if (E.phase === 'listening' || E.phase === 'writing') {
+        btn.textContent = t('btnPauseDictation', '⏸ Pause Dictation');
       } else {
-        btn.textContent = t('btnPlayPause', 'Listen / Pause');
+        btn.textContent = t('btnStartDictation', '▶ Start Dictation');
       }
     }
     return true;
@@ -1019,6 +1067,7 @@
       ['btnPlayPause', togglePlayPause],
       ['btnNext', goNext],
       ['btnRepeat', repeatWord],
+      ['btnReplay', repeatWord],
       ['btnHint', cycleHint],
       ['btnModeSwitch', toggleMode],
       ['btnFinish', finish],
@@ -1037,6 +1086,17 @@
           try { fn(); } catch (e) {}
         });
       })(map[i][0], map[i][1]);
+    }
+    var pills = byId('sessionPills');
+    if (pills && !pills._sdpBound) {
+      pills._sdpBound = true;
+      pills.addEventListener('click', function (ev) {
+        var target = ev && ev.target;
+        while (target && target !== pills && !(target.getAttribute && target.getAttribute('data-word-pill'))) target = target.parentNode;
+        if (!target || target === pills || !target.getAttribute) return;
+        var idx = Number(target.getAttribute('data-word-pill')) - 1;
+        if (!isNaN(idx)) jumpTo(idx);
+      });
     }
     var host = byId('hintChips');
     if (host && !host._sdpBound) {
@@ -1082,6 +1142,22 @@
     return true;
   }
   bindLifecycle();
+  /* P4: the 30-pill strip is a map of the whole session, so it paints at boot
+     and again the moment a session lands — never only after Start. */
+  function watchSession() {
+    if (!doc || typeof doc.addEventListener !== 'function') return false;
+    if (doc._sdpPillWatch) return false;
+    doc._sdpPillWatch = true;
+    doc.addEventListener('sdp:ready', function () {
+      try { paintProgressStrip(); } catch (e) {}
+      try { renderBadges(); } catch (e2) {}
+    }, false);
+    doc.addEventListener('sdp:update', function () { try { paintProgressStrip(); } catch (e) {} }, false);
+    return true;
+  }
+  watchSession();
+  try { paintProgressStrip(); } catch (e) {}
+  try { renderBadges(); } catch (e) {}
 
   var Engine = {
     start: start,
@@ -1107,6 +1183,7 @@
     loadDraft: loadDraft,
     restorePausedDraft: restorePausedDraft,
     renderBadges: renderBadges,
+    paintProgressStrip: paintProgressStrip,
     pauseReasonLabel: reasonLabel,
     bindLifecycle: bindLifecycle,
     flushDeferred: function () { try { if (SDP.Sync && SDP.Sync.flushDeferred) return SDP.Sync.flushDeferred(); } catch (e) {} return 0; },

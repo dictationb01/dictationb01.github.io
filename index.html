@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.2.a — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.2.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -21,7 +21,7 @@
     </svg>
     <span id="brandName">Smart Dictation</span>
     <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.2.a</span>
+    <span id="sdpVerPill">v0.0.2.b</span>
     <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
     <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio">🔒 Lecturer Admin</button>
     <div id="quickJumper" class="quick-jumper" hidden>
@@ -50,6 +50,35 @@
 
     <section id="screen-home" class="screen active" aria-labelledby="homeTitle">
       <div id="resumeBanner" class="card resume-card" role="status" aria-live="polite" hidden>
+
+      <!-- E9: sound-symbol practice deck — hidden until the lecturer opens it,
+           keeps every element ID alive off the active chrome (never deleted). -->
+      <div id="symbolDeck" class="deck" hidden>
+        <div class="deck-head">
+          <span class="step-tag" aria-hidden="true" data-i18n="homeStep4Tag">STEP 4</span>
+          <h2 class="card-title">Sound Symbols · IPA Practice Deck</h2>
+          <p class="muted">Tap a symbol to hear its British English sound.</p>
+        </div>
+        <div class="deck-grid" id="symbolDeckGrid">
+          <button type="button" class="symbol-card" data-symbol="ˈæ"cat /ˈkæt/</button>
+          <button type="button" class="symbol-card" data-symbol="ˈɑː"father /ˈfɑːðə/</button>
+          <button type="button" class="symbol-card" data-symbol="ˈe">pen /pen/</button>
+          <button type="button" class="symbol-card" data-symbol="ˈi">happy /ˈhæpi/</button>
+          <button type="button" class="symbol-card" data-symbol="ɒ"hot /hɒt/</button>
+          <button type="button" class="symbol-card" data-symbol="ɔː"saw /sɔː/</button>
+          <button type="button" class="symbol-card" data-symbol="ʊ"put /pʊt/</button>
+          <button type="button" class="symbol-card" data-symbol="uː"too /tuː/</button>
+          <button type="button" class="symbol-card" data-symbol="ʌ"cup /kʌp/</button>
+          <button type="button" class="symbol-card" data-symbol="ɜː"bird /bɜːd/</button>
+          <button type="button" class="symbol-card" data-symbol="ə"about /əˈbaʊt/</button>
+          <button type="button" class="symbol-card" data-symbol="ð"this /ðɪs/</button>
+          <button type="button" class="symbol-card" data-symbol="θ"think /θɪŋk/</button>
+          <button type="button" class="symbol-card" data-symbol="ʃ"ship /ʃɪp/</button>
+          <button type="button" class="symbol-card" data-symbol="ʒ"measure /ˈmeʒə/</button>
+        </div>
+        <button id="btnSymbolDeckClose" type="button" class="btn btn-ghost">Close spotlight</button>
+      </div>
+
         <p id="resumeText" class="resume-title">Continue where you stopped</p>
         <p id="resumeMeta" class="resume-meta" data-i18n="resumeMetaIdle">Paused at Word #1 of 30</p>
         <div class="resume-actions">
@@ -377,7 +406,7 @@
           <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
           <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
           <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.2.a</span></li>
+            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.2.b</span></li>
             <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
             <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
           </ul>
@@ -438,11 +467,18 @@
   </div>
 </div>
 
+<!-- E7: guide-spot spotlight — hidden off the active chrome until a step
+     points at a control; never deleted, only hidden (display:none). -->
+<div id="guideSpot" class="guide-spot" hidden>
+  <p id="guideSpotCue" class="guide-spot-cue"></p>
+  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
+</div>
+
 <div id="sdpDataToast" class="toast toast-hidden" role="status" aria-live="polite"></div>
 
 <script>
 (function () {
-  var TARGET = '0.0.2.a';
+  var TARGET = '0.0.2.b';
   window.__SDP_BOOT_VERSION__ = TARGET;
   var doReload = function (remoteVersion) {
     try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

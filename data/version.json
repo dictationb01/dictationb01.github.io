@@ -1,14 +1,14 @@
 {
-  "ver": 10,
-  "appVersion": "0.0.2.a",
-  "version": "0.0.2.a",
+  "ver": 11,
+  "appVersion": "0.0.2.b",
+  "version": "0.0.2.b",
   "buildDate": "2026-11-02",
-  "schema": 10,
-  "settingsRev": 16,
+  "schema": 11,
+  "settingsRev": 17,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "updatedAt": "2026-11-02T09:58:11.030Z",
-  "syncRev": 1793615000000,
+  "syncRev": 1793620000000,
   "payloadFiles": [
     "data/config.json",
     "data/version.json"

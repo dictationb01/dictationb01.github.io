@@ -327,8 +327,7 @@ Target: appVersion/version 0.0.2.a, ver 10, schema 10, settingsRev 16,
 syncRev 1793615000000, buildDate 2026-11-02, TARGET '0.0.2.a',
 SW sdp-v0.0.2.a / sdp-v0.0.2.a-shell.
 
-P1  A 54px tactile button system and amber .cue callouts. Tokens --btn-h, --shadow-btn,
-    --grad-primary (#2563EB->#1D4ED8), --grad-go (#059669->#10B981), --cue-bg #F59E0B.
+P1  54px tactile buttons (.btn-h, --shadow-btn, --grad-primary, --grad-go) and amber .cue callouts.
     .btn 54px/700/1.5px border, :active translateY(2px) + no shadow, .btn-sm 48px,
     .btn-ghost dashed, .badge flat #A1A1AA. Every new class needs a rule in sdp-ui.css
     (W3: never a runtime <style>).
@@ -351,9 +350,8 @@ P5  Guide 3.0: four voice-transition cards with animated previews (guideMockMark
 P6  Ledgers: ARCHITECTURE_MAP §1 budgets + §H2 ids, this template, CHANGELOG, sync
     contract (schema 10) and UI guide (tactile tokens) updated in the same release.
 
-Legal: config.encVault and config.pinVerifier are never rewritten; five localStorage keys
-(cuesSeen lives INSIDE sdp.settings); strict ES5, no build step; /v1/text-to-speech only
-from a human click in data/studio.js; version.json commits last (one syncRev).
+Legal: config.encVault/config.pinVerifier never rewritten; five localStorage keys;
+strict ES5, no build step; /v1/text-to-speech only from a human click; version.json last.
 
 Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 100, G4 8, G5 60, G6 15, G7 52, G8 39,
 G9 47, G10 26, G11 74, G12 94 = 636 assertions; preserved SHA-256 4/4; merge to main.
@@ -404,6 +402,30 @@ G9 47, G10 26, G11 74, G12 94 = 636 assertions; shasum -a 256 -c 4/4 OK;
 data/session.json and gas-source.txt byte-identical; zero occurrences of the retired PIN;
 verbatim EN + SI credit lines on Home, About and /data; all five docs updated with real
 bytes; merge to main only with --no-ff.
+```
+
+## v0.0.2.b upgrade prompt (copy/paste block, 2026-11-02)
+
+```
+Upgrade dictationb1/dictationb1.github.io from v0.0.2.a to v0.0.2.b in one autonomous pass.
+Target: appVersion/version 0.0.2.b, ver 11, schema 11, settingsRev 17,
+syncRev 1793620000000, TARGET '0.0.2.b', SW sdp-v0.0.2.b / sdp-v0.0.2.b-shell.
+
+P1 Stamp every surface to 0.0.2.b/ver 11.
+P2 SDP.Speech speechEpoch on every async chain; stopAll() bumps it; handlers
+re-check before acting. Hard screen guard screenIsCovered() (#studioGate over active #screen-studio
+or hidden doc); #guideModal not a cover.
+P3 guideRunId bumped on openGuide; openGuideSpot()/closeGuideSpot() for #guideSpot;
+guideRunId() accessor; #symbolDeck in #screen-home.
+P4 screenIsCovered() guards enterListening.
+P5 #btnChangePin + btnChangePin -> saveKeys(); studioChangePin strings EN+SI.
+guideAutoPlay defaults false; Start opens cockpit directly.
+
+Legal: five localStorage keys; strict ES5 (G1/acorn); spoken guide en-GB;
+credits verbatim EN+SI on Home/About/Studio//data;
+preserved SHA-256 4/4.
+
+Hard gates: 12 gates 0 FAIL; shasum 4/4 OK.
 ```
 
 ### Sequencing that worked

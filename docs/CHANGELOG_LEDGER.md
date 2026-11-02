@@ -1,31 +1,18 @@
-## v0.0.2.a — 2026-11-02 — Tactile Classroom UI, Dedicated Studio, 34-Clip Pack & Honest Cockpit
+## v0.0.2.b — 2026-11-02 — Hard Screen Guard, Guide Spots, Symbol Deck & Studio PIN Change
 
-**Release type:** major UI/UX + functional overhaul over v0.0.1.i (P0–P6, defects D1–D20).
-**Stamp:** `appVersion/version '0.0.2.a'` · `ver 10` · `schema 10` · `settingsRev 16` · `syncRev 1793615000000` · `SW_VERSION 'sdp-v0.0.2.a'` / `SHELL_CACHE 'sdp-v0.0.2.a-shell'` · `TARGET='0.0.2.a'`.
+**Release type:** guard + defect-fix release over v0.0.2.a (P1–P5, D1–D20). No classroom-data migration: `sdp.progress`, `sdp.session`, both Sinhala fonts, `data/session.json` and `data/gas-source.txt` stay byte-identical.
 
-### The five release blockers, and their fixes
+**Stamp:** `appVersion/version '0.0.2.b'` · `ver 11` · `schema 11` · `settingsRev 17` · `syncRev 1793620000000` · `SW_VERSION 'sdp-v0.0.2.b'` / `SHELL_CACHE 'sdp-v0.0.2.b-shell'` · `TARGET='0.0.2.b'`.
 
-| # | Blocker the Creator reported | Fix |
-| --- | --- | --- |
-| B1 | Buttons looked like flat text on a projector; nobody could see where to tap | 54 px tactile system: `--btn-h`, `--shadow-btn`, `--grad-primary`, `--grad-go`, 2 px press collapse, `.btn-sm` 48 px, amber `.cue` callouts on each screen's primary CTA (`assets/css/sdp-ui.css`) |
-| B2 | The lecturer's studio hid **inside** student Settings — students saw PIN plumbing, the lecturer scrolled past student options | sixth screen `#screen-studio` + `#tab-studio` + `#rail-studio`; Settings is student-only and carries one `#settingsLecturerBanner` button into the studio (`index.html`, `data/sdp-ui-views.js`) |
-| B3 | Generating the 34 voice clips was a hunt through five buttons with no progress or cost | `#studioPackDashboard` (X/34 live), `#studioGenProgress` (verbatim `Generating clip n/N · key · chars used`), one primary CTA `#btnOneClickMasterSetup`, delta-only `queueFor()` retry that never re-bills a saved clip |
-| B4 | The cockpit was unreadable from the back of the room and the student could not see the session as a map | 30-pill `#sessionProgressStrip`, 4-button transport (`⏮ Prev (#k)`, `⏸ Pause Dictation`/`▶ Resume Word #k`, `🔊 Replay Word`, `⏭ Next (#k)`), verbatim phase sentences, giant `#resumeBanner`, ordered `#01..#30` word sheet with per-word self-check |
-| B5 | The guide read like a manual and never showed the control it described | Guide 3.0: four voice-transition cards, each with an animated preview of the real button (`guideMockMarkup`, `.active-step`, `sdpRing`), footer CTA `▶ Start Dictation Now` |
+### Fixes
 
-### Added
-
-| Surface | Contract |
-| --- | --- |
-| `#screen-studio` | 6th screen and 6th tab; three numbered cards (`#studioCardKeys`, `#studioCardWords`, `#studioCardSettings`) mount into `#studioBody`; `#studioGate` when locked |
-| Locked studio | strictly PIN-only: 12-dot `#pinDots`, 8 visible digits max, 56 px 12-key `#pinPad`; `#studioAccordion`/`#studioBody` never render cards while locked |
-| `#lecturerSyncBar` | ONE node, always in the DOM: `#studioSyncDock` while locked, `#studioSyncSlot` inside Card 3 once unlocked |
-| 34-clip arithmetic | 30 words + 4 guide steps = 34; `costPreviewLine()` states it; `queueFor()` builds it |
-| Cockpit | `#sessionPills` paints 30 pills at boot (done / current / todo), pill click jumps, `#sessionProgressCount` reads `Word #NN of 30` |
-| Word sheet | strict class order `#01..#30`, Listen button, IPA + POS, Sinhala/English/example on separate lines, `✓ Correct` / `✗ Needs Practice` → `sdp.progress.mastered` + `weakWords` |
-| Cues | `sdp.settings.cuesSeen` (inside the settings object, never a sixth key) retires a `.cue` once its screen is used |
-| Strings | every new string ships in **both** `STRINGS_EN` and `STRINGS_SI` (R10) |
-| Version pill | `#aboutVersion`, `#sdpVerPill`, `data/version.json`, `data/config.json`, `sw.js`, `manifest.webmanifest`, `data.html` = `data/index.html` all read `0.0.2.a` |
+* `speechEpoch` (`data/sdp-audio-speech.js`): every async chain captures an epoch; `stopAll()` bumps it; every timer/watchdog/onend/`<audio>` handler re-checks before acting.
+* `screenIsCovered()` hard guard (speech + engine): document hidden, or `#studioGate` over active `#screen-studio` aborts queues/`<audio>`/`enterListening()`; `#guideModal` is **not** a cover.
+* `guideRunId` (bumped on `openGuide`), `openGuideSpot()`/`closeGuideSpot()` drive the `#guideSpot` spotlight; `guideRunId()` exposed.
+* `#symbolDeck` — 15 IPA cards (`.deck` grid) inside `#screen-home`; `.deck` CSS in `assets/css/sdp-ui.css`.
+* `#btnChangePin` + `btnChangePin` handler calling `saveKeys()`; `studioChangePin` strings in `STRINGS_EN`/`STRINGS_SI`.
+* `guideAutoPlay` defaults false; Start opens the cockpit directly.
+* Every versioned literal re-stamped to 0.0.2.b / ver 11 / schema 11 / settingsRev 17 / syncRev 1793620000000; all 12 gates updated.
 
 ### Preserved, byte for byte
 
@@ -36,15 +23,52 @@
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e754139` |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a88a0` |
 
-`config.encVault` (`SDP_ENC_V2:…`, 487 chars) and `config.pinVerifier` (`VlIxxCOF1…`, PIN `78987898`) survived every JSON rewrite; PBKDF2 250,000, five localStorage keys, strict ES5, no build step, no runtime `<style>`, and both credit lines unchanged.
+Five localStorage keys; strict ES5; spoken guide en-GB; credits verbatim EN+SI on Home/About/Studio//data.
 
 ### Gate results (`cd tests && npm run gates`)
 
-G1 109/0 · G2 12/0 · G3 100/0 · G4 8/0 · G5 60/0 · G6 15/0 · G7 52/0 · G8 39/0 · G9 47/0 · G10 26/0 · G11 74/0 · G12 94/0 — 636 assertions, 0 FAIL.
+G1–G12 all 0 FAIL — 636 assertions. G7.3g now samples inside one phase so it never compares across the listen→writing flip.
 
-### Bytes (`wc -c`)
 
-`index.html` 33,381/38,000 · `sdp-ui.css` 59,197/68,000 · `sdp-data-sync.js` 84,004/86,000 · `sdp-audio-speech.js` 38,831/52,000 · `sdp-dictation-engine.js` 47,685/62,000 · `sdp-ui-views.js` 135,328/136,000 · `studio.js` 122,792/126,000 · `data-meter.js` 22,845/24,000 · `data.html` = `data/index.html` 27,967/34,000 · `sw.js` 10,759/13,000 · `config.json` 35,477/36,000 · `version.json` 369/2,000.
+---
+
+**Release type:** major overhaul over v0.0.1.i.
+**Stamp:** `appVersion/version '0.0.2.a'` · `ver 10` · `schema 10` · `settingsRev 16` · `syncRev 1793615000000`.
+
+### The five release blockers, and their fixes
+
+| # | Blocker | Fix |
+| --- | --- | --- |
+| B1 | Flat, invisible buttons on a projector | 54 px tactile system: `--btn-h`, `--shadow-btn`, `--grad-primary`, `--grad-go`, `.btn-sm` 48 px, amber `.cue` (`sdp-ui.css`) |
+| B2 | Studio hidden inside student Settings | sixth screen `#screen-studio` + `#tab-studio` + `#rail-studio`; Settings student-only; locked studio strictly PIN-only (`#pinDots`, 56 px 12-key `#pinPad`) |
+| B3 | 34 voice clips with no progress or cost | `#studioPackDashboard` X/34, `#studioGenProgress`, `#btnOneClickMasterSetup`, delta retry that never re-bills a saved clip |
+| B4 | Cockpit unreadable; no session map | 30-pill `#sessionProgressStrip`, 4-button transport, verbatim phase lines, giant `#resumeBanner`, ordered `#01..#30` word sheet with self-check |
+| B5 | Guide never showed the control it described | Guide 3.0: four voice-transition cards with animated previews, footer CTA `▶ Start Dictation Now` |
+
+### Added
+
+| Surface | Contract |
+| --- | --- |
+| `#screen-studio` | 6th screen/tab; three numbered cards mount into `#studioBody`; `#studioGate` when locked |
+| Locked studio | strictly PIN-only: `#pinDots`, 56 px 12-key `#pinPad`; cards never render while locked |
+| Cockpit | 30-pill `#sessionProgressStrip`, 4-button transport, verbatim phase lines, `#resumeBanner`, `#01..#30` word sheet |
+| Version pill | `#aboutVersion`, `#sdpVerPill`, `data/version.json`, `data/config.json`, `sw.js`, manifest, `data.html` = `data/index.html` read `0.0.2.a` |
+
+### Preserved, byte for byte
+
+| File | Bytes | SHA-256 (first 16) |
+| --- | --- | --- |
+| `data/session.json` | 57,381 | `c96dbe6de02d7d6d` |
+| `data/gas-source.txt` | 13,764 | `591b9b086f6d3723` |
+| `assets/fonts/NotoSansSinhala-Regular.woff2` | 48,520 | `23f1503e1e754139` |
+| `assets/fonts/NotoSansSinhala-Bold.woff2` | 48,748 | `bf59c1487b0a88a0` |
+
+`config.encVault` + `config.pinVerifier` survived every rewrite; PBKDF2 250,000; five localStorage keys; strict ES5; credits verbatim.
+
+### Gate results (`cd tests && npm run gates`)
+
+G1–G12 all 0 FAIL — 636 assertions.
+
 
 ---
 

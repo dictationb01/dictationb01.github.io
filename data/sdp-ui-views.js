@@ -11,7 +11,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.2.a';
+    return '0.0.2.b';
   })();
 
   function noop() {}
@@ -32,7 +32,7 @@
     return node;
   }
 
-  /* ══ STRINGS ════════════════════════════════════════════════════════════ */
+  /* ══ STRINGS  ══ */
   
   var STRINGS_EN = {
     appName: 'Smart Dictation',
@@ -76,6 +76,7 @@
     setProgress: '4 · Progress & offline storage', exportBackup: 'Export backup', importBackup: 'Import backup',
     resetStats: 'Reset local stats', checkUpdate: 'Check for session update',
     studioTitle: '6 · Lecturer Studio & admin vault', studioLocked: 'Enter the lecturer PIN to open the studio.',
+    studioChangePin: 'Change PIN',
     guideSpeakBtn: 'Listen to the steps (EN)', guideCloseBtn: 'Got it, Start Learning',
     /* Table B additions — UI labels, badges, presets and studio controls */
     dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
@@ -312,6 +313,7 @@
     setProgress: '4 · ප්‍රගතිය සහ නොබැඳි ගබඩාව', exportBackup: 'උපස්ථයක් අපනයනය', importBackup: 'උපස්ථයක් ආනයනය',
     resetStats: 'දේශීය සංඛ්‍යාලේඛන මකන්න', checkUpdate: 'වාර යාවත්කාලීනය පරීක්ෂා කරන්න',
     studioTitle: '6 · කථිකාචාර්ය ස්ටුඩියෝ සහ පරිපාලන බඳුන', studioLocked: 'ස්ටුඩියෝ විවෘත කිරීමට කථිකාචාර්ය PIN ඇතුළත් කරන්න.',
+    studioChangePin: 'PIN වෙනස් කරන්ඕ.',
     guideSpeakBtn: 'උපදෙස් හඬින් අසන්න (EN)', guideCloseBtn: 'තේරුණා, ආරම්භ කරමු',
     /* Table B additions — Sinhala UI labels, badges, presets and studio controls */
     dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
@@ -526,7 +528,7 @@
     try { return SDP.Data.stats(); } catch (e) { return { mastered: 0, accuracy: 0, streak: 0 }; }
   }
 
-  /* ══ language / theme ═══════════════════════════════════════════════════ */
+  /* ══ language / theme  ══ */
   function applyI18n() {
     var nodes = doc.querySelectorAll('[data-i18n]');
     for (var i = 0; i < nodes.length; i++) {
@@ -650,7 +652,7 @@
     return applyTheme(next);
   }
 
-  /* ══ router ═════════════════════════════════════════════════════════════ */
+  /* ══ router  ══ */
   
   var TABS = ['home', 'player', 'practice', 'dict', 'settings', 'studio'];
   /* R6/D10: leaving the cockpit pauses the live beat; Settings is a modal surface. */
@@ -706,7 +708,7 @@
     return 'home';
   }
 
-  /* ══ Home ═══════════════════════════════════════════════════════════════ */
+  /* ══ Home  ══ */
   function renderHome() {
     var s = stats();
     var bank = words().length;
@@ -887,7 +889,7 @@
   function startDictation(mode) {
     var chosen = mode || settings().mode;
     var conf = settings();
-    if (!sessionState.introShown && conf.guideAutoPlay !== false && words().length) {
+    if (!sessionState.introShown && conf.guideAutoPlay === true && words().length) {
       sessionState.introShown = true;
       if (openGuideQuick(chosen)) return true;
     }
@@ -926,8 +928,8 @@
     }
   }
 
-  /* ══ Guide 3.0 — version-stamped, auto-narrating student guide (R3, D16) ═ */
-  var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, autoplayTimer: null, quickMode: false, pendingMode: null };
+  /* ══ Guide 3.0 ══ */
+  var guideState = { activeStep: 0, narrating: false, opener: null, watchdog: null, autoplayTimer: null, quickMode: false, pendingMode: null, guideRunId: 0 };
   var guidePaused = false;
 
   /* D16: Guide 3.0 — four voice-transition cards with animated previews. */
@@ -1125,6 +1127,7 @@
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     clearGuideAutoplayWatch();
+    closeGuideSpot();
     /* The first tap unlocks audio + speechSynthesis. */
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     if (fromBanner) { guideState.narrating = false; startGuideNarration(0); return true; }
@@ -1165,6 +1168,9 @@
     opts = opts || {};
     var modal = byId('guideModal');
     if (!modal) return false;
+    /* E6: each guide run gets its own id; old narration/watchdogs never act
+       on a new run. */
+    guideState.guideRunId += 1;
     /* R6 / D10: opening the guide is a modal event — pause the beat first. */
     pauseForNavigation('settings');
     if (!opts.quick && !guideState.quickMode) restoreGuideTitle();
@@ -1206,6 +1212,11 @@
         }
       }, false);
     }
+    var spotClose = byId('btnGuideSpotClose');
+    if (spotClose && !spotClose._sdpBound) {
+      spotClose._sdpBound = true;
+      spotClose.addEventListener('click', closeGuideSpot, false);
+    }
     var close = byId('btnGuideClose');
     if (close && close.focus) { try { close.focus({ preventScroll: true }); } catch (e) {} }
     return true;
@@ -1217,6 +1228,7 @@
       modal.setAttribute('aria-hidden', 'true');
       if (modal.classList) modal.classList.remove('is-open');
     }
+    closeGuideSpot();
     stopGuideNarration();
     clearGuideWatchdog();
     clearGuideAutoplayWatch();
@@ -1288,11 +1300,27 @@
     }
     try { if (SDP.Speech && SDP.Speech.unlockAudio) SDP.Speech.unlockAudio(); } catch (e) {}
     hideGuideTapBanner();
+    closeGuideSpot();
     guideState.narrating = false;
     startGuideNarration(0);
     armGuideWatchdog();
     armGuideAutoplayWatch();
     return 4;
+  }
+  /* E7: guide-spot spotlight — highlights the control the step describes. */
+  function openGuideSpot(targetId, cueText) {
+    var spot = byId('guideSpot');
+    var cue = byId('guideSpotCue');
+    if (!spot) return false;
+    if (cue) cue.textContent = str(cueText || '');
+    spot.hidden = false;
+    spot.setAttribute('aria-hidden', 'false');
+    return true;
+  }
+  function closeGuideSpot() {
+    var spot = byId('guideSpot');
+    if (spot) { spot.hidden = true; spot.setAttribute('aria-hidden', 'true'); }
+    return true;
   }
   function trapGuideKeys() {
     if (doc.documentElement._sdpGuideKeys) return;
@@ -1314,7 +1342,7 @@
     }, true);
   }
 
-  /* ══ Words explorer ═════════════════════════════════════════════════════ */
+  /* ══ Words explorer  ══ */
   function wordFilter() {
     var active = doc.querySelector ? doc.querySelector('#dictFilterRow [aria-pressed="true"]') : null;
     return active ? str(active.getAttribute('data-filter')) : 'all';
@@ -1420,7 +1448,7 @@
     }
   }
 
-  /* ══ Practice ═══════════════════════════════════════════════════════════ */
+  /* ══ Practice  ══ */
   function practicePool() {
     var list = words().slice(0);
     var weakOnly = byId('pracWeakOnly');
@@ -1553,7 +1581,7 @@
     return practice.mode;
   }
 
-  /* ══ Settings ═══════════════════════════════════════════════════════════ */
+  /* ══ Settings  ══ */
   function buildRepeatsOptions(select) {
     /* ONE shared builder for #setRepeats (never duplicated). */
     if (!select || select._sdpBuilt) return;
@@ -1877,7 +1905,7 @@
     node.textContent = str(text);
     if (state) node.setAttribute('data-state', state); else node.removeAttribute('data-state');
   }
-  /* ══ Sync badge — four honest states (I1/R10) ══ */
+  /* ══ Sync badge ══ */
   function paintSyncBadge(state) {
     state = state || {};
     var session = str(state.session || '8');
@@ -1965,7 +1993,7 @@
     }
   }
 
-  /* ══ Quick pacing presets (settings section 1)… */
+  /* ══ Quick pacing presets ══ */
   var PRESETS = {
     beginner: { pacingPreset: 'beginner', writeSecs: 12, repeats: 4, pauseSecs: 2, autoAdvance: true },
     standard: { pacingPreset: 'standard', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true },
@@ -1985,7 +2013,7 @@
     setUpdateStatus(t('presetApplied'), 'ok');
   }
 
-  /* ══ Smart Board Classroom Bar (D-UI4, D-UI5, R10) ═══════════════════════ */
+  /* ══ Smart Board Classroom Bar (D-UI4, D-UI5, R10)  ══ */
   var boardState = { wordShown: false };
   function boardWordCount() {
     var n = 0;
@@ -2088,7 +2116,7 @@
     return true;
   }
 
-  /* ══ Smart Board quick-word jumper (R7 / H5) ═══════════════════════════ */
+  /* ══ Smart Board quick-word jumper (R7 / H5)  ══ */
   function renderQuickJumper() {
     var sel = byId('setQuickWord');
     if (!sel) return;
@@ -2105,7 +2133,7 @@
     });
   }
 
-  /* ══ Settings order guard (5 sections, studio last & collapsed) ═════════ */
+  /* ══ Settings order guard ══ */
   
   function settingsOrder() {
     var host = byId('settingsSections');
@@ -2116,7 +2144,7 @@
     return order;
   }
 
-  /* ══ Data toast ═════════════════════════════════════════════════════════ */
+  /* ══ Data toast  ══ */
   
   var toastTimer = null;
   function toastBytes() {
@@ -2153,7 +2181,7 @@
     }, 2400);
   }
 
-  /* ══ wiring ═════════════════════════════════════════════════════════════ */
+  /* ══ wiring  ══ */
   /* D13: the resume card's secondary route — a clean run from word #1. */
   function startOver() {
     try { SDP.Data.clearSession(); } catch (e) {}

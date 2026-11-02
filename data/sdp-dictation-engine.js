@@ -66,6 +66,19 @@
   function state() { return E.phase; }
   function items() { return E.items; }
   function current() { return E.items[E.index] || null; }
+  /* E5 hard screen guard — the listening/writing beat never starts while a
+     screen covers the cockpit (document hidden, guide modal open, lecturer
+     lock gate up). E.epoch is re-checked on every tick and watchdog. */
+  /* E5 hard screen guard — the beat never starts while the page is hidden or
+     the lecturer lock gate covers the cockpit. The guide modal is NOT a
+     cover: narration happens inside it. */
+  function screenIsCovered() {
+    try { if (doc && doc.hidden === true) return true; } catch (e) { return true; }
+    var g = byId('studioGate');
+    var studioScreen = byId('screen-studio');
+    if (g && !g.hidden && studioScreen && studioScreen.classList && studioScreen.classList.contains('active')) return true;
+    return false;
+  }
 
   /* ── scoring helpers ────────────────────────────────────────────────── */
   function isCorrectItem(item) {
@@ -420,6 +433,7 @@
   }
 
   function enterListening() {
+    if (screenIsCovered()) return false;
     E.phase = 'listening';
     E.pausedPhase = '';
     E.pauseReason = '';

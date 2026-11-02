@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.2.a';
+  SDP.version = '0.0.2.b';
   SDP.build = '2026-11-02';
-  SDP.ver = 10;
+  SDP.ver = 11;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.2.a';
-  var SCHEMA = 10;
-  var SETTINGS_REV = 16;
+  var APP_VERSION = '0.0.2.b';
+  var SCHEMA = 11;
+  var SETTINGS_REV = 17;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -59,7 +59,9 @@
     return {
       mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 1.5, autoAdvance: true,
       voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'dark',
-      guideAutoPlay: true, pacingPreset: 'exam', voiceLock: 'unified',
+      /* Start goes straight to the cockpit unless the lecturer opts the
+         walkthrough in (guideAutoPlay: true); the boot guide is unaffected. */
+      guideAutoPlay: false, pacingPreset: 'exam', voiceLock: 'unified',
       hints: { pos: true, first: false, si: false, sentence: false },
       /* D9 (v0.0.2.a): which screens already showed their amber STEP cue. It
          lives INSIDE sdp.settings, so the five-key localStorage law holds. */

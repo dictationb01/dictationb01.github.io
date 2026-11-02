@@ -6,6 +6,10 @@
 (function (global) {
   'use strict';
   var METER_VERSION = '0.0.1.a', SCHEMA = 1, KB = 1024, MB = KB * KB, GB = KB * MB;
+  /* D20: the /data meter cache is version-keyed. Every release bumps this
+     literal, so a cached asset size from an older release can never be shown
+     as today's byte count; Studio also calls clearCache() after a publish. */
+  var CACHE_VERSION = '0.0.1.i';
   var AUDIO_ESTIMATE = 11000;
   var STORAGE = { daily: 'sdp.dataMeter.daily', allTime: 'sdp.dataMeter.allTime', price: 'sdp.dataPriceLkrPerGb', plan: 'sdp.dataPricePlan', manifest: 'sdp.mediaManifest.v1', buffer: 'sdp.dataMeter.videoHW' };
   var KNOWN_ASSETS = {};
@@ -23,17 +27,23 @@
   function own(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
   function safeGet(k) { try { return global.localStorage && global.localStorage.getItem(k); } catch (e) { return null; } }
   function safeSet(k, v) { try { if (global.localStorage) global.localStorage.setItem(k, v); } catch (e) {} }
+  function safeRemove(k) { try { if (global.localStorage) global.localStorage.removeItem(k); } catch (e) {} }
   function nowDay() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function readDaily() { try { var o = JSON.parse(safeGet(STORAGE.daily) || '{}'); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } }
   function assetName(src) { return String(src || '').split('?')[0].split('#')[0].split('/').pop(); }
   function loadManifest() {
     if (state.manifest) return state.manifest;
-    try { var cached = JSON.parse(safeGet(STORAGE.manifest) || 'null'); if (cached && cached.assets) state.manifest = cached; } catch (e) {}
+    try {
+      var cached = JSON.parse(safeGet(STORAGE.manifest) || 'null');
+      /* D20: a cache stamped by another release is discarded, never shown. */
+      if (cached && cached.assets && String(cached.__v || '') === CACHE_VERSION) state.manifest = cached;
+      else if (cached) safeRemove(STORAGE.manifest);
+    } catch (e) {}
     /* D-UI12: no 404 probe on boot — the retired manifest is off. */
     if (MANIFEST_FETCH_ENABLED && canNetwork()) {
       try {
         global.fetch(manifestUrl(), { cache: 'no-cache' }).then(function (r) { return r && r.ok ? r.json() : null; }).then(function (m) {
-          if (m && m.assets) { state.manifest = m; safeSet(STORAGE.manifest, JSON.stringify(m)); indexManifest(); }
+          if (m && m.assets) { m.__v = CACHE_VERSION; state.manifest = m; safeSet(STORAGE.manifest, JSON.stringify(m)); indexManifest(); }
         })['catch'](function () {});
       } catch (e) {}
     }
@@ -335,6 +345,17 @@
     state.videoBufferedSources = {}; state.sessionStart = Date.now(); persistedSession = 0;
     state.seenUrls = {}; state.seenEntries = {}; state.trackedUrls = {}; state.fetchPending = {}; state.audioPlayTimes = {};
   }
+  /* D20: Studio calls this after every successful publish so /data repaints
+     the fresh byte sizes instead of a cached manifest. Also exposed as the
+     cache key itself for the release gates. */
+  function clearCache() {
+    safeRemove(STORAGE.manifest);
+    state.manifest = null;
+    KNOWN_ASSETS = {};
+    indexManifest();
+    return CACHE_VERSION;
+  }
+  function cacheKey() { return STORAGE.manifest + ':' + CACHE_VERSION; }
   function start(opts) {
     opts = opts || {};
     if (state.started && !state.paused) return meter;
@@ -365,7 +386,8 @@
     persistTotals(); return getLive();
   }
   function onTick(cb) { if (typeof cb === 'function') state.tickers.push(cb); return function () { var i = state.tickers.indexOf(cb); if (i >= 0) state.tickers.splice(i, 1); }; }
-  var meter = { version: METER_VERSION, schema: SCHEMA, ver: SCHEMA, appVersion: METER_VERSION, KNOWN_ASSETS: KNOWN_ASSETS, STORAGE: STORAGE,
+  var meter = { version: METER_VERSION, schema: SCHEMA, ver: SCHEMA, appVersion: METER_VERSION, CACHE_VERSION: CACHE_VERSION,
+    cacheKey: cacheKey, clearCache: clearCache, KNOWN_ASSETS: KNOWN_ASSETS, STORAGE: STORAGE,
     knownBytesFor: knownBytesFor, classify: classify, addBytes: addBytes, trackFetch: trackFetch, accountEntry: accountEntry,
     videoBufferedBytes: videoBufferedBytes, recordAudioPlay: recordAudioPlay, sample: sample, flushEntries: flushEntries,
     getLive: getLive, getModeProfiles: getModeProfiles, formatMB: formatMB, formatBytes: formatBytes, costLkr: costLkr,

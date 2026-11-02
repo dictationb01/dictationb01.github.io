@@ -1,4 +1,4 @@
-# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.e
+# UI_COMPONENT_GUIDE — Smart Dictation Player v0.0.1.g
 
 One stylesheet, flat matte, no glass. If a component is not documented here, it
 does not belong in the app.
@@ -425,3 +425,75 @@ Unlocked: a `.studio-head` row with the title and `#btnLockStudio`, then
 Every new string ships in `STRINGS_EN` and `STRINGS_SI` with identical keys; Sinhala
 text may only appear inside `.word-si` (word data) and the Sinhala string table. The
 credit pill `CREDITS GOES TO Hansana` and both credit lines are untouched.
+
+---
+
+## 10. Studio Card 1 after v0.0.1.g (D7, D10, D13, D14)
+
+Card 1 is the only card a teacher must touch. It reads top to bottom:
+
+1. **Green vault badge** `#studioVaultBadge` — `Vault Saved & Protected Across Updates`
+   (`STRINGS_EN.vaultBadgeLabel`). Visible from the moment the vault is sealed, hidden
+   while locked. It is the promise that the next release cannot eat the keys.
+2. **Three credential rows**, one per secret — ElevenLabs, GitHub, and (for the optional
+   back end) Apps Script + AI. Each row is an input plus a `[Show]` / `[Paste]` / `[Test]`
+   trio; the input `type` flips between `password` and `text`, never a read-only label.
+   After an unlock every input is auto-filled from `ST.secrets` **and stays masked** (D7).
+3. **The AI provider select** `#studioAiProvider`, five slots in ladder order (D10):
+
+   | Slot | `value` | Needs a key | Endpoint / prefix |
+   | --- | --- | --- | --- |
+   | 1 | `free_dict` | no | offline dictionary enricher (default) |
+   | 2 | `pollinations_free` | no | `text.pollinations.ai/openai`, `model:'openai'` |
+   | 3 | `groq` | yes, `gsk_…` | Groq chat completions |
+   | 4 | `openrouter` | yes, `sk-or-…` | OpenRouter |
+   | 5 | `gemini` | yes, `AIza…` | Google Gemini |
+
+   Slots 1 and 2 show `#studioFreeNoKey` — `100% Free — No API Key Required!`. The badge
+   is re-painted on every `change` and hides for slots 3–5 (G12.9a–e). A keyless slot
+   omits the `Authorization` header entirely rather than sending an empty one.
+4. **The diagnostics strip** — `#quotaText`, `#costPreviewLine` (`30 words = 241 chars`),
+   `#btnTestOneWord` (a one-word, one-credit probe) and `#btnGenClips` (the delta
+   generator that only makes the clips that are missing).
+5. **One force-regen checkbox** `#studioForceRegen` (D14). `#chkForceRegen` still exists
+   for old code paths, stays `display:none`, and is mirrored from the visible box on every
+   `change` — never the reverse (G12.9k–l).
+6. **The four master steps** `#studioMasterSteps` — one `<li>` per step, painted `active`
+   → `ok` / `bad` as `oneClickMasterSetup()` walks them.
+7. **The two-button primary bar** `.studio-primary-bar` (D13):
+
+   | Button | Label (verbatim, `STRINGS_EN`) |
+   | --- | --- |
+   | `#btnSaveKeys` | `Step 1: Save Keys Permanently (Local Vault + GitHub Sync)` |
+   | `#btnOneClickMasterSetup` | `Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices` |
+
+   Nothing else lives in the bar. The old `#btnCheckQuota` / `#btnRefreshQuota` remain in
+   the DOM for compatibility but are `display:none`; exactly one visible button says
+   `Test ElevenLabs Key` (the ElevenLabs row's own `[Test]`), never two (G12.9m–r).
+
+### 10.1 Honest states a teacher will see
+
+| Situation | What the UI says |
+| --- | --- |
+| Key is real but scoped/free-tier | green: `studioQuotaScoped` — “key accepted, quota read bypassed” |
+| Quota exhausted mid-generation | amber `studioElTierWarn`: the free British Female Professor voice takes over; the publish still happens |
+| No AI key | neutral `studioFreeNoKey`: slots 1–2 work with no key at all |
+| GitHub push failed during Save Keys | red toast `Saved in local Vault (protected across updates) · GitHub sync failed: <reason>` — the keys are **not** lost |
+| Session leg failed, config leg verified | a quiet retry is queued (`deferredSession`); the badge stays green because the settings really did land |
+
+### 10.2 The Sinhala face law (W7)
+
+The Studio card is the densest Sinhala surface on the site, so it is also the one place a
+missing font is obvious. Two rules make it correct:
+
+* `--font-ui` ends in `'Noto Sans Sinhala'`, so a Sinhala glyph inside an English sentence
+  (a class name, a teacher's note) renders in the shipped face instead of a system guess;
+* `html[lang='si'] .studio-card { font-family: var(--font-si); }` switches the whole card
+  when the language is Sinhala. Inputs, `#studioGasUrl` and any monospace rule keep their
+  own family on purpose.
+
+`#studioMasterSteps` is an `<ol>` and shows its numbers from the list marker alone; never
+type `1 · ` into the label, or the card reads `1.1 · …` (that was a v0.0.1.f defect).
+
+Every Sinhala string above ships in `STRINGS_SI` in the same commit; `G12.9t/u` fail if
+either language is missing for the scoped-key note or the tier warning.

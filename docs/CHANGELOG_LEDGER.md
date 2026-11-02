@@ -6,6 +6,47 @@ from the twelve gates.
 
 ---
 
+## v0.0.1.g — 2026-11-02 — Scoped-Key Survival, Immortal Vault & the Free AI Ladder
+
+**Release type:** defect-fix release over v0.0.1.f (PR #118). No data migration: `sdp.progress` is never overwritten, `data/session.json` stays byte-identical, and a device that is already unlocked keeps its vault.
+**Stamp, one clock for every file:** `appVersion/version '0.0.1.g'` · `ver/schema/settingsRev 7` · `syncRev 1793595000000` · `SW_VERSION 'sdp-v0.0.1.g'` / `SHELL_CACHE 'sdp-v0.0.1.g-shell'`.
+
+### The eighteen defects (D1–D18)
+
+| # | What was broken | The fix |
+| --- | --- | --- |
+| D1 | A scoped/free-tier ElevenLabs key read as a hard failure | `fetchSubscription` is a 3-rung ladder: subscription → quota; else probe `/v1/voices`; else any `looksLikeElevenKey()` key is accepted as `{ok:true, scoped:true, remaining:null, note:SCOPED_NOTE}`. Only `invalid_api_key` is fatal |
+| D2 | The scoped key painted a red ❌ | `quotaError()` understands 403 + `res.scoped` + `detail.status`; scoped keys always paint green and never say `subscription_failed` |
+| D3 | One-click setup died when the quota read died | 4 steps: seal + Layer-1 + GitHub verify (the only fatal step) → advisory `checkQuota` → fault-tolerant delta clips → inject + `publishBundle()` of 4 files on ONE `nextSyncRev()`, `version.json` last |
+| D4 | A 401/402/403/429 during clip generation aborted the publish | Tier statuses warn (`TIER_WARN`), keep the clips already made, mark the rest skipped and resolve into step 4 |
+| D5 | A release reset `config.json` and destroyed the vault | Layer 1 lives in `sdp.settings.vaultLock` `{fails,lockUntil,strikes,until,encVault,pinVerifier,updatedAt}` |
+| D6 | `saveKeys` could not publish | Layer 2: seal → Layer-1 write → `config.json` + `version.json` push; honest toast on GitHub failure, keys still saved locally |
+| D7 | Teachers retyped keys after every unlock | `#elKeyInput`, `#ghTokenInput`, `#studioGasUrl`, `#studioAiKey`, `#studioAiProvider` auto-fill (masked) + green `#studioVaultBadge` |
+| D8/D9 | A healed device could not unlock | Self-heal at boot, in `resolveEnvelope()` and in `unlockWithVerifier()`; `encVault`+`pinVerifier` are copied from Layer 1 when it is real and newer, then decrypted with the PIN into `ST.secrets` |
+| D10 | The AI provider list assumed a paid key | 5 slots: `free_dict` (default) → `pollinations_free` (zero-key) → `groq` → `openrouter` → `gemini`, with keyless `Authorization` omission and `#studioFreeNoKey` on slots 1–2 |
+| D11/D12 | Harvested phonetics were ignored; custom audio was dropped | `entry.phonetics[].audio` preferred (`-uk.mp3`/`_gb`, `//`→`https://`), `audioForWord(w, dAudio)` falls back to Youdao `type=1`, and `normalizeWord` keeps custom audio |
+| D13 | Card 1 was a wall of buttons | 3 credential rows `[Show][Paste][Test]`, hidden `#btnCheckQuota`/`#btnRefreshQuota`, a 2-button primary bar (`#btnSaveKeys`, `#btnOneClickMasterSetup`), a diagnostics strip, a 4-step list, `#studioVaultBadge` |
+| D14 | Two force-regen checkboxes confused teachers | One visible `#studioForceRegen`; `#chkForceRegen` stays hidden and mirrored |
+| D15 | A failed session leg threw away a good config | Config-sovereign `settle()`: adopt version+config when the config leg verifies even if the session leg failed, return `deferredSession:true`, defer everything only when the config leg fails |
+| D16 | A sub-30-word session was refused | `verifyPayloadLeg` accepts a matching session number with `words.length >= 1`, or the same active list (`id`+length+`updatedAt`) |
+| D17 | Every tick re-pulled the 46 KB session | `needSession` is also true only when the session number differs, `state.deferredSession`, or legacy `payloadFiles` includes `data/session.json` |
+| D18 | Stamps drifted between files | Every versioned literal re-stamped (`version.json`, `config.json` keeping `pinVerifier` + `classSettings`, voice pack, `APP_VERSION`, `sw.js`, both shells, manifest) |
+
+### W7 — the Sinhala Studio
+
+Card 1 gained 30+ Sinhala strings, and the Studio card had no Sinhala face: the text
+inherited `Inter, system-ui` and rendered as tofu on any device without a system Sinhala
+font. Two CSS lines close it — the shipped face is now the last fallback in `--font-ui`,
+and `html[lang='si'] .studio-card { font-family: var(--font-si); }` switches the card
+wholesale (inputs and monospace keep their own family). The old `1.1 · …` double numbering
+on `#studioMasterSteps` is gone too: the `<ol>` marker is the only number now.
+
+### Gate results
+
+Twelve gates, 566 assertions, 0 FAIL — see *Release verification* at the end of this file.
+
+---
+
 ## v0.0.1.e — 2026-11-02 — Honest Sync, British English Default, Guaranteed Voice & Bento UI
 
 **Release type:** defect-fix + UI release over v0.0.1.d (no classroom data migration; `sdp.progress` is never overwritten; one one-time settings migration `langResetV001e`).
@@ -588,7 +629,7 @@ two routers · D11 resume replaying repeat 1 · D12 no 30-row editor · D13 stal
 narration silent on a cold boot · D17 object-vs-string `version` · D18 one giant studio
 scroll · D19 mixed publish clocks · D20 second publish path in one-click setup.
 
-### Release verification (2026-11-02, full twelve-gate run on the release tree)
+### Release verification — v0.0.1.g (2026-11-02, full twelve-gate run on the release tree)
 
 ```
 shasum -a 256 -c /tmp/sdp-preserve.sha256   → 4 × OK
@@ -602,22 +643,22 @@ node tests/e2e.cjs                          → G7  52 PASS / 0 FAIL
 node tests/live-lab.cjs                     → G8  39 PASS / 0 FAIL
 node tests/audit-v42.cjs                    → G9  47 PASS / 0 FAIL
 node tests/voice-guide.cjs                  → G10 26 PASS / 0 FAIL
-node tests/vault-sync.cjs                   → G11 40 PASS / 0 FAIL
-node tests/studio-safety.cjs                → G12 55 PASS / 0 FAIL
+node tests/vault-sync.cjs                   → G11 74 PASS / 0 FAIL
+node tests/studio-safety.cjs                → G12 78 PASS / 0 FAIL
                                               ─────────────────────
-                                              509 assertions, 0 FAIL
+                                              566 assertions, 0 FAIL
 ```
 
-### Byte budgets actually used
+### Byte budgets actually used (W2 ceilings)
 
-`index.html` 30,170 / 40,000 · `sdp-ui.css` 43,383 / 68,000 · `sdp-data-sync.js`
-73,761 / 74,000 · `sdp-audio-speech.js` 38,831 / 54,000 · `sdp-dictation-engine.js`
-43,844 / 64,000 · `sdp-ui-views.js` 115,546 / 120,000 · `studio.js` 97,706 / 98,000 ·
-`data-meter.js` 21,740 / 22,000 · `data.html` = `data/index.html` 27,905 / 60,000 ·
-`sw.js` 10,759 / 12,000 · `config.json` 35,001 / 36,000.
-Docs: `ARCHITECTURE_MAP.md` 22395 B / 44,000 · `SYNC_AND_DATA_CONTRACT.md` 22338 B / 44,000 ·
-`UI_COMPONENT_GUIDE.md` 19141 B / 44,000 · `DAILY_UPGRADE_PROMPT_TEMPLATE.md` 15124 B / 22,000 ·
-`CHANGELOG_LEDGER.md` 42763 B / 44,000.
+`index.html` 30,170 / 36,000 · `sdp-ui.css` 44,305 / 60,000 · `sdp-data-sync.js`
+78,825 / 82,000 · `sdp-audio-speech.js` 38,831 / 52,000 · `sdp-dictation-engine.js`
+43,844 / 60,000 · `sdp-ui-views.js` 118,919 / 125,000 · `studio.js` 107,824 / 108,000 ·
+`data-meter.js` 21,740 / 24,000 · `data.html` = `data/index.html` 27,905 / 32,000 ·
+`sw.js` 10,759 / 13,000 · `config.json` 35,001 / 36,000 · `version.json` 289 / 2,000.
+Docs: `ARCHITECTURE_MAP.md` 25,066 B / 48,000 · `SYNC_AND_DATA_CONTRACT.md` 26,632 B / 48,000 ·
+`UI_COMPONENT_GUIDE.md` 23,497 B / 48,000 · `DAILY_UPGRADE_PROMPT_TEMPLATE.md` 19,784 B / 24,000 ·
+`CHANGELOG_LEDGER.md` 47,470 B / 48,000.
 
 ### Preserved payloads (byte-identical, `shasum -a 256 -c` 4 × OK)
 
@@ -626,4 +667,4 @@ Docs: `ARCHITECTURE_MAP.md` 22395 B / 44,000 · `SYNC_AND_DATA_CONTRACT.md` 2233
 `NotoSansSinhala-Bold.woff2` `bf59c148…944a643e`. `data/elevenlabs-audio.json` stays
 app-written and budgeted (≤ 2.5 MB), never hash-frozen.
 
-Released under: `Release Smart Dictation Player v0.0.1.f (Verified Adoption, One-Click Studio & Free Enrichment)`.
+Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, Immortal Vault & the Free AI Ladder)`.

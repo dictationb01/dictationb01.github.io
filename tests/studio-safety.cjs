@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* G12 — Lecturer Studio: real DOM widgets, zero-credit quota, delta clips (P3/P4).
+ * v0.0.1.g adds the 5-slot free ladder, the immortal-vault UI and Card 1 (D7/D10/D13/D14).
  * contract: docs/UI_COMPONENT_GUIDE.md §5 studio widgets
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §W5 CREDIT SAFETY
  * CREDIT SAFETY: this gate never calls /v1/text-to-speech. The only network
@@ -27,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.1.g'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -169,7 +170,7 @@ async function unlockStudio(app) {
       'studioTitle', 'studioPinLabel', 'pinPadClear', 'pinPadUnlock', 'studioCommitClip',
       'testOneWordBtn', 'genDeltaBtn', 'costPreviewLabel', 'quotaHeading',
       'creditsLine', 'creditsPill', 'howToUse', 'guideSpeakBtn',
-      /* v0.0.1.f studio surface */
+      /* v0.0.1.g studio surface */
       'studioCardKeys', 'studioCardWords', 'studioCardSettings', 'studioOneClick',
       'studioMasterSteps', 'studioEnrich', 'studioWordManager', 'studioAiProvider',
       'studioAiKey', 'studioAiNoKey', 'studioPublishWordsVoice', 'studioLock',
@@ -189,7 +190,7 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 7. v0.0.1.f: three cards, the one-click setup, the PIN and the dots ─ */
+  /* ── 7. v0.0.1.g: three cards, the one-click setup, the PIN and the dots ─ */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 studio cards · §R4 PIN · §R5 lock
   {
     const app = await createApp(base);
@@ -230,8 +231,8 @@ async function unlockStudio(app) {
     check('G12.7j the unlocked header carries an explicit lock control', !!app.byId('btnLockStudio'));
     const prov = app.byId('studioAiProvider');
     const options = prov ? Array.from(prov.querySelectorAll('option')).map((o) => o.value) : [];
-    check('G12.7k the free provider is the default and all four ship',
-      JSON.stringify(options) === JSON.stringify(['free_dict', 'groq', 'gemini', 'openrouter']) &&
+    check('G12.7k the free provider is the default and all five slots ship in ladder order',
+      JSON.stringify(options) === JSON.stringify(['free_dict', 'pollinations_free', 'groq', 'openrouter', 'gemini']) &&
       prov.value === 'free_dict', options.join(','));
     check('G12.7l free_dict needs no key at all',
       app.SDP.Studio.aiProviderName() === 'free_dict' && app.SDP.Studio.aiProviderKey() === '',
@@ -306,6 +307,103 @@ async function unlockStudio(app) {
     check('G12.8f offline the deterministic B1 lexicon still fills all six fields',
       !!f.w && !!f.p && !!f.pos && !!f.m && !!f.si && !!f.s && off.offline === 1, JSON.stringify(f).slice(0, 140));
     offlineApp.close();
+  }
+
+  /* ── 9. v0.0.1.g: 5-slot ladder, immortal vault UI, Card 1 for teachers ─ */
+  // contract: docs/UI_COMPONENT_GUIDE.md §5 studio Card 1 · §R8 free ladder
+  {
+    const app = await createApp(base);
+    await unlockStudio(app);
+
+    /* D10 — the 5-slot 100% free AI ladder */
+    const prov = app.byId('studioAiProvider');
+    const slots = Array.from(prov.querySelectorAll('option')).map((o) => o.value);
+    check('G12.9a the five free slots ship in ladder order',
+      JSON.stringify(slots) === JSON.stringify(['free_dict', 'pollinations_free', 'groq', 'openrouter', 'gemini']), slots.join(','));
+    check('G12.9b slot 1 needs no key, slot 3 does',
+      app.SDP.Studio.providers.free_dict.needsKey === false &&
+      app.SDP.Studio.providers.pollinations_free.needsKey === false &&
+      app.SDP.Studio.providers.groq.needsKey === true, JSON.stringify(Object.keys(app.SDP.Studio.providers)));
+    const freeBadge = app.byId('studioFreeNoKey');
+    check('G12.9c slot 1 shows the zero-key badge verbatim',
+      !!freeBadge && freeBadge.hidden === false &&
+      freeBadge.textContent === app.SDP.STRINGS_EN.studioFreeNoKey &&
+      /100% Free — No API Key Required!/.test(freeBadge.textContent), freeBadge && freeBadge.textContent);
+    prov.value = 'pollinations_free';
+    prov.dispatchEvent(new app.w.Event('change', { bubbles: true }));
+    check('G12.9d the badge also shows for slot 2 (zero-key LLM)', freeBadge.hidden === false);
+    prov.value = 'groq';
+    prov.dispatchEvent(new app.w.Event('change', { bubbles: true }));
+    check('G12.9e the badge hides for a keyed slot', freeBadge.hidden === true);
+    prov.value = 'free_dict';
+    prov.dispatchEvent(new app.w.Event('change', { bubbles: true }));
+
+    /* D7 (Layer 3) — auto-filled, masked inputs + the green vault badge */
+    const el = app.byId('elKeyInput');
+    const gh = app.byId('ghTokenInput');
+    check('G12.9f the ElevenLabs key is auto-filled after unlock', el.value === 'sk_x', el.value);
+    check('G12.9g the GitHub token is auto-filled after unlock', gh.value === 'ghp_x', gh.value);
+    check('G12.9h both credential inputs stay masked', el.type === 'password' && gh.type === 'password', el.type + '/' + gh.type);
+    const badge = app.byId('studioVaultBadge');
+    check('G12.9i the green vault badge proves the keys are protected',
+      !!badge && badge.hidden === false &&
+      /Vault Saved & Protected Across Updates/.test(badge.textContent), badge && badge.textContent);
+    check('G12.9j the AI key row has the same Show / Paste / Test trio',
+      !!app.byId('btnToggleAi') && !!app.byId('btnPasteAi') && !!app.byId('btnTestAi'));
+
+    /* D14 — exactly one visible force-regen checkbox, the mirror stays hidden */
+    const force = app.byId('studioForceRegen');
+    const mirror = app.byId('chkForceRegen');
+    check('G12.9k exactly one force-regen checkbox is visible',
+      !!force && force.hidden === false && !!mirror && mirror.style.display === 'none' &&
+      app.qa('.studio-card-keys input[type=checkbox]:not(#chkForceRegen)').length === 1,
+      app.qa('.studio-card-keys input[type=checkbox]').length);
+    force.checked = true;
+    force.dispatchEvent(new app.w.Event('change', { bubbles: true }));
+    check('G12.9l the hidden mirror stays in sync with the visible box', mirror.checked === true);
+    force.checked = false;
+    force.dispatchEvent(new app.w.Event('change', { bubbles: true }));
+
+    /* D13 — the clean TWO-button primary action bar */
+    const bar = app.q('.studio-primary-bar');
+    const barButtons = bar ? Array.from(bar.querySelectorAll('button')).map((b) => b.id) : [];
+    check('G12.9m the primary bar is exactly two buttons',
+      JSON.stringify(barButtons) === JSON.stringify(['btnSaveKeys', 'btnOneClickMasterSetup']), barButtons.join(','));
+    check('G12.9n #btnSaveKeys carries the verbatim Step 1 label',
+      app.byId('btnSaveKeys').textContent === app.SDP.STRINGS_EN.studioSave &&
+      /^Step 1: Save Keys Permanently \(Local Vault \+ GitHub Sync\)$/.test(app.byId('btnSaveKeys').textContent),
+      app.byId('btnSaveKeys').textContent);
+    check('G12.9o #btnOneClickMasterSetup carries the verbatim Step 2 label',
+      app.byId('btnOneClickMasterSetup').textContent === app.SDP.STRINGS_EN.studioOneClick &&
+      /^Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent),
+      app.byId('btnOneClickMasterSetup').textContent);
+    check('G12.9p the legacy quota buttons stay in the DOM but hidden',
+      !!app.byId('btnCheckQuota') && !!app.byId('btnRefreshQuota') &&
+      app.byId('btnCheckQuota').style.display === 'none' && app.byId('btnRefreshQuota').style.display === 'none');
+    const elTestButtons = app.qa('#studioCardKeys button').filter((b) => /Test ElevenLabs Key/.test(b.textContent) && b.style.display !== 'none');
+    check('G12.9q no duplicate "Test ElevenLabs Key" button clutters Card 1',
+      elTestButtons.length === 1, elTestButtons.length);
+    check('G12.9r the diagnostics strip holds the 1-word test and the delta generator',
+      !!app.byId('btnTestOneWord') && !!app.byId('btnGenClips') &&
+      !!app.byId('quotaText') && !!app.byId('costPreviewLine'));
+    check('G12.9s the four master steps and the vault badge are inside Card 1',
+      !!app.byId('studioMasterSteps') && app.byId('studioMasterSteps').querySelectorAll('li').length === 4 &&
+      !!badge && badge.parentNode === app.byId('studioCardKeys'));
+    check('G12.9t the scoped-key note ships in both languages',
+      /scoped\/free-tier key/.test(app.SDP.STRINGS_EN.studioQuotaScoped) &&
+      /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.studioQuotaScoped), app.SDP.STRINGS_SI.studioQuotaScoped);
+    /* W7 — the Sinhala face and the single-numbered step list */
+    const cssText = fs.readFileSync(path.join(ROOT, 'assets/css/sdp-ui.css'), 'utf8');
+    check('G12.9v the shipped Sinhala face is wired for the Studio card',
+      /html\[lang='si'\]\s+\.studio-card\s*\{[^}]*var\(--font-si\)/.test(cssText) &&
+      /--font-ui:[^;]*'Noto Sans Sinhala'/.test(cssText));
+    const stepLabels = Array.from(app.byId('studioMasterSteps').querySelectorAll('li')).map((li) => li.textContent);
+    check('G12.9w the step list is numbered by the <ol> marker only',
+      stepLabels.length === 4 && stepLabels.every((t) => !/^\s*\d+\s*[.·]/.test(t)), stepLabels.join('|'));
+    check('G12.9x the tier warning ships in both languages',
+      /Built-in Free British Female Professor Voice/.test(app.SDP.STRINGS_EN.studioElTierWarn) &&
+      /[\u0D80-\u0DFF]/.test(app.SDP.STRINGS_SI.studioElTierWarn), app.SDP.STRINGS_SI.studioElTierWarn);
+    app.close();
   }
 
   const failed = results.filter((r) => r.status === 'FAIL');

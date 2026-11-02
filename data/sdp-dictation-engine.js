@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — dictation engine (v0.0.1.f)
+/*! Smart Dictation Player — dictation engine (v0.0.1.g)
  * Strict ES5, dependency free.
  * contract: docs/ARCHITECTURE_MAP.md §R2 priority #3 single integrated cockpit
  * contract: docs/ARCHITECTURE_MAP.md §R4 focus & input law

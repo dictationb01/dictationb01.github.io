@@ -318,3 +318,74 @@ zero occurrences of the retired PIN, verbatim EN + SI credit lines, all five doc
   to the release value when the test pins its own pacing.
 * `enrichWords()` must decide what needs enrichment from the *provided/prior* record, not
   from the merged fallback, otherwise the lexicon short-circuits the dictionary call.
+
+## v0.0.1.g upgrade prompt (copy/paste block, 2026-11-02)
+
+```
+Upgrade dictationb1/dictationb1.github.io from v0.0.1.f to v0.0.1.g in one autonomous pass.
+Target: appVersion/version 0.0.1.g, ver 7, schema 7, settingsRev 7, syncRev 1793595000000,
+buildDate 2026-11-02, SW sdp-v0.0.1.g / sdp-v0.0.1.g-shell.
+
+D1/D2  Rule 1A — fetchSubscription 3-rung ladder (subscription -> /v1/voices -> format
+       check). scoped => green, remaining:null, SCOPED_NOTE. Only invalid_api_key fatal.
+       quotaError() must never emit the literal "subscription_failed".
+D3/D4  Rule 1B — oneClickMasterSetup 4 steps; GitHub token is the ONLY fatal step; a
+       401/402/403/429 during clip generation warns, keeps made clips, resolves to step 4.
+D5/D8/D9  Layer 1 = sdp.settings.vaultLock {fails,lockUntil,strikes,until,encVault,
+       pinVerifier,updatedAt}; self-heal at boot, in resolveEnvelope(), in
+       unlockWithVerifier(); copy encVault+pinVerifier when Layer 1 is real and newer.
+D6     saveKeys = Layer 2 (seal -> Layer 1 -> config.json + version.json when ghToken).
+D7     Auto-fill elKey/ghToken/gasUrl/aiKey/aiProvider on unlock, masked, + #studioVaultBadge.
+D10    5-slot #studioAiProvider: free_dict (default) -> pollinations_free (zero-key) ->
+       groq -> openrouter -> gemini; omit Authorization when keyless; #studioFreeNoKey on 1-2.
+D11/D12  Harvest entry.phonetics[].audio (-uk.mp3/_gb, // -> https://); audioForWord(w,dAudio)
+       falls back to Youdao type=1; normalizeWord keeps custom audio.
+D13    keysCardMarkup: 3 credential rows [Show][Paste][Test]; hidden #btnCheckQuota/
+       #btnRefreshQuota; two-button primary bar #btnSaveKeys + #btnOneClickMasterSetup;
+       diagnostics strip; 4-step list; #studioVaultBadge.
+D14    One visible #studioForceRegen; #chkForceRegen hidden and mirrored.
+D15    Config-sovereign settle(): adopt version+config when the config leg verifies even if
+       the session leg failed; return deferredSession:true; defer-all only on config failure.
+D16    verifyPayloadLeg(session): matching session no. + words.length >= 1, or the same
+       active list by id + length + updatedAt.
+D17    needSession also true when the session no. differs, state.deferredSession, or legacy
+       payloadFiles includes data/session.json.
+D18    Re-stamp every versioned literal, re-baseline BUDGET (W2 ceilings below), extend
+       G11 (74) and G12 (78), bump the appliedSettingsRev fixtures 6 -> 7.
+
+W2 ceilings: index.html 36000, sdp-ui.css 60000, sdp-data-sync.js 82000,
+sdp-audio-speech.js 52000, sdp-dictation-engine.js 60000, sdp-ui-views.js 125000,
+studio.js 108000, data-meter.js 24000, data.html = data/index.html 32000, sw.js 13000,
+config.json 36000, docs 48000 each (template 24000).
+
+Hard gates: 12 gates 0 FAIL — G1 88, G2 12, G3 81, G4 8, G5 46, G6 15, G7 52, G8 39,
+G9 47, G10 26, G11 74, G12 78 = 566 assertions; shasum -a 256 -c 4/4 OK;
+data/session.json and gas-source.txt byte-identical; zero occurrences of the retired PIN;
+verbatim EN + SI credit lines on Home, About and /data; all five docs updated with real
+bytes; merge to main only with --no-ff.
+```
+
+### Sequencing that worked
+
+1. Stamp the release literals everywhere first (`version.json`, `config.json`, voice pack,
+   `sw.js`, manifest, both shells, `APP_VERSION`, `SCHEMA`, `SETTINGS_REV`) so G1/G2 flip.
+2. Land D5/D8/D9 in `sdp-data-sync.js` before anything in the Studio uses `writeLayerOne`.
+3. Land D15/D16/D17 in `sync()` and prove them early — G3 and G7 both depend on `settle()`.
+4. Rebuild Card 1 (`keysCardMarkup`) last, then re-check the strings in **both** languages.
+5. Update the gate literals in a dedicated `gate-align: v0.0.1.g` pass: BUDGET (W2),
+   version pins, `syncRev`, the `appliedSettingsRev` fixtures, `audit-v42.cjs` G9.2.
+6. Run all twelve gates, paste the real numbers into `CHANGELOG_LEDGER.md`, `shasum -c`,
+   then merge `--no-ff`.
+
+### Traps seen last time
+
+* A bumped `settingsRev` (6 -> 7) re-adopts `classSettings`; every fixture that pins its own
+  pacing must raise `appliedSettingsRev` to 7 — G3, G7, G8, G10 and G12 all had one.
+* `tests/audit-v42.cjs` keeps a **second** budget table; bumping only `check.cjs` leaves
+  G9.2a red.
+* `T(key, fallback)` must be `esc(t(key, fallback))`; a wrapper that calls itself recurses
+  until the stack dies and silently blanks the results table.
+* A `ReferenceError` inside `mount()` renders an empty `#resultsTable tbody`, which looks
+  like a selector bug. Assert on `renderResults()` output before blaming the selector.
+* G12 fails the release if any test file so much as *mentions* the paid TTS path — stub
+  `elevenlabs.io` generically instead.

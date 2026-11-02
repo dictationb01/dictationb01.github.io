@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.e
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.1.g
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the
@@ -10,13 +10,13 @@ code is the bug.
 
 | Constant | Value | Where |
 | --- | --- | --- |
-| `APP_VERSION` / `SDP.version` | `0.0.1.e` | `index.html`, every module |
-| `ver` | `5` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
-| `schema` | `5` | same |
-| `settingsRev` | `5` | same |
-| `syncRev` | `1793585000000` | identical in version/config/voice-pack |
-| `SW_VERSION` | `sdp-v0.0.1.e` | `sw.js` |
-| `SHELL_CACHE` | `sdp-v0.0.1.e-shell` | `sw.js` |
+| `APP_VERSION` / `SDP.version` | `0.0.1.g` | `index.html`, every module |
+| `ver` | `7` | `data/version.json`, `data/config.json`, `data/elevenlabs-audio.json` |
+| `schema` | `7` | same |
+| `settingsRev` | `7` | same |
+| `syncRev` | `1793595000000` | identical in version/config/voice-pack; seed for `nextSyncRev()` |
+| `SW_VERSION` | `sdp-v0.0.1.g` | `sw.js` |
+| `SHELL_CACHE` | `sdp-v0.0.1.g-shell` | `sw.js` |
 | `PRESERVE_CACHES` | `['sdp-youdao-v1', 'sdp-audio-clips']` | `sw.js` |
 
 There is exactly one version file: `data/version.json`. Never a root `/version.json`.
@@ -475,3 +475,76 @@ envelope and `pinVerifier`.
 gains `defaultsResetV001f:true`, the seven defaults above are re-applied once and the
 `touchedKeys` entries for `pacingPreset`/`writeSecs`/`repeats`/`voiceLock` are cleared.
 No sixth localStorage key is ever created (W4).
+
+---
+
+## R13 — v0.0.1.g: Rule 1A, Rule 1B, Layer 1 and the session trap
+
+### R13.1 Rule 1A — the key ladder (D1, D2)
+
+`SDP.Studio.fetchSubscription(key, cb)` never invents a failure. Three rungs, in order:
+
+1. `GET /v1/user/subscription` → 200 → the real quota (`{ok:true, remaining:(character_count,character_limit)}`).
+2. Subscription refused (401/403/404/429) → probe `GET /v1/voices`. Anything 200 means the
+   key is real but scoped → `{ok:true, scoped:true, remaining:null, note:SCOPED_NOTE}`.
+3. Probe also failed → accept the key when `looksLikeElevenKey(key)` (format check only) →
+   same scoped verdict, so a free-tier key on a locked-down network still gets green.
+
+Only `detail.status === 'invalid_api_key'` (HTTP 401) is fatal, and it is the only path
+that paints red. `quotaError()` translates every other status into a sentence a teacher
+can act on; the literal string `subscription_failed` can never reach the DOM (G11.10d).
+
+### R13.2 Rule 1B — one-click master setup (D3, D4)
+
+```
+step 1  merge inputs → sealVaultNow → writeLayerOne → testGitHubToken   ← the ONLY fatal step
+step 2  checkQuota(elKey)                                              ← advisory, always proceeds
+step 3  generateClips({force, noCommit:true})  guide 1–4 + up to 30 words
+step 4  injectClips → publishBundle() → 4 files, ONE nextSyncRev(), version.json LAST
+```
+
+A 401/402/403/429 *inside* clip generation is a tier status, not an error: the clips
+already produced are kept, the rest are marked skipped, `ST.tierWarn = TIER_WARN()` is
+shown, and the run resolves into step 4 so the four files still publish (G11.11a–g).
+`G11` also proves the paid endpoint is never called by a test — the stub answers any
+`elevenlabs.io` URL that is not `/v1/user/subscription` or `/v1/voices`.
+
+### R13.3 Layer 1 — the vault inside `sdp.settings` (D5, D8, D9)
+
+`sdp.settings.vaultLock` is the second copy of the envelope: a **plain object** with
+`{fails, lockUntil, strikes, until, encVault, pinVerifier, updatedAt}`. It is written by
+`setup`, `saveKeys`, `unlock` (on success) and `writeLayerOne()`, and read by
+`healFromLayerOne()` at boot, inside `resolveEnvelope()` and in `unlockWithVerifier()`.
+
+Self-heal rule: when Layer 1 holds a real `SDP_ENC_V2:` envelope, its `updatedAt` is newer
+than the config record, or the config record is the template placeholder
+(`SDP_ENC_V2:AAA=`), then `encVault` + `pinVerifier` are copied into the config record and
+the vault survives a release that reset `data/config.json`. Unlocking then decrypts the
+healed envelope with the PIN, so `ST.secrets` is filled instead of `{}` (G11.12a–i).
+Layer 1 is still *inside* `sdp.settings`: the five-key law in R4 is untouched (G11.12d).
+
+### R13.4 Config-sovereign adoption (D15) and the session trap (D16, D17)
+
+`settle()` weighs three legs. The session leg no longer has veto power:
+
+* config verified → adopt `version.json` + `config.json`, apply `classSettings`, advance the
+  pointer, and report `deferredSession:true` when the session leg failed;
+* config failed → adopt nothing (`stale_payload`), so a half-published tree can never brick
+  a device.
+
+`verifyPayloadLeg('session')` accepts a payload that proves the pointer (`syncRev`), a
+matching session number with at least one word (D16), or the same active list by
+`id` + `words.length` + `updatedAt`. Because any of those proves the payload, a test that
+wants a rejection must send a 0-word list or a different session number (G11.15a–d).
+
+`needSession` is false only when the session number is unchanged **and** `payloadFiles`
+names no session file (D17, legacy headers excluded) and no device state asked for a
+retry. A settings-only publish therefore costs 3 small requests and never re-downloads the
+46,403 B `data/session.json` (G11.13a–d). A device that lost its session still pulls it on
+the next tick because `state.deferredSession` survives the adoption (G11.14c).
+
+### R13.5 The publish contract did not move
+
+`publishFilesSequential()` is unchanged: fresh SHA → PUT → await → next file, exactly one
+409 retry, `data/version.json` committed last, one `nextSyncRev() = max(Date.now(), prev+1)`
+across all four files (G11.11c–e). A locked Studio still refuses to publish at all.

@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.1.a)
+/*! Smart Dictation Player — views, i18n & router (v0.0.1.g)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -138,7 +138,7 @@
     studioLockedOut: 'Too many wrong PINs. Try again in', seconds: 'seconds',
     studioBadPin: 'Wrong PIN', studioEditor: 'Session words (one per line: w | ipa | pos | meaning | sinhala | sentence)',
     studioPreview: 'Publish preview', studioPublish: 'Publish session', studioGenerate: 'Generate Alice clips',
-    studioRecord: 'Record word', studioSave: 'Save draft', studioLock: 'Lock studio',
+    studioRecord: 'Record word', studioSave: 'Step 1: Save Keys Permanently (Local Vault + GitHub Sync)', studioLock: 'Lock studio',
     studioEnvelope: 'Encrypted vault envelope (SDP_ENC_V2)', studioCopy: 'Copy envelope',
     studioPublishOk: 'Session published', studioPublishFail: 'Publish failed',
     studioNoToken: 'Add a GitHub token (Contents API) in the vault first', studioWordsCount: 'words parsed',
@@ -192,8 +192,8 @@
     studioAiProvider: 'Free AI / dictionary engine',
     studioAiKey: 'Free AI key (optional)',
     studioTestAi: 'Test Free AI / Dictionary Engine',
-    studioAiNoKey: '1: Built-in Free Dictionary + Sinhala Translator — No Key Needed',
-    studioOneClick: 'Save Keys, Generate Complete British Professor Voice Pack (Guide + 30 Words) & Sync to All Devices',
+    studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
+    studioOneClick: 'Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices',
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
@@ -202,7 +202,19 @@
     studioMasterSteps: 'Setup progress',
     studioEnriching: 'Enriching',
     studioEnriched: 'Enriched',
-    studioAiOffline: 'offline B1 lexicon used'
+    studioAiOffline: 'offline B1 lexicon used',
+    /* ── v0.0.1.g (D2, D6, D7, D10, D13, D14) ── */
+    studioSaveKeysStep1: 'Step 1: Save Keys Permanently (Local Vault + GitHub Sync)',
+    studioOneClickStep2: 'Step 2: One-Click Generate British Professor Voices & Sync Everything to All Devices',
+    vaultBadgeLabel: 'Vault Saved & Protected Across Updates',
+    studioFreeNoKey: '100% Free — No API Key Required!',
+    studioQuotaScoped: 'Key accepted (scoped/free-tier key — quota read bypassed)',
+    studioElTierWarn: 'ElevenLabs free quota/tier limit reached — using Built-in Free British Female Professor Voice for remaining words',
+    studioSavedLocal: 'Saved in local Vault (protected across updates)',
+    studioAiSlotPollinations: '2: Pollinations Free Open-Source AI (Llama/Mistral — 100% Free, No API Key Needed!)',
+    studioAiSlotGroq: '3: Groq Cloud Free Tier · Llama-3.3-70B Open-Source (gsk_… — Free, No Credit Card)',
+    studioAiSlotOpenrouter: '4: OpenRouter Free Models · Llama-3.3-70B:free (sk-or-… — Free Tier)',
+    studioAiSlotGemini: '5: Google Gemini Free Tier · gemini-2.5-flash (AIza… — Optional)'
   };
 
   /* contract: docs/UI_COMPONENT_GUIDE.md §H7 verified Sinhala strings */
@@ -312,7 +324,7 @@
     studioLockedOut: 'වැරදි PIN ගණන වැඩිය. නැවත උත්සාහ කරන්න', seconds: 'තත්පර',
     studioBadPin: 'වැරදි PIN', studioEditor: 'වාරයේ වචන (පේළියකට එකක්: w | ipa | pos | meaning | sinhala | sentence)',
     studioPreview: 'ප්‍රකාශන පෙරදසුන', studioPublish: 'වාරය ප්‍රකාශයට පත් කරන්න', studioGenerate: 'Alice හඬ පටි සාදන්න',
-    studioRecord: 'වචනය පටිගත කරන්න', studioSave: 'කෙටුම්පත සුරකින්න', studioLock: 'ස්ටුඩියෝ අගුළු දමන්න',
+    studioRecord: 'වචනය පටිගත කරන්න', studioSave: 'පියවර 1: යතුරු ස්ථිරවම සුරකින්න (දේශීය බඳුන + GitHub සමමුහුර්තය)', studioLock: 'ස්ටුඩියෝ අගුළු දමන්න',
     studioEnvelope: 'සංකේතිත බඳුන ලියුම (SDP_ENC_V2)', studioCopy: 'ලියුම පිටපත් කරන්න',
     studioPublishOk: 'වාරය ප්‍රකාශයට පත් විය', studioPublishFail: 'ප්‍රකාශනය අසාර්ථක විය',
     studioNoToken: 'පළමුව බඳුනට GitHub ටෝකනයක් එක් කරන්න', studioWordsCount: 'වචන විග්‍රහ කර ඇත',
@@ -366,8 +378,8 @@
     studioAiProvider: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම',
     studioAiKey: 'නොමිලේ AI යතුර (අවශ්‍ය නැත)',
     studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
-    studioAiNoKey: '1: ඉදිකළ නොමිලේ ශබ්දකෝෂය සහ සිංහල පරිවර්තකය — යතුරක් අවශ්‍ය නැත',
-    studioOneClick: 'යතුරු සුරකා සම්පූර්ණ බ්‍රිතාන්‍ය මහාචාර්ය හඬ පැකේජය (උපදෙස් + වචන 30) සාදා සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
+    studioAiNoKey: '1: ඉදිකළ නොමිලේ Oxford/Wikimedia ශබ්දකෝෂය සහ සිංහල පරිවර්තකය (100% නොමිලේ — යතුරක් අවශ්‍ය නැත)',
+    studioOneClick: 'පියවර 2: එක් ස්පර්ශයකින් බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා සියල්ල සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
     studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
@@ -376,7 +388,19 @@
     studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
     studioEnriching: 'පුරවමින්',
     studioEnriched: 'පුරවා අවසන්',
-    studioAiOffline: 'නොබැඳි B1 ශබ්දකෝෂය භාවිතා විය'
+    studioAiOffline: 'නොබැඳි B1 ශබ්දකෝෂය භාවිතා විය',
+    /* ── v0.0.1.g (D2, D6, D7, D10, D13, D14) ── */
+    studioSaveKeysStep1: 'පියවර 1: යතුරු ස්ථිරවම සුරකින්න (දේශීය බඳුන + GitHub සමමුහුර්තය)',
+    studioOneClickStep2: 'පියවර 2: එක් ස්පර්ශයකින් බ්‍රිතාන්‍ය මහාචාර්ය හඬ සාදා සියල්ල සියලු උපාංග වෙත සමමුහුර්ත කරන්න',
+    vaultBadgeLabel: 'යතුරු බඳුන සුරකින ලදී · යාවත්කාලීනවලින් ආරක්ෂිතයි',
+    studioFreeNoKey: '100% නොමිලේ — API යතුරක් අවශ්‍ය නැත!',
+    studioQuotaScoped: 'යතුර පිළිගැනිණි (scoped/නොමිලේ මට්ටමේ යතුර — සීමා කියවීම මඟ හැරිණි)',
+    studioElTierWarn: 'ElevenLabs නොමිලේ සීමාව අවසන් — ඉතිරි වචන සඳහා ඉදිකළ නොමිලේ බ්‍රිතාන්‍ය කාන්තා මහාචාර්ය හඬ භාවිතා වේ',
+    studioSavedLocal: 'දේශීය බඳුනේ සුරකින ලදී (යාවත්කාලීනවලින් ආරක්ෂිතයි)',
+    studioAiSlotPollinations: '2: Pollinations නොමිලේ විවෘත මූලාශ්‍ර AI (Llama/Mistral — 100% නොමිලේ, යතුරක් අවශ්‍ය නැත!)',
+    studioAiSlotGroq: '3: Groq Cloud නොමිලේ මට්ටම · Llama-3.3-70B (gsk_… — නොමිලේ, කාඩ්පතක් අවශ්‍ය නැත)',
+    studioAiSlotOpenrouter: '4: OpenRouter නොමිලේ ආකෘති · Llama-3.3-70B:free (sk-or-… — නොමිලේ මට්ටම)',
+    studioAiSlotGemini: '5: Google Gemini නොමිලේ මට්ටම · gemini-2.5-flash (AIza… — අමතර)'
   };
 
   var lang = 'en';

@@ -37,30 +37,32 @@ function sha256(p) { return crypto.createHash('sha256').update(read(p)).digest('
  * contract: docs/ARCHITECTURE_MAP.md §H1 — every shipped file has an owner
  * and an explicit ceiling; an unbudgeted file is a release blocker (W4). */
 const BUDGET = {
-  'index.html': 40000,
-  'assets/css/sdp-ui.css': 68000,
+  /* contract: docs/ARCHITECTURE_MAP.md §H1 — v0.0.1.g ceilings (W2), re-based
+     from the measured v0.0.1.f sizes plus release headroom. */
+  'index.html': 36000,
+  'assets/css/sdp-ui.css': 60000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data/sdp-data-sync.js': 74000,
-  'data/sdp-audio-speech.js': 54000,
-  'data/sdp-dictation-engine.js': 64000,
-  'data/sdp-ui-views.js': 120000,
-  'data/studio.js': 98000,
-  'data/data-meter.js': 22000,
+  'data/sdp-data-sync.js': 82000,
+  'data/sdp-audio-speech.js': 52000,
+  'data/sdp-dictation-engine.js': 60000,
+  'data/sdp-ui-views.js': 125000,
+  'data/studio.js': 108000,
+  'data/data-meter.js': 24000,
   'data/session.json': 46403,
   'data/config.json': 36000,
   'data/version.json': 2000,
   'data/gas-source.txt': 13764,
   'data/elevenlabs-audio.json': 2500000,
-  'data.html': 60000,
-  'data/index.html': 60000,
-  'sw.js': 12000,
+  'data.html': 32000,
+  'data/index.html': 32000,
+  'sw.js': 13000,
   'manifest.webmanifest': 4000,
-  'docs/ARCHITECTURE_MAP.md': 44000,
-  'docs/UI_COMPONENT_GUIDE.md': 44000,
-  'docs/SYNC_AND_DATA_CONTRACT.md': 44000,
-  'docs/CHANGELOG_LEDGER.md': 44000,
-  'docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md': 22000
+  'docs/ARCHITECTURE_MAP.md': 48000,
+  'docs/UI_COMPONENT_GUIDE.md': 48000,
+  'docs/SYNC_AND_DATA_CONTRACT.md': 48000,
+  'docs/CHANGELOG_LEDGER.md': 48000,
+  'docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md': 24000
 };
 /* contract: docs/ARCHITECTURE_MAP.md §H1 — preserved read-only payloads are
  * pinned to an exact byte count so an accidental editor save is caught. */
@@ -239,11 +241,11 @@ function pending(p) {
 (function versions() {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.1.f ships ver 6 / schema 6 / settingsRev 6
-    const ok = v.ver === 6 && v.appVersion === '0.0.1.f' && v.version === '0.0.1.f' &&
-      v.schema === 6 && v.settingsRev === 6 && String(v.session) === '8';
-    record('version.json carries the v0.0.1.f schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1793590000000', Number(v.syncRev) === 1793590000000, JSON.stringify(v).slice(0, 200));
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.1.g ships ver 6 / schema 6 / settingsRev 6
+    const ok = v.ver === 7 && v.appVersion === '0.0.1.g' && v.version === '0.0.1.g' &&
+      v.schema === 7 && v.settingsRev === 7 && String(v.session) === '8';
+    record('version.json carries the v0.0.1.g schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1793595000000', Number(v.syncRev) === 1793595000000, JSON.stringify(v).slice(0, 200));
     record('version.json stays slim (<= 2000 B)', bytes('data/version.json') <= 2000, bytes('data/version.json'));
   } else { pending('version.json'); }
 
@@ -256,9 +258,9 @@ function pending(p) {
       c.repoName === 'dictationb1.github.io' && c.defaults && c.classInfo,
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.1.f bump set
-    record('config.json carries v0.0.1.f version fields',
-      c.ver === 6 && c.appVersion === '0.0.1.f' && c.version === '0.0.1.f' && c.schema === 6 && c.settingsRev === 6,
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.1.g bump set
+    record('config.json carries v0.0.1.g version fields',
+      c.ver === 7 && c.appVersion === '0.0.1.g' && c.version === '0.0.1.g' && c.schema === 7 && c.settingsRev === 7,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -402,7 +404,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.1.f boot target', html.indexOf("'0.0.1.f'") > 0 || html.indexOf('"0.0.1.f"') > 0);
+  record('index.html declares the v0.0.1.g boot target', html.indexOf("'0.0.1.g'") > 0 || html.indexOf('"0.0.1.g"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings'];
   record('index.html contains the five tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings'];
@@ -437,9 +439,9 @@ function pending(p) {
     record('index.html ships the studio quick launcher', html.indexOf('id="btnStudioQuick"') > 0);
     record('index.html ships guide narration controls (pause / next / replay)',
       /guidePauseVoice/.test(html) && /guideNextStep/.test(html) && /guideReplayStep/.test(html) && /guideResumeVoice/.test(views));
-    record('index.html boots at the v0.0.1.f target', /var TARGET = '0\.0\.1\.f'/.test(html));
-    record('service worker pins the v0.0.1.f shell caches',
-      /SW_VERSION = 'sdp-v0\.0\.1\.f'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.1\.f-shell'/.test(sw));
+    record('index.html boots at the v0.0.1.g target', /var TARGET = '0\.0\.1\.g'/.test(html));
+    record('service worker pins the v0.0.1.g shell caches',
+      /SW_VERSION = 'sdp-v0\.0\.1\.g'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.1\.g-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -459,12 +461,12 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.1.f',
-      /"start_url": "\.\/\?v=0\.0\.1\.f/.test(man) && man.indexOf('?v=0.0.1.f') > 0 &&
-      (man.match(/v=0\.0\.1\.f/g) || []).length >= 3, (man.match(/v=0\.0\.1\.f/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.1.g',
+      /"start_url": "\.\/\?v=0\.0\.1\.g/.test(man) && man.indexOf('?v=0.0.1.g') > 0 &&
+      (man.match(/v=0\.0\.1\.g/g) || []).length >= 3, (man.match(/v=0\.0\.1\.g/g) || []).length);
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.1.f header',
-      pack.version === '0.0.1.f' && pack.appVersion === '0.0.1.f' && pack.ver === 6 && pack.schema === 6,
+    record('voice pack carries the v0.0.1.g header',
+      pack.version === '0.0.1.g' && pack.appVersion === '0.0.1.g' && pack.ver === 7 && pack.schema === 7,
       JSON.stringify([pack.version, pack.ver]));
   })();
 

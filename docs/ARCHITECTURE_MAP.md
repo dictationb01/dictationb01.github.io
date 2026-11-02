@@ -1,4 +1,4 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.e
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.1.g
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
@@ -13,26 +13,26 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 
 | File | Budget | Owner / role |
 | --- | --- | --- |
-| `index.html` | ≤ 35,000 B | Shell: 54px header, 5 screens, guide modal, toast, boot check, 6 deferred modules |
+| `index.html` | ≤ 36,000 B | Shell: 54px header, 5 screens, guide modal, toast, boot check, 6 deferred modules |
 | `assets/css/sdp-ui.css` | ≤ 60,000 B | The single stylesheet (Zinc + Sky flat matte). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
-| `data/sdp-data-sync.js` | ≤ 65,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
-| `data/sdp-audio-speech.js` | ≤ 48,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
-| `data/sdp-dictation-engine.js` | ≤ 58,000 B | `SDP.Engine`: beat machine, ring/bar timer, Paper/Typing, hints, 30-row self-check |
-| `data/sdp-ui-views.js` | ≤ 110,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
-| `data/studio.js` | ≤ 85,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
-| `data/data-meter.js` | ≤ 22,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
+| `data/sdp-data-sync.js` | ≤ 82,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
+| `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
+| `data/sdp-dictation-engine.js` | ≤ 60,000 B | `SDP.Engine`: beat machine, ring/bar timer, Paper/Typing, hints, 30-row self-check |
+| `data/sdp-ui-views.js` | ≤ 125,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, router, Home, Guide, Words, Practice, Settings, toast |
+| `data/studio.js` | ≤ 108,000 B | `SDP.Studio`: PIN vault, session editor, recorder, ElevenLabs, publish |
+| `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
 | `data/session.json` | exactly 46,403 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
 | `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Alice voice pack (D-UI11); header asserted, clips travel with the repo |
-| `data.html` | ≤ 60,000 B | `/data` transparency route |
-| `data/index.html` | ≤ 60,000 B | Byte-identical twin of `data.html` |
-| `sw.js` | ≤ 12,000 B | `sdp-v0.0.1.e` service worker |
-| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.e` |
-| `docs/*.md` (5 files) | ≤ 40,000 B each (template ≤ 18,000 B) | This ledger |
+| `data.html` | ≤ 32,000 B | `/data` transparency route |
+| `data/index.html` | ≤ 32,000 B | Byte-identical twin of `data.html` |
+| `sw.js` | ≤ 13,000 B | `sdp-v0.0.1.g` service worker |
+| `manifest.webmanifest` | ≤ 4,000 B | PWA manifest, description pinned to `0.0.1.g` |
+| `docs/*.md` (5 files) | ≤ 48,000 B each (template ≤ 24,000 B) | This ledger |
 
 **Preserved files are never edited by hand.** `tests/check.cjs` compares their
 byte count *and* SHA-256; the hashes live in its `PRESERVED_SHA` table and in
@@ -422,3 +422,56 @@ locked or token-less studio commits nothing.
 Every doc stays inside its cap: `CHANGELOG_LEDGER.md` 42763 B / 44,000 ·
 `SYNC_AND_DATA_CONTRACT.md` 22338 B / 44,000 · `UI_COMPONENT_GUIDE.md` 19141 B / 44,000 ·
 `DAILY_UPGRADE_PROMPT_TEMPLATE.md` 15124 B / 22,000 · this file 22395 B / 44,000.
+
+---
+
+## §H4 — v0.0.1.g release tree, budgets and module deltas (2026-11-02)
+
+Pointer: `appVersion/version '0.0.1.g'` · `ver/schema/settingsRev 7` ·
+`syncRev 1793595000000` · `SW_VERSION 'sdp-v0.0.1.g'` / `SHELL_CACHE 'sdp-v0.0.1.g-shell'`.
+`tests/check.cjs` (W2 ceilings) and `tests/audit-v42.cjs` §G9.2 carry the same table.
+
+### §H4.1 Bytes measured on the release tree
+
+| File | Bytes | Ceiling |
+| --- | --- | --- |
+| `index.html` | 30,170 | 36,000 |
+| `assets/css/sdp-ui.css` | 44,305 | 60,000 |
+| `data/sdp-data-sync.js` | 78,825 | 82,000 |
+| `data/sdp-audio-speech.js` | 38,831 | 52,000 |
+| `data/sdp-dictation-engine.js` | 43,844 | 60,000 |
+| `data/sdp-ui-views.js` | 118,919 | 125,000 |
+| `data/studio.js` | 107,824 | 108,000 |
+| `data/data-meter.js` | 21,740 | 24,000 |
+| `data.html` = `data/index.html` | 27,905 each | 32,000 |
+| `sw.js` | 10,759 | 13,000 |
+| `data/config.json` | 35,001 | 36,000 |
+| `data/version.json` | 289 | 2,000 |
+
+### §H4.2 Module ownership of the D1–D18 register
+
+* **`data/studio.js` (Studio).** D1 `fetchSubscription` 3-rung ladder · D2 `quotaError`
+  (403 + `res.scoped` + `detail.status`; scoped is green, never red) · D3/D4
+  `oneClickMasterSetup` (4 steps, GitHub token the only fatal one, tier statuses warn and
+  keep made clips) · D6 `saveKeys` = Layer 2 · D7 `paintSecretFields` (masked auto-fill) ·
+  D10 `AI_PROVIDERS` 5-slot ladder, `free_dict` default · D13 `keysCardMarkup` ·
+  D14 `#studioForceRegen` ↔ `#chkForceRegen`.
+* **`data/sdp-data-sync.js` (Data + Sync + Vault).** D5 `settings.vaultLock` Layer 1 ·
+  D8/D9 `healFromLayerOne` at boot, inside `resolveEnvelope()` and
+  `unlockWithVerifier()` · D15 config-sovereign `settle()` + `deferredSession` ·
+  D16 `verifyPayloadLeg` · D17 `needSession`.
+* **`data/sdp-audio-speech.js` (Speech).** D11/D12 `audioForWord(w, dAudio)`, British
+  harvest (`-uk.mp3`/`_gb`), Youdao `type=1` fallback.
+* **`data/sdp-ui-views.js` (Views).** `STRINGS_EN`/`STRINGS_SI` gained `studioSave`,
+  `studioOneClick`, `studioQuotaScoped`, `studioElTierWarn`, `studioAiNoKey`,
+  `studioAiSlot1..5`, `studioFreeNoKey`, `vaultBadgeLabel`.
+* **`data/sdp-dictation-engine.js` (Engine).** untouched by v0.0.1.g except the header
+  stamp; `renderResults()` still owns every result row.
+* **`data/data-meter.js` (transparency).** untouched, `METER_VERSION` unchanged.
+
+### §H4.3 What a release must never move
+
+`data/session.json`, `data/gas-source.txt` and both Sinhala `woff2` files stay
+byte-identical (Appendix A). `data/elevenlabs-audio.json` is app-written and budgeted,
+never hash-frozen. The credits strip stays verbatim in EN and SI on Home, About and
+`/data`.

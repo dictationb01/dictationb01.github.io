@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.1.f'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.1.g'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -58,10 +58,10 @@ async function bootSettings(page, settings) {
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
      the test's own pacing against a classSettings adoption, and guideAutoPlay
      keeps Start on the fast path (the quick guide is G3/G7's job). */
-  const seed = Object.assign({ appliedSettingsRev: 6, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
+  const seed = Object.assign({ appliedSettingsRev: 7, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.1.f');
+    localStorage.setItem('sdp.guide_seen', '0.0.1.g');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }

@@ -49,7 +49,9 @@
   --gap: 10px;
   --tap: 48px;
   --shadow: none;
-  --font-ui: Inter, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  /* W7: the Sinhala face is a fallback, so Latin keeps Inter and any Sinhala
+   * glyph inside an English string still renders on a fontless device. */
+  --font-ui: Inter, 'Segoe UI', system-ui, -apple-system, sans-serif, 'Noto Sans Sinhala';
   --font-si: 'Noto Sans Sinhala', 'Iskoola Pota', 'Nirmala UI', sans-serif;
   color-scheme: dark;
 }
@@ -1114,6 +1116,11 @@ html[data-theme='board'] .board-class-bar.is-active { display: flex; }
 html[data-theme='board'] #beatSeconds { font-size: 48px; }
 html[data-theme='board'] .board-word { font-size: 30px; }
 
+/* W7: a Sinhala UI must render in the shipped Sinhala face, not a system guess.
+ * The Studio card carries the most Sinhala copy on the site (D7/D13 labels), so it
+ * is switched wholesale; inputs and monospace rules keep their own family. */
+html[lang='si'] .studio-card { font-family: var(--font-si); }
+
 /* Sinhala credit line under the English one (R1: both languages, always). */
 .credit-line-si {
   font-family: var(--font-si);
@@ -1197,8 +1204,11 @@ html[data-theme='board'] .board-word { font-size: 30px; }
 }
 .studio-h4 { margin: 2px 0 4px; font-size: 13.5px; font-weight: 700; }
 .studio-h5 { margin: 6px 0 2px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
-.studio-steps { margin: 4px 0; padding-left: 18px; font-size: 12px; color: var(--text-muted); }
-.studio-steps > li { margin: 2px 0; }
+.studio-steps { margin: 4px 0; padding-left: 22px; font-size: 12px; color: var(--text-muted); list-style: decimal outside; }
+.studio-steps > li { margin: 2px 0; padding-left: 2px; }
+.studio-steps > li::marker { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.studio-steps > li[data-state="active"]::marker { color: var(--accent); }
+.studio-steps > li[data-state="bad"]::marker { color: #F87171; }
 .studio-steps > li[data-state="active"] { color: var(--accent); font-weight: 600; }
 .studio-steps > li[data-state="ok"] { color: var(--text); }
 .studio-steps > li[data-state="bad"] { color: #F87171; font-weight: 600; }
@@ -1213,3 +1223,24 @@ html[data-theme='board'] .board-word { font-size: 30px; }
 }
 .guide-autoplay-banner.hidden, .guide-autoplay-banner[hidden] { display: none !important; }
 #btnOneClickMasterSetup { width: 100%; min-height: 48px; text-align: left; }
+/* v0.0.1.g (D7, D10, D13, D14): Card 1 for non-technical lecturers. */
+.studio-primary-bar { display: grid; gap: 8px; margin: 8px 0 4px; }
+.studio-primary-bar > .btn { width: 100%; min-height: 48px; text-align: left; }
+.studio-compat-row { margin: 0; }
+.studio-diagnostics-row { margin: 2px 0; }
+.studio-free-badge {
+  margin: 0; padding: 6px 10px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; color: #86EFAC;
+  border: 1px solid rgba(134, 239, 172, 0.45);
+  background: rgba(34, 197, 94, 0.12);
+}
+.studio-vault-badge {
+  margin: 6px 0 2px; padding: 8px 10px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; color: #86EFAC;
+  border: 1px solid rgba(134, 239, 172, 0.45);
+  background: rgba(34, 197, 94, 0.12);
+}
+.studio-free-badge[hidden], .studio-vault-badge[hidden] { display: none !important; }
+@media (max-width: 420px) {
+  .studio-primary-bar > .btn { font-size: 12.5px; min-height: 52px; }
+}

@@ -620,6 +620,15 @@
       mount();
       paintLecturerBar();
       loadVoicePack(noop);
+      /* v0.0.4.a S4: the verifier unlock path tops the pack up to the full 70
+         Alice clips too, under exactly the same guards as unlock(). */
+      if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken) && countExistingClips() < 70) {
+        resolveProfessorVoice(ST.secrets.elevenKey, function () {
+          generateClips({ auto: true }, function (err, info) {
+            if (!err && info && info.made && info.made.length) commitVoicePack();
+          });
+        });
+      }
       cb(null, ST.secrets);
     }
     v.verifyPinVerifier(pin, verifier).then(function (ok) {

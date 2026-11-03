@@ -79,8 +79,8 @@ test('R1: app, schema and service-worker constants are all 0.0.4.a', () => {
   assert.equal(version.appVersion, '0.0.4.a');
   assert.equal(version.version, '0.0.4.a');
   assert.equal(version.schema, 13);
-  assert.equal(version.settingsRev, 23);
-  assert.equal(Number(version.syncRev), 1793656017976);
+  assert.equal(version.settingsRev, 25);
+  assert.equal(Number(version.syncRev), 1793704800000);
   assert.equal(String(version.session), '8');
 
   const cfg = readJSON('data/config.json');
@@ -88,7 +88,7 @@ test('R1: app, schema and service-worker constants are all 0.0.4.a', () => {
   assert.equal(cfg.appVersion, '0.0.4.a');
   assert.equal(cfg.version, '0.0.4.a');
   assert.equal(cfg.schema, 13);
-  assert.equal(cfg.settingsRev, 23);
+  assert.equal(cfg.settingsRev, 25);
   assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
 
   const sw = read('sw.js');

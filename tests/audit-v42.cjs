@@ -222,8 +222,8 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.a is ver 12 / schema 12 / settingsRev 20
-  config.ver === 13 && config.appVersion === '0.0.4.a' && config.version === '0.0.4.a' && config.schema === 13 && config.settingsRev === 23,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.a is ver 12 / schema 12 / settingsRev 25
+  config.ver === 13 && config.appVersion === '0.0.4.a' && config.version === '0.0.4.a' && config.schema === 13 && config.settingsRev === 25,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */

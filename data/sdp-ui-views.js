@@ -766,6 +766,7 @@
     }
     var resumeBtn = byId('btnResume');
     if (resumeBtn) setText(resumeBtn, t('resumeSession'));
+    if (resumeBtn) resumeBtn.hidden = !!(enginePaused || draftPaused);
     var resumeDraftBtn = byId('btnResumeDraft');
     if (resumeDraftBtn) {
       resumeDraftBtn.hidden = !(enginePaused || draftPaused);

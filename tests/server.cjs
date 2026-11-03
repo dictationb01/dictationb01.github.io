@@ -57,8 +57,8 @@ test('Server failed multi-cell publish leaves committed words/version intact and
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 — the frozen SDP_ENC_V2 wire format ships with the studio */
 test('v0.0.4.a release metadata: public JSON is secret-free, GitHub-only studio and AES-GCM v2 runtime ship together',()=>{
  const read=f=>JSON.parse(fs.readFileSync(require('path').join(__dirname,'..',f),'utf8'));
- const rel=read('data/version.json');assert.equal(rel.ver,13);assert.equal(rel.appVersion,'0.0.4.a');assert.equal(rel.schema,13);assert.equal(rel.settingsRev,23);assert.equal(Number(rel.syncRev),1793656017976);
- const cfg=read('data/config.json');assert.equal(cfg.ver,13);assert.equal(cfg.appVersion,'0.0.4.a');assert.equal(cfg.schema,13);assert.equal(cfg.settingsRev,23);assert.equal(Number(cfg.syncRev),1793656017976);assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
+ const rel=read('data/version.json');assert.equal(rel.ver,13);assert.equal(rel.appVersion,'0.0.4.a');assert.equal(rel.schema,13);assert.equal(rel.settingsRev, 25);assert.equal(Number(rel.syncRev),1793704800000);
+ const cfg=read('data/config.json');assert.equal(cfg.ver,13);assert.equal(cfg.appVersion,'0.0.4.a');assert.equal(cfg.schema,13);assert.equal(cfg.settingsRev, 25);assert.equal(Number(cfg.syncRev),1793704800000);assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
  for(const jf of ['data/version.json','data/config.json','data/session.json','data/elevenlabs-audio.json']){const d=read(jf);assert.ok(d.adminPin===undefined||d.adminPin==='',jf);assert.ok(!d.vaultCiphertext,jf+' no public vault');assert.ok(!d.keysTopic&&!d.wordsTopic&&!d.audioTopic,jf+' no relays');}
  const vault=read('data/elevenlabs-audio.json');assert.equal(vault.voiceId,'Xb7hH8MSUJpSbSDYk0k2');assert.equal(vault.voiceName,'Alice');assert.equal(vault.modelId,'eleven_flash_v2_5');assert.equal(vault.strictAdminOnly,true);assert.equal(typeof vault.clips,'object');
  const file=n=>require('path').join(__dirname,'..',n);

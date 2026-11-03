@@ -92,7 +92,7 @@
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
   "appVersion": "0.0.4.a",
-  "settingsRev": 23,
+  "settingsRev": 25,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -694,7 +694,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793656017976,
+  "syncRev": 1793704800000,
   "versionFamily": "10.0.0",
   "encVault": "SDP_ENC_V2:Gzu+/E3ukVNdGmCT5lSu45dEsCUgBs2NRbF7jDnSZ59OuxzFVM8v3Nls3rh6NTdZ41vyYBSbIdnq/jJsSLg+X5ET4xQ80Z6OV7TiFoq1zAlUje2prt5BQGzzUuCc6LIadvHAibQ/dxIg6U1bLy1MyZet/g7NN4Jht69XkHFZML7IrMN00uJnGSmVrmo3C6V9widGBuoVrmQ3fOtXXfNufhecBz0eUjFIH3hczxnH7046/JEeOOHM6Rik3xMMr4of3nBB8Fn4isrGvZBOFo74hjMQpIb0rlwt976ee9M2joZEUJ7BQfCapHLBLIXCd3iUq4tyCwqWtRCr9Qs4VCtKPKS/gtey61Ksl67xSthytY8bGyDj7/099yu7fLpTBHIG89Wnxv6GAEbjtEMLLQkWbJb2UpLO0u90hshpW6/kyi/Dg1Y2HW3/RAF6XwyKbd6QMZiUg+/O7/U=",
   "classSettings": {

@@ -1730,3 +1730,7 @@ html[lang='si'] .guide-step-text { font-family: var(--font-si); }
 .wm-edit-cells .wm-input{min-width:110px;flex:1 1 110px;}
 .studio-diag-drawer{margin:6px 0;}
 .studio-diag-drawer>summary{cursor:pointer;font-weight:700;}
+
+/* v0.0.4.a S2: Home de-clutter — one resume CTA, no duplicate STEP cue or badges. */
+.cue[data-cue="home"]{display:none}
+#homeReadyBadge,#homePresetBadge{display:none}

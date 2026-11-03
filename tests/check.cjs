@@ -245,11 +245,11 @@ function pending(p) {
 (function versions() {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.a ships ver 12 / schema 12 / settingsRev 20
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.a ships ver 12 / schema 12 / settingsRev 25
     const ok = v.ver === 13 && v.appVersion === '0.0.4.a' && v.version === '0.0.4.a' &&
-      v.schema === 13 && v.settingsRev === 23 && String(v.session) === '8';
+      v.schema === 13 && v.settingsRev === 25 && String(v.session) === '8';
     record('version.json carries the v0.0.4.a schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1793656017976', Number(v.syncRev) === 1793656017976, JSON.stringify(v).slice(0, 200));
+    record('version.json pins syncRev 1793704800000', Number(v.syncRev) === 1793704800000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -270,7 +270,7 @@ function pending(p) {
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.4.a bump set
     record('config.json carries v0.0.4.a version fields',
-      c.ver === 13 && c.appVersion === '0.0.4.a' && c.version === '0.0.4.a' && c.schema === 13 && c.settingsRev === 23,
+      c.ver === 13 && c.appVersion === '0.0.4.a' && c.version === '0.0.4.a' && c.schema === 13 && c.settingsRev === 25,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&

@@ -389,12 +389,12 @@ function gitHubStub(opts) {
     app.w.fetch = function (url, init) { seen.push(String(url)); return inner(url, init); };
     /* D10: the published revision must exceed the shipped settingsRev. */
     const cfgOnly = Object.assign({}, live, {
-      settingsRev: 24, syncRev: 1793654500000,
+      settingsRev: 26, syncRev: 1793654500000,
       classSettings: Object.assign({}, live.classSettings, { writeSecs: 9, repeats: 3 })
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 24,
+      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 26,
       session: '8', title: 'Session 8', syncRev: 1793654500000,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
@@ -430,11 +430,11 @@ function gitHubStub(opts) {
     }, base));
     failSession = true;
     app.files['data/config.json'] = JSON.stringify(Object.assign({}, liveCfg, {
-      settingsRev: 24, syncRev: 1793654500001,
+      settingsRev: 26, syncRev: 1793654500001,
       classSettings: Object.assign({}, liveCfg.classSettings, { writeSecs: 8 })
     }));
     app.files['data/version.json'] = JSON.stringify({
-      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 24,
+      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 26,
       session: '9', title: 'Session 9', syncRev: 1793654500001,
       payloadFiles: ['data/session.json', 'data/config.json', 'data/version.json']
     });

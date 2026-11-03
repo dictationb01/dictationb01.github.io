@@ -737,7 +737,9 @@
     if (lecturer) tiers.push({ tier: 'lecturer', url: lecturer });
     if (eleven) tiers.push({ tier: 'eleven', url: eleven });
     if (unified && hasTier1Neural) tiers.push({ tier: 'neural_tts', url: '' });
-    if (dictionary) tiers.push({ tier: 'dictionary', url: dictionary });
+    /* v0.0.4.a W1: under 'unified' the Youdao dictionary MP3 tier is NEVER
+       mixed with Web Speech TTS — opt in explicitly via includeDictionary. */
+    if (dictionary && (!unified || (opts && opts.includeDictionary))) tiers.push({ tier: 'dictionary', url: dictionary });
     tiers.push({ tier: 'tts', url: '' });
     return tiers;
   }

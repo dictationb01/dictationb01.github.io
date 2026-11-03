@@ -5,14 +5,14 @@
  * api.elevenlabs.io, api.github.com and raw.githubusercontent.com are never
  * intercepted, never cached and never delayed by this worker. Network-first
  * for the shell and data JSON ({ cache: 'reload' }, 10 s timeout, D3/D4),
- * cache-first for audio and fonts, and two preserved caches that are never
- * purged: 'sdp-youdao-v1' (dictionary audio) and 'sdp-audio-clips'
- * (lecturer/Alice). */
+  * cache-first for audio and fonts. v0.0.4.a empties PRESERVE_CACHES, so the
+ * stale 'sdp-youdao-v1' (dictionary audio) and 'sdp-audio-clips' caches are
+ * purged on upgrade; word audio now comes from the committed Alice pack. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.3';
-var SHELL_CACHE = 'sdp-v0.0.3-shell';
-var PRESERVE_CACHES = ['sdp-youdao-v1', 'sdp-audio-clips'];
+var SW_VERSION = 'sdp-v0.0.4.a';
+var SHELL_CACHE = 'sdp-v0.0.4.a-shell';
+var PRESERVE_CACHES = [];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
 var AUDIO_CACHE = CLIP_CACHE;
@@ -184,7 +184,7 @@ self.addEventListener('install', function (event) {
 });
 
 /* Purge every cache-busted '?t=' entry the v0.0.1.d worker left behind (D4),
-   then delete retired caches. The two preserved audio caches survive. */
+   then delete retired caches. v0.0.4.a keeps PRESERVE_CACHES empty, so the stale audio caches are purged too. */
 function purgeQueryKeys(cacheName) {
   return caches.open(cacheName).then(function (cache) {
     return cache.keys().then(function (requests) {

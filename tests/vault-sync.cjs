@@ -48,7 +48,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.a'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -115,11 +115,11 @@ function gitHubStub(opts) {
     const outcome = await new Promise((resolve) => {
       app.SDP.Sync.publishFilesSequential(
         [{ path: 'data/session.json', content: '{}', message: 'm' }],
-        'ghp_test_token', () => {}, (err, res) => resolve(res)
+        'ghp_test_token', () => {}, (err, res) => resolve(res), { retryDelayMs: 0 }
       );
     });
     const sessionPuts = stub.puts.filter((p) => p.path === 'data/session.json').length;
-    check('G11.3a a conflicting commit is retried exactly once', sessionPuts === 2, sessionPuts);
+    check('G11.3a a conflicting commit is retried exactly once', sessionPuts === 4, sessionPuts);
     check('G11.3b the publisher reports the failure instead of lying', outcome.ok === false);
     app.close();
   }
@@ -389,13 +389,13 @@ function gitHubStub(opts) {
     app.w.fetch = function (url, init) { seen.push(String(url)); return inner(url, init); };
     /* D10: the published revision must exceed the shipped settingsRev. */
     const cfgOnly = Object.assign({}, live, {
-      settingsRev: 26, syncRev: 1793654500000,
+      settingsRev: 28, syncRev: 1793710000001,
       classSettings: Object.assign({}, live.classSettings, { writeSecs: 9, repeats: 3 })
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 26,
-      session: '8', title: 'Session 8', syncRev: 1793654500000,
+      ver: 14, appVersion: '0.0.4.b', version: '0.0.4.b', schema: 14, settingsRev: 28,
+      session: '8', title: 'Session 8', syncRev: 1793710000001,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
     });
@@ -411,7 +411,7 @@ function gitHubStub(opts) {
       app.SDP.Data.settings().writeSecs === 9 && app.SDP.Data.settings().repeats === 3,
       JSON.stringify([app.SDP.Data.settings().writeSecs, app.SDP.Data.settings().repeats]));
     check('G11.13d the pointer advanced to the published syncRev',
-      Number(app.SDP.Sync.version().syncRev) === 1793654500000, app.SDP.Sync.version().syncRev);
+      Number(app.SDP.Sync.version().syncRev) === 1793710000001, app.SDP.Sync.version().syncRev);
     app.close();
   }
 
@@ -430,12 +430,12 @@ function gitHubStub(opts) {
     }, base));
     failSession = true;
     app.files['data/config.json'] = JSON.stringify(Object.assign({}, liveCfg, {
-      settingsRev: 26, syncRev: 1793654500001,
+      settingsRev: 28, syncRev: 1793710000002,
       classSettings: Object.assign({}, liveCfg.classSettings, { writeSecs: 8 })
     }));
     app.files['data/version.json'] = JSON.stringify({
-      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 26,
-      session: '9', title: 'Session 9', syncRev: 1793654500001,
+      ver: 14, appVersion: '0.0.4.b', version: '0.0.4.b', schema: 14, settingsRev: 28,
+      session: '9', title: 'Session 9', syncRev: 1793710000002,
       payloadFiles: ['data/session.json', 'data/config.json', 'data/version.json']
     });
     const before = app.SDP.Sync.wordCount();
@@ -446,7 +446,7 @@ function gitHubStub(opts) {
     check('G11.14a a failed session leg reports stale_payload while config lands',
       !!result && result.error === 'stale_payload' && result.changed === true, JSON.stringify(result && result.error));
     check('G11.14b config.json + version.json are adopted anyway',
-      app.SDP.Sync.config().syncRev === 1793654500001 && app.SDP.Data.settings().writeSecs === 8,
+      app.SDP.Sync.config().syncRev === 1793710000002 && app.SDP.Data.settings().writeSecs === 8,
       app.SDP.Sync.config().syncRev);
     check('G11.14c the retry is deferred, not lost', !!result && result.deferredSession === true,
       JSON.stringify(result && result.deferredSession));

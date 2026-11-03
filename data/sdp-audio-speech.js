@@ -512,6 +512,10 @@
     var pEpoch = state.speechEpoch;
     var el = sharedAudio();
     if (!el) { cb(new Error('no_audio_element')); return; }
+    var srcUrl = playableUrl(url);
+    /* v0.0.4.b BUG-4: an unconvertible data clip cannot play in a plain <audio>;
+       hand over to the next tier at once instead of stalling for twelve seconds. */
+    if (str(srcUrl).indexOf('data:audio/') === 0) { cb(new Error('audio_failed')); return; }
     /* E5 hard screen guard: a covered screen never plays <audio>. */
     if (screenIsCovered()) { finish(false); return; }
     var conf = settings();
@@ -535,7 +539,7 @@
       el.pause();
       state.audioPlaying = true; /* D11: the views guide watchdog reads this */
       /* D-M1: a data:audio/mpeg manifest entry becomes a cached Blob URL. */
-      el.src = playableUrl(url);
+      el.src = srcUrl;
       el.volume = volume;
       try { el.playbackRate = Math.min(1.2, Math.max(0.7, Number(opts.rate || conf.rate) || 1)); } catch (e) {}
       el.onended = function () { finish(true); };
@@ -576,9 +580,32 @@
     } catch (e) { return u; }
   }
 
+  function normKey(k) { return str(k).trim().toLowerCase().replace(/[.,!?;:]+$/, ''); }
+  function canBlobUrl() {
+    return typeof global.Blob === 'function' && !!global.URL && typeof global.URL.createObjectURL === 'function';
+  }
+  /* v0.0.4.b: the shipped pack is b64-only. Hydrate data URLs in memory where
+     Blob URLs are actually playable, and index both words.<w> and <w> keys. */
+  function hydrateClips(map) {
+    if (!isObj(map)) return map;
+    var keys = [], k;
+    for (k in map) if (Object.prototype.hasOwnProperty.call(map, k)) keys.push(k);
+    for (var i = 0; i < keys.length; i++) {
+      var srcKey = keys[i], v = map[srcKey];
+      if (canBlobUrl() && v && isObj(v) && !v.url && v.b64) v.url = 'data:audio/mpeg;base64,' + v.b64;
+      var n = normKey(srcKey);
+      if (!n) continue;
+      var bare = n.replace(/^words\./, '');
+      if (n !== srcKey && !map[n]) map[n] = v;
+      if (bare && !map[bare]) map[bare] = v;
+      if (bare && !map['words.' + bare]) map['words.' + bare] = v;
+    }
+    return map;
+  }
   function applyManifest(data) {
     state.manifest = data && isObj(data) ? data : { clips: {} };
     if (!isObj(state.manifest.clips)) state.manifest.clips = {};
+    hydrateClips(state.manifest.clips);
     state.manifestSyncRev = Number(state.manifest.syncRev || 0);
     state.manifestRequested = false;
     return state.manifest;
@@ -638,19 +665,21 @@
       if (!Object.prototype.hasOwnProperty.call(clipsMap, k)) continue;
       var entry = clipsMap[k];
       if (entry === null || entry === undefined || entry === '') continue;
-      state.manifest.clips[str(k).toLowerCase()] = entry;
+      state.manifest.clips[normKey(k)] = entry;
       added += 1;
     }
+    hydrateClips(state.manifest.clips);
     state.manifestSyncRev = Math.max(Number(state.manifestSyncRev || 0), Number(state.manifest.syncRev || 0));
     state.manifestRequested = false;
     return added;
   }
   /* The adoption chain calls this after every adopted publish. */
-  function reloadManifest(cb) {
+  function reloadManifest(cb, force) {
+    if (typeof cb === 'boolean') { force = cb; cb = noop; }
     cb = cb || noop;
     state.manifest = null;
     state.manifestRequested = false;
-    loadManifest(cb, true);
+    loadManifest(cb, force !== false);
     return true;
   }
   /* One-shot listeners: the next online / visible moment reloads the pack. */
@@ -674,7 +703,7 @@
 
   function entryUrl(entry) {
     if (typeof entry === 'string') return entry;
-    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || '');
+    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || (canBlobUrl() && entry.b64 ? 'data:audio/mpeg;base64,' + entry.b64 : ''));
     return '';
   }
   /* R5: the 70-clip pack names every word clip 'words.<w>' and keeps the legacy
@@ -682,7 +711,7 @@
   function manifestClip(key) {
     var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
     if (!clips) return '';
-    var k = str(key).toLowerCase();
+    var k = normKey(str(key));
     if (!k) return '';
     return entryUrl(clips[k] || clips['words.' + k] || null);
   }
@@ -697,7 +726,7 @@
       }
       return '';
     }
-    var k = str(word && word.w).toLowerCase();
+    var k = normKey(str(word && word.w));
     return entryUrl(clips['words.' + k] || clips[k] || clips[str(word && word.i)] || null);
   }
 

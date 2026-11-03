@@ -1734,3 +1734,44 @@ html[lang='si'] .guide-step-text { font-family: var(--font-si); }
 /* v0.0.4.a S2: Home de-clutter — one resume CTA, no duplicate STEP cue or badges. */
 .cue[data-cue="home"]{display:none}
 #homeReadyBadge,#homePresetBadge{display:none}
+
+/* ══ v0.0.4.b Modern Tactile Button & Settings Architecture ══ */
+.btn,.btn-ghost,.deck-btn{
+  background:linear-gradient(180deg,var(--bg-elev),var(--bg-card));
+  border:1px solid var(--border-strong);
+  border-radius:999px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 2px 8px rgba(2,6,23,.22);
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),box-shadow .16s cubic-bezier(.2,.8,.2,1),border-color .16s ease,filter .16s ease;
+}
+.btn-ghost{border-style:solid;opacity:.92;}
+.btn:hover,.btn-ghost:hover{border-color:var(--accent);transform:translateY(-1px);}
+.btn-primary,.btn-go{
+  background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:999px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 4px 14px rgba(37,99,235,.32);
+  font-weight:700;
+  color:#FFFFFF;
+}
+.btn-go{
+  background:linear-gradient(135deg,#10B981 0%,#059669 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 4px 14px rgba(16,185,129,.32);
+}
+.btn-primary:hover,.btn-go:hover{filter:brightness(1.06);transform:translateY(-1px);}
+.btn:active,.btn-primary:active,.btn-go:active{transform:translateY(1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 4px rgba(2,6,23,.25);}
+.seg{background:var(--bg-sunken);border-radius:999px;padding:4px;gap:4px;border:1px solid var(--border);}
+.seg-btn{background:transparent;border:1px solid transparent;border-radius:999px;color:var(--text-muted);font-weight:600;}
+.seg-btn[aria-pressed="true"],.seg-btn.is-active{background:var(--accent);color:#FFFFFF;box-shadow:0 3px 10px rgba(37,99,235,.30);}
+.preset-pill,.pill,.chip{border-radius:999px;background:var(--bg-card);color:var(--text);border:1px solid var(--border-strong);}
+.preset-pill[aria-pressed="true"],.pill[aria-pressed="true"],.chip[aria-pressed="true"]{
+  background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%);
+  color:#FFFFFF;
+  border-color:transparent;
+  box-shadow:0 4px 12px rgba(37,99,235,.28);
+}
+.set-card{border-radius:18px;border:1px solid var(--border-strong);box-shadow:0 4px 18px rgba(2,6,23,.14);}
+.set-head{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.set-head::before{content:"";width:28px;height:28px;border-radius:9px;flex:0 0 28px;background:linear-gradient(135deg,rgba(37,99,235,.28),rgba(16,185,129,.18));border:1px solid rgba(56,189,248,.25);}
+.set-card .field{margin:12px 0;}
+.set-card select.input,.set-card input.input{border-radius:999px;padding:0 16px;min-height:48px;background:var(--bg-card);border:1px solid var(--border-strong);font-weight:600;}
+@media (prefers-reduced-motion:reduce){.btn,.btn-primary,.btn-go,.seg-btn,.pill,.chip{transition:none;transform:none;}}

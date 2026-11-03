@@ -462,7 +462,7 @@
     base.voiceModel = VOICE_MODEL;
     base.persona = VOICE_PERSONA;
     base.hashAlgo = HASH_ALGO;
-    base.clips = ST.voicePack.clips || {};
+    base.clips = packClipsForDisk();
     base.updatedAt = new Date().toISOString();
     /* D19: same publish clock as */
     base.syncRev = Number(syncRev) || nextSyncRev();
@@ -620,15 +620,7 @@
       mount();
       paintLecturerBar();
       loadVoicePack(noop);
-      /* v0.0.4.a S4: the verifier unlock path tops the pack up to the full 70
-         Alice clips too, under exactly the same guards as unlock(). */
-      if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken) && countExistingClips() < 70) {
-        resolveProfessorVoice(ST.secrets.elevenKey, function () {
-          generateClips({ auto: true }, function (err, info) {
-            if (!err && info && info.made && info.made.length) commitVoicePack();
-          });
-        });
-      }
+      loadVoicePack(function () { paintPackDashboard(); paintClipTable(); });
       cb(null, ST.secrets);
     }
     v.verifyPinVerifier(pin, verifier).then(function (ok) {
@@ -691,14 +683,7 @@
         paintLecturerBar();
         /* SYNC-11: the committed clips must load */
         loadVoicePack(noop);
-        /* v0.0.4.a W1: on unlock with a valid key, top the pack up to the full 70 clips. */
-        if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken) && countExistingClips() < 70) {
-          resolveProfessorVoice(ST.secrets.elevenKey, function () {
-            generateClips({ auto: true }, function (err, info) {
-              if (!err && info && info.made && info.made.length) commitVoicePack();
-            });
-          });
-        }
+        loadVoicePack(function () { paintPackDashboard(); paintClipTable(); });
         /* SYNC-07 completion: a local */
         autoPublishVault(envelope);
         cb(null, ST.secrets);
@@ -981,6 +966,7 @@
       '<div class="chip-row studio-retry-row"' + (ST.lastFailedClip ? '' : ' hidden') + '>' + btn('btnRetryFailedClip', t('studioRetryFailed'), 'btn-ghost') + '</div>' +
       '<label class="checkline" for="studioForceRegen"><input type="checkbox" id="studioForceRegen"> <span>' + T('forceRegenLabel') + '</span></label>' +
       '<input type="checkbox" id="chkForceRegen" style="display:none" aria-hidden="true" tabindex="-1">' +
+      '<div class="chip-row studio-recovery-row"><button id="btnRecoverClips" type="button" class="btn btn-primary" data-action="recoverClips">📥 Recover Generated Clips From ElevenLabs History (0 Credits)</button></div>' +
       '<div class="chip-row studio-diagnostics-row">' +
       btn('btnTestOneWord', t('testOneWordBtn')) +
       btn('btnGenClips', t('genDeltaBtn'), 'btn-primary') +
@@ -1409,6 +1395,8 @@
 
   /* D3/D15/D17: dead btnStudioUnlock */
   var CLICK_ACTIONS = {
+    btnRecoverClips: function () { recoverFromHistory(noop); },
+    recoverClips: function () { recoverFromHistory(noop); },
     pinPadClear: function () { setPinValue(''); },
     pinPadBack: function () { backspacePin(); },
     pinPadUnlock: function () { unlock(pinValue(), noop); },
@@ -1570,14 +1558,7 @@
         }
         msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
         toast(t('vaultSavedToast'));
-        /* v0.0.4.a W1: a valid ElevenLabs key + push token auto-generates the 70-clip pack. */
-        if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken)) {
-          resolveProfessorVoice(ST.secrets.elevenKey, function () {
-            generateClips({ auto: true }, function (err, info) {
-              if (!err && info && info.made && info.made.length) commitVoicePack();
-            });
-          });
-        }
+        loadVoicePack(function () { paintPackDashboard(); paintClipTable(); });
       });
     });
     return true;
@@ -2160,7 +2141,12 @@
     cb = cb || noop;
     function pub() { publishBundle(currentWords(), {}, function (err, info) {
       if (err) { clearBusy(); msg(t('studioPublishFail') + ' · ' + publishReason(err, info), 'bad'); cb(err, info); return; }
-      try { if (SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {}); } catch (e) {}
+      try {
+        if (SDP.Speech) {
+          if (SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {});
+          if (SDP.Speech.reloadManifest) SDP.Speech.reloadManifest(true);
+        }
+      } catch (e) {}
       var saved = clipCount() + t('studioClipsSaved') + (info && info.syncRev) + ' · data/elevenlabs-audio.json';
       paintGenProgress(saved);
       paintPackDashboard();
@@ -2697,6 +2683,14 @@
       if (err || !result || !result.ok) { ST.voicePack.loaded = true; cb(err || new Error('pack_failed')); return; }
       var pack = result.json;
       if (isObj(pack) && isObj(pack.clips)) ST.voicePack.clips = pack.clips;
+      /* v0.0.4.b: the shipped pack is b64-only; drop any legacy .url in memory. */
+      if (isObj(ST.voicePack.clips)) {
+        for (var ck in ST.voicePack.clips) {
+          if (!Object.prototype.hasOwnProperty.call(ST.voicePack.clips, ck)) continue;
+          var ce2 = ST.voicePack.clips[ck];
+          if (ce2 && typeof ce2 === 'object' && ce2.url) delete ce2.url;
+        }
+      }
       ST.voicePack.rev = Number((pack && pack.syncRev) || 0);
       ST.voicePack.source = str(result.source);
       ST.voicePack.loaded = true;
@@ -2851,7 +2845,7 @@
           var b64 = arrayBufferToBase64(buffer);
           if (!b64) throw new Error('encode_failed');
           done(null, {
-            b64: b64, url: 'data:audio/mpeg;base64,' + b64, bytes: buffer.byteLength,
+            b64: b64, text: str(item.text), bytes: buffer.byteLength,
             at: Date.now(), voiceId: activeVoiceId, modelId: VOICE_MODEL,
             hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, activeVoiceId, VOICE_MODEL)
           });
@@ -2862,17 +2856,135 @@
     return { ok: true, started: queue.length, calls: 0 };
   }
 
+  /* v0.0.4.b: serialise clips without the duplicate .url data URL on disk. */
+  function packClipsForDisk() {
+    var src = ST.voicePack.clips || {}, out = {}, k;
+    for (k in src) {
+      if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
+      var c = src[k];
+      if (!c || typeof c !== 'object') { out[k] = c; continue; }
+      out[k] = {
+        b64: str(c.b64), bytes: Number(c.bytes) || 0, at: Number(c.at) || 0,
+        text: str(c.text), hashAlgo: str(c.hashAlgo), hash: str(c.hash),
+        voiceId: str(c.voiceId), modelId: str(c.modelId)
+      };
+    }
+    return out;
+  }
+  /* IRON LAW: GET /v1/history only — 0 credits, never POST to the audio API. */
+  function recoverFromHistory(cb) {
+    cb = cb || noop;
+    var key = str(ST.secrets.elevenKey || fieldValue('elKeyInput'));
+    if (!looksLikeElevenKey(key)) {
+      msg('Paste a valid sk_... ElevenLabs key first to recover clips from history.', 'warn');
+      cb(new Error('no_key'));
+      return;
+    }
+    msg('Checking ElevenLabs History (0 credits)...', 'info');
+    loadVoicePack(function () {
+      global.fetch('https://api.elevenlabs.io/v1/history?page_size=100', {
+        method: 'GET', headers: { 'xi-api-key': key }, cache: 'no-store'
+      }).then(function (r) { return r && r.ok ? r.json() : null; }).then(function (j) {
+        var items = (j && Array.isArray(j.history)) ? j.history : [];
+        var byText = {}, i;
+        for (i = 0; i < items.length; i++) {
+          var it = items[i] || {};
+          var t = str(it.text).trim();
+          if (t && it.history_item_id && !byText[t]) byText[t] = str(it.history_item_id);
+        }
+        var q = buildQueue(currentWords()), todo = [], k;
+        for (k = 0; k < q.length; k++) {
+          if (!clipExists(q[k].key) && byText[str(q[k].text).trim()]) {
+            todo.push({ key: q[k].key, text: q[k].text, hid: byText[str(q[k].text).trim()] });
+          }
+        }
+        function repaint() {
+          try {
+            if (global.SDP && global.SDP.Speech) {
+              if (global.SDP.Speech.injectClips) global.SDP.Speech.injectClips(ST.voicePack.clips);
+              if (global.SDP.Speech.reloadManifest) global.SDP.Speech.reloadManifest(true);
+            }
+          } catch (e) {}
+          paintPackDashboard();
+          paintClipTable();
+        }
+        if (!todo.length) {
+          repaint();
+          msg('All 70 voice pack clips are already loaded and verified (0 credits spent).', 'ok');
+          cb(null, { recovered: 0 });
+          return;
+        }
+        var idx = 0, rec = 0;
+        function pullNext() {
+          if (idx >= todo.length) {
+            repaint();
+            commitVoicePack(function () {
+              msg('Recovered ' + rec + ' clips from ElevenLabs History (0 credits spent)!', 'ok');
+              cb(null, { recovered: rec });
+            });
+            return;
+          }
+          var cur = todo[idx++];
+          global.fetch('https://api.elevenlabs.io/v1/history/' + encodeURIComponent(cur.hid) + '/audio', {
+            method: 'GET', headers: { 'xi-api-key': key }
+          }).then(function (ar) { return ar && ar.ok ? ar.arrayBuffer() : null; }).then(function (buf) {
+            if (buf && buf.byteLength > 100) {
+              var b64 = arrayBufferToBase64(buf);
+              ST.voicePack.clips[cur.key] = {
+                b64: b64, bytes: buf.byteLength, at: Date.now(), text: cur.text,
+                voiceId: activeVoiceId, modelId: VOICE_MODEL, hashAlgo: HASH_ALGO,
+                hash: clipContentHash(cur.text, activeVoiceId, VOICE_MODEL)
+              };
+              rec++;
+            }
+            pullNext();
+          }, function () { pullNext(); });
+        }
+        pullNext();
+      }, function (err) {
+        msg('Could not reach ElevenLabs History.', 'warn');
+        cb(err);
+      });
+    });
+  }
+
   /* Commit the freshly paid-for clips so */
+  /* v0.0.4.b: sequential publish mutex — concurrent calls queue, never race
+     on the single data/elevenlabs-audio.json blob. */
+  var packPublishQueue = [], packPublishBusy = false;
   function commitVoicePack(cb) {
     cb = cb || noop;
+    packPublishQueue.push(cb);
+    if (packPublishBusy) return true;
+    packPublishBusy = true;
+    function done(err, info) {
+      var list = packPublishQueue.slice();
+      packPublishQueue = [];
+      packPublishBusy = false;
+      if (!err) {
+        try {
+          if (global.SDP && global.SDP.Speech) {
+            if (global.SDP.Speech.injectClips) global.SDP.Speech.injectClips(ST.voicePack.clips);
+            if (global.SDP.Speech.reloadManifest) global.SDP.Speech.reloadManifest(true);
+          }
+        } catch (e) {}
+      }
+      for (var i = 0; i < list.length; i++) { try { list[i](err, info); } catch (e2) {} }
+    }
     var token = str(ST.secrets.ghToken);
-    if (!token || !sync() || !sync().publishFilesSequential) { cb(new Error('no_token')); return false; }
+    if (!token || !sync() || !sync().publishFilesSequential) {
+      packPublishBusy = false;
+      var waiting = packPublishQueue.slice();
+      packPublishQueue = [];
+      for (var j = 0; j < waiting.length; j++) { try { waiting[j](new Error('no_token')); } catch (e3) {} }
+      return false;
+    }
     var files = [{
       path: 'data/elevenlabs-audio.json',
       content: JSON.stringify(voicePackPayload(), null, 2),
       message: 'Alice voice pack ' + appVersion()
     }];
-    sync().publishFilesSequential(files, token, noop, cb || noop);
+    sync().publishFilesSequential(files, token, noop, done);
     return true;
   }
 
@@ -3220,6 +3332,8 @@
     message: function () { return ST.message; },
     testStatusText: function () { return ST.testStatus; }
   };
+
+  Studio.recoverFromHistory = recoverFromHistory;
 
   SDP.Studio = Studio;
 

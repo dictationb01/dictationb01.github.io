@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.4.a'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.4.a');
+    localStorage.setItem('sdp.guide_seen', '0.0.4.b');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -153,7 +153,7 @@ async function bootSettings(page, settings) {
       check('G5.4b each card shows IPA, POS, English, Sinhala, sentence and Play', Object.values(cardFields).every(Boolean), JSON.stringify(cardFields));
       const search = await page.evaluate(async () => {
         const input = document.getElementById('dictSearch');
-        input.value = 'charm';
+        input.value = 'important';
         input.dispatchEvent(new Event('input'));
         await new Promise((r) => setTimeout(r, 60));
         return document.querySelectorAll('#dictList .dict-card').length;

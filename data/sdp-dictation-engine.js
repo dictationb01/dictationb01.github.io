@@ -852,6 +852,16 @@
     if (E.phase === 'finished') return 'finished';
     return 'idle';
   }
+  /* v0.0.4.b: fingerprint the exact word list a draft belongs to. */
+  function wordsSignature(items) {
+    var list = Array.isArray(items) ? items : [], out = [], i;
+    for (i = 0; i < list.length; i++) {
+      var it = list[i] || {};
+      var raw = typeof it === 'string' ? it : (it.w || it.word || '');
+      out.push(String(raw).trim().toLowerCase());
+    }
+    return out.join('|');
+  }
   function saveDraft() {
     try {
       if (!SDP.Data || E.finished || !E.items.length) return null;
@@ -870,6 +880,7 @@
         repeatsDone: Math.max(0, Number(E.repeatsDone) || 0),
         pauseReason: str(E.pauseReason || ''),
         answers: answers,
+        wordsSig: wordsSignature(E.items),
         updatedAt: now()
       };
       SDP.Data.saveSession(draft);
@@ -880,6 +891,28 @@
     try {
       var d = SDP.Data && SDP.Data.session ? SDP.Data.session() : null;
       if (!d || typeof d.index !== 'number') return null;
+      var active = [];
+      try {
+        if (SDP.Sync && typeof SDP.Sync.words === 'function') active = SDP.Sync.words();
+        else if (SDP.Sync && SDP.Sync.state && Array.isArray(SDP.Sync.state.words)) active = SDP.Sync.state.words;
+      } catch (e) { active = []; }
+      if (d && d.wordsSig && active.length && d.wordsSig !== wordsSignature(active)) {
+        if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession();
+        return null;
+      }
+      if (d && !d.wordsSig && active.length && d.answers) {
+        var valid = {}, i, ww;
+        for (i = 0; i < active.length; i++) {
+          ww = active[i] || {};
+          valid[String(ww.w || ww.word || ww).trim().toLowerCase()] = 1;
+        }
+        for (var k in d.answers) {
+          if (Object.prototype.hasOwnProperty.call(d.answers, k) && !valid[String(k).trim().toLowerCase()]) {
+            if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession();
+            return null;
+          }
+        }
+      }
       return d;
     } catch (e) { return null; }
   }

@@ -666,3 +666,12 @@ G10 26/0 · G11 74/0 · G12 94/0 — 636 assertions, 0 FAIL (`cd tests && npm ru
 | `docs/SYNC_AND_DATA_CONTRACT.md` | 32,323 | 52,000 |
 | `docs/UI_COMPONENT_GUIDE.md` | 31,180 | 52,000 |
 | `docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md` | 23,070 | 26,000 |
+
+## v0.0.4.b — systems map delta
+
+* `data/studio.js`: `recoverFromHistory()` (GET /v1/history + /audio, 0 credits), `packClipsForDisk()`, the `commitVoicePack` mutex and `#btnRecoverClips`; no automatic generation path remains.
+* `data/sdp-data-sync.js`: `SETTINGS_REV 27`, `SCHEMA 14`, three 409 retries, `normClipKey()` and stale-draft invalidation in `applyPayloads()`.
+* `data/sdp-dictation-engine.js`: `wordsSignature()` stamps `wordsSig` on drafts and invalidates stale ones in `loadDraft()`.
+* `data/sdp-audio-speech.js`: `normKey()` / `hydrateClips()` / `canBlobUrl()`, boolean `reloadManifest(force)`, fast handover for unplayable clips.
+* `data/elevenlabs-audio.json`: 100 clips, b64 only, ~2.27 MB (H1 cap 2,500,000 B). `assets/css/sdp-ui.css` carries the v0.0.4.b tactile pill system (cap 82,000 B).
+* Stamp: `0.0.4.b` / `ver 14` / `schema 14` / `settingsRev 27` / `syncRev 1793710000000` across all nine surfaces.

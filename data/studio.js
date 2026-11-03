@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.3)
+/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.4.a)
  * Strict ES5, dependency free. The ONLY module that touches a key (W5/W6).
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, §R7 */
 (function (global) {
@@ -6,11 +6,48 @@
 
   var SDP = global.SDP = global.SDP || {};
   var doc = global.document;
-  /* R5 (F6): Charlotte — 25-35 British English female professor. */
-  var VOICE_ID = 'XB0fDUnXU5powFXDhCwa';
-  var VOICE_NAME = 'Charlotte';
+  /* R5 (F6)/v0.0.4.a: Alice — the free-tier British female educator voice. */
+  var VOICE_ID = 'Xb7hH8MSUJpSbSDYk0k2';
+  var VOICE_NAME = 'Alice';
   var VOICE_MODEL = 'eleven_flash_v2_5';
-  var VOICE_PERSONA = '25-35 British English female professor';
+  var VOICE_PERSONA = 'British English female educator (Alice-class)';
+  var VOICE_FALLBACK = { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice' };
+  var activeVoiceId = VOICE_ID;
+  var activeVoiceName = VOICE_NAME;
+  /* v0.0.4.a W1: single-voice engine law. Library voices (Charlotte) answer
+     HTTP 402 paid_plan_required on free-tier keys, so the studio resolves the
+     best free British female educator voice at runtime and always falls back
+     to Alice (Xb7hH8MSUJpSbSDYk0k2) with eleven_flash_v2_5. */
+  function resolveProfessorVoice(key, cb) {
+    cb = cb || noop;
+    if (!key || !global.fetch) { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); return; }
+    try {
+      global.fetch(EL_VOICES, { headers: { 'xi-api-key': key }, cache: 'no-store' })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .then(function (j) {
+          var list = j && Array.isArray(j.voices) ? j.voices : [], best = '', bestName = '', bestScore = -1;
+          for (var i = 0; i < list.length; i++) {
+            var v = list[i] || {}, lb = v.labels || {};
+            var hay = (str(v.name) + ' ' + str(lb.accent) + ' ' + str(lb.gender) + ' ' + str(lb.use_case)).toLowerCase();
+            if (hay.indexOf('british') < 0 || hay.indexOf('female') < 0) continue;
+            var score = 10;
+            if (hay.indexOf('educational') >= 0 || hay.indexOf('educator') >= 0 || hay.indexOf('informative') >= 0) score += 5;
+            if (str(v.voice_id) === VOICE_FALLBACK.id) score += 20;
+            if (score > bestScore) { bestScore = score; best = str(v.voice_id); bestName = str(v.name); }
+          }
+          activeVoiceId = best || VOICE_FALLBACK.id;
+          activeVoiceName = bestName || VOICE_FALLBACK.name;
+          cb(activeVoiceId, activeVoiceName);
+        }, function () { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); });
+    } catch (e) { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); }
+  }
+  /* v0.0.4.a: auto-generation runs in the real app only — never inside the
+     headless gate harness (window.__SDP_NO_LIVE__) unless explicitly allowed. */
+  function allowAutoGen() {
+    if (global.__SDP_ALLOW_AUTOGEN === true) return true;
+    return !global.__SDP_NO_LIVE__;
+  }
+  function countExistingClips() { return clipCount(); }
   var HASH_ALGO = 'sha1';
   var EL_SUBSCRIPTION = 'https://api.elevenlabs.io/v1/user/subscription';
   /* D1/D2 (Rule 1A): rung 2 — a scoped */
@@ -107,7 +144,7 @@
     return hex8(h0) + hex8(h1) + hex8(h2) + hex8(h3) + hex8(h4);
   }
   function clipContentHash(text, voiceId, modelId) {
-    return 'sha1:' + sha1Hex(str(text) + '|' + str(voiceId || VOICE_ID) + '|' + str(modelId || VOICE_MODEL));
+    return 'sha1:' + sha1Hex(str(text) + '|' + str(voiceId || activeVoiceId) + '|' + str(modelId || VOICE_MODEL));
   }
 
   /* R5 (F6): the whole 70-clip pack — 30 words, 30 numbers, 6 commands, 4
@@ -419,8 +456,8 @@
     var remote = null;
     try { remote = SDP.Speech && SDP.Speech.state ? SDP.Speech.state.manifest : null; } catch (e) { remote = null; }
     if (isObj(remote)) for (var k in remote) if (Object.prototype.hasOwnProperty.call(remote, k) && base[k] === undefined) base[k] = remote[k];
-    base.voiceId = VOICE_ID;
-    base.voiceName = VOICE_NAME;
+    base.voiceId = activeVoiceId;
+    base.voiceName = activeVoiceName;
     base.modelId = VOICE_MODEL;
     base.voiceModel = VOICE_MODEL;
     base.persona = VOICE_PERSONA;
@@ -583,6 +620,15 @@
       mount();
       paintLecturerBar();
       loadVoicePack(noop);
+      /* v0.0.4.a S4: the verifier unlock path tops the pack up to the full 70
+         Alice clips too, under exactly the same guards as unlock(). */
+      if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken) && countExistingClips() < 70) {
+        resolveProfessorVoice(ST.secrets.elevenKey, function () {
+          generateClips({ auto: true }, function (err, info) {
+            if (!err && info && info.made && info.made.length) commitVoicePack();
+          });
+        });
+      }
       cb(null, ST.secrets);
     }
     v.verifyPinVerifier(pin, verifier).then(function (ok) {
@@ -645,6 +691,14 @@
         paintLecturerBar();
         /* SYNC-11: the committed clips must load */
         loadVoicePack(noop);
+        /* v0.0.4.a W1: on unlock with a valid key, top the pack up to the full 70 clips. */
+        if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken) && countExistingClips() < 70) {
+          resolveProfessorVoice(ST.secrets.elevenKey, function () {
+            generateClips({ auto: true }, function (err, info) {
+              if (!err && info && info.made && info.made.length) commitVoicePack();
+            });
+          });
+        }
         /* SYNC-07 completion: a local */
         autoPublishVault(envelope);
         cb(null, ST.secrets);
@@ -931,10 +985,10 @@
       btn('btnTestOneWord', t('testOneWordBtn')) +
       btn('btnGenClips', t('genDeltaBtn'), 'btn-primary') +
       '</div>' +
-      '<div id="quotaInspectorCard" class="studio-quota">' +
+      '<details class="studio-diag-drawer"><summary class="studio-h4">' + T('quotaHeading') + '</summary><div id="quotaInspectorCard" class="studio-quota">' +
       '<p id="quotaText" class="muted" role="status" aria-live="polite">' + T('quotaHeading') + '</p>' +
       '<p class="lbl">' + T('costPreviewLabel') + '</p>' + '<p id="costPreviewLine" class="muted">' + esc(costPreviewLine()) + '</p>' +
-      '<div id="clipPreviewTable" class="studio-preview"></div></div>' +
+      '<div id="clipPreviewTable" class="studio-preview"></div></div></details>' +
       '<p id="studioVaultBadge" class="studio-vault-badge"' + (vaultBadgeVisible() ? '' : ' hidden') + '>' + T('vaultBadgeLabel') + '</p>' +
       masterStepsMarkup() + '</section>';
   }
@@ -980,7 +1034,7 @@
     return '<div id="studioGate" class="studio-gate" role="group" aria-label="' + T('studioPinLabel') + '">' +
       '<h4>' + T('studioScreenTitle') + '</h4>' +
       '<p class="muted">' + T('studioLocked') + '</p>' +
-      '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
+      '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input" type="password" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
       '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
       pinDotsMarkup() +
       pinPadMarkup() +
@@ -1212,6 +1266,14 @@
     host.addEventListener('click', onStudioClick, false);
     host.addEventListener('input', onStudioInput, false);
     host.addEventListener('change', onStudioChange, false);
+    host.addEventListener('focusout', function (ev) {
+      if (ownerId(ev && ev.target, host) === 'studioBulkWords') scheduleAutoEnrich();
+    }, false);
+    var scr = byId('screen-studio');
+    if (scr && !scr._sdpKeyBound) {
+      scr._sdpKeyBound = true;
+      scr.addEventListener('keydown', onStudioKeydown, false);
+    }
     return true;
   }
   function ownerId(node, stop) {
@@ -1225,6 +1287,32 @@
   function forceRegenChecked() {
     var a = byId('studioForceRegen'), b = byId('chkForceRegen');
     return !!((a && a.checked) || (b && b.checked));
+  }
+  /* v0.0.4.a W2: debounced zero-touch auto-enrichment while typing words. */
+  function scheduleAutoEnrich() {
+    try { if (ST.autoEnrichTimer) global.clearTimeout(ST.autoEnrichTimer); } catch (e) {}
+    ST.autoEnrichTimer = global.setTimeout(function () {
+      ST.autoEnrichTimer = null;
+      enrichWords(fieldValue('studioBulkWords'), { force: false }, function () { paintWordManager(); });
+    }, 400);
+  }
+  /* v0.0.4.a W3: physical-keyboard PIN entry on the locked gate — the mobile
+     OS keyboard never opens because #studioPin is readonly/inputmode=none. */
+  function onStudioKeydown(ev) {
+    if (!byId('studioGate')) return;
+    var t = ev && ev.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA') && t.id !== 'studioPin') return;
+    var k = ev && ev.key;
+    if (/^[0-9]$/.test(str(k))) {
+      appendPin(str(k));
+      if (ev.preventDefault) ev.preventDefault();
+    } else if (k === 'Backspace') {
+      backspacePin();
+      if (ev.preventDefault) ev.preventDefault();
+    } else if (k === 'Enter') {
+      unlock(pinValue(), noop);
+      if (ev.preventDefault) ev.preventDefault();
+    }
   }
   function onStudioInput(ev) {
     var target = ev && ev.target;
@@ -1244,6 +1332,7 @@
       paintWordManager();
     } else if (id === 'studioBulkWords') {
       setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
+      scheduleAutoEnrich();
     } else if (id === 'studioAiKey') {
       var guess = detectProvider(str(target.value));
       if (guess) { ST.aiProvider = guess; var sel = byId('studioAiProvider'); if (sel) sel.value = guess; }
@@ -1369,6 +1458,13 @@
   };
   function onStudioClick(ev) {
     var target = ev && ev.target;
+    var actEl = target;
+    while (actEl && actEl !== byId('studioAccordion') && !(actEl.getAttribute && actEl.getAttribute('data-action'))) actEl = actEl.parentNode;
+    if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'toggleWmRow') {
+      if (ev.preventDefault) ev.preventDefault();
+      toggleWmRow(actEl.getAttribute('data-row'));
+      return;
+    }
     var id = ownerId(target, byId('studioAccordion'));
     if (!id) return;
     var digit = target && target.getAttribute ? target.getAttribute('data-pin') : null;
@@ -1474,6 +1570,14 @@
         }
         msg(t('studioPublishOk') + ' · v' + appVersion(), 'ok');
         toast(t('vaultSavedToast'));
+        /* v0.0.4.a W1: a valid ElevenLabs key + push token auto-generates the 70-clip pack. */
+        if (allowAutoGen() && looksLikeElevenKey(ST.secrets.elevenKey) && str(ST.secrets.ghToken)) {
+          resolveProfessorVoice(ST.secrets.elevenKey, function () {
+            generateClips({ auto: true }, function (err, info) {
+              if (!err && info && info.made && info.made.length) commitVoicePack();
+            });
+          });
+        }
       });
     });
     return true;
@@ -1531,9 +1635,9 @@
     return {
       w: w,
       p: str(base.p) || ('/' + w + '/'),
-      pos: str(base.pos) || 'n/v',
+      pos: str(base.pos) || '—',
       m: str(base.m) || ('B1 classroom vocabulary word: ' + w),
-      si: str(base.si) || w,
+      si: str(base.si) || '',
       s: str(base.s) || ('Please write the word ' + w + ' carefully in your dictation book.'),
       audio: str(base.audio) || audioForWord(w),
       exampleSi: str(base.exampleSi),
@@ -1606,10 +1710,97 @@
     var rd = isObj(json.responseData) ? json.responseData : {};
     return str(rd.translatedText || '');
   }
+  /* v0.0.4.a W2: built-in B1 Sinhala lexicon + multi-tier translateSi cascade. */
+  var SI_LEXICON = {
+    "afraid": "බියට පත් වූ",
+    "amazed": "මවිතයට පත් වූ",
+    "amusing": "විනෝදජනක",
+    "annoyed": "කෝපයට හෝ කරදරයට පත් වූ",
+    "anxious": "කනස්සල්ලෙන් සිටින",
+    "ashamed": "ලැජ්ජාවට පත් වූ",
+    "awesome": "ඉතා විශිෂ්ට",
+    "boring": "කම්මැලි හෝ නීරස",
+    "brilliant": "ඉතා දක්ෂ හෝ විශිෂ්ට",
+    "challenging": "අභියෝගාත්මක",
+    "charming": "ආකර්ෂණීය හෝ සිත්ගන්නාසුලු",
+    "confident": "ආත්ම විශ්වාසයෙන් යුතු",
+    "confusing": "ව්‍යාකූල කරන",
+    "cruel": "කෲර හෝ නපුරු",
+    "curious": "කුතුහලයෙන් යුතු",
+    "delighted": "ඉතා සතුටට පත් වූ",
+    "depressed": "දැඩි කලකිරීමට හෝ දුකට පත් වූ",
+    "disappointed": "බලාපොරොත්තු සුන් වූ",
+    "embarrassing": "අපහසුතාවයට පත් කරන",
+    "enjoyable": "රසවත් හෝ සතුටුදායක",
+    "excellent": "ඉතා විශිෂ්ට",
+    "excited": "උද්‍යෝගිමත් වූ",
+    "fantastic": "අති විශිෂ්ට",
+    "favourite": "ප්‍රියතම",
+    "frightened": "බියට පත් වූ",
+    "friendly": "මිත්‍රශීලී",
+    "generous": "ත්‍යාගශීලී",
+    "guilty": "වරදකාරී හැඟීමක් ඇති",
+    "healthy": "සෞඛ්‍ය සම්පන්න",
+    "hungry": "කුසගින්නෙන් පෙළෙන",
+    "brave": "නිර්භීත"
+  };
+  var GOOGLE_SI_API = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=si&dt=t&q=';
+  var POLLINATIONS_SI_API = 'https://text.pollinations.ai/';
+  function sessionLexicon() {
+    var out = {}, i, list = [];
+    try { list = sync() && sync().words ? sync().words() : []; } catch (e) { list = []; }
+    for (i = 0; i < list.length; i++) {
+      var rw = list[i] || {};
+      if (str(rw.w) && /[\u0D80-\u0DFF]/.test(str(rw.si))) out[str(rw.w).toLowerCase()] = str(rw.si);
+    }
+    return out;
+  }
+  function fetchTextSafe(url, timeoutMs, cb) {
+    cb = cb || noop;
+    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
+    var done = false, timer = null;
+    function finish(err, text) {
+      if (done) return; done = true;
+      if (timer) { try { global.clearTimeout(timer); } catch (e) {} timer = null; }
+      cb(err, text);
+    }
+    timer = global.setTimeout(function () { finish(new Error('timeout')); }, Number(timeoutMs) || 6000);
+    try {
+      global.fetch(url, { cache: 'no-store' })
+        .then(function (res) { return res && res.ok && res.text ? res.text() : null; })
+        .then(function (t) { if (t) finish(null, t); else finish(new Error('bad_response')); },
+          function (err) { finish(err || new Error('network_error')); });
+    } catch (e) { finish(e || new Error('network_error')); }
+    return true;
+  }
+  /* (a) lexicon → (b) Google Translate gtx → (c) MyMemory → (d) pollinations. */
+  function translateSi(word, cb) {
+    cb = cb || noop;
+    var w = str(word).toLowerCase();
+    var lex = SI_LEXICON[w] || sessionLexicon()[w] || '';
+    if (lex && /[\u0D80-\u0DFF]/.test(lex)) { cb(null, lex, 'lexicon'); return true; }
+    fetchJsonSafe(GOOGLE_SI_API + encodeURIComponent(w), 6000, function (err, json) {
+      var t = '', i;
+      if (!err && Array.isArray(json) && Array.isArray(json[0])) {
+        for (i = 0; i < json[0].length; i++) t += str(json[0][i] && json[0][i][0]);
+      }
+      if (t && /[\u0D80-\u0DFF]/.test(t)) { cb(null, t, 'net'); return; }
+      fetchJsonSafe(SINHALA_API + encodeURIComponent(w) + '&langpair=en|si', 6000, function (err2, json2) {
+        var t2 = !err2 ? sinhalaFrom(json2) : '';
+        if (t2 && t2.indexOf('MYMEMORY WARNING') < 0 && /[\u0D80-\u0DFF]/.test(t2)) { cb(null, t2, 'net'); return; }
+        fetchTextSafe(POLLINATIONS_SI_API + encodeURIComponent('Translate the English word "' + w + '" into Sinhala. Answer with ONLY the Sinhala word, no explanation.'), 8000, function (err3, text) {
+          var t3 = err3 ? '' : str(text).replace(/^["'\s]+|["'\s]+$/g, '');
+          if (t3 && /[\u0D80-\u0DFF]/.test(t3)) { cb(null, t3, 'net'); return; }
+          cb(new Error('no_sinhala'), '');
+        });
+      });
+    });
+    return true;
+  }
   function freeEnrichOne(word, prior, cb) {
     cb = cb || noop;
     var w = str(word);
-    var pending = 2, dict = null, si = '';
+    var pending = 2, dict = null, si = '', siLex = false;
     function done() {
       pending -= 1;
       if (pending > 0) return;
@@ -1623,15 +1814,16 @@
         if (dict.audio) out.audio = str(dict.audio);
       }
       if (si) out.si = si;
-      out.enrichSource = (dict || si) ? 'free_dict' : 'lexicon';
-      cb(null, out, !(dict || si));
+      var net = !!(dict || (si && !siLex));
+      out.enrichSource = net ? 'free_dict' : 'lexicon';
+      cb(null, out, !net);
     }
     fetchJsonSafe(DICTIONARY_API + encodeURIComponent(w), 6000, function (err, json) {
       if (!err) dict = dictFields(json);
       done();
     });
-    fetchJsonSafe(SINHALA_API + encodeURIComponent(w) + '&langpair=en|si', 6000, function (err, json) {
-      if (!err) si = sinhalaFrom(json);
+    translateSi(w, function (err, text, src) {
+      if (!err) { si = str(text); if (src === 'lexicon') siLex = true; }
       done();
     });
     return true;
@@ -1676,9 +1868,33 @@
     if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
     var prompt = llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
     if (provider === 'gemini') {
-      url += '?key=' + encodeURIComponent(str(key));
-      /* D7: add generationConfig for strict */
-      body = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } };
+      /* v0.0.4.a W2: model cascade — gemini-2.0-flash → gemini-flash-latest →
+         gemini-2.5-flash. A 404/400 moves to the next model; the working model
+         is remembered in ST.aiModel. A hard failure falls back to the zero-key
+         engine in the caller (enrichWords → freeEnrichOne). */
+      var models = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
+      if (str(ST.aiModel) && models.indexOf(str(ST.aiModel)) >= 0) {
+        models = [str(ST.aiModel)].concat(models.filter(function (m) { return m !== str(ST.aiModel); }));
+      }
+      var geminiTry = function (mi) {
+        var m = models[mi];
+        if (!m) { cb(new Error('llm_failed')); return; }
+        var gurl = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + encodeURIComponent(str(key));
+        var gbody = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } };
+        global.fetch(gurl, { method: 'POST', headers: headers, body: JSON.stringify(gbody), cache: 'no-store' })
+          .then(function (res) {
+            var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+            if ((st === 404 || st === 400) && mi + 1 < models.length) { geminiTry(mi + 1); return null; }
+            return res && res.json ? res.json() : null;
+          })
+          .then(function (json) {
+            if (json === null) return;
+            ST.aiModel = m;
+            cb(null, llmRows(provider, json));
+          }, function (err) { cb(err || new Error('llm_failed')); });
+      };
+      try { geminiTry(0); } catch (e) { cb(e || new Error('llm_failed')); return false; }
+      return true;
     } else {
       /* D10: no Authorization header at */
       if (str(key)) headers.Authorization = 'Bearer ' + str(key);
@@ -2143,7 +2359,7 @@
   }
 
   /* ══ D-C1..C7: credit-safe Alice */
-  function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + VOICE_ID; }
+  function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + activeVoiceId; }
   function guideSteps() {
     /* R5: the four reusable guide clips. The frozen legacy keys stay readable
        by the speech module (guide.en.N wins, _guide_N+1 is the fallback). */
@@ -2192,7 +2408,8 @@
     if (err && err.scoped) return SCOPED_NOTE();
     if (d === 'invalid_api_key' || c === 401) return 'ElevenLabs key not accepted — please check and try again';
     if (d === 'missing_permissions' || c === 403) return SCOPED_NOTE();
-    if (d === 'quota_exceeded' || c === 402) return 'ElevenLabs free quota used up — top up or wait for renewal';
+    if (c === 402 && /paid_plan_required|library voices/i.test(m + ' ' + d)) return 'This voice needs an ElevenLabs paid plan — switched to the free British female educator voice (Alice)';
+    if (d === 'quota_exceeded' || c === 402) 'ElevenLabs free quota used up — top up or wait for renewal';
     if (c === 429) return 'ElevenLabs is busy — trying again in a few seconds';
     if (c === 422) return 'Voice settings not on this plan — using simplified settings';
     if (c === 400) return 'ElevenLabs could not process the request — please try again';
@@ -2583,7 +2800,7 @@
       index += 1;
       /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash
          still matches text|voice|model is never paid for twice. */
-      var itemHash = clipContentHash(item.text, VOICE_ID, VOICE_MODEL);
+      var itemHash = clipContentHash(item.text, activeVoiceId, VOICE_MODEL);
       var existing = ST.voicePack.clips[item.key];
       if (!force && clipExists(item.key)) {
         var storedHash = isObj(existing) ? str(existing.hash) : '';
@@ -2635,8 +2852,8 @@
           if (!b64) throw new Error('encode_failed');
           done(null, {
             b64: b64, url: 'data:audio/mpeg;base64,' + b64, bytes: buffer.byteLength,
-            at: Date.now(), voiceId: VOICE_ID, modelId: VOICE_MODEL,
-            hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, VOICE_ID, VOICE_MODEL)
+            at: Date.now(), voiceId: activeVoiceId, modelId: VOICE_MODEL,
+            hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, activeVoiceId, VOICE_MODEL)
           });
         }, function (err) { done(err || new Error('tts_failed')); });
       } catch (e) { done(e || new Error('tts_failed')); }
@@ -2664,6 +2881,21 @@
     var list = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
     return Array.isArray(list) ? list.slice(0, WORD_CAP) : [];
   }
+  /* v0.0.4.a W2: read-only auto-enriched preview badge per row; the six edit
+     inputs stay alive inside a hidden .wm-edit-cells block (✎ toggles it). */
+  function toggleWmRow(row) {
+    var host = byId('studioWordManager');
+    if (!host || !host.querySelectorAll) return false;
+    var trs = host.querySelectorAll('tr.wm-row');
+    for (var i = 0; i < trs.length; i++) {
+      if (String(trs[i].getAttribute('data-word-row')) === String(row)) {
+        var cells = trs[i].querySelector('.wm-edit-cells');
+        if (cells) cells.hidden = !cells.hidden;
+        return true;
+      }
+    }
+    return false;
+  }
   function paintWordManager() {
     var host = byId('studioWordManager');
     if (!host) return false;
@@ -2673,14 +2905,20 @@
     var rows = '', i, c;
     for (i = 0; i < list.length; i++) {
       var w = list[i] || {};
-      rows += '<tr data-word-row="' + i + '"><td class="wm-idx">' + (i + 1) + '</td>';
+      var ipa = str(w.p) ? '/' + str(w.p).replace(/^\/+|\/+$/g, '') + '/' : '/—/';
+      rows += '<tr class="wm-row" data-word-row="' + i + '"><td class="wm-idx">' + (i + 1) + '</td>' +
+        '<td colspan="6"><div class="wm-preview">#' + (i + 1) + ' <b>' + esc(str(w.w)) + '</b> · ' + esc(ipa) +
+        ' · ' + esc(str(w.pos) || '—') + ' · <span lang="si">' + esc(str(w.si) || '—') + '</span> · ' +
+        esc(str(w.m)) + ' · <i>' + esc(str(w.s)) + '</i>' +
+        ' <button type="button" class="btn btn-sm wm-toggle" data-action="toggleWmRow" data-row="' + i +
+        '" aria-label="Edit row ' + (i + 1) + '">✎</button></div><div class="wm-edit-cells" hidden>';
       for (c = 0; c < cols.length; c++) {
-        rows += '<td><input class="input wm-input" data-wm="' + cols[c] + '" data-row="' + i +
-          '" value="' + esc(str(w[cols[c]])) + '"></td>';
+        rows += '<input class="input wm-input" data-wm="' + cols[c] + '" data-wm-field="' + cols[c] + '" data-row="' + i +
+          '" value="' + esc(str(w[cols[c]])) + '">';
       }
-      rows += '</tr>';
+      rows += '</div></td></tr>';
     }
-    host.innerHTML = '<div class="table-wrap"><table class="studio-preview-table studio-word-table"><thead><tr>' + '<th>#</th><th>w</th><th>p</th><th>pos</th><th>m</th><th>si</th><th>s</th></tr></thead><tbody>' +
+    host.innerHTML = '<div class="table-wrap"><table class="studio-preview-table studio-word-table"><thead><tr>' + '<th>#</th><th>w · p · pos · si · m · s</th></tr></thead><tbody>' +
       rows + '</tbody></table></div><p class="muted">' + T('studioWordManager') + ' · ' +
       list.length + ' ' + T('studioWordsCount') + '</p>';
     return true;

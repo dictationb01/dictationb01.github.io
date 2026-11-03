@@ -56,8 +56,8 @@
     "defaultsResetV001f": true,
     "appliedSettingsRev": 6
   },
-  "ver": 12,
-  "version": "0.0.3",
+  "ver": 13,
+  "version": "0.0.4.a",
   "buildDate": "2026-11-02",
   "credits": {
     "createdBy": "Hansana",
@@ -91,8 +91,8 @@
     "community": "https://ntfy.sh/sdp_dictationb1_comm_v8",
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
-  "appVersion": "0.0.3",
-  "settingsRev": 24,
+  "appVersion": "0.0.4.a",
+  "settingsRev": 25,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -417,9 +417,9 @@
       "credit": "One 3.2s intro followed by one 8s spotlight cycle"
     }
   },
-  "updatedAt": "2026-11-03T09:47:34.752Z",
+  "updatedAt": "2026-11-02T21:46:57.976Z",
   "updatedAtMs": 1793448000000,
-  "schema": 12,
+  "schema": 13,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
   "sessionTitle": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "sessionCode": "Session 8",
@@ -687,14 +687,14 @@
     "preEditWarning": "v55: Lecturer Mode opens with #adminSyncWarningCard - an amber \"Action Required Before Editing\" banner and a bilingual (English / Sinhala) 3-step setup guide with the pre-filled github.com/settings/tokens/new?...&scopes=repo link, turning emerald-green once both keys are encrypted and synced.",
     "crossDeviceVoice": "v55: ElevenVault.playOrFetchOnce() replays every permanent clip for 0 credits and, when a clip is missing on a new device, generates it exactly once with the PIN-decrypted key, stores it in IndexedDB, and commits data/elevenlabs-audio.json so no second device ever pays again."
   },
-  "voiceId": "XB0fDUnXU5powFXDhCwa",
+  "voiceId": "Xb7hH8MSUJpSbSDYk0k2",
   "voiceModel": "eleven_flash_v2_5",
   "creditLock": "student playback replays saved clips only",
-  "voiceName": "Charlotte",
+  "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793699254751,
+  "syncRev": 1793704800000,
   "versionFamily": "10.0.0",
   "encVault": "SDP_ENC_V2:Gzu+/E3ukVNdGmCT5lSu45dEsCUgBs2NRbF7jDnSZ59OuxzFVM8v3Nls3rh6NTdZ41vyYBSbIdnq/jJsSLg+X5ET4xQ80Z6OV7TiFoq1zAlUje2prt5BQGzzUuCc6LIadvHAibQ/dxIg6U1bLy1MyZet/g7NN4Jht69XkHFZML7IrMN00uJnGSmVrmo3C6V9widGBuoVrmQ3fOtXXfNufhecBz0eUjFIH3hczxnH7046/JEeOOHM6Rik3xMMr4of3nBB8Fn4isrGvZBOFo74hjMQpIb0rlwt976ee9M2joZEUJ7BQfCapHLBLIXCd3iUq4tyCwqWtRCr9Qs4VCtKPKS/gtey61Ksl67xSthytY8bGyDj7/099yu7fLpTBHIG89Wnxv6GAEbjtEMLLQkWbJb2UpLO0u90hshpW6/kyi/Dg1Y2HW3/RAF6XwyKbd6QMZiUg+/O7/U=",
   "classSettings": {
@@ -716,5 +716,5 @@
     "salt": "ISzHPhxESOW/5ZOl5hO4Gg==",
     "hash": "VlIxxCOF1uxtFMz5C1hPwqoe5gp5Tn/uUetPH2xCKsY="
   },
-  "voicePersona": "25-35 British English female professor"
+  "voicePersona": "British English female educator (Alice-class)"
 }

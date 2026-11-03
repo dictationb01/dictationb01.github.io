@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.3)
+/*! Smart Dictation Player — views, i18n & router (v0.0.4.a)
  * Strict ES5, dependency free, no runtime CSS injection.
  * contract: docs/UI_COMPONENT_GUIDE.md §Components
  * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
@@ -11,7 +11,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.3';
+    return '0.0.4.a';
   })();
 
   function noop() {}
@@ -189,7 +189,7 @@
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: '🔊 Generate Voices & Publish 30 Words to All Devices',
+    studioPublishWordsVoice: '🚀 Auto-Enrich & Publish 30 Words',
     studioSyncSettings: '📡 Save & Sync Classroom Settings to All Devices',
     studioMasterSteps: 'Setup progress',
     studioEnriching: 'Enriching',
@@ -236,7 +236,7 @@
     pausedAtWord: 'Dictation Paused at Word #', pausedResumeTail: ' — Press Resume Below',
     resumeMetaLine: 'Paused at Word #', ofWord: ' of 30 · Repeat ', secondsLeft: 's left',
     progressWord: 'Word #', progressOf: ' of 30',
-    /* Phase 5 (v0.0.3): the one-line cockpit header and the symbol deck. */
+    /* Phase 5 (v0.0.4.a): the one-line cockpit header and the symbol deck. */
     progressWordUpper: 'WORD #', progressOf30: ' / 30', repeatOf: ' of ', writeSecsBadge: 's Write',
     capPrev: 'Prev', capPlay: 'Pause', capReplay: 'Replay', capNext: 'Next',
     capRepeat: 'Repeat', capHint: 'Hint', capMode: 'Mode', capFinish: 'Check',
@@ -253,10 +253,10 @@
     studioRetryFailed: '🔁 Retry Only the Missing Clips',
     studioOneClick34: '🚀 Generate 70 British Professor Voices & Sync All Devices',
     studioSaveOnly: '💾 Save Keys to Vault Only',
-    studioPublishWordsVoice34: '🔊 Generate Voices & Publish 30 Words to All Devices',
+    studioPublishWordsVoice34: '🚀 Auto-Enrich & Publish 30 Words',
     studioBroadcast34: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Start Dictation Now',
-    /* R2 (v0.0.3): the compact spotlight — four clean spoken sentences. */
+    /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
     guideSpotlight1: 'Press Start Dictation to begin.',
     guideSpotlight2: 'Listen twice, then write in five seconds.',
     guideSpotlight3: 'Check all thirty words in order.',
@@ -429,7 +429,7 @@
     studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: '🔊 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioPublishWordsVoice: '🚀 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
     studioSyncSettings: '📡 පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
     studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
     studioEnriching: 'පුරවමින්',
@@ -492,7 +492,7 @@
     studioRetryFailed: '🔁 ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
     studioOneClick34: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioSaveOnly: '💾 යතුරු බඳුනේ පමණක් සුරකින්න',
-    studioPublishWordsVoice34: '🔊 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioPublishWordsVoice34: '🚀 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
     studioBroadcast34: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
     guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
     guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
@@ -766,6 +766,7 @@
     }
     var resumeBtn = byId('btnResume');
     if (resumeBtn) setText(resumeBtn, t('resumeSession'));
+    if (resumeBtn) resumeBtn.hidden = !!(enginePaused || draftPaused);
     var resumeDraftBtn = byId('btnResumeDraft');
     if (resumeDraftBtn) {
       resumeDraftBtn.hidden = !(enginePaused || draftPaused);
@@ -1284,6 +1285,15 @@
     var active = doc.querySelector ? doc.querySelector('#dictFilterRow [aria-pressed="true"]') : null;
     return active ? str(active.getAttribute('data-filter')) : 'all';
   }
+  /* v0.0.4.a W4: wrap the first case-insensitive match of the word inside its
+     example sentence in a <b class="d-hit"> highlight. */
+  function highlightWordInSentence(sentence, word) {
+    var s = str(sentence), w = str(word);
+    if (!s || !w) return esc(s);
+    var at = s.toLowerCase().indexOf(w.toLowerCase());
+    if (at < 0) return esc(s);
+    return esc(s.slice(0, at)) + '<b class="d-hit">' + esc(s.slice(at, at + w.length)) + '</b>' + esc(s.slice(at + w.length));
+  }
   function renderWords() {
     var host = byId('dictList');
     if (!host) return 0;
@@ -1311,7 +1321,7 @@
         '<div class="d-p">/' + esc(w.p) + '/</div>' +
         '<div class="d-m">' + esc(w.m) + '</div>' +
         '<div class="word-si">' + esc(w.si) + '</div>' +
-        '<div class="d-s">' + esc(w.s) + '</div>' +
+        '<div class="d-s">' + highlightWordInSentence(str(w.s), str(w.w)) + '</div>' +
         '</div>' +
         '<div class="d-side">' +
         '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '">🔊 Listen</button>' +
@@ -2005,12 +2015,24 @@
     return w ? str(w.w) : '';
   }
   /* R10 — the board NEVER spoils the spelling during dictation by default. */
+  function currentBoardWord() {
+    var idx = 0;
+    try { idx = Number(SDP.Engine && SDP.Engine.config ? SDP.Engine.config().index : 0) || 0; } catch (e) { idx = 0; }
+    try { return SDP.Sync && SDP.Sync.word ? (SDP.Sync.word(idx) || null) : null; } catch (e2) { return null; }
+  }
   function paintBoardWord() {
     var node = byId('boardWordDisplay');
     if (!node) return false;
     var text = currentWordText();
     node.textContent = boardState.wordShown ? text : '••••••';
     node.setAttribute('data-revealed', boardState.wordShown ? 'true' : 'false');
+    var w = currentBoardWord();
+    var idx = 0, count = boardWordCount();
+    try { idx = Number(SDP.Engine && SDP.Engine.config ? SDP.Engine.config().index : 0) || 0; } catch (e) { idx = 0; }
+    setText(byId('boardWordNo'), '#' + (idx + 1) + '/' + count);
+    setText(byId('boardIpa'), w && w.p ? '/' + String(w.p).replace(/^\/+|\/+$/g, '') + '/' : '/—/');
+    setText(byId('boardPos'), (w && w.pos) || '—');
+    setText(byId('boardSi'), (w && w.si) || '—');
     var btn = byId('btnBoardToggleWord');
     if (btn) {
       btn.textContent = boardState.wordShown ? t('boardHideWord') : t('boardShowWord');
@@ -2040,7 +2062,9 @@
         }
         return;
       }
-      var id = ev && ev.target && ev.target.id;
+      var t2 = ev && ev.target;
+      while (t2 && t2 !== bar && !(t2.id)) t2 = t2.parentNode;
+      var id = (t2 && t2 !== bar) ? t2.id : '';
       if (id === 'btnBoardToggleWord') { toggleBoardWord(); return; }
       var engine = SDP.Engine;
       if (!engine) return;
@@ -2261,7 +2285,10 @@
     try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
     var unlocked = false;
     try { unlocked = !!(SDP.Studio && SDP.Studio.isUnlocked && SDP.Studio.isUnlocked()); } catch (e) { unlocked = false; }
-    var target = unlocked ? (byId('elKeyInput') || byId('btnOneClickMasterSetup')) : (byId('studioPin') || byId('pinPad'));
+    /* v0.0.4.a W3: never call .focus() while the Studio is locked — the mobile
+       OS keyboard must never cover #pinPad. Desktop + unlocked still focuses. */
+    var isDesktopFine = global.matchMedia && global.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var target = (unlocked && isDesktopFine) ? (byId('elKeyInput') || byId('btnOneClickMasterSetup')) : null;
     if (target && target.focus) { try { target.focus({ preventScroll: true }); } catch (e) {} }
     var acc = byId('studioAccordion');
     if (acc && acc.scrollIntoView) { try { acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { try { acc.scrollIntoView(); } catch (e2) {} } }
@@ -2316,6 +2343,33 @@
     return true;
   }
 
+  /* v0.0.4.a W5: modern inline SVG icon system — stroke-based, currentColor. */
+  var ICON_PATHS = {
+    play: 'M8 5v14l11-7z',
+    pause: 'M6 5h4v14H6zM14 5h4v14h-4z',
+    prev: 'M6 6h2v12H6zM20 6l-10 6 10 6z',
+    next: 'M16 6h2v12h-2zM4 6l10 6-10 6z',
+    replay: 'M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z',
+    repeat: 'M17 1l4 4-4 4V6H7a4 4 0 0 0-4 4v2H1v-2a6 6 0 0 1 6-6h10V1zM7 23l-4-4 4-4v3h10a4 4 0 0 0 4-4v-2h2v2a6 6 0 0 1-6 6H7v3z',
+    bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.7 1 1.5 1 2.5h6c0-1 .2-1.8 1-2.5A6 6 0 0 0 12 3z',
+    check: 'M20 6L9 17l-5-5',
+    home: 'M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5',
+    headphones: 'M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v6H4zM17 14h3v6h-3z',
+    sparkles: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z',
+    list: 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01',
+    gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z',
+    cap: 'M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z',
+    book: 'M4 4a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2V4zM4 20a2 2 0 0 1 2-2h13',
+    sun: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+    moon: 'M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z',
+    volume: 'M11 5L6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13',
+    eyeoff: 'M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 5.2A9.8 9.8 0 0 1 12 5c7 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A16.6 16.6 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 4-.8'
+  };
+  function svgIcon(name, size) {
+    var d = ICON_PATHS[name] || ICON_PATHS.sparkles;
+    var s = Number(size) || 18;
+    return '<svg class="ic ic-' + esc(name) + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="' + d + '"/></svg>';
+  }
   var Views = {
     init: init,
     t: t,
@@ -2381,6 +2435,8 @@
     onDataReady: onDataReady
   };
   SDP.Views = Views;
+  Views.Icons = { icon: svgIcon };
+  SDP.Icons = Views.Icons;
   SDP.STRINGS_EN = STRINGS_EN;
   SDP.STRINGS_SI = STRINGS_SI;
 

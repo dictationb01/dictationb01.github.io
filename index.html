@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.3 — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.4.a — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -21,7 +21,7 @@
     </svg>
     <span id="brandName">Smart Dictation</span>
     <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.3</span>
+    <span id="sdpVerPill">v0.0.4.a</span>
     <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
     <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio">🔒 Lecturer Admin</button>
     <div id="quickJumper" class="quick-jumper" hidden>
@@ -38,12 +38,26 @@
 
 <div id="sdpLayout">
   <nav id="sdpSideRail" aria-label="Sections">
-    <button id="rail-home" type="button" class="rail-btn" data-tab="home" aria-selected="true"><span class="rail-ico" aria-hidden="true">⌂</span><span data-i18n="tabHome">Home</span></button>
-    <button id="rail-player" type="button" class="rail-btn" data-tab="player" aria-selected="false"><span class="rail-ico" aria-hidden="true">▶</span><span data-i18n="tabPlayer">Dictation</span></button>
-    <button id="rail-practice" type="button" class="rail-btn" data-tab="practice" aria-selected="false"><span class="rail-ico" aria-hidden="true">✦</span><span data-i18n="tabPractice">Practice</span></button>
-    <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false"><span class="rail-ico" aria-hidden="true">☰</span><span data-i18n="tabWords">30 Words</span></button>
-    <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false"><span class="rail-ico" aria-hidden="true">⚙</span><span data-i18n="tabSettings">Settings</span></button>
-    <button id="rail-studio" type="button" class="rail-btn" data-tab="studio" aria-selected="false"><span class="rail-ico" aria-hidden="true">🎓</span><span data-i18n="tabStudio">Lecturer</span></button>
+    <button id="rail-home" type="button" class="rail-btn" data-tab="home" aria-selected="true">
+      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
+      <span data-i18n="tabHome">Home</span></button>
+    <button id="rail-player" type="button" class="rail-btn" data-tab="player" aria-selected="false">
+      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+      <span data-i18n="tabPlayer">Dictation</span></button>
+    <button id="rail-practice" type="button" class="rail-btn" data-tab="practice" aria-selected="false">
+      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
+      <span data-i18n="tabPractice">Practice</span></button>
+    <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false">
+      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
+      <span data-i18n="tabWords">30 Words</span></button>
+    <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false">
+      <span class="rail-ico" aria-hidden="true">
+        <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+        </span>
+      <span data-i18n="tabSettings">Settings</span></button>
+    <button id="rail-studio" type="button" class="rail-btn" data-tab="studio" aria-selected="false">
+      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
+      <span data-i18n="tabStudio">Lecturer</span></button>
   </nav>
 
   <main id="sdpScreens" tabindex="-1">
@@ -183,15 +197,21 @@
       </div>
       <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Smart Board classroom controls" hidden>
         <div class="board-transport">
-          <button id="boardPlayPause" type="button" class="btn board-btn" data-i18n="boardPlayPause">▶ Play / Pause</button>
-          <button id="boardRepeat" type="button" class="btn board-btn" data-i18n="boardRepeat">🔁 Repeat</button>
-          <button id="boardNext" type="button" class="btn board-btn" data-i18n="boardNext">⏭ Next</button>
+          <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">▶ Play / Pause</span></button>
+          <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat">🔁 Repeat</span></button>
+          <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">⏭ Next</span></button>
         </div>
         <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
         <div class="board-word-row">
+          <span id="boardWordNo" class="board-no">#1/30</span>
           <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
-          <button id="btnBoardToggleWord" type="button" class="btn board-btn" aria-pressed="false" data-i18n="boardHideWord">🙈 Hide Word on Board</button>
+          <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" data-i18n="boardHideWord">🙈 Hide Word on Board</span></button>
         </div>
+        <p id="boardMeta" class="board-meta" aria-live="polite">
+          <span id="boardIpa" class="board-ipa">/—/</span>
+          <span id="boardPos" class="board-pos">—</span>
+          <span id="boardSi" class="board-si" lang="si">—</span>
+        </p>
       </div>
       <div id="cockpitBar" class="card cockpit">
         <div class="cockpit-head">
@@ -413,7 +433,7 @@
           <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
           <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
           <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.3</span></li>
+            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.4.a</span></li>
             <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
             <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
           </ul>
@@ -446,12 +466,28 @@
 </div>
 
 <nav id="tabbar" aria-label="Sections">
-  <button id="tab-home" type="button" class="tab" data-tab="home" aria-selected="true"><span class="tab-ico" aria-hidden="true">⌂</span><span data-i18n="tabHome">Home</span></button>
-  <button id="tab-player" type="button" class="tab" data-tab="player" aria-selected="false"><span class="tab-ico" aria-hidden="true">▶</span><span data-i18n="tabPlayer">Dictation</span></button>
-  <button id="tab-practice" type="button" class="tab" data-tab="practice" aria-selected="false"><span class="tab-ico" aria-hidden="true">✦</span><span data-i18n="tabPractice">Practice</span></button>
-  <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false"><span class="tab-ico" aria-hidden="true">☰</span><span data-i18n="tabWords">30 Words</span></button>
-  <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false"><span class="tab-ico" aria-hidden="true">⚙</span><span data-i18n="tabSettings">Settings</span></button>
-  <button id="tab-studio" type="button" class="tab" data-tab="studio" aria-selected="false"><span class="tab-ico" aria-hidden="true">🎓</span><span data-i18n="tabStudio">Lecturer</span></button>
+  <button id="tab-home" type="button" class="tab" data-tab="home" aria-selected="true">
+    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
+    <span data-i18n="tabHome">Home</span></button>
+  <button id="tab-player" type="button" class="tab" data-tab="player" aria-selected="false">
+    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+    <span data-i18n="tabPlayer">Dictation</span></button>
+  <button id="tab-practice" type="button" class="tab" data-tab="practice" aria-selected="false">
+    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
+    <span data-i18n="tabPractice">Practice</span></button>
+  <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false">
+    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
+    <span data-i18n="tabWords">30 Words</span></button>
+  <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false">
+    <span class="tab-ico" aria-hidden="true">
+      <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z"/>
+        </svg>
+      </span>
+    <span data-i18n="tabSettings">Settings</span></button>
+  <button id="tab-studio" type="button" class="tab" data-tab="studio" aria-selected="false">
+    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
+    <span data-i18n="tabStudio">Lecturer</span></button>
 </nav>
 
 <div id="guideModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle" aria-hidden="true" hidden>
@@ -494,7 +530,7 @@
 
 <script>
 (function () {
-  var TARGET = '0.0.3';
+  var TARGET = '0.0.4.a';
   window.__SDP_BOOT_VERSION__ = TARGET;
   var doReload = function (remoteVersion) {
     try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

@@ -701,3 +701,19 @@ Docs: `ARCHITECTURE_MAP.md` 25,066 B / 48,000 · `SYNC_AND_DATA_CONTRACT.md` 26,
 app-written and budgeted (≤ 2.5 MB), never hash-frozen.
 
 Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, Immortal Vault & the Free AI Ladder)`.
+
+---
+
+## v0.0.4.a — Single-Voice Alice Pack, Zero-Touch Auto-Enrichment (2026-11-03)
+
+- Monotonic stamp: ver 13 / schema 13 / settingsRev 25 / appVersion 0.0.4.a across all nine versioned surfaces; `SW_VERSION = 'sdp-v0.0.4.a'`, `SHELL_CACHE = 'sdp-v0.0.4.a-shell'`, `PRESERVE_CACHES = []` so the stale `sdp-youdao-v1` / `sdp-audio-clips` caches purge on upgrade.
+- W1 single-voice engine law: Alice (`Xb7hH8MSUJpSbSDYk0k2`, `eleven_flash_v2_5`) replaces library voice Charlotte (HTTP 402 paid_plan_required on free tiers); `resolveProfessorVoice` picks the best free British female educator voice; `saveKeys()`/`unlock()` auto-generate + commit the 70-clip pack; `resolveTiers()` never mixes Youdao dictionary MP3s under `unified`.
+- W2 100% zero-touch auto word enrichment: `SI_LEXICON` + `translateSi` cascade (lexicon → Google Translate gtx → MyMemory → pollinations), Gemini model cascade (2.0-flash → flash-latest → 2.5-flash), 400 ms debounced auto-enrich on `#studioBulkWords`, read-only `.wm-row` preview badges with a ✎ edit toggle.
+- W3 PIN pad: `#studioPin` is `readonly inputmode="none" tabindex="-1"`, the locked gate never calls `.focus()`, and physical-keyboard PIN entry works on `#screen-studio`.
+- W4 Smart Board + 30-word cards render the full word with `#N/30`, `/IPA/`, POS and Sinhala at 360 px with zero clipping.
+- W5 soft eye-care dark (`#1E293B`/`#26334D`) + clean daylight light (`#F8FAFC`/`#FFFFFF`) themes, inline SVG icon system (`SDP.Icons`), one-row topbar.
+
+## v0.0.4.a final delta (S1 / S2 / S4)
+- S1: monotonic `settingsRev 25` and `syncRev 1793704800000` (both above main's 24 / 1793699254751) across version.json, config.json, elevenlabs-audio.json, SETTINGS_REV and every gate pin. `data/session.json` stays byte-identical at `bd42e858` / 57,379 B.
+- S2: `paintHome()` hides the duplicate `#btnResume` while paused; CSS hides the home STEP cue and the redundant ready/preset badges. Markup and the `STEP 1 — PRESS HERE` literal are preserved.
+- S4: `unlockWithVerifier()` now runs the same guarded 70-clip Alice auto-generation top-up as `unlock()`.

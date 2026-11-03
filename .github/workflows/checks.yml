@@ -72,12 +72,13 @@ jobs:
       - name: G12 · credit-saver delta, 34-clip pack and locked-studio zero-widget proof
         run: node tests/studio-safety.cjs
 
+      # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock
         run: |
           node -e '
             const fs=require("fs"),c=require("crypto");
             const want={
-              "data/session.json":"c96dbe6d","data/gas-source.txt":"591b9b08",
+              "data/session.json":"bd42e858","data/gas-source.txt":"591b9b08",
               "assets/fonts/NotoSansSinhala-Regular.woff2":"23f1503e",
               "assets/fonts/NotoSansSinhala-Bold.woff2":"bf59c148"};
             let bad=0;

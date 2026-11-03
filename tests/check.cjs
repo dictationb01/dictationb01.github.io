@@ -39,7 +39,7 @@ function sha256(p) { return crypto.createHash('sha256').update(read(p)).digest('
 const BUDGET = {
   /* contract: docs/ARCHITECTURE_MAP.md §H1 — v0.0.2.b ceilings (W4). The three
      module ceilings moved again for the D1–D20 work: studio 126000, sync 86000,
-     views 136000, engine 62000; session.json is the exact 57,381 B payload. */
+     views 136000, engine 62000; session.json is the exact 57,379 B payload. */
   'index.html': 43000,
   'assets/css/sdp-ui.css': 78000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,

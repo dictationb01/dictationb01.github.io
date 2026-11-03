@@ -48,7 +48,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.a'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -389,12 +389,12 @@ function gitHubStub(opts) {
     app.w.fetch = function (url, init) { seen.push(String(url)); return inner(url, init); };
     /* D10: the published revision must exceed the shipped settingsRev. */
     const cfgOnly = Object.assign({}, live, {
-      settingsRev: 21, syncRev: 1793654500000,
+      settingsRev: 24, syncRev: 1793654500000,
       classSettings: Object.assign({}, live.classSettings, { writeSecs: 9, repeats: 3 })
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 12, appVersion: '0.0.3', version: '0.0.3', schema: 12, settingsRev: 21,
+      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 24,
       session: '8', title: 'Session 8', syncRev: 1793654500000,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
@@ -430,11 +430,11 @@ function gitHubStub(opts) {
     }, base));
     failSession = true;
     app.files['data/config.json'] = JSON.stringify(Object.assign({}, liveCfg, {
-      settingsRev: 21, syncRev: 1793654500001,
+      settingsRev: 24, syncRev: 1793654500001,
       classSettings: Object.assign({}, liveCfg.classSettings, { writeSecs: 8 })
     }));
     app.files['data/version.json'] = JSON.stringify({
-      ver: 12, appVersion: '0.0.3', version: '0.0.3', schema: 12, settingsRev: 21,
+      ver: 13, appVersion: '0.0.4.a', version: '0.0.4.a', schema: 13, settingsRev: 24,
       session: '9', title: 'Session 9', syncRev: 1793654500001,
       payloadFiles: ['data/session.json', 'data/config.json', 'data/version.json']
     });

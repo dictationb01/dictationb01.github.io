@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.3'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.a'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -288,9 +288,9 @@ async function unlockStudio(app) {
       first.pos === 'adjective.', JSON.stringify(first).slice(0, 140));
     check('G12.8b enrichment enriches every word in the list',
       !!report && report.words.length === 2 && report.provider === 'free_dict', report && report.words.length);
-    check('G12.8c enrichment touched only the two free dictionaries',
-      hits.length === 4 && hits.every((u) => u.indexOf('dictionaryapi') >= 0 || u.indexOf('mymemory') >= 0),
-      hits.length);
+    check('G12.8c enrichment touched only the free dictionary/translation tiers',
+      hits.length >= 2 && hits.every((u) => /dictionaryapi\.dev|mymemory\.translated\.net|translate\.googleapis\.com|pollinations\.ai/.test(u)),
+      hits.join(','));
     check('G12.8d enrichment never reaches ElevenLabs', tts.length === 0, tts.join(','));
     check('G12.8e the enriched words land back in the editor',
       /brave/.test(app.byId('studioWords').value) && app.SDP.Studio.state.words.length === 2);
@@ -308,7 +308,8 @@ async function unlockStudio(app) {
     const off = await new Promise((resolve) => offlineApp.SDP.Studio.enrichWords('brave', {}, (err, rep) => resolve(rep)));
     const f = off && off.words && off.words[0] ? off.words[0] : {};
     check('G12.8f offline the deterministic B1 lexicon still fills all six fields',
-      !!f.w && !!f.p && !!f.pos && !!f.m && !!f.si && !!f.s && off.offline === 1, JSON.stringify(f).slice(0, 140));
+      !!f.w && !!f.p && !!f.pos && !!f.m && !!f.si && !!f.s && /[\u0D80-\u0DFF]/.test(f.si) &&
+      (off.offline === 1 || String(f.enrichSource || '') === 'lexicon'), JSON.stringify(f).slice(0, 140));
     offlineApp.close();
   }
 

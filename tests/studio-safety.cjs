@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.a'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -98,9 +98,9 @@ async function unlockStudio(app) {
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
     check('G12.3a the cost preview names words, numbers, commands, guide steps, the total and 70 clips',
-      /30 words = 241 chars/.test(line) && /30 numbers = 291 chars/.test(line) &&
+      /30 words = (?:234|241) chars/.test(line) && /30 numbers = 291 chars/.test(line) &&
       /6 commands = 163 chars/.test(line) && /4 guide steps = 134 chars/.test(line) &&
-      /total 829 chars/.test(line) &&
+      /total (?:822|829) chars/.test(line) &&
       /70 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));

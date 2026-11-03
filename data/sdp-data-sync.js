@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.4.a';
+  SDP.version = '0.0.4.b';
   SDP.build = '2026-11-03';
-  SDP.ver = 13;
+  SDP.ver = 14;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.4.a';
-  var SCHEMA = 11;
-  var SETTINGS_REV = 25;
+  var APP_VERSION = '0.0.4.b';
+  var SCHEMA = 14;
+  var SETTINGS_REV = 27;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -28,6 +28,7 @@
   function nowMs() { return (global.Date && global.Date.now) ? global.Date.now() : 0; }
   function clone(v) { return JSON.parse(JSON.stringify(v)); }
   function trim(s) { return str(s).replace(/^\s+|\s+$/g, ''); }
+  function normClipKey(k) { return str(k).trim().toLowerCase().replace(/[.,!?;:]+$/, ''); }
   function emit(name, detail) {
     try {
       if (!doc || !doc.dispatchEvent) return noop;
@@ -970,6 +971,28 @@
     state.list = list;
     state.listId = list ? str(list.id) : str(cfg.listId);
     state.words = list ? list.words.slice(0, 30).map(normalizeWord) : [];
+    /* v0.0.4.b BUG-4: a stale sdp.session draft from an older word list must
+       never resurrect its old words when a new session payload arrives. */
+    try {
+      var rawDraft = global.localStorage && global.localStorage.getItem ? global.localStorage.getItem('sdp.session') : null;
+      if (rawDraft && state.words.length) {
+        var oldDraft = JSON.parse(rawDraft), want = [], wi;
+        for (wi = 0; wi < state.words.length; wi++) {
+          var ww = state.words[wi] || {};
+          want.push(str(ww.w || ww.word || ww).trim().toLowerCase());
+        }
+        var wantSig = want.join('|'), stale = false;
+        if (oldDraft && oldDraft.wordsSig && oldDraft.wordsSig !== wantSig) stale = true;
+        if (oldDraft && !oldDraft.wordsSig && isObj(oldDraft.answers)) {
+          var okMap = {}, wi2;
+          for (wi2 = 0; wi2 < want.length; wi2++) okMap[want[wi2]] = 1;
+          for (var ak in oldDraft.answers) {
+            if (Object.prototype.hasOwnProperty.call(oldDraft.answers, ak) && !okMap[str(ak).trim().toLowerCase()]) { stale = true; break; }
+          }
+        }
+        if (stale && global.SDP && global.SDP.Data && global.SDP.Data.clearSession) global.SDP.Data.clearSession();
+      }
+    } catch (e) {}
     state.sessionTitle = str((ses.session && ses.session.title) || ver.title || 'Session ' + state.sessionNo);
     state.classInfo = str((ses.session && ses.session.classInfo) || cfg.classInfo || '');
     state.announcement = ses.announcement || null;
@@ -1328,8 +1351,11 @@
       var w = isObj(word) ? word : { w: word };
       if (w.clipUrl) return str(w.clipUrl);
       if (w.clip) return 'assets/audio/' + str(w.clip).replace(/^assets\/audio\//, '');
-      var key = str(w.w).toLowerCase();
+      var key = normClipKey(str(w.w));
+      var bare = key.replace(/^words\./, '');
       if (key && state.clips[key]) return state.clips[key];
+      if (bare && state.clips[bare]) return state.clips[bare];
+      if (bare && state.clips['words.' + bare]) return state.clips['words.' + bare];
       if (w.i && state.clips['#' + w.i]) return state.clips['#' + w.i];
       return '';
     },
@@ -1532,9 +1558,13 @@
                 step();
                 return;
               }
-              /* D7: one fresh-SHA retry on a branch-ref race (409). */
-              if (status === 409 && !flags.conflict) {
-                putOne(file, { conflict: true, transient: flags.transient });
+              /* v0.0.4.b: up to three fresh-SHA retries on a branch-ref race (409).
+                 Production callers may pace them with opts.retryDelayMs (250 ms). */
+              if (status === 409 && Number(flags.tries || 0) < 3) {
+                var nextFlags = { conflict: true, transient: flags.transient, tries: Number(flags.tries || 0) + 1 };
+                var pace = opts.retryDelayMs === undefined ? 250 : Number(opts.retryDelayMs);
+                if (pace > 0) global.setTimeout(function () { putOne(file, nextFlags); }, pace);
+                else putOne(file, nextFlags);
                 return;
               }
               /* D16: one delayed retry with a fresh GET sha on 5xx / network. */

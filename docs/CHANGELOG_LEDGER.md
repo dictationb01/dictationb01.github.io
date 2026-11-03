@@ -717,3 +717,15 @@ Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, I
 - S1: monotonic `settingsRev 25` and `syncRev 1793704800000` (both above main's 24 / 1793699254751) across version.json, config.json, elevenlabs-audio.json, SETTINGS_REV and every gate pin. `data/session.json` stays byte-identical at `bd42e858` / 57,379 B.
 - S2: `paintHome()` hides the duplicate `#btnResume` while paused; CSS hides the home STEP cue and the redundant ready/preset badges. Markup and the `STEP 1 — PRESS HERE` literal are preserved.
 - S4: `unlockWithVerifier()` now runs the same guarded 70-clip Alice auto-generation top-up as `unlock()`.
+
+## v0.0.4.b — zero-credit clip recovery and the 2.27 MB manifest
+
+**Stamp:** `appVersion/version '0.0.4.b'` · `ver 14` · `schema 14` · `settingsRev 27` · `syncRev 1793710000000` · `SW_VERSION 'sdp-v0.0.4.b'` / `SHELL_CACHE 'sdp-v0.0.4.b-shell'` · `TARGET='0.0.4.b'`.
+
+* Iron law: zero new ElevenLabs generation. All 100 Alice MP3 clips (70 live + 30 archived) and the Creator's 30 new words (`important`…`terrible`, 55,260 B, SHA `12b292fe…`) are preserved.
+* BUG-1: the three `auto: true` unlock/save generation races are gone; only an explicit click on `#btnGenClips` or `#btnTestOneWord` can request a clip. `#btnRecoverClips` restores clips from History with GET reads only (0 credits).
+* BUG-2: `publishFilesSequential` retries a 409 up to three times with a fresh SHA (250 ms pacing, opt-out for deterministic gates); `commitVoicePack` queues concurrent publishes behind a pure-ES5 mutex.
+* BUG-3: `wordsSig` fingerprints every `sdp.session` draft; a mismatched word list clears the draft in `loadDraft()` and `applyPayloads()`, so old words cannot resurrect.
+* BUG-4: the duplicate `.url` blob was stripped from `data/elevenlabs-audio.json` (4,520,832 B → ~2,266,000 B); entries are hydrated to data URLs in memory where Blob URLs are playable, indexed under both `words.<w>` and `<w>`, and the manifest is reloaded after every publish.
+* FIX-7: modern 2026 tactile pill buttons and Material-3/iOS settings cards in `assets/css/sdp-ui.css`; every DOM id, class, data-* and aria-* attribute is preserved.
+* All twelve gates G1–G12 re-pinned to the v0.0.4.b stamp and report 0 FAIL.

@@ -64,39 +64,39 @@ function bootSync(seed) {
 }
 
 /* ── R1 ─────────────────────────────────────────────────────────────────── */
-test('R1: app, schema and service-worker constants are all 0.0.4.a', () => {
+test('R1: app, schema and service-worker constants are all 0.0.4.b', () => {
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R1 version & cache constants
   const { SDP } = bootSync();
-  assert.equal(SDP.version, '0.0.4.a');
+  assert.equal(SDP.version, '0.0.4.b');
   assert.equal(SDP.build, '2026-11-03');
-  assert.equal(SDP.ver, 13);
+  assert.equal(SDP.ver, 14);
   assert.equal(SDP.SDPCore, undefined); // alias lives on window, not inside SDP
   assert.equal(SDP.Sync.Vault.PREFIX, 'SDP_ENC_V2:');
   assert.equal(SDP.Sync.Vault.ITERATIONS, 250000);
 
   const version = readJSON('data/version.json');
-  assert.equal(version.ver, 13);
-  assert.equal(version.appVersion, '0.0.4.a');
-  assert.equal(version.version, '0.0.4.a');
-  assert.equal(version.schema, 13);
-  assert.equal(version.settingsRev, 25);
-  assert.equal(Number(version.syncRev), 1793704800000);
+  assert.equal(version.ver, 14);
+  assert.equal(version.appVersion, '0.0.4.b');
+  assert.equal(version.version, '0.0.4.b');
+  assert.equal(version.schema, 14);
+  assert.equal(version.settingsRev, 27);
+  assert.equal(Number(version.syncRev), 1793710000000);
   assert.equal(String(version.session), '8');
 
   const cfg = readJSON('data/config.json');
-  assert.equal(cfg.ver, 13);
-  assert.equal(cfg.appVersion, '0.0.4.a');
-  assert.equal(cfg.version, '0.0.4.a');
-  assert.equal(cfg.schema, 13);
-  assert.equal(cfg.settingsRev, 25);
+  assert.equal(cfg.ver, 14);
+  assert.equal(cfg.appVersion, '0.0.4.b');
+  assert.equal(cfg.version, '0.0.4.b');
+  assert.equal(cfg.schema, 14);
+  assert.equal(cfg.settingsRev, 27);
   assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
 
   const sw = read('sw.js');
-  assert.match(sw, /SW_VERSION = 'sdp-v0\.0\.4\.a'/);
-  assert.match(sw, /SHELL_CACHE = 'sdp-v0\.0\.4\.a-shell'/);
+  assert.match(sw, /SW_VERSION = 'sdp-v0\.0\.4\.b'/);
+  assert.match(sw, /SHELL_CACHE = 'sdp-v0\.0\.4\.b-shell'/);
   assert.match(sw, /PRESERVE_CACHES = \[\]/);
   const index = read('index.html');
-  assert.match(index, /var TARGET = '0\.0\.4\.a'/);
+  assert.match(index, /var TARGET = '0\.0\.4\.b'/);
 });
 
 test('R1: the five localStorage keys and the settings default shape are exact', () => {
@@ -383,7 +383,7 @@ test('R7: GitHub Contents payload, CORS-simple GAS relay and 40K word chunking',
   assert.equal(parsed.pin, undefined, 'relay must not carry the PIN');
   assert.equal(relay.indexOf(SDP.Studio ? '78987898' : '78987898'), -1, 'the PIN must not appear anywhere in the body');
   // contract: docs/CHANGELOG_LEDGER.md §Release ledger — relay pins the current build version
-  assert.equal(parsed.ver, '0.0.4.a');
+  assert.equal(parsed.ver, '0.0.4.b');
 
   const longWords = Array.from({ length: 1200 }, (_, i) => ({
     w: 'word' + i,

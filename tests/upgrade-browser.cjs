@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.4.a-shell';
+const SHELL = 'sdp-v0.0.4.b-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -46,7 +46,7 @@ async function launch() {
       const stale = await caches.open(names.stale);
       await stale.put('/retired-wallpaper.mp4', new Response('stale-bytes'));
       const youdao = await caches.open(names.youdao);
-      await youdao.put('https://dict.youdao.com/dictvoice?type=1&audio=afraid', new Response('mp3-bytes'));
+      await youdao.put('https://dict.youdao.com/dictvoice?type=1&audio=important', new Response('mp3-bytes'));
       const clips = await caches.open(names.clips);
       await clips.put('/assets/audio/session-w1-1.mp3', new Response('clip-bytes'));
       return (await caches.keys()).sort();
@@ -72,7 +72,7 @@ async function launch() {
       await navigator.serviceWorker.ready;
       await new Promise((r) => setTimeout(r, 1200));
       const names = (await caches.keys()).sort();
-      const shell = await caches.open('sdp-v0.0.4.a-shell');
+      const shell = await caches.open('sdp-v0.0.4.b-shell');
       const shellNames = (await shell.keys()).map((req) => new URL(req.url).pathname);
       return { names, shellNames, controller: !!navigator.serviceWorker.controller };
     }, null);
@@ -101,7 +101,7 @@ async function launch() {
     /* the "published" build is derived from the running one, so this fixture
        can never fall out of sync with the release it ships alongside. */
     const LOCAL_VER = JSON.parse(read('data/version.json')).appVersion;
-    /* bump the LAST segment whatever its shape (0.0.4.a → 0.0.4), so the
+    /* bump the LAST segment whatever its shape (0.0.4.b → 0.0.4), so the
        fixture can never coincide with the running build. */
     const REMOTE_VER = LOCAL_VER.replace(/(\d+)([a-z.]*)$/, (n, suf) => String(Number(n) + 1) + suf);
     server.setOverride('/data/version.json', JSON.stringify({

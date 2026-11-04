@@ -1,1 +1,16 @@
-{"ver":16,"appVersion":"0.0.6.a","version":"0.0.6.a","buildDate":"2026-11-04","schema":16,"settingsRev":31,"session":"8","title":"Session 8 - Personal Feelings, Opinions & Experiences (Adj)","updatedAt":"2026-11-04T00:00:00.000Z","syncRev":1793750000000,"payloadFiles":["data/config.json","data/version.json"]}
+{
+  "ver": 17,
+  "appVersion": "0.0.6.b",
+  "version": "0.0.6.b",
+  "buildDate": "2026-11-04",
+  "schema": 17,
+  "settingsRev": 32,
+  "session": "8",
+  "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
+  "updatedAt": "2026-11-04T00:00:00.000Z",
+  "syncRev": 1793760000000,
+  "payloadFiles": [
+    "data/config.json",
+    "data/version.json"
+  ]
+}

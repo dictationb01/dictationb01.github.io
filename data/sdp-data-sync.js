@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.a';
+  SDP.version = '0.0.6.b';
   SDP.build = '2026-11-04';
-  SDP.ver = 16;
+  SDP.ver = 17;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.a';
-  var SCHEMA = 16;
-  var SETTINGS_REV = 31;
+  var APP_VERSION = '0.0.6.b';
+  var SCHEMA = 17;
+  var SETTINGS_REV = 32;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -69,6 +69,8 @@
       cuesSeen: {},
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
+      /* v0.0.6.b: one-time Light-Default upgrade flag (inside sdp.settings). */
+      lightDefaultV6b: true,
       /* D5 (v0.0.1.h): Layer-1 — the encrypted vault backup and its PIN
          verifier live INSIDE sdp.settings.vaultLock (W4: still five keys). */
       vaultLock: {
@@ -152,7 +154,8 @@
     defaultProgress: defaultProgress,
 
     settings: function () {
-      var s = mergeSettings(defaultSettings(), readJSON(KEYS.settings, {}));
+      var raw = readJSON(KEYS.settings, {});
+      var s = mergeSettings(defaultSettings(), raw);
       if (s.mode !== 'paper' && s.mode !== 'typing') s.mode = 'paper';
       /* R3 / D9: writeSecs is the classroom writing window; older payloads
          named the same field intervalSec, so both are accepted (5 s default). */
@@ -193,6 +196,20 @@
       /* D-UI3: 'board' is a real theme; v0.0.6.a heals an unknown value to
          the mandatory light default instead of dark. */
       if (s.theme !== 'dark' && s.theme !== 'board') s.theme = 'light';
+      /* v0.0.6.b (S1): the one-time Light-Default upgrade, scope-safe. Only a
+         legacy stored object (appliedSettingsRev 1–30) that the student never
+         personalised (touchedKeys.theme absent) wakes up in the Daylight
+         palette; every explicit Light/Dark/Board choice — a seeded
+         sdp.settings, the board preset, #btnTheme or #setTheme — always wins.
+         The flag lives INSIDE sdp.settings, so the five-key R8 law holds (W4). */
+      if (raw.lightDefaultV6b !== true && Object.keys(raw).length > 0 &&
+          Number(raw.appliedSettingsRev) > 0 && Number(raw.appliedSettingsRev) < 31 &&
+          !(raw.touchedKeys && raw.touchedKeys.theme)) {
+        s.theme = 'light';
+        s.lightDefaultV6b = true;
+        writeJSON(KEYS.settings, s);
+      }
+      s.lightDefaultV6b = true;
       /* R7: which settings the student changed by hand. A remote settingsRev
          bump overrides touchedKeys for the ten classroom keys (R1/SYNC-01). */
       if (!isObj(s.touchedKeys)) s.touchedKeys = {};

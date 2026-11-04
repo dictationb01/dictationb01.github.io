@@ -39,7 +39,7 @@
     guideBtn: '? Guide',
     tabHome: 'Home', tabPlayer: 'Dictation', tabPractice: 'Practice', tabWords: '30 Words', tabSettings: 'Settings',
     homeTitle: 'Smart Dictation', homeSub: 'Listen, write, and check 30 B1 words with your class.',
-    startDictation: '▶ Start Dictation (Word #1 to #30)', howToUse: 'How to Use',
+    startDictation: 'Start Dictation (Word #1 to #30)', howToUse: 'How to Use',
     paperMode: 'Paper', typingMode: 'Typing', resumeSession: 'Continue where you stopped',
     statMastered: 'Mastered', statAccuracy: 'Accuracy', statStreak: 'Day streak',
     quickPractice: 'Quick practice', flashcards: 'Flashcards', quiz: '4-Choice Quiz', listening: 'Listening Drill',
@@ -142,7 +142,7 @@
     homeJourney3: 'Train weak words',
     homeReadyBadge: 'Session 8 ready · 30 words',
     modePaperFull: ' Write in Exercise Book (Paper)',
-    modeTypingFull: '⌨ Type on Screen',
+    modeTypingFull: 'Type on Screen',
     voiceGuideBtn: ' Interactive Voice Guide',
     boardShowWord: ' 👁 Show Current Word',
     boardHideWord: ' 🙈 Hide Current Word',
@@ -154,9 +154,9 @@
     teacherUpdatedToast: 'Your teacher updated the class settings',
     vaultSavedToast: 'Vault saved · synced to GitHub',
     guideVoiceFailed: 'Voice guide unavailable — tap to retry',
-    boardPlayPause: '▶ Play / Pause',
+    boardPlayPause: 'Play / Pause',
     boardRepeat: ' Repeat',
-    boardNext: '⏭ Next',
+    boardNext: 'Next',
     boardJumpLabel: 'Jump to word',
     syncShortSynced: 'Synced ',
     syncShortOffline: 'Offline',
@@ -217,7 +217,7 @@
     homeWordsSub: 'Every word in class order with its British IPA, Sinhala meaning and example sentence.',
     homeWordsBtn: ' Open the 30-Word List (#1–#30)',
     resumeMetaIdle: 'Paused at Word #1 of 30',
-    startOver: '↺ Start Over from Word #1',
+    startOver: 'Start Over from Word #1',
     cueStep1: 'STEP 1 — PRESS HERE',
     cuePlayer: 'PAUSE OR RESUME HERE',
     cueDict: 'TAP A WORD TO LISTEN',
@@ -243,28 +243,28 @@
     pillsDrawer: 'Jump to Word 1–30 ▾',
     markCorrectWord: ' Correct', markWeakWord: ' Needs Practice', btnStartDictation: '▶ Start Dictation',
     studioRetryNone: 'No failed clip to retry — every clip is already saved.',
-    studioRetryOne: '↻ Retry Only the Failed Clip',
+    studioRetryOne: 'Retry the failed clip',
     studioStep1Head: 'STEP 1 — API KEYS & 70-CLIP VOICE PACK GENERATOR',
     studioStep2Head: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioStep3Head: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
     studioPackVault: 'Vault: Saved ', studioPackGithub: 'GitHub: Connected ', studioPackClips: 'Voice Pack: ',
     studioClipsUnit: '/70 Clips', studioGenPrefix: 'Generating clip ',
     studioGenCharsTail: ' chars used', studioClipsSaved: '/70 Clips Saved to GitHub · syncRev ',
-    studioRetryFailed: ' Retry Only the Missing Clips',
+    studioRetryFailed: 'Retry missing clips',
     studioOneClick34: ' Generate 70 British Professor Voices & Sync All Devices',
     studioSaveOnly: ' Save Keys to Vault Only',
     studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
-    studioOneClickFull: 'All-in-One: Auto-Build Complete Session (Enrich IPA/Sinhala + Voice Pack + Publish & Sync All Devices)',
+    studioOneClickFull: 'Publish & Sync 30 Words',
     studioWordsRecognized: 'Words Recognized',
     studioErrTitle: 'Something needs your attention',
     studioErrFixNow: '1-Click Fix / Retry Failed Step',
     studioErrDismiss: 'Dismiss',
-    pillReady: '🎧 Ready',
-    pillPaused: '⏸ Paused — tap Resume',
-    pillFinished: '✅ Finished — check answers',
-    pillListening: '🎧 Listening · Repeat',
-    pillWriting: '✍️ Write the word ·',
-    pillFinishWarn: '⏳ Finish writing ·',
+    pillReady: 'Ready',
+    pillPaused: 'Paused — tap Resume',
+    pillFinished: 'Finished — check answers',
+    pillListening: 'Listening · Repeat',
+    pillWriting: 'Write the word ·',
+    pillFinishWarn: 'Finish writing ·',
     studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Start Dictation Now',
     /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
@@ -282,6 +282,15 @@
     studioClips70: '70 clips = 829 chars ≈ 8.3% of the free monthly quota (flash_v2_5 ≈ 414 credits)',
     studioRecoveryUsed: 'Master recovery used — set a new PIN now',
     studioChangePinBtn: ' Change Lecturer PIN',
+    presetReset: 'Reset to Class Default (5s · 2×)',
+    studioOneClickSub: 'Automatic: British IPA · Sinhala meaning · voice pack · all-device sync',
+    studioAdvancedToggle: ' Advanced Tools & Word Inspector',
+    ssbUnlocked: 'Lecturer Mode Active — lock before handing the device to students',
+    guardTitle: 'Lecturer Mode is unlocked',
+    guardBody: 'You have unpublished word edits. Publish & Lock before switching, or lock the studio now.',
+    guardPublish: 'Publish & Lock',
+    guardLock: 'Lock Now & Switch Tab',
+    guardStay: 'Stay in Studio',
     studioPublishOkFull: ' Published & synced to all classroom devices'
   };
 
@@ -291,7 +300,7 @@
     guideBtn: '? උපදෙස්',
     tabHome: 'මුල් පිටුව', tabPlayer: 'ඩික්ටේෂන්', tabPractice: 'අභ්‍යාස', tabWords: 'වචන 30', tabSettings: 'සැකසුම්',
     homeTitle: 'Smart Dictation', homeSub: 'ඔබේ පන්තියේ B1 වචන 30 අසමින් ලියන්න, පසුව පරීක්ෂා කරන්න.',
-    startDictation: '▶ ඩික්ටේෂන් ආරම්භ කරන්න (වචන #1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
+    startDictation: 'ඩික්ටේෂන් ආරම්භ කරන්න (වචන #1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
     paperMode: 'පොතේ ලිවීම', typingMode: 'ටයිප් කිරීම', resumeSession: 'නැවැත්වූ තැනින් ඉදිරියට යන්න',
     statMastered: 'ප්‍රගුණ කළ වචන', statAccuracy: 'නිවැරදිභාවය', statStreak: 'දින පෙළ',
     quickPractice: 'ක්ෂණික අභ්‍යාස', flashcards: 'ෆ්ලෑෂ් කාඩ්', quiz: 'බහුවරණ ප්‍රශ්න', listening: 'ශ්‍රවණ අභ්‍යාස',
@@ -393,7 +402,7 @@
     homeJourney3: 'දුර්වල වචන පුහුණු වන්න',
     homeReadyBadge: '8 වන වාරය සූදානම් · වචන 30',
     modePaperFull: ' අභ්‍යාස පොතේ ලිවීම (Paper)',
-    modeTypingFull: '⌨ තිරයේ ටයිප් කිරීම (Typing)',
+    modeTypingFull: 'තිරයේ ටයිප් කිරීම (Typing)',
     voiceGuideBtn: ' අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
     boardShowWord: ' 👁 වචනය පෙන්වන්න',
     boardHideWord: ' 🙈 වචනය සඟවන්න',
@@ -504,7 +513,7 @@
     studioOneClick34: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioSaveOnly: ' යතුරු බඳුනේ පමණක් සුරකින්න',
     studioPublishWordsVoice34: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
-    studioOneClickFull: 'සියල්ල එකම එකෙන්: සම්පූර්ණ සැසිය ස්වයංක්‍රීයව සාදන්න (IPA/සිංහල පොහොසත් + හඬ පැකේජය + පළ කර සියලු උපාංග සමමුහුර්ත)',
+    studioOneClickFull: 'වචන 30 පළ කර සමමුහුර්ත කරන්න',
     studioWordsRecognized: 'වචන හඳුනාගත්',
     studioErrTitle: 'දෙයක් ඔබේ අවධානය ඉල්ලයි',
     studioErrFixNow: 'එක් ක්ලික් එකකින් නිවැරදි කරන්න / අසාර්ථක පියවර නැවත උත්සාහ කරන්න',
@@ -531,11 +540,20 @@
     studioClips70: 'හඬපට 70 = අක්ෂර 829 ≈ මාසික නොමිලේ කෝටාවෙන් 8.3% (flash_v2_5 ≈ ණය 414)',
     studioRecoveryUsed: 'ප්‍රධාන ප්‍රතිසාධනය භාවිතයි — දැන් නව PIN එකක් සකසන්න',
     studioChangePinBtn: ' කථිකාචාර්ය PIN වෙනස් කරන්න',
+    presetReset: 'පන්ති පෙරනිමියට යථා කරන්න (5 තත් · 2×)',
+    studioOneClickSub: 'ස්වයංක්‍රීය: බ්‍රිතාන්‍ය IPA · සිංහල තේරුම · හඬ පැකේජය · සියලු උපාංග සමමුහුර්තය',
+    studioAdvancedToggle: ' උසස් මෙවලම් සහ වචන පරීක්ෂකයා',
+    ssbUnlocked: 'කථිකාචාර්ය ප්‍රකාරය විවෘතයි — උපාංගය සිසුන්ට දීමට පෙර අගුළු දමන්න',
+    guardTitle: 'කථිකාචාර්ය ප්‍රකාරය අගුළු නොදැමී ඇත',
+    guardBody: 'ප්‍රකාශ නොකළ වචන සංස්කරණ තවම ඇත. මාරු වීමට පෙර පළ කර අගුළු දමන්න, නැතහොත් දැන් අගුළු දමා මාරු වන්න.',
+    guardPublish: 'පළ කර අගුළු දමන්න',
+    guardLock: 'දැන් අගුළු දමා මාරු වන්න',
+    guardStay: 'ස්ටූඩියෝවේ රැඳී සිටින්න',
     studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
 
   var lang = 'en';
-  var theme = 'dark';
+  var theme = 'light';
   var initialized = false;
   var practice = { mode: 'flash', index: 0, flipped: false, answered: '', score: 0, pool: [] };
 
@@ -547,7 +565,7 @@
     return value;
   }
   function settings() {
-    try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', lang: 'en', theme: 'dark' }; }
+    try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', lang: 'en', theme: 'light' }; }
   }
   function words() {
     try { return SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []; } catch (e) { return []; }
@@ -621,7 +639,7 @@
   var THEMES = ['dark', 'light', 'board'];
   function normalizeTheme(next) {
     var wanted = str(next).toLowerCase();
-    return THEMES.indexOf(wanted) >= 0 ? wanted : 'dark';
+    return THEMES.indexOf(wanted) >= 0 ? wanted : 'light';
   }
   /* D-UI2: 'board' must survive normalizeTheme. */
   function applyTheme(next, quiet) {
@@ -629,7 +647,7 @@
     if (doc && doc.documentElement) doc.documentElement.setAttribute('data-theme', theme);
     if (doc && doc.body) doc.body.setAttribute('data-theme', theme);
     var meta = doc.querySelector ? doc.querySelector('meta[name="theme-color"]') : null;
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#FFFFFF' : (theme === 'board' ? '#000000' : '#09090B'));
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#F8FAFC' : (theme === 'board' ? '#000000' : '#0F1420'));
     if (!quiet) { try { SDP.Data.saveSettings({ theme: theme, touchedKeys: touchedPatch('theme') }); } catch (e) {} }
     var select = byId('setTheme');
     if (select) select.value = theme;
@@ -637,12 +655,6 @@
     if (icon) {
       icon.innerHTML = svgIcon(theme === 'light' ? 'sun' : (theme === 'board' ? 'target' : 'moon'), 20);
       icon.setAttribute('data-icon', theme === 'light' ? 'sun' : (theme === 'board' ? 'target' : 'moon'));
-    }
-    /* R7 / H5: Smart Board shows a clean quick-word jumper in the cockpit header. */
-    var jumper = byId('quickJumper');
-    if (jumper) {
-      if (theme === 'board') { jumper.hidden = false; renderQuickJumper(); }
-      else jumper.hidden = true;
     }
     renderBoardBar();
     return theme;
@@ -702,9 +714,73 @@
     try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
     return true;
   }
+  /* ══ S4 (v0.0.6.b): the Lecturer Session Guard ══
+     Leaving the studio while it is unlocked can never hand an open studio to
+     a student: clean state auto-locks on tab exit; unpublished edits raise
+     the guard modal instead of switching. Programmatic showTab flows in the
+     gates never carry dirty edits, so they keep auto-locking transparently. */
+  var guardPendingTab = null;
+  function closeGuardModal() {
+    var host = byId('studioGuardModal');
+    if (host) { host.hidden = true; host.setAttribute('aria-hidden', 'true'); }
+    return true;
+  }
+  function studioGuardModal(target) {
+    guardPendingTab = target;
+    var host = byId('studioGuardModal');
+    if (!host) {
+      host = doc.createElement('div');
+      host.id = 'studioGuardModal';
+      host.className = 'modal';
+      host.setAttribute('role', 'dialog');
+      host.setAttribute('aria-modal', 'true');
+      host.setAttribute('aria-labelledby', 'guardTitle');
+      host.hidden = true;
+      host.setAttribute('aria-hidden', 'true');
+      host.innerHTML = '<div class="modal-card"><h2 class="card-title" id="guardTitle"></h2>' +
+        '<p class="muted" id="guardBody"></p><div class="modal-foot">' +
+        '<button type="button" class="btn btn-primary" id="btnGuardPublish"></button>' +
+        '<button type="button" class="btn" id="btnGuardLock"></button>' +
+        '<button type="button" class="btn btn-ghost" id="btnGuardStay"></button></div></div>';
+      if (doc.body) doc.body.appendChild(host);
+      var pub = byId('btnGuardPublish'), lk = byId('btnGuardLock'), stay = byId('btnGuardStay');
+      if (pub) pub.addEventListener('click', function () {
+        closeGuardModal();
+        var done = function () { try { SDP.Studio.lock(); } catch (e) {} showTab(guardPendingTab || 'home'); };
+        try {
+          if (SDP.Studio && SDP.Studio.publishWordsAndVoice) { SDP.Studio.publishWordsAndVoice(done); return; }
+        } catch (e) {}
+        done();
+      }, false);
+      if (lk) lk.addEventListener('click', function () {
+        closeGuardModal();
+        try { SDP.Studio.lock(); } catch (e) {}
+        showTab(guardPendingTab || 'home');
+      }, false);
+      if (stay) stay.addEventListener('click', function () { closeGuardModal(); }, false);
+    }
+    setText(byId('guardTitle'), t('guardTitle'));
+    setText(byId('guardBody'), t('guardBody'));
+    setText(byId('btnGuardPublish'), t('guardPublish'));
+    setText(byId('btnGuardLock'), t('guardLock'));
+    setText(byId('btnGuardStay'), t('guardStay'));
+    host.hidden = false;
+    host.setAttribute('aria-hidden', 'false');
+    return true;
+  }
   function showTab(name) {
     var target = TABS.indexOf(name) >= 0 ? name : 'home';
     var i;
+    if (target !== 'studio') {
+      var studioUnlocked = false;
+      try { studioUnlocked = !!(SDP.Studio && SDP.Studio.isUnlocked && SDP.Studio.isUnlocked()); } catch (e) { studioUnlocked = false; }
+      if (studioUnlocked) {
+        var dirtyEdits = false;
+        try { dirtyEdits = !!(SDP.Studio && SDP.Studio.hasUnpublishedEdits && SDP.Studio.hasUnpublishedEdits()); } catch (e) { dirtyEdits = false; }
+        if (dirtyEdits) { studioGuardModal(target); return currentTab(); }
+        try { SDP.Studio.lock(); } catch (e) {}
+      }
+    }
     if (target !== 'player' && target !== 'dict' && target !== 'dictation') pauseForNavigation(target);
     for (i = 0; i < TABS.length; i++) {
       var screen = byId('screen-' + TABS[i]);
@@ -791,7 +867,7 @@
       banner.hidden = !resumable;
       if (resumable) {
         banner.setAttribute('data-state', (enginePaused || draftPaused) ? 'paused' : 'draft');
-        setText(byId('resumeText'), '⏸ ' + t('resumeMetaLine') + (draftIndex + 1) + t('ofWord') +
+        setText(byId('resumeText'), t('resumeMetaLine') + (draftIndex + 1) + t('ofWord') +
           repeatsShown + ' of ' + repeatsTotal + ' · ' + secondsLeft + t('secondsLeft'));
         setText(byId('resumeMeta'), resumable ? t('resumePaused') : t('resumeMetaIdle'));
       }
@@ -1465,7 +1541,7 @@
       var others = shuffle(practice.pool.filter(function (x) { return str(x.w) !== str(word.w); }));
       for (var d = 0; d < others.length && distractors.length < 3; d++) distractors.push(others[d]);
       var options = shuffle(distractors.concat([word]));
-      var prompt = practice.mode === 'quiz' ? '<div class="prac-word">' + esc(word.w) + '</div><div class="prac-mini">/' + esc(word.p) + '/ · ' + esc(t('chooseMeaning')) + '</div>'
+      var prompt = practice.mode === 'quiz' ? '<div class="prac-word">' + esc(word.w) + '</div><div class="prac-mini">/' + esc(str(word.p).replace(/^\/+|\/+$/g, '')) + '/ · ' + esc(t('chooseMeaning')) + '</div>'
         : '<div class="prac-word">▶</div><div class="prac-mini">' + esc(t('listenAndChoose')) + '</div>';
       html += '<div class="prac-card">' + prompt + '</div><div class="prac-options">';
       for (var o = 0; o < options.length; o++) {
@@ -1488,7 +1564,7 @@
     } else {
       var face = practice.flipped
         ? '<div class="prac-word si">' + esc(word.si) + '</div><div class="prac-mini">' + esc(word.m) + '</div>'
-        : '<div class="prac-word">' + esc(word.w) + '</div><div class="prac-mini">/' + esc(word.p) + '/ · ' + esc(word.pos) + '</div>';
+        : '<div class="prac-word">' + esc(word.w) + '</div><div class="prac-mini">/' + esc(str(word.p).replace(/^\/+|\/+$/g, '')) + '/ · ' + esc(word.pos) + '</div>';
       html += '<div class="prac-card" data-prac-act="flip" role="button" tabindex="0">' + face +
         '<div class="prac-mini">' + esc(t('tapToFlip')) + '</div></div>' +
         '<div class="prac-actions">' +
@@ -1649,6 +1725,8 @@
     for (var pi = 0; pi < pills.length; pi++) {
       pills[pi].setAttribute('aria-pressed', String(pills[pi].getAttribute('data-preset') === str(conf.pacingPreset || 'standard')));
     }
+    var resetChip = byId('presetReset');
+    if (resetChip) resetChip.hidden = !!(Number(conf.writeSecs) !== 5 || Number(conf.repeats) !== 2 || Number(conf.pauseSecs) !== 1);
     paintModePills();
     paintLecturerBar();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
@@ -1698,6 +1776,37 @@
     range('setPause', 'pauseSecs', 1, { out: 'outPause', fn: function (v) { return v + 's'; } }, t('pauseBetween'));
     range('setRate', 'rate', 1, { out: 'outRate', fn: function (v) { return v + 'x'; } }, t('rate'));
     range('setVolume', 'volume', 100, { out: 'outVolume', fn: function (v) { return Math.round(v * 100) + '%'; } }, t('volume'), true);
+    function wireStepper(inputId, minusId, plusId, min, max, step) {
+      var node = byId(inputId), minus = byId(minusId), plus = byId(plusId);
+      if (!node || !minus || !plus || node._sdpStepper) return;
+      node._sdpStepper = true;
+      function fire(type) {
+        try {
+          var ev = (typeof global.Event === 'function') ? new global.Event(type) : null;
+          if (ev) node.dispatchEvent(ev);
+        } catch (e) {}
+      }
+      function bump(dir) {
+        var raw = Number(node.value) + dir * step;
+        raw = Math.round(raw * 1000) / 1000;
+        if (raw < min) raw = min;
+        if (raw > max) raw = max;
+        node.value = String(raw);
+        fire('input');
+        fire('change');
+      }
+      minus.addEventListener('click', function () { bump(-1); });
+      plus.addEventListener('click', function () { bump(1); });
+    }
+    wireStepper('setWriteSecs', 'stepWriteMinus', 'stepWritePlus', 3, 20, 1);
+    wireStepper('setPause', 'stepPauseMinus', 'stepPausePlus', 0.5, 3, 0.5);
+    wireStepper('setRate', 'stepRateMinus', 'stepRatePlus', 0.7, 1.2, 0.05);
+    wireStepper('setVolume', 'stepVolMinus', 'stepVolPlus', 0, 100, 5);
+    var resetChipBtn = byId('presetReset');
+    if (resetChipBtn && !resetChipBtn._sdpBound) {
+      resetChipBtn._sdpBound = true;
+      resetChipBtn.addEventListener('click', function () { applyPreset('exam'); });
+    }
     var repeats = byId('setRepeats');
     if (repeats && !repeats._sdpBound2) {
       repeats._sdpBound2 = true;
@@ -2119,22 +2228,6 @@
     return true;
   }
 
-  /* ══ Smart Board quick-word jumper (R7 / H5)  ══ */
-  function renderQuickJumper() {
-    var sel = byId('setQuickWord');
-    if (!sel) return;
-    /* D-UI5: live word count, never a hardcoded 30. */
-    var count = boardWordCount() || 30;
-    var i, html = '';
-    for (i = 1; i <= count; i++) html += '<option value="' + i + '">' + str(i) + '</option>';
-    sel.innerHTML = html;
-    if (sel._jqBound) return;
-    sel._jqBound = true;
-    sel.addEventListener('change', function () {
-      var idx = Number(sel.value) - 1;
-      if (SDP.Engine && typeof SDP.Engine.jumpTo === 'function') SDP.Engine.jumpTo(idx);
-    });
-  }
 
   /* ══ Settings order guard ══ */
   

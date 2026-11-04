@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F8FAFC">
-<meta name="description" content="Smart Dictation Player v0.0.6.a — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FFFFFF'/%3E%3Cpath d='M7 20c4-1 6-4 8-9 2 5 5 8 10 9' stroke='%232563EB' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<style id="sdpCloak">html,body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Inter,system-ui,sans-serif}.screen{display:none!important}.screen.active{display:block!important}</style>
+<style id="sdpCloak">html,body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Inter,system-ui,sans-serif}html[data-theme='dark'] body{background:#0F1420}html[data-theme='board'] body{background:#000000}.screen{display:none!important}.screen.active{display:block!important}</style>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('sdp.settings')||'{}');var t=s&&s.theme;if(t!=='dark'&&t!=='board')t='light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -21,13 +22,9 @@
   </svg>
   <span id="brandName">Smart Dictation</span>
   <span class="b1badge">CCBE B1</span>
-  <div id="quickJumper" class="quick-jumper" hidden>
-   <label class="muted" for="setQuickWord">Jump to word:</label>
-   <select id="setQuickWord" class="input"></select>
-  </div>
  </div>
  <div class="header-cluster">
-  <span id="sdpVerPill">v0.0.6.a</span>
+  <span id="sdpVerPill">v0.0.6.b</span>
   <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
   <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
  </div>
@@ -120,7 +117,7 @@
     </div>
     <div id="homeModePills" class="pill-row" role="group" aria-label="Dictation mode">
      <button type="button" class="pill" data-mode="paper" aria-pressed="true" ><span data-icon="book" data-icon-size="16"></span><span class="i18n-label" data-i18n="modePaperFull"> Write in Exercise Book (Paper)</span></button>
-     <button type="button" class="pill" data-mode="typing" aria-pressed="false" ><span data-icon="keyboard" data-icon-size="16"></span><span class="i18n-label" data-i18n="modeTypingFull">⌨ Type on Screen</span></button>
+     <button type="button" class="pill" data-mode="typing" aria-pressed="false" ><span data-icon="keyboard" data-icon-size="16"></span><span class="i18n-label" data-i18n="modeTypingFull">Type on Screen</span></button>
     </div>
    </div>
 
@@ -199,9 +196,9 @@
    </div>
    <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Word reveal and classroom controls" hidden>
     <div class="board-transport">
-     <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">▶ Play / Pause</span></button>
+     <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">Play / Pause</span></button>
      <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
-     <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">⏭ Next</span></button>
+     <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">Next</span></button>
     </div>
     <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
     <div class="board-word-row">
@@ -330,36 +327,45 @@
     </section>
 
     <section class="card set-card">
-     <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
-     <div class="field">
+    <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
+    <p class="lbl" data-i18n="presetHeading">Quick Pacing Presets</p>
+    <div id="presetRow" class="pill-row" role="group" aria-label="Quick pacing presets">
+      <button type="button" class="pill preset-pill" id="presetBeginner" data-preset="beginner" ><span data-icon="clock" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBeginner"> Beginner Slow (12s · 4×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetStandard" data-preset="standard" ><span data-icon="target" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetStandard"> CCBE B1 Standard (8s · 3×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetExam" data-preset="exam" ><span data-icon="alert" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetExam"> Fast Exam (5s · 2×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetBoard" data-preset="board" ><span data-icon="table" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBoard"> Smart Board Class Mode</span></button>
+      <button type="button" class="pill preset-pill preset-reset" id="presetReset" hidden data-i18n="presetReset">Reset to Class Default (5s · 2×)</button>
+    </div>
+    <div class="field">
       <span class="lbl" data-i18n="modeLabel">Mode</span>
       <div class="seg" role="group" aria-label="Dictation mode">
        <button type="button" class="seg-btn" id="setModePaper" data-set-mode="paper" aria-pressed="true" data-i18n="paperMode">Paper</button>
        <button type="button" class="seg-btn" id="setModeTyping" data-set-mode="typing" aria-pressed="false" data-i18n="typingMode">Typing</button>
       </div>
      </div>
-     <div class="field">
+     <div class="field field-slider">
       <label class="lbl" for="setWriteSecs" data-i18n="writeTime">Writing time</label>
-      <input id="setWriteSecs" type="range" min="3" max="20" step="1" value="8">
+      <div class="stepper">
+       <button type="button" class="stepper-btn" id="stepWriteMinus" aria-label="Decrease writing time">&minus;</button>
+       <input id="setWriteSecs" type="range" min="3" max="20" step="1" value="8">
+       <button type="button" class="stepper-btn" id="stepWritePlus" aria-label="Increase writing time">+</button>
+      </div>
       <output id="outWriteSecs" for="setWriteSecs">8s</output>
      </div>
      <div class="field">
       <label class="lbl" for="setRepeats" data-i18n="repeats">Word repeats</label>
       <select id="setRepeats" class="input"></select>
      </div>
-     <div class="field">
+     <div class="field field-slider">
       <label class="lbl" for="setPause" data-i18n="pauseBetween">Pause between repeats</label>
-      <input id="setPause" type="range" min="0.5" max="3" step="0.5" value="1.5">
+      <div class="stepper">
+       <button type="button" class="stepper-btn" id="stepPauseMinus" aria-label="Decrease pause">&minus;</button>
+       <input id="setPause" type="range" min="0.5" max="3" step="0.5" value="1.5">
+       <button type="button" class="stepper-btn" id="stepPausePlus" aria-label="Increase pause">+</button>
+      </div>
       <output id="outPause" for="setPause">1.5s</output>
      </div>
      <label class="checkline" for="setAutoAdvance"><input type="checkbox" id="setAutoAdvance" checked> <span data-i18n="autoAdvance">Advance automatically</span></label>
-     <p class="lbl" data-i18n="presetHeading">Quick Pacing Presets</p>
-     <div id="presetRow" class="pill-row" role="group" aria-label="Quick pacing presets">
-      <button type="button" class="pill preset-pill" id="presetBeginner" data-preset="beginner" ><span data-icon="clock" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBeginner"> Beginner Slow (12s · 4×)</span></button>
-      <button type="button" class="pill preset-pill" id="presetStandard" data-preset="standard" ><span data-icon="target" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetStandard"> CCBE B1 Standard (8s · 3×)</span></button>
-      <button type="button" class="pill preset-pill" id="presetExam" data-preset="exam" ><span data-icon="alert" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetExam"> Fast Exam (5s · 2×)</span></button>
-      <button type="button" class="pill preset-pill" id="presetBoard" data-preset="board" ><span data-icon="table" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBoard"> Smart Board Class Mode</span></button>
-     </div>
     </section>
 
     <section class="card set-card">
@@ -380,14 +386,22 @@
        <option value="device" data-i18n="voiceDevice">Device voice</option>
       </select>
      </div>
-     <div class="field">
+     <div class="field field-slider">
       <label class="lbl" for="setRate" data-i18n="rate">Speech rate</label>
-      <input id="setRate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
+      <div class="stepper">
+       <button type="button" class="stepper-btn" id="stepRateMinus" aria-label="Decrease speech rate">&minus;</button>
+       <input id="setRate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
+       <button type="button" class="stepper-btn" id="stepRatePlus" aria-label="Increase speech rate">+</button>
+      </div>
       <output id="outRate" for="setRate">0.95x</output>
      </div>
-     <div class="field">
+     <div class="field field-slider">
       <label class="lbl" for="setVolume" data-i18n="volume">Volume</label>
-      <input id="setVolume" type="range" min="0" max="100" step="5" value="100">
+      <div class="stepper">
+       <button type="button" class="stepper-btn" id="stepVolMinus" aria-label="Decrease volume">&minus;</button>
+       <input id="setVolume" type="range" min="0" max="100" step="5" value="100">
+       <button type="button" class="stepper-btn" id="stepVolPlus" aria-label="Increase volume">+</button>
+      </div>
       <output id="outVolume" for="setVolume">100%</output>
      </div>
      <button id="btnTestVoice" type="button" class="btn btn-primary" data-i18n="testVoice">Test Voice</button>
@@ -436,7 +450,7 @@
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.a</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.b</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-04</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
@@ -533,7 +547,7 @@
 
 <script>
 (function () {
- var TARGET = '0.0.6.a';
+ var TARGET = '0.0.6.b';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

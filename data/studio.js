@@ -219,6 +219,8 @@
 
  var ST = {
   unlocked: false,
+  /* v0.0.6.b (S4): unpublished word edits — powers the tab-exit guard. */
+  dirty: false,
   envelope: '',
   secrets: {},
   message: '',
@@ -616,7 +618,7 @@
    ST.envelope = env ? env : '';
    ST.secrets = isObj(secrets) ? secrets : {};
    if (env && v.stash) v.stash(ST.secrets);
-   msg(t('studioUnlock') + ' ', 'ok');
+   ST.message = ''; ST.messageState = '';
    mount();
    paintLecturerBar();
    loadVoicePack(noop);
@@ -677,7 +679,7 @@
     ST.secrets = isObj(secrets) ? secrets : {};
     if (v.stash) v.stash(ST.secrets);
     clearVaultLock();
-    msg(t('studioUnlock') + ' ', 'ok');
+    ST.message = ''; ST.messageState = '';
     mount();
     /* D4: #lecturerSyncBar appears */
     paintLecturerBar();
@@ -775,6 +777,7 @@
   try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
   try { if (global.speechSynthesis && global.speechSynthesis.cancel) global.speechSynthesis.cancel(); } catch (e) {}
   ST.unlocked = false;
+  ST.dirty = false;
   ST.secrets = {};
   ST.pin = '';
   try { if (vault() && vault().clear && !keepStash) vault().clear(); } catch (e) {}
@@ -878,7 +881,7 @@
  function keyRowMarkup(inputId, label, placeholder, kind) {
   /* D1: data-pristine = untouched */
   return '<label class="lbl" for="' + inputId + '">' + esc(label) + '</label>' + '<div class="key-row">' +
-   '<input id="' + inputId + '" class="input" type="password" autocomplete="off" spellcheck="false" data-pristine="1" placeholder="' + esc(placeholder) + '">' +
+   '<input id="' + inputId + '" class="input" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" data-pristine="1" placeholder="' + esc(placeholder) + '">' +
    btn('btnToggle' + kind, t('studioShow'), '', 'aria-pressed="false"') +
    btn('btnPaste' + kind, t('studioPaste')) +
    btn('btnTest' + kind, kind === 'ElKey' ? t('studioTestEl') : (kind === 'Ai' ? t('studioTestAi') : t('studioTestGh'))) +
@@ -928,10 +931,10 @@
  function masterStepsMarkup() {
   /* v0.0.6.a Track 6: the four human-readable All-in-One stages. */
   var labels = [
-   '\u2705 Step 1 \u00b7 Verify Vault &amp; API Keys (PIN, ghToken, AI key)',
-   '\u2728 Step 2 \u00b7 Auto-Enrich 30 Words \u2014 Real British IPA /\u2026/, POS, English + Sinhala meaning, example',
-   '\ud83c\udfa4 Step 3 \u00b7 British Female Professor Voice Pack Sync \u2014 0-Credit Smart Guard (reuse all 100 clips)',
-   '\ud83d\ude80 Step 4 \u00b7 Atomic Publish &amp; Classroom Broadcast \u2014 all devices sync on one syncRev'
+   'Step 1 \u00b7 Verify vault & keys',
+   'Step 2 \u00b7 Enrich the 30 words (IPA + Sinhala)',
+   'Step 3 \u00b7 Voice pack sync \u2014 0 credits',
+   'Step 4 \u00b7 Publish & broadcast to the class'
   ];
   var html = '<ol id="studioMasterSteps" class="studio-steps" aria-label="' +
    T('studioMasterSteps') + '">';
@@ -987,7 +990,7 @@
    '<p class="lbl">' + T('costPreviewLabel') + '</p>' + '<p id="costPreviewLine" class="muted">' + esc(costPreviewLine()) + '</p>' +
    '<div id="clipPreviewTable" class="studio-preview"></div></div></details>' +
    '<p id="studioVaultBadge" class="studio-vault-badge"' + (vaultBadgeVisible() ? '' : ' hidden') + '>' + T('vaultBadgeLabel') + '</p>' +
-   masterStepsMarkup() + '</section>';
+   '</section>';
  }
  /* v0.0.6.a Track 6: live "N / 30 Words Recognized" pill + spring CTA. */
  function wordCountPillText(n) {
@@ -1017,23 +1020,28 @@
   for (var i = 0; i < words.length; i++) if (str(words[i] && words[i].w)) names.push(str(words[i].w));
   return '<section id="studioCardWords" class="studio-card studio-card-words">' + '<h4 class="studio-h4">' + T('studioCardWords') + '</h4>' + '<label class="lbl" for="studioBulkWords">' + T('studioBulkWords') + '</label>' +
    '<p id="studioWordCountPill" class="studio-word-count-pill" role="status" aria-live="polite">' + esc(wordCountPillText(names.length)) + '</p>' +
-   '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' + '<label class="lbl" for="studioWords">' + T('studioEditor') + '</label>' + '<textarea id="studioWords" spellcheck="false">' + esc(wordsToText(words)) + '</textarea>' +
-   '<p id="studioCount" class="studio-msg">' + words.length + ' ' + T('studioWordsCount') + '</p>' +
+   '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' +
    '<p id="studioEnrichStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div class="chip-row">' + btn('btnEnrichWords', t('studioEnrich'), 'btn-ghost') +
    btn('btnPreviewWords', t('studioPreview')) + btn('btnPublishWords', t('studioPublish'), 'btn-primary') +
-   btn('btnPublishWordsAndVoice', '✨ ' + T('studioOneClickFull'), 'btn-primary', 'data-primary-cta="1" data-one-click="1"') +
-   btn('btnStudioLock', t('studioLock')) + '</div>' + '<h5 class="studio-h5">' + T('studioWordManager') + '</h5>' +
-   '<div id="studioWordManager" class="studio-word-manager"></div>' + '<div id="studioPreview" class="studio-preview"></div>' + '<p class="muted">' + T('studioElevenNote') + '</p>' + '</section>';
+   btn('btnPublishWordsAndVoice', t('studioOneClickFull'), 'btn-primary', 'data-primary-cta="1" data-one-click="1"', 'sparkles') + '</div>' +
+   '<p class="studio-sub">' + T('studioOneClickSub') + '</p>' + masterStepsMarkup() +
+   '<details class="studio-word-inspector"><summary class="studio-h5">' + ico('list', 16) + 'Inspect & Edit Individual Words (IPA / Sinhala / Audio Preview)</summary>' +
+   '<div class="studio-insp-body">' + '<label class="lbl" for="studioWords">' + T('studioEditor') + '</label>' + '<textarea id="studioWords" spellcheck="false">' + esc(wordsToText(words)) + '</textarea>' +
+   '<p id="studioCount" class="studio-msg">' + words.length + ' ' + T('studioWordsCount') + '</p>' +
+   '<h5 class="studio-h5">' + T('studioWordManager') + '</h5>' +
+   '<div id="studioWordManager" class="studio-word-manager"></div>' + '<div id="studioPreview" class="studio-preview"></div>' + '<p class="muted">' + T('studioElevenNote') + '</p>' + '</div></details></section>';
  }
  /* ══ Card 3 — classroom settings */
  function settingsCardMarkup() {
   return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + T('studioCardSettings') + '</h4>' +
-   /* D7: the ONE classroom broadcast bar is slotted here while unlocked. */
-   '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
    '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
-   '<input id="studioNewPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
-   '<input id="studioConfirmPin" class="input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" minlength="4">' + btn('btnChangePin', t('studioChangePinBtn'), 'btn-ghost', 'data-atomic-pin="1"') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
+   '<input id="studioNewPin" class="input pin-mask" type="text" inputmode="numeric" autocomplete="off" ' +
+   'autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" ' +
+   'data-form-type="other" maxlength="12" minlength="4" aria-label="New lecturer PIN">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
+   '<input id="studioConfirmPin" class="input pin-mask" type="text" inputmode="numeric" autocomplete="off" ' +
+   'autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" ' +
+   'data-form-type="other" maxlength="12" minlength="4" aria-label="Confirm lecturer PIN">' + btn('btnChangePin', t('studioChangePinBtn'), 'btn-ghost', 'data-atomic-pin="1"') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
    '<div class="studio-lock-row">' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-ghost') + '</div>' +
    '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
    btn('btnCommitClip', t('studioCommitClip'), 'btn-primary', 'disabled') + '</div>' +
@@ -1041,20 +1049,36 @@
  }
  /* D18: three outcome cards under */
  /* D19: compact sub-label, no */
+ function securityBarMarkup() {
+  /* v0.0.6.b (S4): the high-visibility Lecturer Mode bar — Lock or Publish
+    & Lock is always one tap away while the studio is open. The green mode
+    pill lives INSIDE this single bar (never a second stacked header). */
+  return '<div id="studioSecurityBar" class="studio-security-bar" role="region" aria-live="polite">' +
+   '<span class="ssb-badge">' + ico('unlock', 16) + T('ssbUnlocked') + '</span>' +
+   '<span class="studio-mode-pill">Lecturer Mode Unlocked</span>' +
+   btn('btnSsbPublish', t('guardPublish'), 'btn-primary', 'data-primary-cta="1"', 'upload') +
+   btn('btnSsbLock', t('studioLockLecturer'), 'btn-ghost', '', 'lock') +
+   '</div>';
+ }
  function unlockedMarkup() {
-  return '<div class="studio-head">' + '<span class="studio-mode-pill">Lecturer Mode Unlocked </span>' + '</div>' +
+  return securityBarMarkup() +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
-   /* R7 (F7): words first — editing vocabulary is the daily job; keys are
-     a once-a-term chore. Card order is part of the contract. */
-   wordsCardMarkup() + settingsCardMarkup() + keysCardMarkup();
+   /* R7 (F7): words first — editing vocabulary is the daily job. Card order
+     (words → settings → keys) is part of the contract and survives the
+     v0.0.6.b Basic/Advanced split: the daily card stays open, Cards 3+1
+     fold into the calm Advanced drawer (S5). */
+   wordsCardMarkup() +
+   '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
+   '<details id="studioAdvancedDrawer" class="studio-advanced-drawer"><summary class="studio-h4">' + ico('gear', 16) + T('studioAdvancedToggle') + '</summary>' +
+   '<div class="studio-adv-body">' + settingsCardMarkup() + keysCardMarkup() + '</div></details>';
  }
  /* R5/SEC-01: while locked the body */
  function lockedMarkup() {
   return '<div id="studioGate" class="studio-gate" role="group" aria-label="' + T('studioPinLabel') + '">' +
    '<h4>' + T('studioScreenTitle') + '</h4>' +
    '<p class="muted">' + T('studioLocked') + '</p>' +
-   '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input" type="password" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
+   '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input pin-mask" type="text" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
    '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
    pinDotsMarkup() +
    pinPadMarkup() +
@@ -1362,11 +1386,13 @@
   }
   if (id === 'studioWords') {
    var editor = byId('studioWords');
+   ST.dirty = true;
    ST.words = parseWords(editor ? editor.value : '');
    setText(byId('studioCount'), ST.words.length + ' ' + t('studioWordsCount'));
    setText(byId('costPreviewLine'), costPreviewLine(ST.words));
    paintWordManager();
   } else if (id === 'studioBulkWords') {
+   ST.dirty = true;
    setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
    paintWordCountPill();
    scheduleAutoEnrich();
@@ -1416,7 +1442,7 @@
    paintFreeNoKey();
    return true;
   }
-  if (target && target.getAttribute && target.getAttribute('data-wm')) return applyWordManagerEdit(target, true);
+  if (target && target.getAttribute && target.getAttribute('data-wm')) { ST.dirty = true; return applyWordManagerEdit(target, true); }
   return false;
  }
 
@@ -1467,6 +1493,8 @@
   btnPreviewWords: function () { openPublishPreview(); },
   btnLockStudio: function () { lock(); },
   btnStudioLock: function () { lock(); },
+  btnSsbLock: function () { lock(); },
+  btnSsbPublish: function () { withBusy('btnSsbPublish', function (d) { publishWordsAndVoice(function () { d(); lock(); }); }); },
   btnStudioRecord: function () { toggleRecord(); },
   btnCommitClip: function () {
    commitClip(str(ST.secrets.ghToken), function (err) {
@@ -3453,6 +3481,7 @@ function priorIPAFor(w) {
   setup: setup,
   lock: lock,
   isUnlocked: isUnlocked,
+  hasUnpublishedEdits: function () { return !!(ST.unlocked && ST.dirty); },
   secrets: secrets,
   setEnvelope: setEnvelope,
   hasVault: hasVault,

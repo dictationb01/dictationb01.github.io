@@ -3,6 +3,58 @@
    Full design-system notes in the file header of the tokens section. */
 /* ── 1 · Tokens · Vibrant Deep Sapphire-Zinc Dark (default) ─────────────── */
 :root {
+  /* v0.0.6.a "Human-First Daylight" palette — Duolingo/Stripe/Apple HIG light. */
+  --bg-app: #F8FAFC;
+  --bg-sunken: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --bg-elev: #EFF6FF;
+  --bg-interactive: #E2E8F0;
+  --bg-accent-glass: rgba(37, 99, 235, 0.10);
+  --glass-bg: rgba(248, 250, 252, 0.80);
+  --text: #0F172A;
+  --text-muted: #475569;
+  --border: #CBD5E1;
+  --border-strong: #64748B;
+  --stroke: #94A3B8;
+  --stroke-strong: rgba(15, 23, 42, 0.26);
+  --accent: #2563EB;
+  --accent-2: #4F46E5;
+  --accent-ink: #FFFFFF;
+  --accent-fg: #1D4ED8;
+  --ok: #059669;
+  --ok-ink: #FFFFFF;
+  --ok-fg: #065F46;
+  --ok-glass: rgba(5, 150, 105, 0.12);
+  --warn: #D97706;
+  --warn-ink: #FFFFFF;
+  --warn-fg: #92400E;
+  --warn-glass: rgba(217, 119, 6, 0.14);
+  --danger: #E11D48;
+  --danger-ink: #FFFFFF;
+  --danger-fg: #9F1239;
+  --danger-glass: rgba(225, 29, 72, 0.10);
+  --cue-bg: #F59E0B;
+  --cue-ink: #241703;
+  --grad-primary: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
+  --grad-go: linear-gradient(135deg, #059669 0%, #2563EB 100%);
+  --shadow-btn: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 6px 16px rgba(15, 23, 42, 0.16);
+  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 16px -4px rgba(15, 23, 42, 0.05);
+  --header-h: 54px;
+  --tabbar-h: 60px;
+  --rail-w: 232px;
+  --tap: 48px;
+  --btn-h: 54px;
+  --radius: 16px;
+  --radius-sm: 12px;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, 'Noto Sans Sinhala', sans-serif;
+  --font-si: 'Noto Sans Sinhala', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-emph: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── 1b · Warm Alabaster-Indigo Light ───────────────────────────────────── */
+html[data-theme='dark'], html[data-theme='dark'] body {
   --bg-app: #0F1420;
   --bg-sunken: #0B101B;
   --bg-card: #161D2E;
@@ -50,46 +102,6 @@
   --font-mono: ui-monospace, 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
   --ease: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-emph: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* ── 1b · Warm Alabaster-Indigo Light ───────────────────────────────────── */
-html[data-theme='light'], html[data-theme='light'] body {
-  /* v0.0.6.a "Human-First Daylight" palette — Duolingo/Stripe/Apple HIG light. */
-  --bg-app: #F8FAFC;
-  --bg-sunken: #F1F5F9;
-  --bg-card: #FFFFFF;
-  --bg-elev: #EFF6FF;
-  --bg-interactive: #E2E8F0;
-  --bg-accent-glass: rgba(37, 99, 235, 0.10);
-  --glass-bg: rgba(248, 250, 252, 0.80);
-  --text: #0F172A;
-  --text-muted: #475569;
-  --border: #E2E8F0;
-  --border-strong: rgba(15, 23, 42, 0.30);
-  --stroke: #CBD5E1;
-  --stroke-strong: rgba(15, 23, 42, 0.26);
-  --accent: #2563EB;
-  --accent-2: #4F46E5;
-  --accent-ink: #FFFFFF;
-  --accent-fg: #1D4ED8;
-  --ok: #059669;
-  --ok-ink: #FFFFFF;
-  --ok-fg: #065F46;
-  --ok-glass: rgba(5, 150, 105, 0.12);
-  --warn: #D97706;
-  --warn-ink: #FFFFFF;
-  --warn-fg: #92400E;
-  --warn-glass: rgba(217, 119, 6, 0.14);
-  --danger: #E11D48;
-  --danger-ink: #FFFFFF;
-  --danger-fg: #9F1239;
-  --danger-glass: rgba(225, 29, 72, 0.10);
-  --cue-bg: #F59E0B;
-  --cue-ink: #241703;
-  --grad-primary: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
-  --grad-go: linear-gradient(135deg, #059669 0%, #2563EB 100%);
-  --shadow-btn: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 6px 16px rgba(15, 23, 42, 0.16);
-  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 16px -4px rgba(15, 23, 42, 0.05);
 }
 
 /* ── 1c · Classroom Smart Board High-Contrast (projection) ─────────────── */
@@ -239,8 +251,6 @@ body[data-lang='si'] #btnLang .lang-off, body[data-lang='si'] #guideLangPill .la
 .sync-badge[data-sync-state='error'] { color: var(--danger-ink); border-color: var(--danger); background: var(--danger-glass); }
 #btnStudioQuick { gap: 7px; }
 .studio-quick-label { white-space: nowrap; }
-.quick-jumper { display: flex; align-items: center; gap: 8px; margin-left: 10px; }
-.quick-jumper .input { min-height: 40px; padding: 0 10px; font-size: 13px; }
 
 #sdpLayout { min-height: 100dvh; }
 #sdpScreens { outline: none; }
@@ -1098,7 +1108,7 @@ tr.is-missed td.r-word { color: var(--danger); }
 .field select.input { max-width: 320px; }
 .set-card .field { margin-bottom: 14px; }
 .checkline { font-weight: 600; }
-#presetRow { margin-top: 6px; }
+#presetRow { margin-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .preset-pill { gap: 9px; }
 #screen-settings .btn-sm { min-height: var(--tap); }
 .about-card .credit-foot { border-top: 1px solid var(--stroke); margin-top: 16px; padding-top: 12px; }
@@ -1500,3 +1510,83 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
 
 .studio-card label.lbl { display: block; margin: 12px 0 6px; font-size: 13.5px; font-weight: 750; color: var(--text-muted); }
 .studio-card textarea { display: block; width: 100%; min-height: 110px; font-family: var(--font-mono); font-size: 13px; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+
+/* ── 16 · v0.0.6.b Human-Factors layer ──────────────────────────────────── */
+/* S6: scroll-safe sliders — vertical pans scroll the page, steppers are the
+   tactile path, and the track stays clear of the right thumb-scroll zone. */
+.field input[type='range'] { touch-action: pan-y; flex: 1 1 130px; max-width: 190px; }
+.stepper { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.stepper-btn {
+  min-height: var(--tap); min-width: var(--tap);
+  display: inline-flex; align-items: center; justify-content: center;
+  font: inherit; font-size: 20px; font-weight: 800; line-height: 1;
+  color: var(--text); background: var(--bg-elev);
+  border: 1px solid var(--stroke); border-radius: 9999px;
+  cursor: pointer; transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.stepper-btn:hover { background: var(--bg-interactive); border-color: var(--border-strong); }
+.stepper-btn:active { transform: translateY(1px); }
+.preset-reset { border-color: var(--warn); color: var(--warn-fg); background: var(--warn-glass); }
+.preset-reset[hidden] { display: none; }
+/* S3: masked PIN/key fields that never look like a login form to the browser */
+.pin-mask { -webkit-text-security: disc; text-security: disc; letter-spacing: 3px; }
+/* S4: the sticky Lecturer Mode security bar */
+.studio-security-bar {
+  position: sticky; top: calc(var(--header-h) + 6px); z-index: 40;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 10px 14px; margin: 0 0 12px;
+  background: var(--warn-glass); border: 1.5px solid var(--warn); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+}
+.ssb-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 800; color: var(--warn-fg); flex: 1; min-width: 180px;
+}
+.studio-security-bar .btn { flex: none; }
+/* S5: the calm Advanced drawer around Cards 3 + 1 */
+.studio-advanced-drawer {
+  border: 1px solid var(--stroke); border-radius: var(--radius);
+  margin: 4px 0 14px; background: var(--bg-sunken);
+}
+.studio-advanced-drawer > summary {
+  cursor: pointer; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; gap: 8px; padding: 14px 16px; list-style: none;
+}
+.studio-advanced-drawer > summary::-webkit-details-marker { display: none; }
+.studio-advanced-drawer > summary::after { content: '▾'; margin-left: auto; color: var(--text-muted); }
+.studio-advanced-drawer:not([open]) > summary::after { content: '▸'; }
+.studio-advanced-drawer[open] > summary { border-bottom: 1px solid var(--stroke); }
+.studio-adv-body { padding: 6px 8px 8px; }
+.studio-sub { font-size: 12.5px; color: var(--text-muted); margin: 6px 0 10px; }
+#studioGuardModal .modal-card { max-width: 430px; }
+#studioGuardModal .modal-foot { flex-wrap: wrap; }
+
+/* ── 17 · v0.0.6.b fix layer: compact settings + one calm studio header ──── */
+/* M5: the four pacing presets collapse into a 2×2 grid so Mode and the
+   tactile stepper bars land inside the first viewport on 360px phones. */
+#presetRow .preset-pill { width: 100%; justify-content: flex-start; }
+#presetRow .preset-reset { grid-column: 1 / -1; }
+/* M5: one crisp tactile bar — label on its own row, then − / track / + with
+   the live value badge pinned to the right edge. */
+.field-slider { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 12px; row-gap: 8px; }
+.field-slider .lbl { grid-column: 1 / -1; margin: 0; }
+.field-slider .stepper { grid-column: 1; }
+.field-slider output { grid-column: 2; justify-self: end; }
+/* M3: the unlocked studio keeps ONE green header — badge, pill and actions. */
+.studio-security-bar { background: var(--ok-glass); border-color: var(--ok); }
+.ssb-badge { color: var(--ok-fg); }
+.studio-security-bar .studio-mode-pill {
+  display: inline-flex; align-items: center; font-size: 12.5px; font-weight: 800;
+  color: var(--ok-fg); background: var(--ok-glass); border: 1px solid var(--ok);
+  border-radius: 9999px; padding: 4px 11px; margin-left: auto;
+}
+/* M3: the raw pipe editor and the 30-row manager fold into a calm drawer. */
+.studio-word-inspector { border: 1px solid var(--stroke); border-radius: var(--radius-sm); margin: 12px 0 6px; background: var(--bg-sunken); }
+.studio-word-inspector > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; padding: 12px 14px; font-weight: 800; font-size: 13.5px; color: var(--text-muted); }
+.studio-word-inspector > summary::-webkit-details-marker { display: none; }
+.studio-word-inspector > summary::after { content: '\25BE'; margin-left: auto; }
+.studio-word-inspector:not([open]) > summary::after { content: '\25B8'; }
+.studio-word-inspector[open] > summary { border-bottom: 1px solid var(--stroke); }
+.studio-insp-body { padding: 2px 14px 12px; }
+
+body, #appHeader, #brandName { color: var(--text) !important; }

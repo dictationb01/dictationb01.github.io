@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F8FAFC">
-<meta name="description" content="Smart Dictation Player v0.0.6.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.c — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -24,7 +24,7 @@
   <span class="b1badge">CCBE B1</span>
  </div>
  <div class="header-cluster">
-  <span id="sdpVerPill">v0.0.6.b</span>
+  <span id="sdpVerPill">v0.0.6.c</span>
   <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
   <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
  </div>
@@ -194,24 +194,6 @@
      <div id="sessionPills" class="word-pills"></div>
     </div>
    </div>
-   <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Word reveal and classroom controls" hidden>
-    <div class="board-transport">
-     <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">Play / Pause</span></button>
-     <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
-     <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">Next</span></button>
-    </div>
-    <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
-    <div class="board-word-row">
-     <span id="boardWordNo" class="board-no">#1/30</span>
-     <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
-     <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" ><span data-icon="eyeOff" data-icon-size="16"></span><span class="i18n-label" data-i18n="boardHideWord"> Hide Word on Board</span></span></button>
-    </div>
-    <p id="boardMeta" class="board-meta" aria-live="polite">
-     <span id="boardIpa" class="board-ipa">/—/</span>
-     <span id="boardPos" class="board-pos">—</span>
-     <span id="boardSi" class="board-si" lang="si">—</span>
-    </p>
-   </div>
    <div id="cockpitBar" class="card cockpit">
     <div class="cockpit-head">
      <div>
@@ -222,13 +204,15 @@
     </div>
 
     <div class="beat">
-     <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
-      <circle class="ring-track" cx="40" cy="40" r="34"></circle>
-      <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
-     </svg>
-     <div class="beat-readout">
-      <span id="beatSeconds">08s</span>
-      <div class="bar-wrap"><div id="beatBar"></div></div>
+     <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+       <circle class="ring-track" cx="40" cy="40" r="34"></circle>
+       <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
+      </svg>
+      <div class="beat-readout">
+       <span id="beatSeconds">08s</span>
+       <div class="bar-wrap"><div id="beatBar"></div></div>
+      </div>
      </div>
     </div>
 
@@ -236,13 +220,6 @@
     <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
     <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
     <div id="beatStage" class="beat-stage"></div>
-    <div id="hintChips" class="chip-row hint-chips">
-     <button type="button" class="chip" data-hint="pos" aria-pressed="false" data-i18n="hintPos">Word type</button>
-     <button type="button" class="chip" data-hint="first" aria-pressed="false" data-i18n="hintFirst">First letter</button>
-     <button type="button" class="chip" data-hint="si" aria-pressed="false" data-i18n="hintSi">Sinhala meaning</button>
-     <button type="button" class="chip" data-hint="sentence" aria-pressed="false" data-i18n="hintSentence">Example sentence</button>
-    </div>
-
     <!-- Phase 5: a symbol-first transport deck — one glyph, one micro-caption. -->
     <div class="cockpit-transport transport-deck" id="cockpitTransport">
      <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn" aria-label="⏮ Prev"><span data-icon="prev" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
@@ -258,6 +235,34 @@
     </div>
    </div>
 
+   <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Word reveal and classroom controls" hidden>
+    <div class="board-transport">
+     <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">Play / Pause</span></button>
+     <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
+     <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">Next</span></button>
+    </div>
+    <details id="boardJumperDrawer" class="board-jumper-drawer">
+     <summary id="boardJumperToggle" class="btn board-jump-toggle" aria-expanded="false">Jump to Word 1–30 ▾</summary>
+     <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
+    </details>
+    <div class="board-word-row">
+     <span id="boardWordNo" class="board-no">#1/30</span>
+     <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
+     <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" ><span data-icon="eyeOff" data-icon-size="16"></span><span class="i18n-label" data-i18n="boardHideWord"> Hide Word on Board</span></span></button>
+    </div>
+    <p id="boardMeta" class="board-meta" aria-live="polite">
+     <span id="boardIpa" class="board-ipa">/—/</span>
+     <span id="boardPos" class="board-pos">—</span>
+     <span id="boardSi" class="board-si" lang="si">—</span>
+    </p>
+   </div>
+    <div id="hintChips" class="chip-row hint-chips">
+     <button type="button" class="chip" data-hint="pos" aria-pressed="false" data-i18n="hintPos">Word type</button>
+     <button type="button" class="chip" data-hint="first" aria-pressed="false" data-i18n="hintFirst">First letter</button>
+     <button type="button" class="chip" data-hint="si" aria-pressed="false" data-i18n="hintSi">Sinhala meaning</button>
+     <button type="button" class="chip" data-hint="sentence" aria-pressed="false" data-i18n="hintSentence">Example sentence</button>
+    </div>
+   
    <div id="resultsPanel" class="card results" hidden>
     <div class="results-head">
      <h2 class="card-title" data-i18n="resultsTitle">Self-Check &amp; Results</h2>
@@ -419,9 +424,9 @@
      <div class="field">
       <label class="lbl" for="setTheme" data-i18n="theme">Theme</label>
       <select id="setTheme" class="input">
-      <option value="light" data-i18n="themeLight">Light (default)</option>
-      <option value="dark" data-i18n="themeDark">Dark</option>
-      <option value="board" data-i18n="themeBoard">Smart Board High-Contrast</option>
+      <option value="light" data-i18n="themeLight">☀️ Light Mode (Default)</option>
+      <option value="dark" data-i18n="themeDark">🌙 Dark Mode</option>
+      <option value="board" data-i18n="themeBoard" hidden>Smart Board High-Contrast</option>
       </select>
      </div>
      <button id="btnReplayGuide" type="button" class="btn btn-sm" ><span data-icon="headphones" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideReplay"> Replay Step-by-Step Voice Guide</span></button>
@@ -450,8 +455,8 @@
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.b</span></li>
-      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-04</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.c</span></li>
+      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-05</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -547,7 +552,7 @@
 
 <script>
 (function () {
- var TARGET = '0.0.6.b';
+ var TARGET = '0.0.6.c';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

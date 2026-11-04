@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.b';
-  SDP.build = '2026-11-04';
-  SDP.ver = 17;
+  SDP.version = '0.0.6.c';
+  SDP.build = '2026-11-05';
+  SDP.ver = 18;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.b';
+  var APP_VERSION = '0.0.6.c';
   var SCHEMA = 17;
-  var SETTINGS_REV = 32;
+  var SETTINGS_REV = 34;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -69,7 +69,7 @@
       cuesSeen: {},
       appliedSettingsRev: 0,
       defaultsResetV001f: false,
-      /* v0.0.6.b: one-time Light-Default upgrade flag (inside sdp.settings). */
+      /* v0.0.6.c: one-time Light-Default upgrade flag (inside sdp.settings). */
       lightDefaultV6b: true,
       /* D5 (v0.0.1.h): Layer-1 — the encrypted vault backup and its PIN
          verifier live INSIDE sdp.settings.vaultLock (W4: still five keys). */

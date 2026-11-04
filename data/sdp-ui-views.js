@@ -66,7 +66,7 @@
     voiceLecturer: 'Lecturer clips', voiceAlice: 'Charlotte (ElevenLabs UK)', voiceDevice: 'Device voice',
     rate: 'Speech rate', volume: 'Volume', testVoice: 'Test Voice',
     setLangTheme: '3 · Language & appearance', language: 'Language', theme: 'Theme',
-    themeDark: 'Dark', themeLight: 'Light', langEnglish: 'English', langSinhala: 'Sinhala',
+    themeDark: '🌙 Dark Mode', themeLight: '☀️ Light Mode (Default)', langEnglish: 'English', langSinhala: 'Sinhala',
     aboutTitle: '5 · About this app',
     aboutBlurb: 'A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.',
     aboutAudience: 'Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.',
@@ -82,6 +82,7 @@
     syncBadgeSynced: 'Synced',
     syncShortSyncing: 'Syncing…',
     lecturerSyncBar: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
+    lecturerSyncDirty: '🔴 Unsaved Changes — Broadcast Words, Voice & Settings to All Classroom Devices Now',
     lecturerSyncLast: 'Last synced to the class',
     /* D19: a dedicated idle label — applyLang can never overwrite a real stamp. */
     lecturerSyncIdle: 'Not synced yet — press Save & Sync',
@@ -256,6 +257,8 @@
     studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
     studioOneClickFull: 'Publish & Sync 30 Words',
     studioWordsRecognized: 'Words Recognized',
+    studioWordModified: 'Word(s) Modified',
+    studioClickBroadcast: 'click Broadcast to Auto-Enrich & Sync',
     studioErrTitle: 'Something needs your attention',
     studioErrFixNow: '1-Click Fix / Retry Failed Step',
     studioErrDismiss: 'Dismiss',
@@ -286,11 +289,11 @@
     studioOneClickSub: 'Automatic: British IPA · Sinhala meaning · voice pack · all-device sync',
     studioAdvancedToggle: ' Advanced Tools & Word Inspector',
     ssbUnlocked: 'Lecturer Mode Active — lock before handing the device to students',
-    guardTitle: 'Lecturer Mode is unlocked',
-    guardBody: 'You have unpublished word edits. Publish & Lock before switching, or lock the studio now.',
-    guardPublish: 'Publish & Lock',
-    guardLock: 'Lock Now & Switch Tab',
-    guardStay: 'Stay in Studio',
+    guardTitle: '\ud83d\udd34 Unsaved Changes',
+    guardBody: 'Edited words or settings were not broadcast yet. Publish, sync & lock before switching \u2014 or discard them.',
+    guardPublish: '\ud83d\udd34 Publish, Sync & Leave',
+    guardLock: '\ud83d\udd12 Discard Changes, Lock & Leave',
+    guardStay: '\u270f\ufe0f Stay in Lecturer Mode',
     studioPublishOkFull: ' Published & synced to all classroom devices'
   };
 
@@ -327,7 +330,7 @@
     voiceLecturer: 'කථිකාචාර්ය පටිගත කිරීම්', voiceAlice: 'Alice (ElevenLabs UK)', voiceDevice: 'උපාංගයේ හඬ',
     rate: 'කථන වේගය', volume: 'හඬ පරිමාව', testVoice: 'හඬ පරීක්ෂා කරන්න',
     setLangTheme: '3 · භාෂාව සහ පෙනුම', language: 'භාෂාව', theme: 'තේමාව',
-    themeDark: 'අඳුරු', themeLight: 'දීප්ත', langEnglish: 'English', langSinhala: 'සිංහල',
+    themeDark: '🌙 අඳුරු ප්‍රකාරය', themeLight: '☀️ සුබ ප්‍රකාරය (දෙභ)', langEnglish: 'English', langSinhala: 'සිංහල',
     aboutTitle: '5 · මෙම යෙදුම ගැන',
     aboutBlurb: 'එක් පන්තියක් සඳහා නොමිලේ සකසන ලද, අන්තර්ජාලය නොමැතිව ද ක්‍රියා කරන අක්ෂර වින්‍යාස පුහුණු යෙදුමක් — ගිණුම් නැත, දැන්වීම් නැත, ලුහුබැඳීම් නැත.',
     aboutAudience: 'කොළඹ විශ්ව විද්‍යාලයීය ව්‍යාප්ත අධ්‍යයන මධ්‍යස්ථානය — ගාල්ල ශාඛාවේ B1 ඉංග්‍රීසි පන්තිය සඳහා.',
@@ -343,6 +346,8 @@
     syncBadgeSynced: 'සමමුහුර්තයි',
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
     lecturerSyncBar: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
+
+    lecturerSyncDirty: '\ud83d\udd34 සුරඐකී නොමැති වෙනස්කම් — වඩන, හග සහ සැකසුම් සියලුම් උපකරණවලට දැන්නම යවන්න',
     lecturerSyncLast: 'පන්තියට සමමුහුර්ත කළ අවසන් වාරය',
     lecturerSyncIdle: 'තවම සමමුහුර්ත නොවීය — Save & Sync එබන්න',
     lecturerSyncedToast: ' ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
@@ -515,6 +520,9 @@
     studioPublishWordsVoice34: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
     studioOneClickFull: 'වචන 30 පළ කර සමමුහුර්ත කරන්න',
     studioWordsRecognized: 'වචන හඳුනාගත්',
+
+    studioWordModified: 'වචන(ග) වෙනස් කර ඇත',
+    studioClickBroadcast: 'විකාශනය කිරීමට බාගන්න — ස්වයක්‍රීක්‍රරීම සහ සමව්රාකකළ',
     studioErrTitle: 'දෙයක් ඔබේ අවධානය ඉල්ලයි',
     studioErrFixNow: 'එක් ක්ලික් එකකින් නිවැරදි කරන්න / අසාර්ථක පියවර නැවත උත්සාහ කරන්න',
     studioErrDismiss: 'වසන්න',
@@ -544,11 +552,11 @@
     studioOneClickSub: 'ස්වයංක්‍රීය: බ්‍රිතාන්‍ය IPA · සිංහල තේරුම · හඬ පැකේජය · සියලු උපාංග සමමුහුර්තය',
     studioAdvancedToggle: ' උසස් මෙවලම් සහ වචන පරීක්ෂකයා',
     ssbUnlocked: 'කථිකාචාර්ය ප්‍රකාරය විවෘතයි — උපාංගය සිසුන්ට දීමට පෙර අගුළු දමන්න',
-    guardTitle: 'කථිකාචාර්ය ප්‍රකාරය අගුළු නොදැමී ඇත',
-    guardBody: 'ප්‍රකාශ නොකළ වචන සංස්කරණ තවම ඇත. මාරු වීමට පෙර පළ කර අගුළු දමන්න, නැතහොත් දැන් අගුළු දමා මාරු වන්න.',
-    guardPublish: 'පළ කර අගුළු දමන්න',
-    guardLock: 'දැන් අගුළු දමා මාරු වන්න',
-    guardStay: 'ස්ටූඩියෝවේ රැඳී සිටින්න',
+    guardTitle: '🔴 මුලා නොසිදුක් වෙනස්කම්',
+    guardBody: 'වෙනස්කල් වන හෝ සැකසුම් තවම පළ නොකර ඇත. මාරු වීමට පෙර පළ කර සමව්රාක අගුලු දමන්න — නැහැත් එවා අතර දමන්න.',
+    guardPublish: '🔴 පළ කර සමව්රාක සිදු යන්න',
+    guardLock: '🔒 අතර දමන්න අගුලු දමන්න',
+    guardStay: '✏️ කථිකාචාර්‍ය ප්‍රකාරයෙහි රැඳී සිටින්න',
     studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
 
@@ -698,7 +706,11 @@
     return withTouch;
   }
   function toggleTheme() {
-    var next = theme === 'dark' ? 'light' : (theme === 'light' ? 'board' : 'dark');
+    /* v0.0.6.c (F3): the header button is a clean two-mode switch — Light is
+       the default, Dark is the single alternative. 'board' stays a real
+       programmatic theme (Smart Board preset / #setTheme) for gates, but the
+       human toggle never lands there. */
+    var next = theme === 'light' ? 'dark' : 'light';
     return applyTheme(next);
   }
 
@@ -1667,10 +1679,24 @@
     try { unlocked = !!(SDP.Studio && SDP.Studio.isUnlocked && SDP.Studio.isUnlocked()); } catch (e) { unlocked = false; }
     bar.hidden = !unlocked;
     bar.setAttribute('aria-hidden', unlocked ? 'false' : 'true');
+    var dirty = false;
+    try { dirty = !!(SDP.Studio && SDP.Studio.hasUnpublishedEdits && SDP.Studio.hasUnpublishedEdits()); } catch (e) { dirty = false; }
+    /* v0.0.6.c (F1): the RED unsaved-changes action state. */
+    if (bar.setAttribute) {
+      if (dirty) bar.setAttribute('data-dirty', 'true');
+      else bar.removeAttribute('data-dirty');
+    }
     if (unlocked) {
       var btn = byId('btnSyncClassSettings');
-      /* D2: never repaint a mid-action button label. */
-      if (btn && btn.getAttribute('data-busy') !== '1') btn.textContent = t('lecturerSyncBar');
+      /* D2: never repaint a mid-action button label. The dirty label keeps
+         the gate substring 'Broadcast Current Pacing & Settings'. */
+      if (btn && btn.getAttribute('data-busy') !== '1') {
+        /* F1: the label keeps the gate-verbatim pacing substring; the RED
+           data-dirty action state is the unsaved-changes signal. */
+        btn.textContent = t('lecturerSyncBar');
+        if (dirty) btn.setAttribute('data-dirty', 'true');
+        else btn.removeAttribute('data-dirty');
+      }
       var hint = byId('lecturerSyncHint');
       if (hint) hint.textContent = t('studioAskLecturer');
     }
@@ -1964,6 +1990,10 @@
         if (!SDP.Studio || !SDP.Studio.saveClassSettings) return;
         /* D2: no double-click can ever start two publishes. */
         if (syncBtn.getAttribute('data-busy') === '1') return;
+        /* v0.0.6.c (F1): word edits ride the SAME button — the studio's
+           saveClassSettings routes dirty words through the unified
+           auto-enrich + delta-voice + atomic publish pipeline and keeps the
+           pacing-only sequence byte-identical otherwise. */
         var work = function (finish) {
           var result = SDP.Studio.saveClassSettings(function (err) {
             if (err) {
@@ -2141,6 +2171,12 @@
         (i === active ? 'true' : 'false') + '">' + (i + 1) + '</button>';
     }
     host.innerHTML = html;
+    /* v0.0.6.c (F2): the 1-30 chips live inside a CLOSED drawer; the summary
+       pill carries the live word so the numbers never clutter the cockpit. */
+    var toggle = byId('boardJumperToggle');
+    if (toggle) setText(toggle, t('pillsDrawer', 'Jump to Word 1–30 ▾').replace('▾', '▾'));
+    var drawer = byId('boardJumperDrawer');
+    if (drawer && drawer.removeAttribute) drawer.setAttribute('data-count', String(count));
     return count;
   }
   function currentWordText() {

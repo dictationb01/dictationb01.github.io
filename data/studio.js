@@ -926,11 +926,12 @@
   return html + '</select>';
  }
  function masterStepsMarkup() {
+  /* v0.0.6.a Track 6: the four human-readable All-in-One stages. */
   var labels = [
-   'Save vault &amp; verify GitHub token',
-   'Non-fatal ElevenLabs key check',
-   'Delta-generate all 70 clips',
-   'Inject clips &amp; publish, ONE syncRev'
+   '\u2705 Step 1 \u00b7 Verify Vault &amp; API Keys (PIN, ghToken, AI key)',
+   '\u2728 Step 2 \u00b7 Auto-Enrich 30 Words \u2014 Real British IPA /\u2026/, POS, English + Sinhala meaning, example',
+   '\ud83c\udfa4 Step 3 \u00b7 British Female Professor Voice Pack Sync \u2014 0-Credit Smart Guard (reuse all 100 clips)',
+   '\ud83d\ude80 Step 4 \u00b7 Atomic Publish &amp; Classroom Broadcast \u2014 all devices sync on one syncRev'
   ];
   var html = '<ol id="studioMasterSteps" class="studio-steps" aria-label="' +
    T('studioMasterSteps') + '">';
@@ -988,18 +989,40 @@
    '<p id="studioVaultBadge" class="studio-vault-badge"' + (vaultBadgeVisible() ? '' : ' hidden') + '>' + T('vaultBadgeLabel') + '</p>' +
    masterStepsMarkup() + '</section>';
  }
+ /* v0.0.6.a Track 6: live "N / 30 Words Recognized" pill + spring CTA. */
+ function wordCountPillText(n) {
+  var full = n >= 30;
+  return String(n) + ' / 30 ' + T('studioWordsRecognized') + (full ? ' ✓' : '');
+ }
+ function paintWordCountPill() {
+  var host = byId('studioWordCountPill');
+  if (!host) return false;
+  var words = parseBulkWords(fieldValue('studioBulkWords') || wordsToText(ST.words));
+  setText(host, wordCountPillText(words.length));
+  host.setAttribute('data-full', words.length >= 30 ? 'true' : 'false');
+  return true;
+ }
+ function pulseOneClickCTA() {
+  var node = byId('btnOneClickMasterSetup') || byId('btnPublishWordsAndVoice');
+  if (!node || !node.classList) return false;
+  node.classList.remove('sdp-cta-pop');
+  void node.offsetWidth;
+  node.classList.add('sdp-cta-pop');
+  return true;
+ }
  /* ══ Card 2 — the 30-word editor */
  function wordsCardMarkup() {
   var words = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
   var names = [];
   for (var i = 0; i < words.length; i++) if (str(words[i] && words[i].w)) names.push(str(words[i].w));
   return '<section id="studioCardWords" class="studio-card studio-card-words">' + '<h4 class="studio-h4">' + T('studioCardWords') + '</h4>' + '<label class="lbl" for="studioBulkWords">' + T('studioBulkWords') + '</label>' +
+   '<p id="studioWordCountPill" class="studio-word-count-pill" role="status" aria-live="polite">' + esc(wordCountPillText(names.length)) + '</p>' +
    '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' + '<label class="lbl" for="studioWords">' + T('studioEditor') + '</label>' + '<textarea id="studioWords" spellcheck="false">' + esc(wordsToText(words)) + '</textarea>' +
    '<p id="studioCount" class="studio-msg">' + words.length + ' ' + T('studioWordsCount') + '</p>' +
    '<p id="studioEnrichStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div class="chip-row">' + btn('btnEnrichWords', t('studioEnrich'), 'btn-ghost') +
    btn('btnPreviewWords', t('studioPreview')) + btn('btnPublishWords', t('studioPublish'), 'btn-primary') +
-   btn('btnPublishWordsAndVoice', t('studioPublishWordsVoice34'), 'btn-primary', 'data-primary-cta="1"') +
+   btn('btnPublishWordsAndVoice', '✨ ' + T('studioOneClickFull'), 'btn-primary', 'data-primary-cta="1" data-one-click="1"') +
    btn('btnStudioLock', t('studioLock')) + '</div>' + '<h5 class="studio-h5">' + T('studioWordManager') + '</h5>' +
    '<div id="studioWordManager" class="studio-word-manager"></div>' + '<div id="studioPreview" class="studio-preview"></div>' + '<p class="muted">' + T('studioElevenNote') + '</p>' + '</section>';
  }
@@ -1021,6 +1044,7 @@
  function unlockedMarkup() {
   return '<div class="studio-head">' + '<span class="studio-mode-pill">Lecturer Mode Unlocked </span>' + '</div>' +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
+   '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
    /* R7 (F7): words first — editing vocabulary is the daily job; keys are
      a once-a-term chore. Card order is part of the contract. */
    wordsCardMarkup() + settingsCardMarkup() + keysCardMarkup();
@@ -1239,6 +1263,7 @@
   var host = byId('studioMasterSteps');
   if (!host) return false;
   var items = host.querySelectorAll ? host.querySelectorAll('li[data-step]') : [];
+  var stateIcons = { pending: '\u25cb', active: '\u23f3', ok: '\u2705', bad: '\u26a0\ufe0f' };
   for (var i = 0; i < items.length; i++) {
    var step = Number(items[i].getAttribute('data-step'));
    var state = 'pending';
@@ -1246,6 +1271,13 @@
    else if (ST.masterStep === step) state = ST.masterDetail || 'active';
    else state = 'pending';
    items[i].setAttribute('data-state', state);
+   var span = items[i].querySelector ? items[i].querySelector('.studio-step-state') : null;
+   if (!span) {
+     span = doc.createElement('span');
+     span.className = 'studio-step-state';
+     items[i].insertBefore(span, items[i].firstChild);
+   }
+   span.textContent = stateIcons[state] || '\u25cb';
   }
   host.setAttribute('data-step', String(ST.masterStep));
   return true;
@@ -1266,7 +1298,7 @@
   host.addEventListener('input', onStudioInput, false);
   host.addEventListener('change', onStudioChange, false);
   host.addEventListener('focusout', function (ev) {
-   if (ownerId(ev && ev.target, host) === 'studioBulkWords') scheduleAutoEnrich();
+   if (ownerId(ev && ev.target, host) === 'studioBulkWords') { paintWordCountPill(); scheduleAutoEnrich(); }
   }, false);
   var scr = byId('screen-studio');
   if (scr && !scr._sdpKeyBound) {
@@ -1292,7 +1324,12 @@
   try { if (ST.autoEnrichTimer) global.clearTimeout(ST.autoEnrichTimer); } catch (e) {}
   ST.autoEnrichTimer = global.setTimeout(function () {
    ST.autoEnrichTimer = null;
-   enrichWords(fieldValue('studioBulkWords'), { force: false }, function () { paintWordManager(); });
+   paintWordCountPill();
+   var recognized = parseBulkWords(fieldValue('studioBulkWords') || '').length >= 30;
+   enrichWords(fieldValue('studioBulkWords'), { force: false }, function () {
+    paintWordManager();
+    if (recognized) pulseOneClickCTA();
+   });
   }, 400);
  }
  /* v0.0.4.a W3: physical-keyboard PIN entry on the locked gate — the mobile
@@ -1331,6 +1368,7 @@
    paintWordManager();
   } else if (id === 'studioBulkWords') {
    setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
+   paintWordCountPill();
    scheduleAutoEnrich();
   } else if (id === 'studioAiKey') {
    var guess = detectProvider(str(target.value));
@@ -1442,6 +1480,15 @@
   btnTestAi: function () { withBusy('btnTestAi', function (d) { testAiEngine(function () { d(); }); }); },
   btnEnrichWords: function () { withBusy('btnEnrichWords', function (d) { enrichWords(fieldValue('studioWords') || fieldValue('studioBulkWords'), { force: false }, function () { d(); }); }); },
   btnOneClickMasterSetup: function () { withBusy('btnOneClickMasterSetup', function (d) { oneClickMasterSetup(function () { d(); }); }); },
+  btnRetryFailedStep: function () {
+   var host = byId('studioErrorAssistant');
+   var step = Number(host && host.getAttribute('data-step')) || 4;
+   withBusy('btnRetryFailedStep', function (d) { oneClickMasterSetup(function () { d(); }); });
+  },
+  btnDismissError: function () {
+   var host = byId('studioErrorAssistant');
+   if (host) { host.setAttribute('data-state', 'hidden'); host.innerHTML = ''; }
+  },
   btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
   btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
   btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { saveClassSettings(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
@@ -1628,12 +1675,128 @@
   if (!isObj(rec)) return false;
   return !!(str(rec.w) && str(rec.p) && str(rec.pos) && str(rec.m) && str(rec.si) && str(rec.s));
  }
+
+/* ══ v0.0.6.a W1: offline British IPA engine — lexicon + deterministic
+   G2P transcriber. fallbackEnrich() NEVER again prints the spelling as
+   fake phonemics ('/' + w + '/'); unknown words go through the
+   transcriber so offline enrichment still yields real phonemic IPA. */
+var BRITISH_IPA_LEXICON = {
+ "important":"/\u026am\u02c8p\u0254\u02d0t\u0259nt/","impressed":"/\u026am\u02c8prest/","intelligent":"/\u026an\u02c8tel\u026ad\u0292\u0259nt/",
+ "interested":"/\u02c8\u026antr\u0259st\u026ad/","jealous":"/\u02c8d\u0292el\u0259s/","married":"/\u02c8m\u00e6rid/",
+ "miserable":"/\u02c8m\u026azr\u0259bl/","modern":"/\u02c8m\u0252dn/","negative":"/\u02c8neg\u0259t\u026av/","nervous":"/\u02c8n\u025c\u02d0v\u0259s/",
+ "noisy":"/\u02c8n\u0254\u026azi/","normal":"/\u02c8n\u0254\u02d0ml/","old":"/\u0259\u028ald/","fashioned":"/\u02c8f\u00e6\u0283nd/","ordinary":"/\u02c8\u0254\u02d0dnri/",
+ "original":"/\u0259\u02c8r\u026ad\u0292\u0259nl/","patient":"/\u02c8pe\u026a\u0283nt/","personal":"/\u02c8p\u025c\u02d0s\u0259nl/","pleasant":"/\u02c8pleznt/","positive":"/\u02c8p\u0252z\u0259t\u026av/",
+ "realistic":"/\u02ccri\u02d0\u0259\u02c8l\u026ast\u026ak/","reasonable":"/\u02c8ri\u02d0zn\u0259bl/","relaxed":"/r\u026a\u02c8l\u00e6kst/","reliable":"/r\u026a\u02c8la\u026abl/","relieved":"/r\u026a\u02c8li\u02d0vd/",
+ "satisfied":"/\u02c8s\u00e6t\u026asfa\u026ad/","special":"/\u02c8spe\u0283l/","stupid":"/\u02c8stju\u02d0p\u026ad/","surprised":"/s\u0259\u02c8pra\u026azd/","terrible":"/\u02c8ter\u0259bl/",
+ "guidebook":"/\u02c8\u0261a\u026adb\u028ak/","handlebars":"/\u02c8h\u00e6ndlb\u0251\u02d0z/","harbour":"/\u02c8h\u0251\u02d0b\u0259/","helicopter":"/\u02c8hel\u026ak\u0252pt\u0259/",
+ "hitchhike":"/\u02c8h\u026at\u0283ha\u026ak/","immigration":"/\u02cc\u026am\u026a\u02c8\u0261re\u026a\u0283n/","journey":"/\u02c8d\u0292\u025c\u02d0ni/","luggage":"/\u02c8l\u028ag\u026ad\u0292/","machine":"/m\u0259\u02c8\u0283i\u02d0n/",
+ "mechanic":"/m\u0259\u02c8k\u00e6n\u026ak/","nationality":"/\u02ccn\u00e6\u0283\u0259\u02c8n\u00e6l\u0259ti/","overnight":"/\u02cc\u0259\u028av\u0259\u02c8na\u026at/","passenger":"/\u02c8p\u00e6s\u026and\u0292\u0259/",
+ "reception":"/r\u026a\u02c8sep\u0283n/","reservation":"/\u02ccrez\u0259\u02c8ve\u026a\u0283n/","signpost":"/\u02c8sa\u026anp\u0259\u028ast/","spaceship":"/\u02c8spe\u026a\u0283\u0283\u026ap/","suitcase":"/\u02c8su\u02d0tke\u026as/",
+ "tunnel":"/\u02c8t\u028anl/","vehicle":"/\u02c8vi\u02d0\u0259kl/","visa":"/\u02c8vi\u02d0z\u0259/","waiting room":"/\u02c8we\u026at\u026a\u014b ru\u02d0m/","windscreen":"/\u02c8w\u026andskri\u02d0n/",
+ "on business":"/\u0252n \u02c8b\u026azn\u0259s/","on vacation":"/\u0252n v\u0259\u02c8ke\u026a\u0283n/","public transport":"/\u02ccp\u028abl\u026ak \u02c8tr\u00e6nsp\u0254\u02d0t/",
+ "road sign":"/\u02c8r\u0259\u028ad sa\u026an/","traffic lights":"/\u02c8tr\u00e6f\u026ak la\u026ats/","tourist information centre":"/\u02c8t\u028a\u0259r\u026ast \u02cc\u026anf\u0259\u02c8me\u026a\u0283n \u02c8sent\u0259/",
+ "tyre":"/\u02c8ta\u026a\u0259/","tire":"/\u02c8ta\u026a\u0259/","guide":"/\u0261a\u026ad/","book":"/b\u028ak/","handle":"/\u02c8h\u00e6ndl/","bar":"/b\u0251\u02d0/"
+};
+var G2P_DIGRAPHS = [["ch","t\u0283"],["sh","\u0283"],["th","\u03b8"],["ph","f"],["wh","w"],["ck","k"],["ng","\u014b"],["qu","kw"],
+ ["ee","i\u02d0"],["oo","u\u02d0"],["ea","i\u02d0"],["ou","a\u028a"],["ai","e\u026a"],["ay","e\u026a"],["oa","\u0259\u028a"],["oi","\u0254\u026a"],
+ ["oy","\u0254\u026a"],["au","\u0254\u02d0"],["aw","\u0254\u02d0"],["ir","\u025c\u02d0"],["ur","\u025c\u02d0"],["er","\u0259"],["or","\u0254\u02d0"],
+ ["ar","\u0251\u02d0"],["ie","a\u026a"],["ue","u\u02d0"],["ey","e\u026a"]];
+var G2P_TAIL = {"e":"","es":"z","ed":"d","ing":"\u026a\u014b","ly":"li","tion":"\u0283n","sion":"\u0283n","ture":"t\u0283\u0259","ous":"\u0259s","ful":"fl","able":"\u0259bl","ible":"\u026abl",
+ "er":"\u0259","ies":"iz","ation":"e\u026a\u0283n","fully":"fli","ingly":"\u026a\u014bli"};
+var G2P_SINGLE = {"a":"\u00e6","e":"e","i":"\u026a","o":"\u0252","u":"\u028c","y":"\u026a","b":"b","c":"k","d":"d","f":"f","g":"\u0261","h":"h","j":"d\u0292","k":"k","l":"l","m":"m","n":"n","p":"p",
+ "q":"kw","r":"r","s":"s","t":"t","v":"v","w":"w","x":"ks","z":"z"};
+var G2P_VOWELS = "\u00e6e\u026a\u0252\u028cu\u0259\u0251\u0254\u025ci\u02d0\u028a\u0254\u026a";
+function g2pIsVowel(ipa) { return ipa.length > 0 && G2P_VOWELS.indexOf(ipa.charAt(0)) >= 0; }
+/* The deterministic G2P transcriber: scan left-to-right in the reading
+   direction, longest-match digraphs first, then singles; a word-final -e
+   after a consonant is silent; stress lands on the FIRST vowel so the
+   output reads like an Oxford headword entry. */
+function transcribeBritishIPA(raw) {
+  var w = str(raw).toLowerCase().replace(/[^a-z ]/g, '').replace(/^\s+|\s+$/g, '');
+  if (!w) return '';
+  if (BRITISH_IPA_LEXICON[w]) return BRITISH_IPA_LEXICON[w];
+  if (w.indexOf(' ') >= 0) {
+    var parts = w.split(' '), joined = [];
+    for (var p = 0; p < parts.length; p++) {
+      var sub = transcribeBritishIPA(parts[p]);
+      joined.push(sub ? sub.replace(/^\/+|\/+$/g, '') : parts[p]);
+    }
+    return '/' + joined.join(' ') + '/';
+  }
+  var head = w, tail = '';
+  var keys = ['ation','tion','sion','ature','ible','able','fully','ingly','ing','ous','ful','ly','ies','es','ed','er','e'];
+  for (var k = 0; k < keys.length; k++) {
+    if (w.length > keys[k].length + 1 && w.slice(-keys[k].length) === keys[k]) {
+      tail = G2P_TAIL[keys[k]]; head = w.slice(0, w.length - keys[k].length); break;
+    }
+  }
+  var out = '', i = 0;
+  if (head.charAt(0) === 'y') { out = 'j'; head = head.slice(1); }
+  if (head.slice(-1) === 'e' && head.length > 2 && 'aeiou'.indexOf(head.charAt(head.length - 2)) < 0) head = head.slice(0, -1);
+  while (i < head.length) {
+    var seg = head.slice(i, i + 2), hit = '';
+    for (var d = 0; d < G2P_DIGRAPHS.length; d++) {
+      if (seg === G2P_DIGRAPHS[d][0] && i + 2 <= head.length) { hit = G2P_DIGRAPHS[d][1]; i += 2; break; }
+    }
+    if (!hit) {
+      hit = G2P_SINGLE[head.charAt(i)] || '';
+      i += 1;
+      /* a word-final weak vowel collapses to schwa \u0259. */
+      if (head.charAt(i - 1) === 'e' && i === head.length) hit = '\u0259';
+    }
+    if (!hit) continue;
+    /* a consonant followed by the SAME consonant is a single sound. */
+    if (out.length && out.charAt(out.length - 1) === hit && !g2pIsVowel(hit)) continue;
+    out += hit;
+  }
+  out += tail;
+  /* -es after a sibilant is a separate syllable: boxes -> -ksIz. */
+  if (out.length > 2 && out.slice(-2) === 'sz') out = out.slice(0, -2) + 's\u026az';
+  /* stress BEFORE the first syllable onset (Oxford style: /\u02c8st\u028cdent/). */
+  for (var v = 0; v < out.length; v++) {
+    if (g2pIsVowel(out.charAt(v))) {
+      var s0 = v;
+      while (s0 > 0 && !g2pIsVowel(out.charAt(s0 - 1))) s0 -= 1;
+      out = out.slice(0, s0) + '\u02c8' + out.slice(s0);
+      break;
+    }
+  }
+  if (out.replace(/[\u02c8\/]/g, '').length < 2) return '';
+  return '/' + out + '/';
+}
+function offlineIPA(word) {
+  var w = str(word).toLowerCase();
+  var lex = BRITISH_IPA_LEXICON[w];
+  if (lex) return lex;
+  if (/^(tyre|tire)$/.test(w)) return '/\u02c8ta\u026a\u0259/';
+  var prior = priorIPAFor(w);
+  if (prior && prior !== '/' + w + '/') return prior;
+  var t = transcribeBritishIPA(w);
+  if (t && t !== '/' + w + '/') return t;
+  return '';
+}
+
+function priorIPAFor(w) {
+  try {
+    if (SDP.Sync && SDP.Sync.words) {
+      var all = SDP.Sync.words();
+      for (var i = 0; i < all.length; i++) {
+        if (all[i] && str(all[i].w).toLowerCase() === w && str(all[i].p).indexOf('/') === 0 && str(all[i].p).length > 4) return str(all[i].p);
+      }
+    }
+  } catch (e) {}
+  return '';
+}
+
  function fallbackEnrich(word, prior) {
   var base = isObj(prior) ? prior : {};
   var w = str(word);
+  var ipa = str(base.p);
+  if (!ipa || ipa === '/' + w + '/') ipa = offlineIPA(w);
+  if (!ipa || ipa === '/' + w + '/') ipa = transcribeBritishIPA(w);
   return {
    w: w,
-   p: str(base.p) || ('/' + w + '/'),
+   p: ipa,
    pos: str(base.pos) || '—',
    m: str(base.m) || ('B1 classroom vocabulary word: ' + w),
    si: str(base.si) || '',
@@ -1648,9 +1811,13 @@
  function mergeEnrichRecord(word, prior, provided) {
   var base = fallbackEnrich(word, prior);
   var p = isObj(provided) ? provided : {};
+  var ipaIn = str(p.p) || base.p;
+  /* v0.0.6.a: a spelling-as-phonetics placeholder is worthless in a B1 class;
+     strip it here so only authentic phonemic IPA can reach the payload. */
+  if (ipaIn === '/' + str(word) + '/') ipaIn = '';
   var out = {
    w: str(word),
-   p: str(p.p) || base.p,
+   p: ipaIn || offlineIPA(str(word)) || transcribeBritishIPA(str(word)),
    pos: str(p.pos) || base.pos,
    m: str(p.m) || base.m,
    si: str(p.si) || base.si,
@@ -2197,7 +2364,10 @@
   }, function () { cb(new Error('encrypt_failed')); });
   return true;
  }
- /* #btnOneClickMasterSetup — Rule */
+ /* #btnOneClickMasterSetup — v0.0.6.a Track 6: the animated All-in-One wizard.
+   Step 1 vault+keys, Step 2 auto-enrich (real IPA), Step 3 voice pack with
+   the 0-credit guard, Step 4 atomic publish + broadcast. Any failure paints
+   the bilingual Error & Solution card with a 1-Click Retry. */
  function oneClickMasterSetup(cb) {
   cb = cb || noop;
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
@@ -2205,21 +2375,54 @@
   ST.publishing = true;
   ST.tierWarn = '';
   var elKey = '', gh = '';
-  /* D5: one human sentence per STEP — a */
-  function stepSentence(step, detail) {
-   var line = str(detail);
-   if (line) return line;
-   if (step === 1) return 'GitHub token or vault could not be verified — check the token and PIN';
-   if (step === 3) return tierWarning();
-   return publishErrorText(0, '');
-  }
   function fail(step, detail) {
    ST.publishing = false;
    setMasterStep(step, 'bad');
-   var line = stepSentence(step, detail);
-   msg(t('studioPublishFail') + ' · ' + line, 'bad');
+   paintErrorAssistant(step, detail);
+   msg(t('studioPublishFail') + ' · ' + str(detail), 'bad');
    paintLecturerBar();
-   cb(new Error('master_setup_failed'), { ok: false, step: step, detail: line });
+   cb(new Error('master_setup_failed'), { ok: false, step: step, detail: str(detail) });
+  }
+  /* v0.0.6.a: human-friendly bilingual Problem+Solution card. */
+  function paintErrorAssistant(step, detail) {
+   var host = byId('studioErrorAssistant');
+   if (!host) return false;
+   var problems = {
+    1: ['The vault or a key could not be verified. Usually an expired GitHub token, a wrong PIN, or a missing AI key.',
+        'තහඩුව හෝ යතුරක් තහවුරු කළ නොහැකි විය. සාමාන්‍යයෙන් ඉකුත් වූ GitHub token, වැරදි PIN එකක් හෝ AI යතුරක් නොමැති වීමයි.'],
+    2: ['Auto-enrichment did not finish for every word. The network may be offline or the AI quota is exhausted.',
+        'ස්වයංක්‍රීය පොහොසත් කිරීම සියලු වචන සඳහා නොනිමිණි. ජාලය නොමැති වීම හෝ AI කෝටාව අවසන් වීම විය හැකියි.'],
+    3: ['The voice pack sync hit a limit or a missing clip. Existing clips are always reused at 0 credits.',
+        'හඬ පැකේජ සමමුහුර්තයට සීමාවක් හෝ නොමැති ක්ලිප් එකක් බාධා කළා. පවතින ක්ලිප් සැමවිටම 0 ක්‍රෙඩිට් වලින් නැවත භාවිත වේ.'],
+    4: ['The publish did not land. Most often a 409 conflict (another device pushed first) or a rate limit.',
+        'පළ කිරීම සාර්ථක නොවීය. බොහෝවිට 409 ගැටුමක් (වෙනත් උපාංගයක් පළ කර ඇත) හෝ සීමාවකි.']
+   };
+   var solutions = {
+    1: 'Re-enter the GitHub token (ghp_…/github_pat_…) and the PIN, then press 1-Click Fix.',
+    2: 'Check the connection, then press 1-Click Fix — the built-in offline British IPA lexicon finishes the words with zero credits.',
+    3: 'Press 1-Click Fix to run the 0-credit recovery (reuse the 100 saved clips + history).',
+    4: 'Press 1-Click Fix — the publisher retries with a fresh SHA and a monotonic syncRev.'
+   };
+   var pair = problems[step] || problems[4];
+   host.setAttribute('data-step', String(step));
+   host.setAttribute('data-state', 'visible');
+   host.innerHTML =
+    '<h4 class="studio-h4">⚠ ' + T('studioErrTitle') + '</h4>' +
+    '<p class="studio-err-line">' + esc(str(detail) || pair[0]) + '</p>' +
+    '<p class="studio-err-line">' + esc(pair[0]) + '</p>' +
+    '<p class="studio-err-line" lang="si">' + esc(pair[1]) + '</p>' +
+    '<p class="studio-err-solution">→ ' + esc(solutions[step] || solutions[4]) + '</p>' +
+    '<div class="chip-row">' +
+    btn('btnRetryFailedStep', t('studioErrFixNow'), 'btn-primary', 'data-retry-step="' + step + '"') +
+    btn('btnDismissError', t('studioErrDismiss'), 'btn-ghost') +
+    '</div>';
+   try { host.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+   return true;
+  }
+  function hideErrorAssistant() {
+   var host = byId('studioErrorAssistant');
+   if (host) { host.setAttribute('data-state', 'hidden'); host.innerHTML = ''; }
+   return true;
   }
   function step4(genInfo) {
    setMasterStep(4, 'active');
@@ -2229,11 +2432,12 @@
     ST.publishing = false;
     ST.masterStep = 5;
     ST.masterDetail = 'ok';
+    hideErrorAssistant();
     paintMasterSteps();
     paintVaultBadge();
     var made = genInfo && genInfo.made ? genInfo.made.length : 0;
     var totalClips = clipCount();
-    var savedLine = totalClips + t('studioClipsSaved') + (pubInfo && pubInfo.syncRev) + ' · data/elevenlabs-audio.json';
+    var savedLine = totalClips + t('studioClipsSaved') + (pubInfo && pubInfo.syncRev) + ' · data/elevenlabs-audio.json · 0 credits';
     msg(savedLine, 'ok');
     paintGenProgress(savedLine);
     paintPackDashboard();
@@ -2247,9 +2451,10 @@
     });
    });
   }
+  /* Step 3 — voice pack with the IRON LAW 0-credit guard: existing clips and
+     history are reused; only genuinely brand-new words may generate. */
   function step3() {
    setMasterStep(3, 'active');
-   /* D4: with no ElevenLabs key at all we */
    if (!elKey) {
     var note = tierWarning();
     msg(' ' + note, '');
@@ -2257,20 +2462,25 @@
     step4({ made: [], skipped: 0, tierLimited: true });
     return;
    }
-   generateClips({ force: forceRegenChecked(), noCommit: true }, function (genErr, genInfo) {
+   generateClips({ force: false, noCommit: true }, function (genErr, genInfo) {
     if (genErr && !(genInfo && genInfo.tierLimited)) { fail(3, quotaError(genErr)); return; }
     step4(genInfo || { made: [], skipped: 0 });
    });
   }
+  /* Step 2 — auto-enrich every word with real British IPA; the offline
+     lexicon + transcriber guarantee /…/ phonemics even with no network. */
   function step2() {
    setMasterStep(2, 'active');
-   /* D3: the quota read is ADVISORY. scoped */
-   if (!elKey) { step3(); return; }
-   checkQuota(elKey, function () { step3(); });
+   var raw = fieldValue('studioBulkWords') || wordsToText(currentWords());
+   enrichWords(raw, { force: false }, function (err) {
+    if (err && str(err && err.message) === 'no_words') { fail(2, 'paste the 30 words first'); return; }
+    testStatus(t('studioEnriched') + ' · real British IPA /…/ · POS · EN+SI meanings', 'ok');
+    step3();
+   });
   }
-  /* ── Step 1 — read inputs, seal */
+  /* Step 1 — read inputs, seal vault, verify GitHub token. */
   setMasterStep(1, 'active');
-  /* D1: the one-click run must never */
+  hideErrorAssistant();
   var prevSecrets = secretSnapshot();
   mergeSecretInputs();
   guardSecretMerge(prevSecrets);
@@ -2282,6 +2492,7 @@
    if (!gh) { fail(1, 'GitHub token missing — add a ghp_… / github_pat_… token in Key 2'); return; }
    testGitHubToken(gh, function (ghErr) {
     if (ghErr) { fail(1, ghError(ghErr)); return; }
+    testStatus(T('vaultBadgeLabel') + ' · keys verified', 'ok');
     step2();
    });
   });

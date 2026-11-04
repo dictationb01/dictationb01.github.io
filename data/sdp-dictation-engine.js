@@ -37,6 +37,9 @@
   try { if (SDP.Views && SDP.Views.t) return SDP.Views.t(key, fallback); } catch (e) {}
   return fallback === undefined ? key : fallback;
  }
+ function lang() {
+  try { return SDP.Views ? SDP.Views.lang() : 'en'; } catch (e) { return 'en'; }
+ }
 
  var RING_R = 34;
  var RING_C = 2 * Math.PI * RING_R; /* 213.63 */
@@ -157,6 +160,35 @@
   renderBadges();
  }
 
+ /* v0.0.6.a Track 4: the human-friendly Phase Pill. One glance answers
+   "what is happening right now?" — Listening (which repeat), Writing (how
+   long), or the last-3s amber warning — in English and Sinhala, while the
+   verbatim #beatStateText contract (G3.4d/e, G5.6a/b/c) is untouched. */
+ function paintPhasePill(phaseOverride, secondsLeft) {
+  var pill = el('beatPhasePill');
+  if (!pill) return '';
+  var phase = phaseOverride || E.phase;
+  var left = Math.max(0, Math.ceil((arguments.length > 1 ? secondsLeft : E.remainingMs) / 1000));
+  var label = '';
+  if (phase === 'paused') label = t('pillPaused', '⏸ Paused — tap Resume');
+  else if (phase === 'finished') label = t('pillFinished', '✅ Finished — check answers');
+  else if (phase === 'idle') label = t('pillReady', '🎧 Ready');
+  else if (phase === 'listening') {
+   var total2 = Math.max(1, Number(E.repeats) || 1);
+   var rep2 = Math.min(total2, Math.max(1, Number(E.repeatShown || E.repeatsDone || 1)));
+   label = t('pillListening', '🎧 Listening · Repeat') + ' ' + rep2 + '/' + total2;
+  } else if (phase === 'writing') {
+   var amber = left <= 3;
+   if (amber) label = t('pillFinishWarn', '⏳ Finish writing ·') + ' ' + left + 's';
+   else label = t('pillWriting', '✍️ Write the word ·') + ' ' + left + 's';
+  }
+  setText(pill, label);
+  pill.setAttribute('data-phase', phase);
+  if (phase === 'writing' && left <= 3) pill.setAttribute('data-warn', 'true');
+  else pill.removeAttribute('data-warn');
+  return pill.textContent || '';
+ }
+
  /* D12 (v0.0.2.a): the phase line spells out the student action verbatim —
    "Listen Carefully (Repeat 1 of 2)…", "Write Word #12 in Your Book! (5s
    countdown)" and the paused sentence with the exact word and repeat. */
@@ -179,6 +211,7 @@
    setText(node, t('writeInBook', 'Write Word #') + (E.index + 1) +
     t('inYourBook', ' in Your Book! (') + left + t('countdownTail', 's countdown)'));
   }
+  paintPhasePill();
  }
 
  /* D11 (v0.0.2.a): the 30-pill progress map. Completed words are green,
@@ -601,6 +634,9 @@
   E.paused = false;
   E.hints = { pos: false, first: false, si: false, sentence: false };
   updateMeta();
+  /* v0.0.6.a Track 3: every new beat re-arms the hidden reveal so the next
+     spelling can never leak (R10) — phone, projector or desktop alike. */
+  try { if (SDP.Views && SDP.Views.resetBoardReveal) SDP.Views.resetBoardReveal(); } catch (e) {}
   renderHints();
   mountInput();
   if (E.startedAt === 0) E.startedAt = now();

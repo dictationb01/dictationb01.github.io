@@ -741,15 +741,25 @@ Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, I
 
 **Stamp:** `appVersion/version '0.0.4.b'` · `ver 14` · `schema 14` · `settingsRev 27` · `syncRev 1793710000000` · `SW_VERSION 'sdp-v0.0.4.b'` / `SHELL_CACHE 'sdp-v0.0.4.b-shell'` · `TARGET='0.0.4.b'`.
 
-* Iron law: zero new ElevenLabs generation. All 100 Alice MP3 clips (70 live + 30 archived) and the Creator's 30 new words (`important`…`terrible`, 55,260 B, SHA `12b292fe…`) are preserved.
-* BUG-1: the three `auto: true` unlock/save generation races are gone; only an explicit click on `#btnGenClips` or `#btnTestOneWord` can request a clip. `#btnRecoverClips` restores clips from History with GET reads only (0 credits).
-* BUG-2: `publishFilesSequential` retries a 409 up to three times with a fresh SHA (250 ms pacing, opt-out for deterministic gates); `commitVoicePack` queues concurrent publishes behind a pure-ES5 mutex.
-* BUG-3: `wordsSig` fingerprints every `sdp.session` draft; a mismatched word list clears the draft in `loadDraft()` and `applyPayloads()`, so old words cannot resurrect.
-* BUG-4: the duplicate `.url` blob was stripped from `data/elevenlabs-audio.json` (4,520,832 B → ~2,266,000 B); entries are hydrated to data URLs in memory where Blob URLs are playable, indexed under both `words.<w>` and `<w>`, and the manifest is reloaded after every publish.
-* FIX-7: modern 2026 tactile pill buttons and Material-3/iOS settings cards in `assets/css/sdp-ui.css`; every DOM id, class, data-* and aria-* attribute is preserved.
-* All twelve gates G1–G12 re-pinned to the v0.0.4.b stamp and report 0 FAIL.
+* Iron law: zero new ElevenLabs generation. All 100 Alice MP3 clips and the Creator's 30 words (`important`…`terrible`, 55,260 B, SHA `12b292fe…`) preserved. BUG-1: the three `auto:true` unlock/save races are gone — only an explicit click can request a clip; `#btnRecoverClips` restores from History with GET reads only (0 credits).
+* BUG-2: `publishFilesSequential` retries a 409 up to three times with a fresh SHA; `commitVoicePack` queues concurrent publishes behind a pure-ES5 mutex. BUG-3: `wordsSig` fingerprints every `sdp.session` draft; a mismatched list clears the draft so old words cannot resurrect. BUG-4: the duplicate `.url` blob was stripped from `data/elevenlabs-audio.json` (4.5 MB → ~2.27 MB).
+* FIX-7: modern 2026 tactile pill buttons and Material-3/iOS settings cards in `assets/css/sdp-ui.css`; every DOM id, class, data-* and aria-* preserved. All twelve gates G1–G12 re-pinned to the v0.0.4.b stamp and report 0 FAIL.
+
 ## v0.0.5.c — Sapphire Ladder · human-friendly UI (2026-11-04)
 - sdp-ui.css rewritten in place (97,804 -> 57,942 B, 41% headroom): six-step surface ladder per theme (canvas/sunken/card/elevated/interactive/accent-glass), hairline strokes replace card shadows, blur(12px) glass on header/rail/tabbar only; light theme warm alabaster; board theme pure black. Ink/surface pairs pre-verified >= 4.5:1 WCAG AA — fixes 30 invisible word-list controls measured at contrast 1.1 and the Sinhala cockpit chip.
 - Cockpit: beat ring is the single focal point (tabular seconds); tactile transport deck (72px hero key, 56px siblings with micro-captions, 48px quiet row). Home: sapphire hero glow, semantic state pills, calm credits. Word list: two-line card anatomy, state-coloured left rail, circular Alice play button. Studio: calm console rhythm; PIN pad kept at 56px.
 - Zero JS behaviour changes: 6 ES5 modules, 100-clip Alice pack, SDP_ENC_V2 vault, session.json/gas-source/fonts byte locks untouched. Version literal bumped in lockstep across 7 shipped surfaces + 11 gate files; syncRev 1793740000001; 12 gates green.
+
+## v0.0.6.a — Human-First Daylight · Real British IPA & All-in-One Studio (2026-11-04)
+
+**Stamp:** `appVersion/version '0.0.6.a'` · `ver 16` · `schema 16` · `settingsRev 31` · `syncRev 1793750000000` · `SW_VERSION 'sdp-v0.0.6.a-s16'` / `SHELL_CACHE 'sdp-v0.0.6.a-s16-shell'` · `TARGET='0.0.6.a'` · `buildDate 2026-11-04`.
+
+* Light Mode is the mandatory default: `index.html`/`data.html` boot `data-theme="light"`, cloak `#F8FAFC/#0F172A`, `DEFAULT_SETTINGS.theme='light'` (unknown heals to light), `config.json classSettings.theme='light'`, manifest `theme_color/background_color #F8FAFC` (G9.7c re-pinned). Dark and Board stay optional.
+* Real British Phonemic IPA: all 60 `data/session.json` words (30 Session 8 + 30 Session 7) now carry Oxford/Cambridge IPA (important /ɪmˈpɔːtənt/), real `pos`, B1 definitions, Sinhala meanings, B1 sentences; re-pinned at exactly 44,885 B (44885), SHA `b1d178d3…` across check.cjs, audit-v42.cjs, checks.yml, data.html, data/index.html, ARCHITECTURE_MAP.md. The `config.json` Session 7 archive is enriched identically.
+* Studio offline IPA engine: `fallbackEnrich()` never prints the spelling as phonetics — 60-word `BRITISH_IPA_LEXICON` + deterministic transcriber (digraph/suffix tables, first-vowel stress) yields real /…/ with zero keys; `mergeEnrichRecord()` strips `/word/` placeholders.
+* Mobile Word Reveal: `#boardClassBar` is a first-class cockpit control on every viewport (was board-preset or ≥1024px only). Each beat re-arms the hidden reveal (`enterWord`→`resetBoardReveal()`); the word still never leaks (R10/G7.3c). Fake-IPA guard on the board meta line.
+* Dictation Clock: new `#beatPhasePill` (EN+SI) — 🎧 Listening · Repeat 1/2, ✍️ Write the word · 5s, ⏳ Finish writing · 3s pulsing amber — with gate-verbatim `#beatStateText`, ring colors and countdown assertions preserved (G3.4d/e, G5.6a/b/c, G7.3d/g). Ring/bar gained 0.12s linear transitions.
+* All-in-One wizard: new 4 steps — verify vault & keys → auto-enrich 30 words (real IPA) → Alice voice sync under the 0-credit guard (`force:false`, reuse the 100 clips) → atomic publish + broadcast; live "N / 30 Words Recognized ✓" pill (400ms debounce), spring CTA pulse, and a bilingual Problem+Solution+1-Click-Fix card (`#studioErrorAssistant`).
+* Light contrast hardening: glass pills use `--accent-fg #1D4ED8` etc. instead of `--accent-ink`; inputs 1.5px `#CBD5E1` on `#F1F5F9`; cards 1px `#E2E8F0`; badges/chips/step states readable in all three themes (WCAG ≥ 4.5:1).
+* Zero ElevenLabs credits; all 100 Alice clips byte-preserved; `gas-source.txt` + Sinhala fonts untouched; `data.html`/`data/index.html` byte-identical; five-key law intact; every .js parses ES5 (max ≤ 400, avg ≤ 200); 12 gates green (0 FAIL).
 

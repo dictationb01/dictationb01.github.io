@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.5.c — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="theme-color" content="#F8FAFC">
+<meta name="description" content="Smart Dictation Player v0.0.6.a — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2309090B'/%3E%3Cpath d='M7 20c4-1 6-4 8-9 2 5 5 8 10 9' stroke='%2338BDF8' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<style id="sdpCloak">html,body{margin:0;background:#09090B;color:#FAFAFA;font-family:Inter,system-ui,sans-serif}.screen{display:none!important}.screen.active{display:block!important}</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FFFFFF'/%3E%3Cpath d='M7 20c4-1 6-4 8-9 2 5 5 8 10 9' stroke='%232563EB' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style id="sdpCloak">html,body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Inter,system-ui,sans-serif}.screen{display:none!important}.screen.active{display:block!important}</style>
 </head>
 <body>
 
@@ -27,7 +27,7 @@
   </div>
  </div>
  <div class="header-cluster">
-  <span id="sdpVerPill">v0.0.5.c</span>
+  <span id="sdpVerPill">v0.0.6.a</span>
   <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
   <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
  </div>
@@ -197,7 +197,7 @@
      <div id="sessionPills" class="word-pills"></div>
     </div>
    </div>
-   <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Smart Board classroom controls" hidden>
+   <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Word reveal and classroom controls" hidden>
     <div class="board-transport">
      <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">▶ Play / Pause</span></button>
      <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
@@ -235,6 +235,7 @@
      </div>
     </div>
 
+    <p id="beatPhasePill" class="beat-phase-pill" data-phase="idle">🎧 Ready</p>
     <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
     <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
     <div id="beatStage" class="beat-stage"></div>
@@ -404,8 +405,8 @@
      <div class="field">
       <label class="lbl" for="setTheme" data-i18n="theme">Theme</label>
       <select id="setTheme" class="input">
+      <option value="light" data-i18n="themeLight">Light (default)</option>
       <option value="dark" data-i18n="themeDark">Dark</option>
-      <option value="light" data-i18n="themeLight">Light</option>
       <option value="board" data-i18n="themeBoard">Smart Board High-Contrast</option>
       </select>
      </div>
@@ -435,7 +436,7 @@
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.5.c</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.a</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-04</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
@@ -532,7 +533,7 @@
 
 <script>
 (function () {
- var TARGET = '0.0.5.c';
+ var TARGET = '0.0.6.a';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

@@ -73,16 +73,16 @@ const BUDGETS = {
   'assets/css/sdp-ui.css': 98000,
   'data/sdp-data-sync.js': 95000,
   'data/sdp-audio-speech.js': 60000,
-  'data/sdp-dictation-engine.js': 70000,
-  'data/sdp-ui-views.js': 150000,
-  'data/studio.js': 162000,
+  'data/sdp-dictation-engine.js': 76000,
+  'data/sdp-ui-views.js': 156000,
+  'data/studio.js': 176000,
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
   'data/sdp-morphe-hooks.js': 8000,
   'data/config.json': 38000,
   'data/version.json': 2000,
-  'data/session.json': 55260,
+  'data/session.json': 44885,
   'data/gas-source.txt': 13764,
   'data/elevenlabs-audio.json': 2500000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
@@ -101,7 +101,7 @@ check('G9.2a every shipped file fits its H1 byte cap', over.length === 0, over.j
 check('G9.2b the /data pair is byte-identical', read('data.html') === read('data/index.html'),
   bytes('data.html') + ' vs ' + bytes('data/index.html'));
 
-const docsBudget = { 'ARCHITECTURE_MAP.md': 56000, 'CHANGELOG_LEDGER.md': 60000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 26000, 'SYNC_AND_DATA_CONTRACT.md': 52000, 'UI_COMPONENT_GUIDE.md': 52000 };
+const docsBudget = { 'ARCHITECTURE_MAP.md': 56000, 'CHANGELOG_LEDGER.md': 64000, 'DAILY_UPGRADE_PROMPT_TEMPLATE.md': 26000, 'SYNC_AND_DATA_CONTRACT.md': 52000, 'UI_COMPONENT_GUIDE.md': 52000 };
 const docsOver = Object.entries(docsBudget).filter(([f, cap]) => bytes('docs/' + f) > cap).map(([f]) => f);
 check('G9.2c all five living docs are inside their caps', docsOver.length === 0, docsOver.join(','));
 check('G9.2d there are exactly five living docs', fs.readdirSync(path.join(ROOT, 'docs')).filter((f) => f.endsWith('.md')).length === 5);
@@ -203,7 +203,7 @@ check('G9.5c only the five R4 localStorage keys are named in scripts', strayKeys
  * now writes it on every publish (D-UI11), so it is budgeted and header-checked
  * instead of hash-frozen, and its clips are still never re-rendered for free. */
 const LOCKED = [
-  ['data/session.json', '1eaed80a'],
+  ['data/session.json', 'b1d178d3'],
   ['data/gas-source.txt', '591b9b08'],
   ['assets/fonts/NotoSansSinhala-Regular.woff2', '23f1503e'],
   ['assets/fonts/NotoSansSinhala-Bold.woff2', 'bf59c148']
@@ -213,7 +213,7 @@ check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lo
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
   voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.voiceName === 'Alice' &&
-  voicePack.version === '0.0.5.c' && voicePack.hashAlgo === 'sha1' &&
+  voicePack.version === '0.0.6.a' && voicePack.hashAlgo === 'sha1' &&
   typeof voicePack.clips === 'object', JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
@@ -228,19 +228,19 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.5.c is ver 12 / schema 12 / settingsRev 25
-  config.ver === 15 && config.appVersion === '0.0.5.c' && config.version === '0.0.5.c' && config.schema === 15 && config.settingsRev === 30,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.a is ver 16 / schema 16 / settingsRev 31
+  config.ver === 16 && config.appVersion === '0.0.6.a' && config.version === '0.0.6.a' && config.schema === 16 && config.settingsRev === 31,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.5.c in its description', /0\.0\.5\.c/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.6.a in its description', /0\.0\.6\.a/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
-check('G9.7c theme and background are the 0.0.5.c matte black', manifest.theme_color === '#09090B' && manifest.background_color === '#09090B', manifest.theme_color);
+check('G9.7c theme and background are the 0.0.6.a daylight light', manifest.theme_color === '#F8FAFC' && manifest.background_color === '#F8FAFC', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.5.c cache names', sw.indexOf('sdp-v0.0.5.c') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.6.a cache names', sw.indexOf('sdp-v0.0.6.a') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
 /* v0.0.5.b: sdp-morphe-hooks.js loads last so it decorates the finished DOM. */

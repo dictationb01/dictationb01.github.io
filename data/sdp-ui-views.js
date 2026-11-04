@@ -144,8 +144,8 @@
     modePaperFull: ' Write in Exercise Book (Paper)',
     modeTypingFull: '⌨ Type on Screen',
     voiceGuideBtn: ' Interactive Voice Guide',
-    boardShowWord: ' Show Word on Board',
-    boardHideWord: ' Hide Word on Board',
+    boardShowWord: ' 👁 Show Current Word',
+    boardHideWord: ' 🙈 Hide Current Word',
     quotaHeading: 'ElevenLabs Character Quota (Zero-Cost Check)',
     costPreviewLabel: 'Estimated Generation Cost',
     testOneWordBtn: ' Test 1 Word (~8 chars)',
@@ -254,6 +254,17 @@
     studioOneClick34: ' Generate 70 British Professor Voices & Sync All Devices',
     studioSaveOnly: ' Save Keys to Vault Only',
     studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
+    studioOneClickFull: 'All-in-One: Auto-Build Complete Session (Enrich IPA/Sinhala + Voice Pack + Publish & Sync All Devices)',
+    studioWordsRecognized: 'Words Recognized',
+    studioErrTitle: 'Something needs your attention',
+    studioErrFixNow: '1-Click Fix / Retry Failed Step',
+    studioErrDismiss: 'Dismiss',
+    pillReady: '🎧 Ready',
+    pillPaused: '⏸ Paused — tap Resume',
+    pillFinished: '✅ Finished — check answers',
+    pillListening: '🎧 Listening · Repeat',
+    pillWriting: '✍️ Write the word ·',
+    pillFinishWarn: '⏳ Finish writing ·',
     studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Start Dictation Now',
     /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
@@ -384,8 +395,8 @@
     modePaperFull: ' අභ්‍යාස පොතේ ලිවීම (Paper)',
     modeTypingFull: '⌨ තිරයේ ටයිප් කිරීම (Typing)',
     voiceGuideBtn: ' අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
-    boardShowWord: ' පුවරුවේ වචනය පෙන්වන්න',
-    boardHideWord: ' පුවරුවේ වචනය සඟවන්න',
+    boardShowWord: ' 👁 වචනය පෙන්වන්න',
+    boardHideWord: ' 🙈 වචනය සඟවන්න',
     quotaHeading: 'ElevenLabs අක්ෂර සීමාව (ගාස්තු රහිත පරීක්ෂාව)',
     costPreviewLabel: 'ඇස්තමේන්තුගත අක්ෂර වැයවීම',
     testOneWordBtn: ' එක් වචනයක් පරීක්ෂා කරන්න (~අක්ෂර 8)',
@@ -493,6 +504,17 @@
     studioOneClick34: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioSaveOnly: ' යතුරු බඳුනේ පමණක් සුරකින්න',
     studioPublishWordsVoice34: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioOneClickFull: 'සියල්ල එකම එකෙන්: සම්පූර්ණ සැසිය ස්වයංක්‍රීයව සාදන්න (IPA/සිංහල පොහොසත් + හඬ පැකේජය + පළ කර සියලු උපාංග සමමුහුර්ත)',
+    studioWordsRecognized: 'වචන හඳුනාගත්',
+    studioErrTitle: 'දෙයක් ඔබේ අවධානය ඉල්ලයි',
+    studioErrFixNow: 'එක් ක්ලික් එකකින් නිවැරදි කරන්න / අසාර්ථක පියවර නැවත උත්සාහ කරන්න',
+    studioErrDismiss: 'වසන්න',
+    pillReady: '🎧 සූදානම්',
+    pillPaused: '⏸ විරාමයි — නැවත පටන් ගන්න',
+    pillFinished: '✅ අවසන් — පිළිතුරු පරීක්ෂා කරන්න',
+    pillListening: '🎧 සවන් දෙන්න · පුනරාවර්තනය',
+    pillWriting: '✍️ වචනය ලියන්න ·',
+    pillFinishWarn: '⏳ ලිවීම අවසන් කරන්න ·',
     studioBroadcast34: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
     guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
     guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
@@ -1979,11 +2001,11 @@
     return n;
   }
   function boardBarShouldShow() {
-    /* R10/D-UI4: a projector viewport shows the board bar once a session exists. */
-    if (boardWordCount() <= 0) return false;
-    if (theme === 'board') return true;
-    var vw = Number(global.innerWidth || (doc && doc.documentElement && doc.documentElement.clientWidth) || 0);
-    return vw >= 1024;
+    /* v0.0.6.a Track 3: the Word Reveal bar is a first-class cockpit control,
+       not a Smart-Board extra. Any phone, tablet, projector or desktop gets it
+       whenever a session exists — the hidden-before-reveal contract (R10) is
+       enforced inside paintBoardWord(), not by hiding the whole bar. */
+    return boardWordCount() > 0;
   }
   function renderBoardBar() {
     var bar = byId('boardClassBar');
@@ -2041,7 +2063,10 @@
     var idx = 0, count = boardWordCount();
     try { idx = Number(SDP.Engine && SDP.Engine.config ? SDP.Engine.config().index : 0) || 0; } catch (e) { idx = 0; }
     setText(byId('boardWordNo'), '#' + (idx + 1) + '/' + count);
-    setText(byId('boardIpa'), w && w.p ? '/' + String(w.p).replace(/^\/+|\/+$/g, '') + '/' : '/—/');
+    var rawP = w && w.p ? String(w.p).replace(/^\/+|\/+$/g, '') : '';
+    /* v0.0.6.a: a spelling-as-phonetics placeholder is never printed. */
+    if (rawP && rawP.toLowerCase() === String(w && w.w ? w.w : '').toLowerCase()) rawP = '';
+    setText(byId('boardIpa'), rawP ? '/' + rawP + '/' : '/—/');
     setText(byId('boardPos'), (w && w.pos) || '—');
     setText(byId('boardSi'), (w && w.si) || '—');
     var btn = byId('btnBoardToggleWord');
@@ -2055,6 +2080,12 @@
     boardState.wordShown = !boardState.wordShown;
     paintBoardWord();
     return boardState.wordShown;
+  }
+  /* v0.0.6.a: each new word (jump or auto-advance) re-hides the reveal so the
+     spelling can never leak into the next beat by itself (R10 / G7.3c). */
+  function resetBoardReveal() {
+    boardState.wordShown = false;
+    paintBoardWord();
   }
   function bindBoardBar() {
     var bar = byId('boardClassBar');
@@ -2493,6 +2524,7 @@
     renderBoardBar: renderBoardBar,
     renderBoardJumper: renderBoardJumper,
     toggleBoardWord: toggleBoardWord,
+    resetBoardReveal: resetBoardReveal,
     paintBoardWord: paintBoardWord,
     closeGuide: closeGuide,
     speakGuide: speakGuide,

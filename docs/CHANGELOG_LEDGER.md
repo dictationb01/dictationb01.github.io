@@ -748,3 +748,8 @@ Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, I
 * BUG-4: the duplicate `.url` blob was stripped from `data/elevenlabs-audio.json` (4,520,832 B → ~2,266,000 B); entries are hydrated to data URLs in memory where Blob URLs are playable, indexed under both `words.<w>` and `<w>`, and the manifest is reloaded after every publish.
 * FIX-7: modern 2026 tactile pill buttons and Material-3/iOS settings cards in `assets/css/sdp-ui.css`; every DOM id, class, data-* and aria-* attribute is preserved.
 * All twelve gates G1–G12 re-pinned to the v0.0.4.b stamp and report 0 FAIL.
+## v0.0.5.c — Sapphire Ladder · human-friendly UI (2026-11-04)
+- sdp-ui.css rewritten in place (97,804 -> 57,942 B, 41% headroom): six-step surface ladder per theme (canvas/sunken/card/elevated/interactive/accent-glass), hairline strokes replace card shadows, blur(12px) glass on header/rail/tabbar only; light theme warm alabaster; board theme pure black. Ink/surface pairs pre-verified >= 4.5:1 WCAG AA — fixes 30 invisible word-list controls measured at contrast 1.1 and the Sinhala cockpit chip.
+- Cockpit: beat ring is the single focal point (tabular seconds); tactile transport deck (72px hero key, 56px siblings with micro-captions, 48px quiet row). Home: sapphire hero glow, semantic state pills, calm credits. Word list: two-line card anatomy, state-coloured left rail, circular Alice play button. Studio: calm console rhythm; PIN pad kept at 56px.
+- Zero JS behaviour changes: 6 ES5 modules, 100-clip Alice pack, SDP_ENC_V2 vault, session.json/gas-source/fonts byte locks untouched. Version literal bumped in lockstep across 7 shipped surfaces + 11 gate files; syncRev 1793740000001; 12 gates green.
+

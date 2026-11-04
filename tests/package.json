@@ -25,5 +25,8 @@
     "jsdom": "22.1.0",
     "playwright-core": "1.56.0",
     "terser": "5.44.0"
+  },
+  "dependencies": {
+    "pagedjs": "^0.4.3"
   }
 }

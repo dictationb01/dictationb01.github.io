@@ -51,7 +51,7 @@ const BUDGET = {
   'data/sdp-audio-speech.js': 60000,
   'data/sdp-dictation-engine.js': 70000,
   'data/sdp-ui-views.js': 150000,
-  /* v0.0.4.c: the studio gained sha1Hex, the 70-clip catalogue and the live key
+  /* v0.0.5.c: the studio gained sha1Hex, the 70-clip catalogue and the live key
      verifier; the ceiling moved with it, in lockstep with audit-v42.cjs. */
   'data/studio.js': 162000,
   'data/data-meter.js': 26000,
@@ -251,11 +251,11 @@ function pending(p) {
 (function versions() {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.c ships ver 12 / schema 12 / settingsRev 25
-    const ok = v.ver === 15 && v.appVersion === '0.0.4.c' && v.version === '0.0.4.c' &&
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.5.c ships ver 12 / schema 12 / settingsRev 25
+    const ok = v.ver === 15 && v.appVersion === '0.0.5.c' && v.version === '0.0.5.c' &&
       v.schema === 15 && v.settingsRev === 30 && String(v.session) === '8';
-    record('version.json carries the v0.0.4.c schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1793740000000', Number(v.syncRev) === 1793740000000, JSON.stringify(v).slice(0, 200));
+    record('version.json carries the v0.0.5.c schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1793740000001', Number(v.syncRev) === 1793740000001, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -274,9 +274,9 @@ function pending(p) {
       c.repoName === 'dictationb1.github.io' && c.defaults && c.classInfo,
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
-    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.4.c bump set
-    record('config.json carries v0.0.4.c version fields',
-      c.ver === 15 && c.appVersion === '0.0.4.c' && c.version === '0.0.4.c' && c.schema === 15 && c.settingsRev === 30,
+    // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
+    record('config.json carries v0.0.5.c version fields',
+      c.ver === 15 && c.appVersion === '0.0.5.c' && c.version === '0.0.5.c' && c.schema === 15 && c.settingsRev === 30,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -420,7 +420,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.4.c boot target', html.indexOf("'0.0.4.c'") > 0 || html.indexOf('"0.0.4.c"') > 0);
+  record('index.html declares the v0.0.5.c boot target', html.indexOf("'0.0.5.c'") > 0 || html.indexOf('"0.0.5.c"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -467,7 +467,7 @@ function pending(p) {
   record('D18 the 70-clip arithmetic is stated in the cost line',
     /clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(studio));
   var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
-  /* contract: docs/UI_COMPONENT_GUIDE.md §3 — v0.0.4.c replaces the four mock
+  /* contract: docs/UI_COMPONENT_GUIDE.md §3 — v0.0.5.c replaces the four mock
      cards with ONE compact spotlight (R2/F3). No mock markup may survive. */
   record('D16 the compact four-step spotlight ships (no mock cards)',
     /GUIDE_SPOTLIGHT_STEPS/.test(views) && /guideSpotlight/.test(readText('index.html')) &&
@@ -505,9 +505,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.4.c target', /var TARGET = '0\.0\.4\.c'/.test(html));
-    record('service worker pins the v0.0.4.c shell caches',
-      /SW_VERSION = 'sdp-v0\.0\.4\.c-s15'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.4\.c-s15-shell'/.test(sw));
+    record('index.html boots at the v0.0.5.c target', /var TARGET = '0\.0\.5\.c'/.test(html));
+    record('service worker pins the v0.0.5.c shell caches',
+      /SW_VERSION = 'sdp-v0\.0\.5\.c-s15'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.5\.c-s15-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -523,16 +523,16 @@ function pending(p) {
     record('settings ship offline clip download (btnDownloadClips)', /id="btnDownloadClips"/.test(html));
     if (exists('data/version.json')) {
       var v = JSON.parse(readText('data/version.json'));
-      record('version.json pins buildDate 2026-11-02', v.buildDate === '2026-11-03');
+      record('version.json pins buildDate 2026-11-02', v.buildDate === '2026-11-04');
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.4.c',
-      /"start_url": "\.\/\?v=0\.0\.4\.c/.test(man) && man.indexOf('?v=0.0.4.c') > 0 &&
-      (man.match(/v=0\.0\.4\.c/g) || []).length >= 3, (man.match(/v=0\.0\.4\.c/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.5.c',
+      /"start_url": "\.\/\?v=0\.0\.5\.c/.test(man) && man.indexOf('?v=0.0.5.c') > 0 &&
+      (man.match(/v=0\.0\.5\.c/g) || []).length >= 3, (man.match(/v=0\.0\.5\.c/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.4.c';
+    var app = '0.0.5.c';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
@@ -543,11 +543,11 @@ function pending(p) {
       'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 15
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.4.c / ver 12',
+    record('D15 all seven versioned surfaces agree on 0.0.5.c / ver 12',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.4.c header',
-      pack.version === '0.0.4.c' && pack.appVersion === '0.0.4.c' && pack.ver === 15 && pack.schema === 15 &&
+    record('voice pack carries the v0.0.5.c header',
+      pack.version === '0.0.5.c' && pack.appVersion === '0.0.5.c' && pack.ver === 15 && pack.schema === 15 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.voiceId]));
   })();

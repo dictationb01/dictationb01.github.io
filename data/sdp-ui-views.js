@@ -81,11 +81,11 @@
     dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
     syncBadgeSynced: 'Synced',
     syncShortSyncing: 'Syncing…',
-    lecturerSyncBar: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
+    lecturerSyncBar: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
     lecturerSyncLast: 'Last synced to the class',
     /* D19: a dedicated idle label — applyLang can never overwrite a real stamp. */
     lecturerSyncIdle: 'Not synced yet — press Save & Sync',
-    lecturerSyncedToast: '📡 Synced teacher\'s latest classroom settings (Rev #',
+    lecturerSyncedToast: ' Synced teacher\'s latest classroom settings (Rev #',
     lecturerSyncNoToken: 'Add a GitHub token in Lecturer Studio to sync the class',
     guideQuickTitle: 'Quick Voice Guide — How This Dictation Works',
     guideSkipStart: '⏩ Skip Guide & Start Immediately',
@@ -96,18 +96,18 @@
     syncBadgeOffline: 'Offline — showing cached session',
     syncBadgeUpdate: 'Update found — tap to reload',
     syncBadgeRetry: 'Check failed — retry',
-    guideReplay: '🎓 Replay Step-by-Step Voice Guide',
+    guideReplay: ' Replay Step-by-Step Voice Guide',
     guideAutoPlay: 'Auto-play English voice guide on start',
     presetHeading: 'Quick Pacing Presets',
-    presetBeginner: '🐢 Beginner Slow (12s · 4×)',
-    presetStandard: '🎯 CCBE B1 Standard (8s · 3×)',
-    presetExam: '⚡ Fast Exam (5s · 2×)',
-    presetBoard: '🖥️ Smart Board Class Mode',
+    presetBeginner: ' Beginner Slow (12s · 4×)',
+    presetStandard: ' CCBE B1 Standard (8s · 3×)',
+    presetExam: ' Fast Exam (5s · 2×)',
+    presetBoard: ' Smart Board Class Mode',
     themeBoard: 'Smart Board High-Contrast',
     voiceLockLabel: 'Voice Persona Lock',
     voiceLockUnified: 'British Female Professor (Unified 25–35 UK)',
     voiceLockCustom: 'Follow Individual Tier Source',
-    downloadClips: '🔊 Download All 30 Word Audio Clips for Offline Use',
+    downloadClips: ' Download All 30 Word Audio Clips for Offline Use',
     downloadClipsDone: 'Cached 30 of 30 audio clips for offline use',
     studioFirstTime: 'First-Time Studio Setup: Set Your 4–8 Digit Lecturer PIN + API Keys',
     studioTestEl: 'Test ElevenLabs Key',
@@ -130,35 +130,35 @@
     studioLockedOut: 'Too many wrong PINs. Try again in', seconds: 'seconds',
     studioBadPin: 'Wrong PIN', studioEditor: 'Session words (one per line: w | ipa | pos | meaning | sinhala | sentence)',
     studioPreview: 'Publish preview', studioPublish: 'Publish session', studioGenerate: 'Generate Alice clips',
-    studioRecord: 'Record word', studioSave: '💾 Save Keys to Vault Only', studioLock: 'Lock studio',
+    studioRecord: 'Record word', studioSave: ' Save Keys to Vault Only', studioLock: 'Lock studio',
     studioEnvelope: 'Encrypted vault envelope (SDP_ENC_V2)', studioCopy: 'Copy envelope',
     studioPublishOk: 'Session published', studioPublishFail: 'Publish failed',
     studioNoToken: 'Add a GitHub token (Contents API) in the vault first', studioWordsCount: 'words parsed',
     studioElevenNote: 'ElevenLabs generation runs only while unlocked, using the Charlotte voice and flash_v2_5.',
     /* ── v0.0.1.c Table B: Guide 2.0, Home journey, Smart Board bar, Studio ── */
-    guideTapToStart: '🔊 Tap anywhere to start the voice guide',
+    guideTapToStart: ' Tap anywhere to start the voice guide',
     homeJourney1: 'Listen & write',
     homeJourney2: 'Check your 30 words',
     homeJourney3: 'Train weak words',
     homeReadyBadge: 'Session 8 ready · 30 words',
-    modePaperFull: '📒 Write in Exercise Book (Paper)',
-    modeTypingFull: '⌨️ Type on Screen',
-    voiceGuideBtn: '🔊 Interactive Voice Guide',
-    boardShowWord: '👁️ Show Word on Board',
-    boardHideWord: '🙈 Hide Word on Board',
+    modePaperFull: ' Write in Exercise Book (Paper)',
+    modeTypingFull: '⌨ Type on Screen',
+    voiceGuideBtn: ' Interactive Voice Guide',
+    boardShowWord: ' Show Word on Board',
+    boardHideWord: ' Hide Word on Board',
     quotaHeading: 'ElevenLabs Character Quota (Zero-Cost Check)',
     costPreviewLabel: 'Estimated Generation Cost',
-    testOneWordBtn: '🔊 Test 1 Word (~8 chars)',
+    testOneWordBtn: ' Test 1 Word (~8 chars)',
     forceRegenLabel: 'Force re-generate existing clips',
-    genDeltaBtn: '⚡ Generate Missing Clips (Credit-Saver)',
+    genDeltaBtn: ' Generate Missing Clips (Credit-Saver)',
     teacherUpdatedToast: 'Your teacher updated the class settings',
     vaultSavedToast: 'Vault saved · synced to GitHub',
     guideVoiceFailed: 'Voice guide unavailable — tap to retry',
     boardPlayPause: '▶ Play / Pause',
-    boardRepeat: '🔁 Repeat',
+    boardRepeat: ' Repeat',
     boardNext: '⏭ Next',
     boardJumpLabel: 'Jump to word',
-    syncShortSynced: 'Synced ✓',
+    syncShortSynced: 'Synced ',
     syncShortOffline: 'Offline',
     syncShortUpdate: 'Update',
     syncShortRetry: 'Retry',
@@ -176,7 +176,7 @@
     pauseReasonModal: 'a dialog opened',
     pauseReasonVisibility: 'the app went to the background',
     pauseReasonUser: 'you tapped pause',
-    guideAutoplayBanner: '🔊 Tap Anywhere to Start Voice Guide',
+    guideAutoplayBanner: ' Tap Anywhere to Start Voice Guide',
     studioCardKeys: 'STEP 1 — API KEYS & 70-CLIP VOICE PACK GENERATOR',
     studioCardWords: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioCardSettings: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
@@ -185,12 +185,12 @@
     studioAiKey: 'Free AI key (optional)',
     studioTestAi: 'Test Free AI / Dictionary Engine',
     studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
-    studioOneClick: '🚀 Generate 70 British Professor Voices & Sync All Devices',
+    studioOneClick: ' Generate 70 British Professor Voices & Sync All Devices',
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: '🚀 Auto-Enrich & Publish 30 Words',
-    studioSyncSettings: '📡 Save & Sync Classroom Settings to All Devices',
+    studioPublishWordsVoice: ' Auto-Enrich & Publish 30 Words',
+    studioSyncSettings: ' Save & Sync Classroom Settings to All Devices',
     studioMasterSteps: 'Setup progress',
     studioEnriching: 'Enriching',
     studioEnriched: 'Enriched',
@@ -215,19 +215,19 @@
     homeStep1Tag: 'STEP 1', homeStep2Tag: 'STEP 2', homeStep3Tag: 'STEP 3',
     homeWordsTitle: 'Check & Study All 30 Session Words in Order #1–#30',
     homeWordsSub: 'Every word in class order with its British IPA, Sinhala meaning and example sentence.',
-    homeWordsBtn: '☰ Open the 30-Word List (#1–#30)',
+    homeWordsBtn: ' Open the 30-Word List (#1–#30)',
     resumeMetaIdle: 'Paused at Word #1 of 30',
     startOver: '↺ Start Over from Word #1',
     cueStep1: 'STEP 1 — PRESS HERE',
     cuePlayer: 'PAUSE OR RESUME HERE',
     cueDict: 'TAP A WORD TO LISTEN',
     cueStudio: 'ENTER YOUR PIN',
-    settingsLecturerActive: '🔓 Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
-    openStudioBtn: '🎓 Open Lecturer Admin Studio',
-    studioScreenTitle: '🎓 Lecturer Admin Studio',
+    settingsLecturerActive: ' Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
+    openStudioBtn: ' Open Lecturer Admin Studio',
+    studioScreenTitle: ' Lecturer Admin Studio',
     studioScreenSub: 'Three numbered steps: keys and the 70-clip voice pack, the 30-word session editor, and the classroom settings broadcast.',
-    lecturerAdminLocked: '🔒 Lecturer Admin', lecturerAdminUnlocked: '🔓 Lecturer Admin',
-    btnReplay: '🔊 Replay Word',
+    lecturerAdminLocked: ' Lecturer Admin', lecturerAdminUnlocked: ' Lecturer Admin',
+    btnReplay: ' Replay Word',
     btnPauseDictation: '⏸ Pause Dictation',
     btnResumeWord: '▶ Resume Word #',
     btnPrevNum: '⏮ Prev (#', btnNextNum: '⏭ Next (#',
@@ -241,20 +241,20 @@
     capPrev: 'Prev', capPlay: 'Pause', capReplay: 'Replay', capNext: 'Next',
     capRepeat: 'Repeat', capHint: 'Hint', capMode: 'Mode', capFinish: 'Check',
     pillsDrawer: 'Jump to Word 1–30 ▾',
-    markCorrectWord: '✓ Correct', markWeakWord: '✗ Needs Practice', btnStartDictation: '▶ Start Dictation',
+    markCorrectWord: ' Correct', markWeakWord: ' Needs Practice', btnStartDictation: '▶ Start Dictation',
     studioRetryNone: 'No failed clip to retry — every clip is already saved.',
     studioRetryOne: '↻ Retry Only the Failed Clip',
     studioStep1Head: 'STEP 1 — API KEYS & 70-CLIP VOICE PACK GENERATOR',
     studioStep2Head: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioStep3Head: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
-    studioPackVault: 'Vault: Saved ✓', studioPackGithub: 'GitHub: Connected ✓', studioPackClips: 'Voice Pack: ',
+    studioPackVault: 'Vault: Saved ', studioPackGithub: 'GitHub: Connected ', studioPackClips: 'Voice Pack: ',
     studioClipsUnit: '/70 Clips', studioGenPrefix: 'Generating clip ',
     studioGenCharsTail: ' chars used', studioClipsSaved: '/70 Clips Saved to GitHub · syncRev ',
-    studioRetryFailed: '🔁 Retry Only the Missing Clips',
-    studioOneClick34: '🚀 Generate 70 British Professor Voices & Sync All Devices',
-    studioSaveOnly: '💾 Save Keys to Vault Only',
-    studioPublishWordsVoice34: '🚀 Auto-Enrich & Publish 30 Words',
-    studioBroadcast34: '📡 Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
+    studioRetryFailed: ' Retry Only the Missing Clips',
+    studioOneClick34: ' Generate 70 British Professor Voices & Sync All Devices',
+    studioSaveOnly: ' Save Keys to Vault Only',
+    studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
+    studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Start Dictation Now',
     /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
     guideSpotlight1: 'Press Start Dictation to begin.',
@@ -262,16 +262,16 @@
     guideSpotlight3: 'Check all thirty words in order.',
     guideSpotlight4: 'Practise the words you missed.',
     guideStepTagPrefix: 'Step', guideStepTagSuffix: 'of 4',
-    guideExitBtn: '✕ Exit',
-    studioSavedOk: '✓ Keys saved & protected across updates',
-    studioVerifyEl: '🔊 Test & Verify ElevenLabs Voice Key',
-    studioVerifyOk: 'VALID ✓ (Remaining Free Credits: ',
-    studioVerifyBad: 'INVALID KEY ✗ (HTTP ',
+    guideExitBtn: ' Exit',
+    studioSavedOk: ' Keys saved & protected across updates',
+    studioVerifyEl: ' Test & Verify ElevenLabs Voice Key',
+    studioVerifyOk: 'VALID  (Remaining Free Credits: ',
+    studioVerifyBad: 'INVALID KEY  (HTTP ',
     studioVerifyHint: 'INVALID KEY — paste the sk_… secret from ElevenLabs (the e1b… value is the key ID and will not work)',
     studioClips70: '70 clips = 829 chars ≈ 8.3% of the free monthly quota (flash_v2_5 ≈ 414 credits)',
     studioRecoveryUsed: 'Master recovery used — set a new PIN now',
-    studioChangePinBtn: '🔑 Change Lecturer PIN',
-    studioPublishOkFull: '✓ Published & synced to all classroom devices'
+    studioChangePinBtn: ' Change Lecturer PIN',
+    studioPublishOkFull: ' Published & synced to all classroom devices'
   };
 
   
@@ -322,10 +322,10 @@
     dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
     syncBadgeSynced: 'සමමුහුර්තයි',
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
-    lecturerSyncBar: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
+    lecturerSyncBar: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
     lecturerSyncLast: 'පන්තියට සමමුහුර්ත කළ අවසන් වාරය',
     lecturerSyncIdle: 'තවම සමමුහුර්ත නොවීය — Save & Sync එබන්න',
-    lecturerSyncedToast: '📡 ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
+    lecturerSyncedToast: ' ගුරුවරයාගේ නවතම පන්ති සැකසුම් සමමුහුර්ත විය (අනුවාදය #',
     lecturerSyncNoToken: 'පන්තිය සමමුහුර්ත කිරීමට කථිකාචාර්ය ස්ටූඩියෝවේ GitHub ටෝකනය එක් කරන්න',
     guideQuickTitle: 'ක්ෂණික හඬ උපදෙස් — ඩික්ටේෂන් ක්‍රියා කරන ආකාරය',
     guideSkipStart: '⏩ උපදෙස් මඟහැර දැන්ම ආරම්භ කරන්න',
@@ -336,18 +336,18 @@
     syncBadgeOffline: 'අන්තර්ජාලය නැත — සුරැකි වාරය පෙන්වයි',
     syncBadgeUpdate: 'නව යාවත්කාලීනයක් ඇත — නැවත පූරණයට ඔබන්න',
     syncBadgeRetry: 'පරීක්ෂාව අසාර්ථකයි — නැවත උත්සාහ කරන්න',
-    guideReplay: '🎓 පියවරෙන් පියවර හඬ උපදෙස් නැවත අසන්න',
+    guideReplay: ' පියවරෙන් පියවර හඬ උපදෙස් නැවත අසන්න',
     guideAutoPlay: 'ආරම්භයේදී ඉංග්‍රීසි හඬ උපදෙස් ස්වයංක්‍රීයව වාදනය කරන්න',
     presetHeading: 'ඉක්මන් කාල සැකසුම් (Presets)',
-    presetBeginner: '🐢 ආරම්භක මන්දගාමී (තත් 12 · 4×)',
-    presetStandard: '🎯 CCBE B1 සාමාන්‍ය (තත් 8 · 3×)',
-    presetExam: '⚡ විභාග වේගවත් (තත් 5 · 2×)',
-    presetBoard: '🖥️ ස්මාර්ට් බෝඩ් පන්ති ප්‍රකාරය',
+    presetBeginner: ' ආරම්භක මන්දගාමී (තත් 12 · 4×)',
+    presetStandard: ' CCBE B1 සාමාන්‍ය (තත් 8 · 3×)',
+    presetExam: ' විභාග වේගවත් (තත් 5 · 2×)',
+    presetBoard: ' ස්මාර්ට් බෝඩ් පන්ති ප්‍රකාරය',
     themeBoard: 'ස්මාර්ට් බෝඩ් අධි-පැහැදිලි තේමාව',
     voiceLockLabel: 'හඬ අගුල (Voice Lock)',
     voiceLockUnified: 'බ්‍රිතාන්‍ය කාන්තා කථිකාචාර්ය හඬ (ඒකාබදද්ධ 25–35 UK)',
     voiceLockCustom: 'තෝරාගත් හඬ මූලාශ්‍රය අනුව',
-    downloadClips: '🔊 අන්තර්ජාලය නොමැතිව භාවිතයට වචන 30 හඬපට බාගන්න',
+    downloadClips: ' අන්තර්ජාලය නොමැතිව භාවිතයට වචන 30 හඬපට බාගන්න',
     downloadClipsDone: 'වචන 30න් 30ම නොබැඳි භාවිතයට සුරැකිණි',
     studioFirstTime: 'පළමු වරට ස්ටුඩියෝ පිහිටුවීම: ඉලක්කම් 4–8 කථිකාචාර්ය PIN අංකය සහ API යතුරු ඇතුළත් කරන්න',
     studioTestEl: 'ElevenLabs යතුර පරීක්ෂා කරන්න',
@@ -376,29 +376,29 @@
     studioNoToken: 'පළමුව බඳුනට GitHub ටෝකනයක් එක් කරන්න', studioWordsCount: 'වචන විග්‍රහ කර ඇත',
     studioElevenNote: 'ElevenLabs ජනනය සිදු වන්නේ අගුළු හැර ඇති විට පමණක්, Charlotte හඬ සහ flash_v2_5 සමඟය.',
     /* ── v0.0.1.c Table B (සිංහල) ── */
-    guideTapToStart: '🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
+    guideTapToStart: ' හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
     homeJourney1: 'අසා ලියන්න',
     homeJourney2: 'වචන 30 පරීක්ෂා කරන්න',
     homeJourney3: 'දුර්වල වචන පුහුණු වන්න',
     homeReadyBadge: '8 වන වාරය සූදානම් · වචන 30',
-    modePaperFull: '📒 අභ්‍යාස පොතේ ලිවීම (Paper)',
-    modeTypingFull: '⌨️ තිරයේ ටයිප් කිරීම (Typing)',
-    voiceGuideBtn: '🔊 අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
-    boardShowWord: '👁️ පුවරුවේ වචනය පෙන්වන්න',
-    boardHideWord: '🙈 පුවරුවේ වචනය සඟවන්න',
+    modePaperFull: ' අභ්‍යාස පොතේ ලිවීම (Paper)',
+    modeTypingFull: '⌨ තිරයේ ටයිප් කිරීම (Typing)',
+    voiceGuideBtn: ' අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
+    boardShowWord: ' පුවරුවේ වචනය පෙන්වන්න',
+    boardHideWord: ' පුවරුවේ වචනය සඟවන්න',
     quotaHeading: 'ElevenLabs අක්ෂර සීමාව (ගාස්තු රහිත පරීක්ෂාව)',
     costPreviewLabel: 'ඇස්තමේන්තුගත අක්ෂර වැයවීම',
-    testOneWordBtn: '🔊 එක් වචනයක් පරීක්ෂා කරන්න (~අක්ෂර 8)',
+    testOneWordBtn: ' එක් වචනයක් පරීක්ෂා කරන්න (~අක්ෂර 8)',
     forceRegenLabel: 'දැනට පවතින හඬපට නැවත උත්පාදනය කරන්න',
-    genDeltaBtn: '⚡ ඉතිරි හඬපට පමණක් සාදන්න (Credit-Saver)',
+    genDeltaBtn: ' ඉතිරි හඬපට පමණක් සාදන්න (Credit-Saver)',
     teacherUpdatedToast: 'ගුරුවරයා පන්තියේ සැකසුම් යාවත්කාලීන කරන ලදී',
     vaultSavedToast: 'ආරක්ෂිත යතුරු සුරැකිණි · GitHub වෙත සමමුහුර්ත විය',
     guideVoiceFailed: 'හඬ උපදෙස් නොමැත — නැවත උත්සාහ කිරීමට ස්පර්ශ කරන්න',
     boardPlayPause: '▶ වාදනය / නවතන්න',
-    boardRepeat: '🔁 නැවත අසන්න',
+    boardRepeat: ' නැවත අසන්න',
     boardNext: '⏭ ඊළඟ',
     boardJumpLabel: 'වචනයට යන්න',
-    syncShortSynced: 'සමමුහුර්තයි ✓',
+    syncShortSynced: 'සමමුහුර්තයි ',
     syncShortOffline: 'නොබැඳි',
     syncShortUpdate: 'යාවත්කාලීන',
     syncShortRetry: 'නැවත',
@@ -416,7 +416,7 @@
     pauseReasonModal: 'කවුළුවක් විවෘත විය',
     pauseReasonVisibility: 'යෙදුම පසුගිය තලයට ගියා',
     pauseReasonUser: 'ඔබ නැවැත්වීමට ස්පර්ශ කළා',
-    guideAutoplayBanner: '🔊 හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
+    guideAutoplayBanner: ' හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
     studioCardKeys: 'පියවර 1 — API යතුරු සහ හඬපට 34 පැකේජය',
     studioCardWords: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioCardSettings: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
@@ -425,12 +425,12 @@
     studioAiKey: 'නොමිලේ AI යතුර (අවශ්‍ය නැත)',
     studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
     studioAiNoKey: '1: ඉදිකළ නොමිලේ Oxford/Wikimedia ශබ්දකෝෂය සහ සිංහල පරිවර්තකය (100% නොමිලේ — යතුරක් අවශ්‍ය නැත)',
-    studioOneClick: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
+    studioOneClick: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: '🚀 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
-    studioSyncSettings: '📡 පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
+    studioPublishWordsVoice: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioSyncSettings: ' පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
     studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
     studioEnriching: 'පුරවමින්',
     studioEnriched: 'පුරවා අවසන්',
@@ -455,19 +455,19 @@
     homeStep1Tag: 'පියවර 1', homeStep2Tag: 'පියවර 2', homeStep3Tag: 'පියවර 3',
     homeWordsTitle: 'වචන 30 ම #1–#30 අනුපිළිවෙලින් පරීක්ෂා කර අධ්‍යයනය කරන්න',
     homeWordsSub: 'සෑම වචනයක්ම පන්ති අනුපිළිවෙලින්, බ්‍රිතාන්‍ය උච්චාරණය, සිංහල තේරුම සහ උදාහරණ වාක්‍යය සමඟ.',
-    homeWordsBtn: '☰ වචන 30 ලැයිස්තුව විවෘත කරන්න (#1–#30)',
+    homeWordsBtn: ' වචන 30 ලැයිස්තුව විවෘත කරන්න (#1–#30)',
     resumeMetaIdle: 'වචන #1 දී නවතා ඇත (වචන 30 න්)',
     startOver: '↺ වචන #1 සිට නැවත අරඹන්න',
     cueStep1: 'පියවර 1 — මෙතැන ඔබන්න',
     cuePlayer: 'මෙතැනින් නවතන්න හෝ දිගටම යන්න',
     cueDict: 'අසන්න වචනයක් ඔබන්න',
     cueStudio: 'ඔබේ PIN ඇතුළත් කරන්න',
-    settingsLecturerActive: '🔓 කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — සැකසුම් විකාශනයට හෝ වචන 30 සංස්කරණයට කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
-    openStudioBtn: '🎓 කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
-    studioScreenTitle: '🎓 කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
+    settingsLecturerActive: ' කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — සැකසුම් විකාශනයට හෝ වචන 30 සංස්කරණයට කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
+    openStudioBtn: ' කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
+    studioScreenTitle: ' කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
     studioScreenSub: 'අංකිත පියවර තුනක්: යතුරු සහ හඬපට 34 පැකේජය, වචන 30 සංස්කාරකය, සහ පන්ති සැකසුම් විකාශනය.',
-    lecturerAdminLocked: '🔒 කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: '🔓 කථිකාචාර්ය පරිපාලනය',
-    btnReplay: '🔊 වචනය නැවත අසන්න',
+    lecturerAdminLocked: ' කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: ' කථිකාචාර්ය පරිපාලනය',
+    btnReplay: ' වචනය නැවත අසන්න',
     btnPauseDictation: '⏸ ඩික්ටේෂන් නවතන්න',
     btnResumeWord: '▶ වචන # ට දිගටම යන්න',
     btnPrevNum: '⏮ පෙර (#', btnNextNum: '⏭ ඊළඟ (#',
@@ -480,36 +480,36 @@
     capPrev: 'පෙර', capPlay: 'නවත්වන්න', capReplay: 'නැවත', capNext: 'ඊළඟ',
     capRepeat: 'පුනරාවර්තනය', capHint: 'ඉඟිය', capMode: 'ක්‍රමය', capFinish: 'පරීක්ෂාව',
     pillsDrawer: 'වචන 1–30 වෙත යන්න ▾',
-    markCorrectWord: '✓ නිවැරදි', markWeakWord: '✗ පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
+    markCorrectWord: ' නිවැරදි', markWeakWord: ' පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
     studioRetryNone: 'නැවත උත්සාහ කිරීමට අසාර්ථක ක්ලිපයක් නැත — සියලු ක්ලිප සුරකිනු ලැබීය.',
     studioRetryOne: '↻ අසාර්ථක වූ ක්ලිපය පමණක් නැවත උත්සාහ කරන්න',
     studioStep1Head: 'පියවර 1 — API යතුරු සහ හඬපට 34 උත්පාදකය',
     studioStep2Head: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioStep3Head: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
-    studioPackVault: 'බඳුන: සුරකින ලදී ✓', studioPackGithub: 'GitHub: සම්බන්ධයි ✓', studioPackClips: 'හඬ පැකේජය: ',
+    studioPackVault: 'බඳුන: සුරකින ලදී ', studioPackGithub: 'GitHub: සම්බන්ධයි ', studioPackClips: 'හඬ පැකේජය: ',
     studioClipsUnit: '/හඬපට 70', studioGenPrefix: 'හඬපට සාදමින් ',
     studioGenCharsTail: ' අක්ෂර භාවිතය', studioClipsSaved: '/හඬපට 34 GitHub වෙත සුරකින ලදී · syncRev ',
-    studioRetryFailed: '🔁 ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
-    studioOneClick34: '🚀 බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
-    studioSaveOnly: '💾 යතුරු බඳුනේ පමණක් සුරකින්න',
-    studioPublishWordsVoice34: '🚀 හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
-    studioBroadcast34: '📡 වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
+    studioRetryFailed: ' ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
+    studioOneClick34: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
+    studioSaveOnly: ' යතුරු බඳුනේ පමණක් සුරකින්න',
+    studioPublishWordsVoice34: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioBroadcast34: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
     guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
     guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
     guideSpotlight2: 'සෑම වචනයක්ම දෙවරක් අසන්න, පසුව තත්පර පහක් තුළ ලියන්න.',
     guideSpotlight3: 'වාරය අවසන් වූ පසු වචන තිහම පිළිවෙලින් පරීක්ෂා කරන්න.',
     guideSpotlight4: 'ඔබට මඟ හැරුණු වචන නැවත පුහුණු වන්න.',
     guideStepTagPrefix: 'පියවර', guideStepTagSuffix: 'න් 4',
-    guideExitBtn: '✕ ඉවත් වන්න',
-    studioSavedOk: '✓ යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
-    studioVerifyEl: '🔊 ElevenLabs හඬ යතුර පරීක්ෂා කරන්න',
-    studioVerifyOk: 'වලංගුයි ✓ (ඉතිරි නොමිලේ අක්ෂර: ',
-    studioVerifyBad: 'වලංගු නොවේ ✗ (HTTP ',
+    guideExitBtn: ' ඉවත් වන්න',
+    studioSavedOk: ' යතුරු සුරක්ෂිතව තැන්පත් කරන ලදී',
+    studioVerifyEl: ' ElevenLabs හඬ යතුර පරීක්ෂා කරන්න',
+    studioVerifyOk: 'වලංගුයි  (ඉතිරි නොමිලේ අක්ෂර: ',
+    studioVerifyBad: 'වලංගු නොවේ  (HTTP ',
     studioVerifyHint: 'වලංගු නොවේ — ElevenLabs වෙතින් sk_… රහස අලවන්න (e1b… අගය යතුරු හැඳුනුමයි, වැඩ නොකරයි)',
     studioClips70: 'හඬපට 70 = අක්ෂර 829 ≈ මාසික නොමිලේ කෝටාවෙන් 8.3% (flash_v2_5 ≈ ණය 414)',
     studioRecoveryUsed: 'ප්‍රධාන ප්‍රතිසාධනය භාවිතයි — දැන් නව PIN එකක් සකසන්න',
-    studioChangePinBtn: '🔑 කථිකාචාර්ය PIN වෙනස් කරන්න',
-    studioPublishOkFull: '✓ සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
+    studioChangePinBtn: ' කථිකාචාර්ය PIN වෙනස් කරන්න',
+    studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
   };
 
   var lang = 'en';
@@ -541,7 +541,13 @@
       var key = nodes[i].getAttribute('data-i18n');
       if (!key) continue;
       var value = t(key);
-      if (value !== undefined) nodes[i].textContent = value;
+      if (value === undefined) continue;
+      /* v0.0.4.c (GAP 2): never wipe an SVG icon. A [data-i18n] node with a
+         .i18n-label child updates only the label, so EN <-> SI keeps its icon. */
+      var label = nodes[i].querySelector ? nodes[i].querySelector('.i18n-label') : null;
+      if (label) { label.textContent = value; continue; }
+      if (nodes[i].querySelector && nodes[i].querySelector('svg.sdp-icon')) continue;
+      nodes[i].textContent = value;
     }
     var placeholders = doc.querySelectorAll('[data-i18n-placeholder]');
     for (var j = 0; j < placeholders.length; j++) {
@@ -570,6 +576,7 @@
     if (doc && doc.body) doc.body.setAttribute('data-lang', lang);
     if (!quiet) { try { SDP.Data.saveSettings({ lang: lang }); } catch (e) {} }
     applyI18n();
+    paintIconHosts();
     paintLangPills();
     var select = byId('setLang');
     if (select) select.value = lang;
@@ -605,7 +612,10 @@
     var select = byId('setTheme');
     if (select) select.value = theme;
     var icon = byId('themeIcon');
-    if (icon) setText(icon, theme === 'light' ? '◑' : (theme === 'board' ? '▣' : '◐'));
+    if (icon) {
+      icon.innerHTML = svgIcon(theme === 'light' ? 'sun' : (theme === 'board' ? 'target' : 'moon'), 20);
+      icon.setAttribute('data-icon', theme === 'light' ? 'sun' : (theme === 'board' ? 'target' : 'moon'));
+    }
     /* R7 / H5: Smart Board shows a clean quick-word jumper in the cockpit header. */
     var jumper = byId('quickJumper');
     if (jumper) {
@@ -1025,7 +1035,7 @@
     if (!banner) return false;
     if (banner.classList) banner.classList.remove('hidden');
     banner.hidden = false;
-    banner.textContent = t('guideAutoplayBanner', '🔊 Tap Anywhere to Start Voice Guide');
+    banner.textContent = t('guideAutoplayBanner', ' Tap Anywhere to Start Voice Guide');
     return true;
   }
   function hideGuideAutoplayBanner() {
@@ -1138,7 +1148,8 @@
     var conf = settings();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    if (conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
+    /* v0.0.4.c Path A: a cold boot paints the guide silently. */
+    if (!opts.fromBoot && conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
     armGuideAutoplayWatch();
     var banner = byId('guideTapBanner');
     if (banner && !banner._sdpBound) {
@@ -1324,7 +1335,7 @@
         '<div class="d-s">' + highlightWordInSentence(str(w.s), str(w.w)) + '</div>' +
         '</div>' +
         '<div class="d-side">' +
-        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '">🔊 Listen</button>' +
+        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '"> Listen</button>' +
         '<button type="button" class="btn btn-sm d-mark-correct" data-mark-word="mastered" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isMastered) + '">' + esc(t('markCorrectWord')) + '</button>' +
         '<button type="button" class="btn btn-sm d-mark-weak" data-mark-word="weak" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isWeak) + '">' + esc(t('markWeakWord')) + '</button>' +
         '</div>' +
@@ -1335,7 +1346,7 @@
     host.innerHTML = shown ? html : (list.length ? '<p class="dict-empty">' + esc(t('noWordsFound')) + '</p>' : '');
     return shown;
   }
-  /* D14: ✓ / ✗ write sdp.progress.mastered / weakWords and repaint. */
+  /* D14:  /  write sdp.progress.mastered / weakWords and repaint. */
   function markDictWord(wordName, state) {
     var key = str(wordName).toLowerCase();
     if (!key) return false;
@@ -1627,7 +1638,7 @@
           (global.localStorage ? str(global.localStorage.getItem('sdp.settings')).length : 0);
         kb = Math.round(payload / 1024);
       } catch (e) { kb = 0; }
-      setText(storage, (SDP.Data.available ? '' : '⚠ ') + kb + ' KB ' + t('storageLine'));
+      setText(storage, (SDP.Data.available ? '' : ' ') + kb + ' KB ' + t('storageLine'));
     }
   }
   function bindSettings() {
@@ -2323,6 +2334,7 @@
     applyTheme(normalizeTheme(conf.theme), true);
     applyLang(conf.lang === 'si' ? 'si' : 'en', true);
     bindShell();
+    paintIconHosts();
     bindTeacherUpdates();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
@@ -2334,7 +2346,7 @@
     renderGuideSteps();
     renderSettings();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
-    if (!SDP.Data.guideSeen()) openGuide();
+    if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
     showToast();
     try { SDP.Sync.registerSW(); } catch (e) {}
     try {
@@ -2343,32 +2355,95 @@
     return true;
   }
 
-  /* v0.0.4.a W5: modern inline SVG icon system — stroke-based, currentColor. */
+  /* v0.0.4.c (GAP 2) — the 56-icon dual-tone bank. Every glyph ships TWO
+     paths: .ic-fill (soft solid silhouette, 22% ink) and .ic-stroke (the 1.9px
+     line detail). Zero emoji pictographs remain in the DOM; every view, the
+     dictation transport and the studio ask this one function for an icon. */
   var ICON_PATHS = {
-    play: 'M8 5v14l11-7z',
-    pause: 'M6 5h4v14H6zM14 5h4v14h-4z',
-    prev: 'M6 6h2v12H6zM20 6l-10 6 10 6z',
-    next: 'M16 6h2v12h-2zM4 6l10 6-10 6z',
-    replay: 'M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z',
-    repeat: 'M17 1l4 4-4 4V6H7a4 4 0 0 0-4 4v2H1v-2a6 6 0 0 1 6-6h10V1zM7 23l-4-4 4-4v3h10a4 4 0 0 0 4-4v-2h2v2a6 6 0 0 1-6 6H7v3z',
-    bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.7 1 1.5 1 2.5h6c0-1 .2-1.8 1-2.5A6 6 0 0 0 12 3z',
-    check: 'M20 6L9 17l-5-5',
-    home: 'M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5',
-    headphones: 'M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v6H4zM17 14h3v6h-3z',
-    sparkles: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z',
-    list: 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01',
-    gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z',
-    cap: 'M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z',
-    book: 'M4 4a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2V4zM4 20a2 2 0 0 1 2-2h13',
-    sun: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
-    moon: 'M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z',
-    volume: 'M11 5L6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13',
-    eyeoff: 'M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 5.2A9.8 9.8 0 0 1 12 5c7 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A16.6 16.6 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 4-.8'
+    play: { f: 'M8 4.5l12 7.5-12 7.5z', s: 'M8 4.5l12 7.5-12 7.5z' },
+    pause: { f: 'M6 5h4v14H6zM14 5h4v14h-4z', s: 'M6 5h4v14H6zM14 5h4v14h-4z' },
+    stop: { f: 'M6 6h12v12H6z', s: 'M6 6h12v12H6z' },
+    prev: { f: 'M6 5h3v14H6zM19 5.5L9 12l10 6.5z', s: 'M6 5h3v14H6zM19 5.5L9 12l10 6.5z' },
+    next: { f: 'M18 5h3v14h-3zM5 5.5L15 12 5 18.5z', s: 'M18 5h3v14h-3zM5 5.5L15 12 5 18.5z' },
+    replay: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 5V2L7 6.5l5 4.5V7a5 5 0 11-5 5H5a7 7 0 107-7z' },
+    repeat: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M4 8a4 4 0 014-4h12M20 16a4 4 0 01-4 4H4M16 1l4 3-4 3M8 23l-4-3 4-3' },
+    volume: { f: 'M11 5L6 9H2v6h4l5 4z', s: 'M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13' },
+    volumeOff: { f: 'M11 5L6 9H2v6h4l5 4z', s: 'M11 5L6 9H2v6h4l5 4zM16 9l5 6M21 9l-5 6' },
+    mic: { f: 'M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3z', s: 'M8 11a4 4 0 008 0M12 15v4M9 21h6M7 11a5 5 0 0010 0' },
+    bulb: { f: 'M12 3a6 6 0 00-3.6 10.8c.6.5.9 1.2 1 2.2h5.2c.1-1 .4-1.7 1-2.2A6 6 0 0012 3z', s: 'M9.5 16h5M10 19h4M12 2v1M4 5l1 1M20 5l-1 1' },
+    check: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M20 6L9 17l-5-5' },
+    checkCircle: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M8 12.5l2.8 2.8L16 9.5' },
+    close: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M6 6l12 12M18 6L6 18' },
+    plus: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 5v14M5 12h14' },
+    minus: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M5 12h14' },
+    home: { f: 'M12 3l9 7.5v10.5H3V10.5z', s: 'M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5' },
+    headphones: { f: 'M12 3a8 8 0 018 8v5h-3v-5a5 5 0 00-10 0v5H4v-5a8 8 0 018-8z', s: 'M4 14v-2a8 8 0 0116 0v2M4 14h3v6H4zM17 14h3v6h-3z' },
+    sparkles: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z' },
+    list: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01' },
+    gear: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z' },
+    sliders: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M4 7h10M18 7h2M4 17h4M12 17h8M15 4v6M8 14v6' },
+    cap: { f: 'M12 4L1 9l11 5 9-4.1V15h2V9L12 4z', s: 'M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5' },
+    book: { f: 'M4 4a2 2 0 012-2h13v18H6a2 2 0 00-2 2V4z', s: 'M4 4a2 2 0 012-2h13v18H6a2 2 0 00-2 2V4zM4 20a2 2 0 012-2h13' },
+    sun: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1' },
+    moon: { f: 'M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z', s: 'M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z' },
+    eye: { f: 'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z', s: 'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7zM12 15a3 3 0 100-6 3 3 0 000 6z' },
+    eyeOff: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 5.2A9.8 9.8 0 0 1 12 5c7 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A16.6 16.6 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 4-.8' },
+    search: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21' },
+    download: { f: 'M5 14v6h14v-6', s: 'M12 3v12M7 11l5 5 5-5M4 20h16' },
+    upload: { f: 'M4 4h16v2H4z', s: 'M12 20V8M7 12l5-5 5 5M4 20h16' },
+    cloud: { f: 'M7 18h10a4 4 0 000-8 6 6 0 00-11.6 1.6A3.5 3.5 0 006 18z', s: 'M7 18h10a4 4 0 000-8 6 6 0 00-11.6 1.6A3.5 3.5 0 006 18z' },
+    cloudOff: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M3 3l18 18M7 18h9M18.5 14.5A4 4 0 0017 7a6 6 0 00-9.3 2.1' },
+    sync: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M20 12a8 8 0 01-13.7 5.6M4 12a8 8 0 0113.7-5.6M4 4v5h5M20 20v-5h-5' },
+    lock: { f: 'M5 11h14v9H5z', s: 'M8 11V8a4 4 0 018 0v3M5 11h14v9H5z' },
+    unlock: { f: 'M5 11h14v9H5z', s: 'M8 11V8a4 4 0 017-2.6M5 11h14v9H5z' },
+    key: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M14 4a6 6 0 00-5.6 8.1L3 17.5V21h3.5l1-1v-2h2v-2h2l1.1-1.1A6 6 0 1014 4z' },
+    shield: { f: 'M12 2l8 3v6c0 5-3.4 9.2-8 11-4.6-1.8-8-6-8-11V5z', s: 'M12 2l8 3v6c0 5-3.4 9.2-8 11-4.6-1.8-8-6-8-11V5z' },
+    user: { f: 'M12 12a4 4 0 100-8 4 4 0 000 8z', s: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
+    users: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2 21a7 7 0 0114 0M17 4.5a3.5 3.5 0 010 7M18 14a6 6 0 014 6' },
+    edit: { f: 'M4 20l1.5-5L16 4.5 19.5 8 9 18.5z', s: 'M14.5 6L18 9.5M4 20l1.5-5L16 4.5 19.5 8 9 18.5z' },
+    trash: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6' },
+    save: { f: 'M5 3h11l3 3v15H5z', s: 'M5 3h11l3 3v15H5zM8 3v6h8V3M8 13h8v8H8z' },
+    table: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M3 4h18v16H3zM3 9h18M3 14.5h18M9 9v11M15 9v11' },
+    chart: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M4 20V6M4 20h16M8 20v-6M13 20v-9M18 20v-4' },
+    clock: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 7v5l3.5 2M12 3a9 9 0 100 18 9 9 0 000-18z' },
+    alert: { f: 'M12 3l10 18H2z', s: 'M12 3l10 18H2zM12 9v5M12 17h.01' },
+    info: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 11v6M12 7h.01' },
+    star: { f: 'M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z', s: 'M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z' },
+    heart: { f: 'M12 20.5S3.5 15 3.5 9.3A4.8 4.8 0 0112 6a4.8 4.8 0 018.5 3.3C20.5 15 12 20.5 12 20.5z', s: 'M12 20.5S3.5 15 3.5 9.3A4.8 4.8 0 0112 6a4.8 4.8 0 018.5 3.3C20.5 15 12 20.5 12 20.5z' },
+    mail: { f: 'M3 5h18v14H3z', s: 'M3 5h18v14H3zM3 6l9 7 9-7' },
+    github: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M9 19c-4 1.5-4-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 4.5-1.4 4.5-5a4 4 0 00-1.1-2.8 3.7 3.7 0 00-.1-2.8s-1.2-.3-3.9 1.5a9.3 9.3 0 00-5 0C6.2 2.6 5 2.9 5 2.9a3.7 3.7 0 00-.1 2.8A4 4 0 003.8 8.5c0 3.6 1.7 4.7 4.5 5-.6.6-.5 1-.5 2V21' },
+    globe: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c2.5 2.4 3.9 5.5 4 9-.1 3.5-1.5 6.6-4 9-2.5-2.4-3.9-5.5-4-9 .1-3.5 1.5-6.6 4-9z' },
+    folder: { f: 'M3 6h6l2 2h10v11H3z', s: 'M3 6h6l2 2h10v11H3zM3 9h18' },
+    target: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8zM12 11.5a.5.5 0 100 1 .5.5 0 000-1z' },
+    keyboard: { f: 'M3 7h18v10H3z', s: 'M3 7h18v10H3zM7 11h.01M11 11h.01M15 11h.01M8 14h8' }
   };
-  function svgIcon(name, size) {
-    var d = ICON_PATHS[name] || ICON_PATHS.sparkles;
+  function iconNames() {
+    var out = [], k;
+    for (k in ICON_PATHS) { if (ICON_PATHS.hasOwnProperty(k)) out.push(k); }
+    return out;
+  }
+  function svgIcon(name, size, extraClass) {
+    var key = ICON_PATHS[name] ? name : 'sparkles';
+    var ic = ICON_PATHS[key];
     var s = Number(size) || 18;
-    return '<svg class="ic ic-' + esc(name) + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="' + d + '"/></svg>';
+    return '<svg class="sdp-icon sdp-icon-' + esc(key) + (extraClass ? ' ' + esc(extraClass) : '') +
+      '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path class="ic-fill" d="' + ic.f + '"/><path class="ic-stroke" d="' + ic.s + '"/></svg>';
+  }
+  /* Hosts declared in index.html as <span data-icon="name"> are painted once,
+     so the shell ships semantic placeholders instead of emoji. */
+  function paintIconHosts() {
+    if (!doc || !doc.querySelectorAll) return 0;
+    var hosts = doc.querySelectorAll('[data-icon]'), i, host, name, painted = 0;
+    for (i = 0; i < hosts.length; i++) {
+      host = hosts[i];
+      name = host.getAttribute('data-icon');
+      if (!name || !ICON_PATHS[name]) continue;
+      if (host.querySelector && host.querySelector('svg')) continue;
+      host.innerHTML = svgIcon(name, Number(host.getAttribute('data-icon-size')) || 18);
+      painted += 1;
+    }
+    return painted;
   }
   var Views = {
     init: init,
@@ -2435,7 +2510,7 @@
     onDataReady: onDataReady
   };
   SDP.Views = Views;
-  Views.Icons = { icon: svgIcon };
+  Views.Icons = { icon: svgIcon, names: iconNames, count: function () { return iconNames().length; }, paint: paintIconHosts };
   SDP.Icons = Views.Icons;
   SDP.STRINGS_EN = STRINGS_EN;
   SDP.STRINGS_SI = STRINGS_SI;

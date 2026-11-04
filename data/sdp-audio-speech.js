@@ -285,7 +285,9 @@
   var unlocked = false;
   function unlockAudio() {
     unlocked = true;
-    try { if (global.speechSynthesis && global.speechSynthesis.resume) global.speechSynthesis.resume(); } catch (e) {}
+    /* v0.0.4.c Path B: a first gesture only unlocks playback. Calling
+       speechSynthesis.resume() here re-queued the previous utterance, which is
+       exactly the stale voice students heard on a cold boot. */
     var el = sharedAudio();
     if (el) { try { el.load(); } catch (e) {} }
     if (!cachedProfVoice) warmProfessorVoice(noop);
@@ -529,9 +531,13 @@
       if (timer) { try { global.clearTimeout(timer); } catch (e) {} }
       if (state.urlTimer === timer) state.urlTimer = null;
       timer = null;
-      /* R1 Path C: detach the element handlers the moment this play finishes,
-         so a stale onended can never start another tier. */
-      if (el) { el.onended = null; el.onerror = null; }
+      /* R1 Path C + v0.0.4.c Path C: detach the handlers AND drop the finished
+         MP3 buffer, so no stale clip stays attached to the shared element. */
+      if (el) {
+        el.onended = null;
+        el.onerror = null;
+        try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {}
+      }
       if (state.speechEpoch !== pEpoch) return;
       cb(ok ? null : new Error('audio_failed'));
     }

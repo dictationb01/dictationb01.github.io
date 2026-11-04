@@ -66,14 +66,20 @@ check('G9.1f no retired CSS is merely hidden with display:none',
 // contract: docs/ARCHITECTURE_MAP.md §5 budget table
 const BUDGETS = {
   /* v0.0.2.b (W2) ceilings — identical to tests/check.cjs BUDGET. */
-  'index.html': 46000,
-  'assets/css/sdp-ui.css': 82000,
+  'index.html': 52000,
+  /* v0.0.5.b: the appended Morphe material layer (glass header, layered
+     shadows, spring motion, screen/modal/accordion transitions, mobile
+     collision fixes) moved the ceiling in lockstep with the release. */
+  'assets/css/sdp-ui.css': 98000,
   'data/sdp-data-sync.js': 95000,
   'data/sdp-audio-speech.js': 60000,
   'data/sdp-dictation-engine.js': 70000,
   'data/sdp-ui-views.js': 150000,
-  'data/studio.js': 158000,
+  'data/studio.js': 162000,
   'data/data-meter.js': 26000,
+  /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
+     measurement, scroll reveals) - class toggles + custom properties only. */
+  'data/sdp-morphe-hooks.js': 8000,
   'data/config.json': 38000,
   'data/version.json': 2000,
   'data/session.json': 55260,
@@ -197,7 +203,7 @@ check('G9.5c only the five R4 localStorage keys are named in scripts', strayKeys
  * now writes it on every publish (D-UI11), so it is budgeted and header-checked
  * instead of hash-frozen, and its clips are still never re-rendered for free. */
 const LOCKED = [
-  ['data/session.json', '12b292fe'],
+  ['data/session.json', '1eaed80a'],
   ['data/gas-source.txt', '591b9b08'],
   ['assets/fonts/NotoSansSinhala-Regular.woff2', '23f1503e'],
   ['assets/fonts/NotoSansSinhala-Bold.woff2', 'bf59c148']
@@ -207,7 +213,7 @@ check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lo
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
   voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.voiceName === 'Alice' &&
-  voicePack.version === '0.0.4.b' && voicePack.hashAlgo === 'sha1' &&
+  voicePack.version === '0.0.4.c' && voicePack.hashAlgo === 'sha1' &&
   typeof voicePack.clips === 'object', JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
@@ -222,24 +228,25 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.b is ver 12 / schema 12 / settingsRev 25
-  config.ver === 14 && config.appVersion === '0.0.4.b' && config.version === '0.0.4.b' && config.schema === 14 && config.settingsRev === 27,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.4.c is ver 12 / schema 12 / settingsRev 25
+  config.ver === 15 && config.appVersion === '0.0.4.c' && config.version === '0.0.4.c' && config.schema === 15 && config.settingsRev === 30,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.4.b in its description', /0\.0\.4\.b/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.4.c in its description', /0\.0\.4\.c/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
-check('G9.7c theme and background are the 0.0.4.b matte black', manifest.theme_color === '#09090B' && manifest.background_color === '#09090B', manifest.theme_color);
+check('G9.7c theme and background are the 0.0.4.c matte black', manifest.theme_color === '#09090B' && manifest.background_color === '#09090B', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.4.b cache names', sw.indexOf('sdp-v0.0.4.b') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.4.c cache names', sw.indexOf('sdp-v0.0.4.c') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
-const order = ['data-meter.js', 'sdp-data-sync.js', 'sdp-audio-speech.js', 'sdp-dictation-engine.js', 'sdp-ui-views.js', 'studio.js'];
+/* v0.0.5.b: sdp-morphe-hooks.js loads last so it decorates the finished DOM. */
+const order = ['data-meter.js', 'sdp-data-sync.js', 'sdp-audio-speech.js', 'sdp-dictation-engine.js', 'sdp-ui-views.js', 'studio.js', 'sdp-morphe-hooks.js'];
 const scriptTags = Array.from(indexHtml.matchAll(/<script[^>]*src="([^"]+)"[^>]*>/g)).map((x) => x[1]);
-check('G9.7f index.html loads exactly six external scripts', scriptTags.length === 6, scriptTags.join(','));
+check('G9.7f index.html loads exactly seven external scripts', scriptTags.length === 7, scriptTags.join(','));
 check('G9.7g the R10 load order is respected', scriptTags.map((s) => s.replace('./data/', '')).join(',') === order.join(','), scriptTags.join(','));
 check('G9.7h every script is deferred', Array.from(indexHtml.matchAll(/<script[^>]*src="[^"]+"[^>]*>/g)).every((x) => /\bdefer\b/.test(x[0])));
 

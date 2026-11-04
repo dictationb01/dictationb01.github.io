@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.c'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -375,12 +375,12 @@ async function unlockStudio(app) {
       JSON.stringify(barButtons) === JSON.stringify(['btnSaveKeys', 'btnOneClickMasterSetup']), barButtons.join(','));
     check('G12.9n #btnSaveKeys is the secondary vault-only action',
       app.byId('btnSaveKeys').textContent === app.SDP.STRINGS_EN.studioSave &&
-      /^💾 Save Keys to Vault Only$/.test(app.byId('btnSaveKeys').textContent) &&
+      /^\s*Save Keys to Vault Only$/.test(app.byId('btnSaveKeys').textContent) &&
       /btn-ghost/.test(app.byId('btnSaveKeys').className),
       app.byId('btnSaveKeys').textContent);
     check('G12.9o #btnOneClickMasterSetup is the primary 70-clip CTA',
       app.byId('btnOneClickMasterSetup').textContent === app.SDP.STRINGS_EN.studioOneClick &&
-      /^🚀 Generate 70 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
+      /^\s*Generate 70 British Professor Voices & Sync All Devices$/.test(app.byId('btnOneClickMasterSetup').textContent) &&
       app.byId('btnOneClickMasterSetup').getAttribute('data-primary-cta') === '1',
       app.byId('btnOneClickMasterSetup').textContent);
     check('G12.9p the legacy quota buttons stay in the DOM but hidden',

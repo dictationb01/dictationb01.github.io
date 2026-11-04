@@ -49,7 +49,7 @@ function installVoices(app, list) {
   /* ── 1. D-V1: the ReferenceError that killed v0.0.1.b ────────────────── */
   // contract: docs/CHANGELOG_LEDGER.md §D-V1 — pickVoice must always be a function
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.c'); } });
     check('G10.1a the speech module exports pickVoice as a function',
       typeof app.SDP.Speech.pickVoice === 'function');
     let picked = 'unset';
@@ -65,7 +65,7 @@ function installVoices(app, list) {
   /* ── 2. D-V2: one unified British female professor, male names banned ── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 male-name blacklist
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.c'); } });
     const list = fakeVoices();
     installVoices(app, list);
     await new Promise((resolve) => app.SDP.Speech.selectProfessorVoice((v) => { app.w.__picked = v; resolve(); }));
@@ -134,7 +134,7 @@ function installVoices(app, list) {
       /runId !== guideState\.guideRunId/.test(block) && /guideState\.guideRunId \+= 1/.test(viewSrc));
     app.byId('btnGuideClose').click();
     check('G10.3l closing hides the modal and stamps the visit',
-      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.4.b');
+      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.4.c');
     app.close();
   }
 
@@ -146,7 +146,7 @@ function installVoices(app, list) {
     check('G10.4b a banner tap resumes the CURRENT step, never step 1',
       /startGuideNarration\(guideState\.activeStep\)/.test(viewSrc) &&
       !/onGuideBannerTap[\s\S]{0,400}?startGuideNarration\(0\)/.test(viewSrc));
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.4.c'); } });
     app.byId('btnReplayGuide').click();
     await app.settle(4);
     const banner = app.byId('guideTapBanner');
@@ -171,7 +171,7 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.4.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.4.c');
         /* appliedSettingsRev pins the student's own lock against adoption. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({ voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
       }
@@ -205,11 +205,11 @@ function installVoices(app, list) {
   }
 
   /* ── 7. R1 (F1): the ghost-voice kill switch ─────────────────────────── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.4.b — Session paused. once, zero late "Afraid."
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.4.c — Session paused. once, zero late "Afraid."
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.4.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.4.c');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
@@ -241,11 +241,11 @@ function installVoices(app, list) {
   }
 
   /* ── 8. R3: the classroom opening cue chain ──────────────────────────── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.4.b — cmd.preparing → num.N → the word
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.4.c — cmd.preparing → num.N → the word
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.4.b');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.4.c');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,

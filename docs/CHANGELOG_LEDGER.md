@@ -1,3 +1,22 @@
+## v0.0.4.c — 2026-11-04 — Unified Morphe Material Layer, 56 Dual-Tone Icons & 4-Path Stale-Audio Fix
+
+**Release type:** UI + audio release over v0.0.4.b. No classroom-data migration: `data/session.json`, `data/gas-source.txt`, both Sinhala fonts and every one of the 100 committed Alice clips stay byte-identical. **0 ElevenLabs credits spent** — no request ever reached `POST /v1/text-to-speech`.
+
+**Stamp:** `appVersion/version '0.0.4.c'` · `ver 15` · `schema 15` · `settingsRev 30` · `syncRev 1793740000000` · `SW_VERSION 'sdp-v0.0.4.c-s15'` / `SHELL_CACHE 'sdp-v0.0.4.c-s15-shell'` · `TARGET='0.0.4.c'`.
+
+### Fixes
+
+* **GAP 1 — true Morphe glass (sdp-ui.css)** — the legacy `backdrop-filter: none !important` kill-switch is retired from the chrome; it survives only on the opaque `.card` / `.pill` / `.chip`. The locked cascade applies `blur(12px) !important` to `#appHeader`, `#tabbar`, `#sdpSideRail`, `blur(8px)` to `#sdpDataToast` and `blur(4px)` to `.modal`, with the Zinc/Crisp-Light/Smart-Board token sets, the shadow ladder plus `--shadow-2xl`, the `linear()` spring, `--ease-emph`, the pointer-tracked `.lit` glow and `data/sdp-morphe-hooks.js` (lit cards, theme cross-fade, measured accordion, scroll reveals, header scroll state).
+* **GAP 2 — 56-icon dual-tone bank** — `ICON_PATHS` (56 entries) and `svgIcon(name, size, extraClass)` render `<path class="ic-fill">` + `<path class="ic-stroke">`; the shell ships `data-icon` hosts instead of emoji, `applyI18n()` updates `.i18n-label` children so EN ↔ SI never wipes an icon, `setBtnIconLabel()` keeps the transport ink through every beat repaint, and the studio's `btn()` / word rows use the same bank (30/30 rows carry an SVG audio-preview button).
+* **GAP 2 — 4-path stale audio** — A: a cold boot opens the guide silently (`fromBoot`); B: `unlockAudio()` no longer calls `speechSynthesis.resume()`; C: `playUrl().finish()` detaches `src` and reloads the element; D: `Studio.lock()` cancels speech and the TTS queue.
+* **GAP 3 — zero-clipping header** — one 54 px `nowrap` row: `.b1badge`, the swan, `#sdpVerPill` and `.studio-quick-label` collapse at ≤640 px, `#syncBadge` shrinks (hidden ≤380 px) and `#brandName` stays the sole ellipsis child. At 390 px and 320 px the brand renders whole, actions end at 384/314 px and `scrollWidth` never exceeds the viewport.
+* **GAP 4/5 — lockstep** — all ten versioned surfaces agree, `sdp-morphe-hooks.js` is in `index.html` (7th deferred script), the `SHELL` precache and both budget tables; `check.cjs` and `audit-v42.cjs` caps now read index 52,000 / CSS 98,000 / views 150,000 / studio 162,000 / hooks 8,000 B.
+* **Gates** — 12/12 green, 0 FAIL. The vault-sync fixtures now derive their publish revision from the live config instead of a frozen `settingsRev`, and the session hash lock re-pins the lecturer's published `session.json`.
+
+### Preserved, byte for byte
+
+`session.json` 55,260 B `1eaed80a290be4ef` · `gas-source.txt` 13,764 B `591b9b086f6d3723` · both Sinhala `.woff2` `23f1503e1e754139` / `bf59c1487b0a88a0` · `config.json` `encVault` (`SDP_ENC_V2:…`, bootstrap PIN 78987898) and `pinVerifier` verbatim · all 100 Alice (`Xb7hH8MSUJpSbSDYk0k2`) clips intact in `data/elevenlabs-audio.json`.
+
 ## v0.0.3 — 2026-11-03 — Unified Voice System, Ghost-Voice Kill-Switch & Incremental UI Fix
 
 **Release type:** voice + UI release over v0.0.2.b (P1–P8, D1–D20). No classroom-data migration: `sdp.progress`, `sdp.session`, both Sinhala fonts, `data/session.json` and `data/gas-source.txt` stay byte-identical.

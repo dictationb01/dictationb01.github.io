@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#09090B">
-<meta name="description" content="Smart Dictation Player v0.0.4.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.4.c — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -14,564 +14,566 @@
 <body>
 
 <header id="appHeader">
-  <div id="sdpBrand">
-    <svg class="swan" viewBox="0 0 48 32" aria-hidden="true" focusable="false">
-      <path d="M4 26c6-2 9-7 12-14 3 7 7 12 13 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"></path>
-      <circle cx="17" cy="8" r="2.6" fill="currentColor"></circle>
-    </svg>
-    <span id="brandName">Smart Dictation</span>
-    <span class="b1badge">CCBE B1</span>
-    <span id="sdpVerPill">v0.0.4.b</span>
-    <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
-    <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio">🔒 Lecturer Admin</button>
-    <div id="quickJumper" class="quick-jumper" hidden>
-      <label class="muted" for="setQuickWord">Jump to word:</label>
-      <select id="setQuickWord" class="input"></select>
-    </div>
+ <div id="sdpBrand">
+  <svg class="swan" viewBox="0 0 48 32" aria-hidden="true" focusable="false">
+   <path d="M4 26c6-2 9-7 12-14 3 7 7 12 13 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"></path>
+   <circle cx="17" cy="8" r="2.6" fill="currentColor"></circle>
+  </svg>
+  <span id="brandName">Smart Dictation</span>
+  <span class="b1badge">CCBE B1</span>
+  <div id="quickJumper" class="quick-jumper" hidden>
+   <label class="muted" for="setQuickWord">Jump to word:</label>
+   <select id="setQuickWord" class="input"></select>
   </div>
-  <div class="header-actions">
-    <button id="btnGuideTop" type="button" class="hbtn" data-i18n="guideBtn" aria-label="Open the student guide">? Guide</button>
-    <button id="btnLang" type="button" class="hbtn" aria-label="Switch language between English and Sinhala"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
-    <button id="btnTheme" type="button" class="hbtn hbtn-icon" aria-label="Switch theme between dark and light"><span id="themeIcon" aria-hidden="true">◐</span></button>
-  </div>
+ </div>
+ <div class="header-cluster">
+  <span id="sdpVerPill">v0.0.4.c</span>
+  <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
+  <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
+ </div>
+ <div class="header-actions">
+  <button id="btnGuideTop" type="button" class="hbtn" data-i18n="guideBtn" aria-label="Open the student guide">? Guide</button>
+  <button id="btnLang" type="button" class="hbtn" aria-label="Switch language between English and Sinhala"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
+  <button id="btnTheme" type="button" class="hbtn hbtn-icon" aria-label="Switch theme between dark and light"><span id="themeIcon" data-icon="moon" data-icon-size="20" aria-hidden="true"></span></button>
+ </div>
 </header>
 
 <div id="sdpLayout">
-  <nav id="sdpSideRail" aria-label="Sections">
-    <button id="rail-home" type="button" class="rail-btn" data-tab="home" aria-selected="true">
-      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
-      <span data-i18n="tabHome">Home</span></button>
-    <button id="rail-player" type="button" class="rail-btn" data-tab="player" aria-selected="false">
-      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-      <span data-i18n="tabPlayer">Dictation</span></button>
-    <button id="rail-practice" type="button" class="rail-btn" data-tab="practice" aria-selected="false">
-      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
-      <span data-i18n="tabPractice">Practice</span></button>
-    <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false">
-      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
-      <span data-i18n="tabWords">30 Words</span></button>
-    <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false">
-      <span class="rail-ico" aria-hidden="true">
-        <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
-        </span>
-      <span data-i18n="tabSettings">Settings</span></button>
-    <button id="rail-studio" type="button" class="rail-btn" data-tab="studio" aria-selected="false">
-      <span class="rail-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
-      <span data-i18n="tabStudio">Lecturer</span></button>
-  </nav>
+ <nav id="sdpSideRail" aria-label="Sections">
+  <button id="rail-home" type="button" class="rail-btn" data-tab="home" aria-selected="true">
+   <span class="rail-ico" aria-hidden="true"><span data-icon="home"></span></span>
+   <span data-i18n="tabHome">Home</span></button>
+  <button id="rail-player" type="button" class="rail-btn" data-tab="player" aria-selected="false">
+   <span class="rail-ico" aria-hidden="true"><span data-icon="play"></span></span>
+   <span data-i18n="tabPlayer">Dictation</span></button>
+  <button id="rail-practice" type="button" class="rail-btn" data-tab="practice" aria-selected="false">
+   <span class="rail-ico" aria-hidden="true"><span data-icon="sparkles"></span></span>
+   <span data-i18n="tabPractice">Practice</span></button>
+  <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false">
+   <span class="rail-ico" aria-hidden="true"><span data-icon="list"></span></span>
+   <span data-i18n="tabWords">30 Words</span></button>
+  <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false">
+   <span class="rail-ico" aria-hidden="true">
+    <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+    </span>
+   <span data-i18n="tabSettings">Settings</span></button>
+  <button id="rail-studio" type="button" class="rail-btn" data-tab="studio" aria-selected="false">
+   <span class="rail-ico" aria-hidden="true"><span data-icon="cap"></span></span>
+   <span data-i18n="tabStudio">Lecturer</span></button>
+ </nav>
 
-  <main id="sdpScreens" tabindex="-1">
+ <main id="sdpScreens" tabindex="-1">
 
-    <section id="screen-home" class="screen active" aria-labelledby="homeTitle">
-      <div id="resumeBanner" class="card resume-card" role="status" aria-live="polite" hidden>
+  <section id="screen-home" class="screen active" aria-labelledby="homeTitle">
+   <div id="resumeBanner" class="card resume-card" role="status" aria-live="polite" hidden>
 
-      <!-- E9: sound-symbol practice deck — hidden until the lecturer opens it,
-           keeps every element ID alive off the active chrome (never deleted). -->
-      <div id="symbolDeck" class="deck" hidden>
-        <div class="deck-head">
-          <span class="step-tag" aria-hidden="true" data-i18n="homeStep4Tag">STEP 4</span>
-          <h2 class="card-title">Sound Symbols · IPA Practice Deck</h2>
-          <p class="muted">Tap a symbol to hear its British English sound.</p>
-        </div>
-        <div class="deck-grid" id="symbolDeckGrid">
-          <button type="button" class="symbol-card" data-symbol="ˈæ">cat /ˈkæt/</button>
-          <button type="button" class="symbol-card" data-symbol="ˈɑː">father /ˈfɑːðə/</button>
-          <button type="button" class="symbol-card" data-symbol="ˈe">pen /pen/</button>
-          <button type="button" class="symbol-card" data-symbol="ˈi">happy /ˈhæpi/</button>
-          <button type="button" class="symbol-card" data-symbol="ɒ">hot /hɒt/</button>
-          <button type="button" class="symbol-card" data-symbol="ɔː">saw /sɔː/</button>
-          <button type="button" class="symbol-card" data-symbol="ʊ">put /pʊt/</button>
-          <button type="button" class="symbol-card" data-symbol="uː">too /tuː/</button>
-          <button type="button" class="symbol-card" data-symbol="ʌ">cup /kʌp/</button>
-          <button type="button" class="symbol-card" data-symbol="ɜː">bird /bɜːd/</button>
-          <button type="button" class="symbol-card" data-symbol="ə">about /əˈbaʊt/</button>
-          <button type="button" class="symbol-card" data-symbol="ð">this /ðɪs/</button>
-          <button type="button" class="symbol-card" data-symbol="θ">think /θɪŋk/</button>
-          <button type="button" class="symbol-card" data-symbol="ʃ">ship /ʃɪp/</button>
-          <button type="button" class="symbol-card" data-symbol="ʒ">measure /ˈmeʒə/</button>
-        </div>
-        <button id="btnSymbolDeckClose" type="button" class="btn btn-ghost">Close spotlight</button>
-      </div>
+   <!-- E9: sound-symbol practice deck — hidden until the lecturer opens it,
+      keeps every element ID alive off the active chrome (never deleted). -->
+   <div id="symbolDeck" class="deck" hidden>
+    <div class="deck-head">
+     <span class="step-tag" aria-hidden="true" data-i18n="homeStep4Tag">STEP 4</span>
+     <h2 class="card-title">Sound Symbols · IPA Practice Deck</h2>
+     <p class="muted">Tap a symbol to hear its British English sound.</p>
+    </div>
+    <div class="deck-grid" id="symbolDeckGrid">
+     <button type="button" class="symbol-card" data-symbol="ˈæ">cat /ˈkæt/</button>
+     <button type="button" class="symbol-card" data-symbol="ˈɑː">father /ˈfɑːðə/</button>
+     <button type="button" class="symbol-card" data-symbol="ˈe">pen /pen/</button>
+     <button type="button" class="symbol-card" data-symbol="ˈi">happy /ˈhæpi/</button>
+     <button type="button" class="symbol-card" data-symbol="ɒ">hot /hɒt/</button>
+     <button type="button" class="symbol-card" data-symbol="ɔː">saw /sɔː/</button>
+     <button type="button" class="symbol-card" data-symbol="ʊ">put /pʊt/</button>
+     <button type="button" class="symbol-card" data-symbol="uː">too /tuː/</button>
+     <button type="button" class="symbol-card" data-symbol="ʌ">cup /kʌp/</button>
+     <button type="button" class="symbol-card" data-symbol="ɜː">bird /bɜːd/</button>
+     <button type="button" class="symbol-card" data-symbol="ə">about /əˈbaʊt/</button>
+     <button type="button" class="symbol-card" data-symbol="ð">this /ðɪs/</button>
+     <button type="button" class="symbol-card" data-symbol="θ">think /θɪŋk/</button>
+     <button type="button" class="symbol-card" data-symbol="ʃ">ship /ʃɪp/</button>
+     <button type="button" class="symbol-card" data-symbol="ʒ">measure /ˈmeʒə/</button>
+    </div>
+    <button id="btnSymbolDeckClose" type="button" class="btn btn-ghost">Close spotlight</button>
+   </div>
 
-        <p id="resumeText" class="resume-title">Continue where you stopped</p>
-        <p id="resumeMeta" class="resume-meta" data-i18n="resumeMetaIdle">Paused at Word #1 of 30</p>
-        <div class="resume-actions">
-          <button id="btnResumeDraft" type="button" class="btn btn-go" data-i18n="resumePaused" hidden>▶ Resume Paused Dictation</button>
-          <button id="btnResume" type="button" class="btn" data-i18n="resumeSession">Continue where you stopped</button>
-          <button id="btnStartOver" type="button" class="btn btn-ghost" data-i18n="startOver">↺ Start Over from Word #1</button>
-        </div>
-      </div>
+    <p id="resumeText" class="resume-title">Continue where you stopped</p>
+    <p id="resumeMeta" class="resume-meta" data-i18n="resumeMetaIdle">Paused at Word #1 of 30</p>
+    <div class="resume-actions">
+     <button id="btnResumeDraft" type="button" class="btn btn-go" data-i18n="resumePaused" hidden>▶ Resume Paused Dictation</button>
+     <button id="btnResume" type="button" class="btn" data-i18n="resumeSession">Continue where you stopped</button>
+     <button id="btnStartOver" type="button" class="btn btn-ghost" ><span data-icon="replay" data-icon-size="16"></span><span class="i18n-label" data-i18n="startOver">↺ Start Over from Word #1</span></button>
+    </div>
+   </div>
 
-      <div id="homeHero" class="card hero">
-        <span class="step-tag" aria-hidden="true" data-i18n="homeStep1Tag">STEP 1</span>
-        <h1 id="homeTitle" data-i18n="homeTitle">Smart Dictation</h1>
-        <p id="homeSub" data-i18n="homeSub">Listen, write, and check 30 B1 words with your class.</p>
-        <p id="homeReadyBadge" class="ready-badge" role="status" data-i18n="homeReadyBadge">Session 8 ready · 30 words</p>
-        <p id="homePresetBadge" class="preset-badge" role="status" data-i18n="homePresetBadge">Fast Exam · 5s · 2× · British English</p>
-        <p id="bankEmpty" class="empty-state" role="status" data-i18n="emptyBank" hidden>No word list is available yet. Connect once, then tap "Check for session update" in Settings.</p>
-        <div class="hero-actions">
-          <span class="cta-wrap">
-            <button id="btnStart" type="button" class="btn btn-primary" data-primary-cta="1" data-i18n="startDictation">▶ Start Dictation (Word #1 to #30)</button>
-            <span class="cue" data-cue="home" data-i18n="cueStep1">STEP 1 — PRESS HERE</span>
-          </span>
-          <button id="btnGuide" type="button" class="btn btn-ghost" data-i18n="voiceGuideBtn">🔊 Interactive Voice Guide</button>
-        </div>
-        <div id="homeModePills" class="pill-row" role="group" aria-label="Dictation mode">
-          <button type="button" class="pill" data-mode="paper" aria-pressed="true" data-i18n="modePaperFull">📒 Write in Exercise Book (Paper)</button>
-          <button type="button" class="pill" data-mode="typing" aria-pressed="false" data-i18n="modeTypingFull">⌨️ Type on Screen</button>
-        </div>
-      </div>
+   <div id="homeHero" class="card hero">
+    <span class="step-tag" aria-hidden="true" data-i18n="homeStep1Tag">STEP 1</span>
+    <h1 id="homeTitle" data-i18n="homeTitle">Smart Dictation</h1>
+    <p id="homeSub" data-i18n="homeSub">Listen, write, and check 30 B1 words with your class.</p>
+    <p id="homeReadyBadge" class="ready-badge" role="status" data-i18n="homeReadyBadge">Session 8 ready · 30 words</p>
+    <p id="homePresetBadge" class="preset-badge" role="status" data-i18n="homePresetBadge">Fast Exam · 5s · 2× · British English</p>
+    <p id="bankEmpty" class="empty-state" role="status" data-i18n="emptyBank" hidden>No word list is available yet. Connect once, then tap "Check for session update" in Settings.</p>
+    <div class="hero-actions">
+     <span class="cta-wrap">
+      <button id="btnStart" type="button" class="btn btn-primary" data-primary-cta="1" data-i18n="startDictation">▶ Start Dictation (Word #1 to #30)</button>
+      <span class="cue" data-cue="home" data-i18n="cueStep1">STEP 1 — PRESS HERE</span>
+     </span>
+     <button id="btnGuide" type="button" class="btn btn-ghost" ><span data-icon="volume" data-icon-size="16"></span><span class="i18n-label" data-i18n="voiceGuideBtn"> Interactive Voice Guide</span></button>
+    </div>
+    <div id="homeModePills" class="pill-row" role="group" aria-label="Dictation mode">
+     <button type="button" class="pill" data-mode="paper" aria-pressed="true" ><span data-icon="book" data-icon-size="16"></span><span class="i18n-label" data-i18n="modePaperFull"> Write in Exercise Book (Paper)</span></button>
+     <button type="button" class="pill" data-mode="typing" aria-pressed="false" ><span data-icon="keyboard" data-icon-size="16"></span><span class="i18n-label" data-i18n="modeTypingFull">⌨ Type on Screen</span></button>
+    </div>
+   </div>
 
-      <div id="homeWordsCard" class="card home-words-card">
-        <span class="step-tag" aria-hidden="true" data-i18n="homeStep2Tag">STEP 2</span>
-        <h2 class="card-title" data-i18n="homeWordsTitle">Check &amp; Study All 30 Session Words in Order #1–#30</h2>
-        <p class="muted" data-i18n="homeWordsSub">Every word in class order with its British IPA, Sinhala meaning and example sentence.</p>
-        <button id="btnHomeWords" type="button" class="btn" data-i18n="homeWordsBtn">☰ Open the 30-Word List (#1–#30)</button>
-        <div id="homeWordsPreview" class="home-words-preview"></div>
-      </div>
+   <div id="homeWordsCard" class="card home-words-card">
+    <span class="step-tag" aria-hidden="true" data-i18n="homeStep2Tag">STEP 2</span>
+    <h2 class="card-title" data-i18n="homeWordsTitle">Check &amp; Study All 30 Session Words in Order #1–#30</h2>
+    <p class="muted" data-i18n="homeWordsSub">Every word in class order with its British IPA, Sinhala meaning and example sentence.</p>
+    <button id="btnHomeWords" type="button" class="btn" ><span data-icon="list" data-icon-size="16"></span><span class="i18n-label" data-i18n="homeWordsBtn"> Open the 30-Word List (#1–#30)</span></button>
+    <div id="homeWordsPreview" class="home-words-preview"></div>
+   </div>
 
-      <div id="homeQuickPractice" class="card">
-        <span class="step-tag" aria-hidden="true" data-i18n="homeStep3Tag">STEP 3</span>
-        <h2 class="card-title" data-i18n="quickPractice">Quick practice</h2>
-        <div class="practice-grid">
-          <button type="button" class="practice-card" data-prac="flash">
-            <span class="prac-ico" aria-hidden="true">🗂️</span>
-            <span class="prac-copy"><span class="prac-title" data-i18n="flashcards">Flashcards</span><span class="prac-sub" data-i18n="flashcardsSub">Flip through all 30 words</span></span>
-          </button>
-          <button type="button" class="practice-card" data-prac="quiz">
-            <span class="prac-ico" aria-hidden="true">✅</span>
-            <span class="prac-copy"><span class="prac-title" data-i18n="quiz">4-Choice Quiz</span><span class="prac-sub" data-i18n="quizSub">Pick the right meaning</span></span>
-          </button>
-          <button type="button" class="practice-card" data-prac="listen">
-            <span class="prac-ico" aria-hidden="true">🎧</span>
-            <span class="prac-copy"><span class="prac-title" data-i18n="listening">Listening Drill</span><span class="prac-sub" data-i18n="listeningSub">Hear it, then choose</span></span>
-          </button>
-          <button type="button" class="practice-card" data-prac="weak">
-            <span class="prac-ico" aria-hidden="true">🎯</span>
-            <span class="prac-copy"><span class="prac-title" data-i18n="weakWords">Weak Words</span><span class="prac-sub" data-i18n="weakWordsSub">Retry the ones you missed</span></span>
-          </button>
-        </div>
-      </div>
+   <div id="homeQuickPractice" class="card">
+    <span class="step-tag" aria-hidden="true" data-i18n="homeStep3Tag">STEP 3</span>
+    <h2 class="card-title" data-i18n="quickPractice">Quick practice</h2>
+    <div class="practice-grid">
+     <button type="button" class="practice-card" data-prac="flash">
+      <span class="prac-ico" aria-hidden="true" data-icon="folder" data-icon-size="22"></span>
+      <span class="prac-copy"><span class="prac-title" data-i18n="flashcards">Flashcards</span><span class="prac-sub" data-i18n="flashcardsSub">Flip through all 30 words</span></span>
+     </button>
+     <button type="button" class="practice-card" data-prac="quiz">
+      <span class="prac-ico" aria-hidden="true" data-icon="checkCircle" data-icon-size="22"></span>
+      <span class="prac-copy"><span class="prac-title" data-i18n="quiz">4-Choice Quiz</span><span class="prac-sub" data-i18n="quizSub">Pick the right meaning</span></span>
+     </button>
+     <button type="button" class="practice-card" data-prac="listen">
+      <span class="prac-ico" aria-hidden="true" data-icon="headphones" data-icon-size="22"></span>
+      <span class="prac-copy"><span class="prac-title" data-i18n="listening">Listening Drill</span><span class="prac-sub" data-i18n="listeningSub">Hear it, then choose</span></span>
+     </button>
+     <button type="button" class="practice-card" data-prac="weak">
+      <span class="prac-ico" aria-hidden="true" data-icon="target" data-icon-size="22"></span>
+      <span class="prac-copy"><span class="prac-title" data-i18n="weakWords">Weak Words</span><span class="prac-sub" data-i18n="weakWordsSub">Retry the ones you missed</span></span>
+     </button>
+    </div>
+   </div>
 
-      <div id="homeJourneyCard" class="card journey">
-        <h2 class="card-title" data-i18n="homeJourneyTitle">Your 3 steps today</h2>
-        <ol class="journey-list">
-          <li><span class="step-badge" aria-hidden="true">1</span><span data-i18n="homeJourney1">Listen &amp; write</span></li>
-          <li><span class="step-badge" aria-hidden="true">2</span><span data-i18n="homeJourney2">Check your 30 words</span></li>
-          <li><span class="step-badge" aria-hidden="true">3</span><span data-i18n="homeJourney3">Train weak words</span></li>
-        </ol>
-      </div>
+   <div id="homeJourneyCard" class="card journey">
+    <h2 class="card-title" data-i18n="homeJourneyTitle">Your 3 steps today</h2>
+    <ol class="journey-list">
+     <li><span class="step-badge" aria-hidden="true">1</span><span data-i18n="homeJourney1">Listen &amp; write</span></li>
+     <li><span class="step-badge" aria-hidden="true">2</span><span data-i18n="homeJourney2">Check your 30 words</span></li>
+     <li><span class="step-badge" aria-hidden="true">3</span><span data-i18n="homeJourney3">Train weak words</span></li>
+    </ol>
+   </div>
 
-      <div id="homeStatsRow" class="stats-row">
-        <div class="card stat"><strong id="statMastered">0 / 30</strong><span data-i18n="statMastered">Mastered</span></div>
-        <div class="card stat"><strong id="statAccuracy">0%</strong><span data-i18n="statAccuracy">Accuracy</span></div>
-        <div class="card stat"><strong id="statStreak">0</strong><span data-i18n="statStreak">Day streak</span></div>
-      </div>
+   <div id="homeStatsRow" class="stats-row">
+    <div class="card stat"><strong id="statMastered">0 / 30</strong><span data-i18n="statMastered">Mastered</span></div>
+    <div class="card stat"><strong id="statAccuracy">0%</strong><span data-i18n="statAccuracy">Accuracy</span></div>
+    <div class="card stat"><strong id="statStreak">0</strong><span data-i18n="statStreak">Day streak</span></div>
+   </div>
 
-      <div id="homeAnn" class="card ann" hidden>
-        <h2 class="card-title" data-i18n="announcements">Class announcement</h2>
-        <p id="homeAnnText"></p>
-      </div>
+   <div id="homeAnn" class="card ann" hidden>
+    <h2 class="card-title" data-i18n="announcements">Class announcement</h2>
+    <p id="homeAnnText"></p>
+   </div>
 
-      <footer id="creditFoot">
-        <span class="credits-pill">CREDITS GOES TO Hansana</span>
-        <p class="credit-line">Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)</p>
-        <p class="credit-line credit-line-si" lang="si">නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini</p>
-      </footer>
+   <footer id="creditFoot">
+    <span class="credits-pill">CREDITS GOES TO Hansana</span>
+    <p class="credit-line">Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)</p>
+    <p class="credit-line credit-line-si" lang="si">නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini</p>
+   </footer>
+  </section>
+
+  <section id="screen-player" class="screen" aria-labelledby="sessionTitle">
+   <div id="sessionProgressStrip" class="card progress-strip" role="group" aria-label="Session progress">
+    <!-- Phase 5: ONE header line — word, repeat and write window. -->
+    <p class="cockpit-line">
+     <span id="sessionProgressCount" class="strip-count" data-i18n="progressWordUpper">WORD #01 / 30</span>
+     <span class="line-sep" aria-hidden="true">·</span>
+     <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 of 2</span>
+     <span class="line-sep" aria-hidden="true">·</span>
+     <span id="playerPresetBadge" class="badge">5s Write · 2×</span>
+    </p>
+    <button id="pillsDrawerToggle" type="button" class="btn btn-sm pills-toggle" aria-expanded="false" aria-controls="pillsDrawer">Jump to Word 1–30 ▾</button>
+    <div id="pillsDrawer" class="pills-drawer" hidden>
+     <div id="sessionPills" class="word-pills"></div>
+    </div>
+   </div>
+   <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Smart Board classroom controls" hidden>
+    <div class="board-transport">
+     <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">▶ Play / Pause</span></button>
+     <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
+     <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">⏭ Next</span></button>
+    </div>
+    <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
+    <div class="board-word-row">
+     <span id="boardWordNo" class="board-no">#1/30</span>
+     <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
+     <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" ><span data-icon="eyeOff" data-icon-size="16"></span><span class="i18n-label" data-i18n="boardHideWord"> Hide Word on Board</span></span></button>
+    </div>
+    <p id="boardMeta" class="board-meta" aria-live="polite">
+     <span id="boardIpa" class="board-ipa">/—/</span>
+     <span id="boardPos" class="board-pos">—</span>
+     <span id="boardSi" class="board-si" lang="si">—</span>
+    </p>
+   </div>
+   <div id="cockpitBar" class="card cockpit">
+    <div class="cockpit-head">
+     <div>
+      <h2 id="sessionTitle">Session 8</h2>
+      <p id="cockpitProgress" class="muted">1 / 30</p>
+     </div>
+     <span id="wordPosBadge" class="badge">adj.</span>
+    </div>
+
+    <div class="beat">
+     <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+      <circle class="ring-track" cx="40" cy="40" r="34"></circle>
+      <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
+     </svg>
+     <div class="beat-readout">
+      <span id="beatSeconds">08s</span>
+      <div class="bar-wrap"><div id="beatBar"></div></div>
+     </div>
+    </div>
+
+    <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
+    <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
+    <div id="beatStage" class="beat-stage"></div>
+    <div id="hintChips" class="chip-row hint-chips">
+     <button type="button" class="chip" data-hint="pos" aria-pressed="false" data-i18n="hintPos">Word type</button>
+     <button type="button" class="chip" data-hint="first" aria-pressed="false" data-i18n="hintFirst">First letter</button>
+     <button type="button" class="chip" data-hint="si" aria-pressed="false" data-i18n="hintSi">Sinhala meaning</button>
+     <button type="button" class="chip" data-hint="sentence" aria-pressed="false" data-i18n="hintSentence">Example sentence</button>
+    </div>
+
+    <!-- Phase 5: a symbol-first transport deck — one glyph, one micro-caption. -->
+    <div class="cockpit-transport transport-deck" id="cockpitTransport">
+     <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn" aria-label="⏮ Prev"><span data-icon="prev" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
+     <div class="deck-key deck-key-main"><button id="btnPlayPause" type="button" class="btn btn-primary btn-transport deck-btn deck-main" data-primary-cta="1" aria-label="⏸ Pause Dictation"><span data-icon="play" data-icon-size="24"></span></button><span class="deck-cap" data-i18n="capPlay">Pause</span></div>
+     <div class="deck-key"><button id="btnReplay" type="button" class="btn deck-btn" aria-label=" Replay Word"><span data-icon="volume" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capReplay">Replay</span></div>
+     <div class="deck-key"><button id="btnNext" type="button" class="btn deck-btn" aria-label="⏭ Next"><span data-icon="next" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capNext">Next</span></div>
+    </div>
+    <div class="cockpit-controls secondary-controls">
+     <div class="deck-key"><button id="btnRepeat" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Repeat"><span data-icon="repeat" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capRepeat">Repeat</span></div>
+     <div class="deck-key"><button id="btnHint" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Hint"><span data-icon="bulb" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capHint">Hint</span></div>
+     <div class="deck-key"><button id="btnModeSwitch" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Paper / Typing"><span data-icon="edit" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capMode">Mode</span></div>
+     <div class="deck-key"><button id="btnFinish" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Finish and check"><span data-icon="check" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capFinish">Check</span></div>
+    </div>
+   </div>
+
+   <div id="resultsPanel" class="card results" hidden>
+    <div class="results-head">
+     <h2 class="card-title" data-i18n="resultsTitle">Self-Check &amp; Results</h2>
+     <div class="score-box">
+      <strong id="scoreValue">0 / 30</strong>
+      <span id="scorePct" class="muted">0%</span>
+     </div>
+    </div>
+    <div class="chip-row">
+     <button id="btnMarkAll" type="button" class="btn btn-sm" data-i18n="markAll">Mark all correct</button>
+     <button id="btnToggleMissed" type="button" class="btn btn-sm" data-i18n="invertMarks" data-confirm-arm="0">Invert marks (tap twice)</button>
+    </div>
+    <div class="table-wrap">
+     <table id="resultsTable">
+      <thead>
+       <tr>
+        <th scope="col">#</th>
+        <th scope="col" data-i18n="colYourWord">Your word</th>
+        <th scope="col" data-i18n="colCorrectWord">Correct word</th>
+        <th scope="col" data-i18n="colMark">Mark</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+     </table>
+    </div>
+    <div class="chip-row">
+     <button id="btnRetryMissed" type="button" class="btn btn-primary" data-i18n="btnRetryMissed">Retry missed words</button>
+     <button id="btnNewSession" type="button" class="btn" data-i18n="btnNewSession">Start new session</button>
+    </div>
+   </div>
+  </section>
+
+  <section id="screen-practice" class="screen" aria-labelledby="pracTitle">
+   <div class="card">
+    <h2 id="pracTitle" class="card-title" data-i18n="tabPractice">Practice</h2>
+    <div id="pracMode" class="chip-row" role="tablist" aria-label="Practice mode">
+     <button type="button" class="pill" data-prac="flash" role="tab" aria-selected="true" data-i18n="flashcards">Flashcards</button>
+     <button type="button" class="pill" data-prac="quiz" role="tab" aria-selected="false" data-i18n="quiz">4-Choice Quiz</button>
+     <button type="button" class="pill" data-prac="listen" role="tab" aria-selected="false" data-i18n="listening">Listening Drill</button>
+    </div>
+    <label class="checkline" for="pracWeakOnly"><input type="checkbox" id="pracWeakOnly"> <span data-i18n="weakWordsOnly">Weak words only</span></label>
+    <div id="pracStage" class="prac-stage"></div>
+   </div>
+  </section>
+
+  <section id="screen-dict" class="screen" aria-labelledby="dictTitle" aria-label="30-Word Session View">
+   <div class="card">
+    <h2 id="dictTitle" class="card-title" data-i18n="dictTitle">30-Word Session View · #01–#30</h2>
+    <input id="dictSearch" type="search" class="input" placeholder="Search words" aria-label="Search words" data-i18n-placeholder="dictSearchPh" autocomplete="off">
+    <div id="dictFilterRow" class="chip-row" role="group" aria-label="Word filters">
+     <button type="button" class="pill" data-filter="all" aria-pressed="true" data-i18n="filterAll">All 30</button>
+     <button type="button" class="pill" data-filter="weak" aria-pressed="false" data-i18n="weakWords">Weak Words</button>
+     <button type="button" class="pill" data-filter="mastered" aria-pressed="false" data-i18n="mastered">Mastered</button>
+    </div>
+    <p id="dictEmpty" class="empty-state" role="status" data-i18n="emptyBank" hidden>No word list is available yet. Connect once, then tap "Check for session update" in Settings.</p>
+    <div id="dictList" class="dict-list"></div>
+   </div>
+  </section>
+
+  <section id="screen-settings" class="screen" aria-labelledby="setTitle">
+   <div id="settingsSections">
+    <h2 id="setTitle" class="card-title screen-title" data-i18n="tabSettings">Settings</h2>
+
+    <section id="settingsLecturerBanner" class="card lecturer-banner" hidden>
+     <p id="settingsLecturerText" ><span data-icon="unlock" data-icon-size="16"></span><span class="i18n-label" data-i18n="settingsLecturerActive"> Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words</span></p>
+     <button id="btnOpenStudioFromSettings" type="button" class="btn btn-primary" ><span data-icon="cap" data-icon-size="16"></span><span class="i18n-label" data-i18n="openStudioBtn"> Open Lecturer Admin Studio</span></button>
     </section>
 
-    <section id="screen-player" class="screen" aria-labelledby="sessionTitle">
-      <div id="sessionProgressStrip" class="card progress-strip" role="group" aria-label="Session progress">
-        <!-- Phase 5: ONE header line — word, repeat and write window. -->
-        <p class="cockpit-line">
-          <span id="sessionProgressCount" class="strip-count" data-i18n="progressWordUpper">WORD #01 / 30</span>
-          <span class="line-sep" aria-hidden="true">·</span>
-          <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 of 2</span>
-          <span class="line-sep" aria-hidden="true">·</span>
-          <span id="playerPresetBadge" class="badge">5s Write · 2×</span>
-        </p>
-        <button id="pillsDrawerToggle" type="button" class="btn btn-sm pills-toggle" aria-expanded="false" aria-controls="pillsDrawer">Jump to Word 1–30 ▾</button>
-        <div id="pillsDrawer" class="pills-drawer" hidden>
-          <div id="sessionPills" class="word-pills"></div>
-        </div>
+    <section class="card set-card">
+     <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
+     <div class="field">
+      <span class="lbl" data-i18n="modeLabel">Mode</span>
+      <div class="seg" role="group" aria-label="Dictation mode">
+       <button type="button" class="seg-btn" id="setModePaper" data-set-mode="paper" aria-pressed="true" data-i18n="paperMode">Paper</button>
+       <button type="button" class="seg-btn" id="setModeTyping" data-set-mode="typing" aria-pressed="false" data-i18n="typingMode">Typing</button>
       </div>
-      <div id="boardClassBar" class="card board-class-bar" role="toolbar" aria-label="Smart Board classroom controls" hidden>
-        <div class="board-transport">
-          <button id="boardPlayPause" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardPlayPause">▶ Play / Pause</span></button>
-          <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat">🔁 Repeat</span></button>
-          <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">⏭ Next</span></button>
-        </div>
-        <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
-        <div class="board-word-row">
-          <span id="boardWordNo" class="board-no">#1/30</span>
-          <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
-          <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" data-i18n="boardHideWord">🙈 Hide Word on Board</span></button>
-        </div>
-        <p id="boardMeta" class="board-meta" aria-live="polite">
-          <span id="boardIpa" class="board-ipa">/—/</span>
-          <span id="boardPos" class="board-pos">—</span>
-          <span id="boardSi" class="board-si" lang="si">—</span>
-        </p>
-      </div>
-      <div id="cockpitBar" class="card cockpit">
-        <div class="cockpit-head">
-          <div>
-            <h2 id="sessionTitle">Session 8</h2>
-            <p id="cockpitProgress" class="muted">1 / 30</p>
-          </div>
-          <span id="wordPosBadge" class="badge">adj.</span>
-        </div>
-
-        <div class="beat">
-          <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
-            <circle class="ring-track" cx="40" cy="40" r="34"></circle>
-            <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
-          </svg>
-          <div class="beat-readout">
-            <span id="beatSeconds">08s</span>
-            <div class="bar-wrap"><div id="beatBar"></div></div>
-          </div>
-        </div>
-
-        <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
-        <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
-        <div id="beatStage" class="beat-stage"></div>
-        <div id="hintChips" class="chip-row hint-chips">
-          <button type="button" class="chip" data-hint="pos" aria-pressed="false" data-i18n="hintPos">Word type</button>
-          <button type="button" class="chip" data-hint="first" aria-pressed="false" data-i18n="hintFirst">First letter</button>
-          <button type="button" class="chip" data-hint="si" aria-pressed="false" data-i18n="hintSi">Sinhala meaning</button>
-          <button type="button" class="chip" data-hint="sentence" aria-pressed="false" data-i18n="hintSentence">Example sentence</button>
-        </div>
-
-        <!-- Phase 5: a symbol-first transport deck — one glyph, one micro-caption. -->
-        <div class="cockpit-transport transport-deck" id="cockpitTransport">
-          <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn" aria-label="⏮ Prev">⏮</button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
-          <div class="deck-key deck-key-main"><button id="btnPlayPause" type="button" class="btn btn-primary btn-transport deck-btn deck-main" data-primary-cta="1" aria-label="⏸ Pause Dictation">⏸</button><span class="deck-cap" data-i18n="capPlay">Pause</span></div>
-          <div class="deck-key"><button id="btnReplay" type="button" class="btn deck-btn" aria-label="🔊 Replay Word">🔊</button><span class="deck-cap" data-i18n="capReplay">Replay</span></div>
-          <div class="deck-key"><button id="btnNext" type="button" class="btn deck-btn" aria-label="⏭ Next">⏭</button><span class="deck-cap" data-i18n="capNext">Next</span></div>
-        </div>
-        <div class="cockpit-controls secondary-controls">
-          <div class="deck-key"><button id="btnRepeat" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Repeat">🔁</button><span class="deck-cap" data-i18n="capRepeat">Repeat</span></div>
-          <div class="deck-key"><button id="btnHint" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Hint">💡</button><span class="deck-cap" data-i18n="capHint">Hint</span></div>
-          <div class="deck-key"><button id="btnModeSwitch" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Paper / Typing">📝</button><span class="deck-cap" data-i18n="capMode">Mode</span></div>
-          <div class="deck-key"><button id="btnFinish" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Finish and check">✅</button><span class="deck-cap" data-i18n="capFinish">Check</span></div>
-        </div>
-      </div>
-
-      <div id="resultsPanel" class="card results" hidden>
-        <div class="results-head">
-          <h2 class="card-title" data-i18n="resultsTitle">Self-Check &amp; Results</h2>
-          <div class="score-box">
-            <strong id="scoreValue">0 / 30</strong>
-            <span id="scorePct" class="muted">0%</span>
-          </div>
-        </div>
-        <div class="chip-row">
-          <button id="btnMarkAll" type="button" class="btn btn-sm" data-i18n="markAll">Mark all correct</button>
-          <button id="btnToggleMissed" type="button" class="btn btn-sm" data-i18n="invertMarks" data-confirm-arm="0">Invert marks (tap twice)</button>
-        </div>
-        <div class="table-wrap">
-          <table id="resultsTable">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col" data-i18n="colYourWord">Your word</th>
-                <th scope="col" data-i18n="colCorrectWord">Correct word</th>
-                <th scope="col" data-i18n="colMark">Mark</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="chip-row">
-          <button id="btnRetryMissed" type="button" class="btn btn-primary" data-i18n="btnRetryMissed">Retry missed words</button>
-          <button id="btnNewSession" type="button" class="btn" data-i18n="btnNewSession">Start new session</button>
-        </div>
-      </div>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setWriteSecs" data-i18n="writeTime">Writing time</label>
+      <input id="setWriteSecs" type="range" min="3" max="20" step="1" value="8">
+      <output id="outWriteSecs" for="setWriteSecs">8s</output>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setRepeats" data-i18n="repeats">Word repeats</label>
+      <select id="setRepeats" class="input"></select>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setPause" data-i18n="pauseBetween">Pause between repeats</label>
+      <input id="setPause" type="range" min="0.5" max="3" step="0.5" value="1.5">
+      <output id="outPause" for="setPause">1.5s</output>
+     </div>
+     <label class="checkline" for="setAutoAdvance"><input type="checkbox" id="setAutoAdvance" checked> <span data-i18n="autoAdvance">Advance automatically</span></label>
+     <p class="lbl" data-i18n="presetHeading">Quick Pacing Presets</p>
+     <div id="presetRow" class="pill-row" role="group" aria-label="Quick pacing presets">
+      <button type="button" class="pill preset-pill" id="presetBeginner" data-preset="beginner" ><span data-icon="clock" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBeginner"> Beginner Slow (12s · 4×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetStandard" data-preset="standard" ><span data-icon="target" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetStandard"> CCBE B1 Standard (8s · 3×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetExam" data-preset="exam" ><span data-icon="alert" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetExam"> Fast Exam (5s · 2×)</span></button>
+      <button type="button" class="pill preset-pill" id="presetBoard" data-preset="board" ><span data-icon="table" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBoard"> Smart Board Class Mode</span></button>
+     </div>
     </section>
 
-    <section id="screen-practice" class="screen" aria-labelledby="pracTitle">
-      <div class="card">
-        <h2 id="pracTitle" class="card-title" data-i18n="tabPractice">Practice</h2>
-        <div id="pracMode" class="chip-row" role="tablist" aria-label="Practice mode">
-          <button type="button" class="pill" data-prac="flash" role="tab" aria-selected="true" data-i18n="flashcards">Flashcards</button>
-          <button type="button" class="pill" data-prac="quiz" role="tab" aria-selected="false" data-i18n="quiz">4-Choice Quiz</button>
-          <button type="button" class="pill" data-prac="listen" role="tab" aria-selected="false" data-i18n="listening">Listening Drill</button>
-        </div>
-        <label class="checkline" for="pracWeakOnly"><input type="checkbox" id="pracWeakOnly"> <span data-i18n="weakWordsOnly">Weak words only</span></label>
-        <div id="pracStage" class="prac-stage"></div>
-      </div>
+    <section class="card set-card">
+     <h3 class="set-head" data-i18n="setAudio">2 · Audio &amp; voice</h3>
+     <div class="field">
+      <label class="lbl" for="setVoiceLock" data-i18n="voiceLockLabel">Voice Persona Lock</label>
+      <select id="setVoiceLock" class="input">
+       <option value="unified" data-i18n="voiceLockUnified">British Female Professor (Unified 25–35 UK)</option>
+       <option value="custom" data-i18n="voiceLockCustom">Follow Individual Tier Source</option>
+      </select>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setVoiceSource" data-i18n="voiceSource">Voice source</label>
+      <select id="setVoiceSource" class="input">
+       <option value="auto" data-i18n="voiceAuto">Auto (best British voice)</option>
+       <option value="lecturer" data-i18n="voiceLecturer">Lecturer clips</option>
+       <option value="alice" data-i18n="voiceAlice">Alice (ElevenLabs UK)</option>
+       <option value="device" data-i18n="voiceDevice">Device voice</option>
+      </select>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setRate" data-i18n="rate">Speech rate</label>
+      <input id="setRate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
+      <output id="outRate" for="setRate">0.95x</output>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setVolume" data-i18n="volume">Volume</label>
+      <input id="setVolume" type="range" min="0" max="100" step="5" value="100">
+      <output id="outVolume" for="setVolume">100%</output>
+     </div>
+     <button id="btnTestVoice" type="button" class="btn btn-primary" data-i18n="testVoice">Test Voice</button>
     </section>
 
-    <section id="screen-dict" class="screen" aria-labelledby="dictTitle" aria-label="30-Word Session View">
-      <div class="card">
-        <h2 id="dictTitle" class="card-title" data-i18n="dictTitle">30-Word Session View · #01–#30</h2>
-        <input id="dictSearch" type="search" class="input" placeholder="Search words" aria-label="Search words" data-i18n-placeholder="dictSearchPh" autocomplete="off">
-        <div id="dictFilterRow" class="chip-row" role="group" aria-label="Word filters">
-          <button type="button" class="pill" data-filter="all" aria-pressed="true" data-i18n="filterAll">All 30</button>
-          <button type="button" class="pill" data-filter="weak" aria-pressed="false" data-i18n="weakWords">Weak Words</button>
-          <button type="button" class="pill" data-filter="mastered" aria-pressed="false" data-i18n="mastered">Mastered</button>
-        </div>
-        <p id="dictEmpty" class="empty-state" role="status" data-i18n="emptyBank" hidden>No word list is available yet. Connect once, then tap "Check for session update" in Settings.</p>
-        <div id="dictList" class="dict-list"></div>
-      </div>
+    <section class="card set-card">
+     <h3 class="set-head" data-i18n="setLangTheme">3 · Language &amp; appearance</h3>
+     <div class="field">
+      <label class="lbl" for="setLang" data-i18n="language">Language</label>
+      <select id="setLang" class="input">
+       <option value="en" data-i18n="langEnglish">English</option>
+       <option value="si" data-i18n="langSinhala">Sinhala</option>
+      </select>
+     </div>
+     <div class="field">
+      <label class="lbl" for="setTheme" data-i18n="theme">Theme</label>
+      <select id="setTheme" class="input">
+      <option value="dark" data-i18n="themeDark">Dark</option>
+      <option value="light" data-i18n="themeLight">Light</option>
+      <option value="board" data-i18n="themeBoard">Smart Board High-Contrast</option>
+      </select>
+     </div>
+     <button id="btnReplayGuide" type="button" class="btn btn-sm" ><span data-icon="headphones" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideReplay"> Replay Step-by-Step Voice Guide</span></button>
+     <label class="checkline" for="setGuideAutoPlay"><input type="checkbox" id="setGuideAutoPlay" checked> <span data-i18n="guideAutoPlay">Auto-play English voice guide on start</span></label>
     </section>
 
-    <section id="screen-settings" class="screen" aria-labelledby="setTitle">
-      <div id="settingsSections">
-        <h2 id="setTitle" class="card-title screen-title" data-i18n="tabSettings">Settings</h2>
-
-        <section id="settingsLecturerBanner" class="card lecturer-banner" hidden>
-          <p id="settingsLecturerText" data-i18n="settingsLecturerActive">🔓 Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words</p>
-          <button id="btnOpenStudioFromSettings" type="button" class="btn btn-primary" data-i18n="openStudioBtn">🎓 Open Lecturer Admin Studio</button>
-        </section>
-
-        <section class="card set-card">
-          <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
-          <div class="field">
-            <span class="lbl" data-i18n="modeLabel">Mode</span>
-            <div class="seg" role="group" aria-label="Dictation mode">
-              <button type="button" class="seg-btn" id="setModePaper" data-set-mode="paper" aria-pressed="true" data-i18n="paperMode">Paper</button>
-              <button type="button" class="seg-btn" id="setModeTyping" data-set-mode="typing" aria-pressed="false" data-i18n="typingMode">Typing</button>
-            </div>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setWriteSecs" data-i18n="writeTime">Writing time</label>
-            <input id="setWriteSecs" type="range" min="3" max="20" step="1" value="8">
-            <output id="outWriteSecs" for="setWriteSecs">8s</output>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setRepeats" data-i18n="repeats">Word repeats</label>
-            <select id="setRepeats" class="input"></select>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setPause" data-i18n="pauseBetween">Pause between repeats</label>
-            <input id="setPause" type="range" min="0.5" max="3" step="0.5" value="1.5">
-            <output id="outPause" for="setPause">1.5s</output>
-          </div>
-          <label class="checkline" for="setAutoAdvance"><input type="checkbox" id="setAutoAdvance" checked> <span data-i18n="autoAdvance">Advance automatically</span></label>
-          <p class="lbl" data-i18n="presetHeading">Quick Pacing Presets</p>
-          <div id="presetRow" class="pill-row" role="group" aria-label="Quick pacing presets">
-            <button type="button" class="pill preset-pill" id="presetBeginner" data-preset="beginner" data-i18n="presetBeginner">🐢 Beginner Slow (12s · 4×)</button>
-            <button type="button" class="pill preset-pill" id="presetStandard" data-preset="standard" data-i18n="presetStandard">🎯 CCBE B1 Standard (8s · 3×)</button>
-            <button type="button" class="pill preset-pill" id="presetExam" data-preset="exam" data-i18n="presetExam">⚡ Fast Exam (5s · 2×)</button>
-            <button type="button" class="pill preset-pill" id="presetBoard" data-preset="board" data-i18n="presetBoard">🖥️ Smart Board Class Mode</button>
-          </div>
-        </section>
-
-        <section class="card set-card">
-          <h3 class="set-head" data-i18n="setAudio">2 · Audio &amp; voice</h3>
-          <div class="field">
-            <label class="lbl" for="setVoiceLock" data-i18n="voiceLockLabel">Voice Persona Lock</label>
-            <select id="setVoiceLock" class="input">
-              <option value="unified" data-i18n="voiceLockUnified">British Female Professor (Unified 25–35 UK)</option>
-              <option value="custom" data-i18n="voiceLockCustom">Follow Individual Tier Source</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setVoiceSource" data-i18n="voiceSource">Voice source</label>
-            <select id="setVoiceSource" class="input">
-              <option value="auto" data-i18n="voiceAuto">Auto (best British voice)</option>
-              <option value="lecturer" data-i18n="voiceLecturer">Lecturer clips</option>
-              <option value="alice" data-i18n="voiceAlice">Alice (ElevenLabs UK)</option>
-              <option value="device" data-i18n="voiceDevice">Device voice</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setRate" data-i18n="rate">Speech rate</label>
-            <input id="setRate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
-            <output id="outRate" for="setRate">0.95x</output>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setVolume" data-i18n="volume">Volume</label>
-            <input id="setVolume" type="range" min="0" max="100" step="5" value="100">
-            <output id="outVolume" for="setVolume">100%</output>
-          </div>
-          <button id="btnTestVoice" type="button" class="btn btn-primary" data-i18n="testVoice">Test Voice</button>
-        </section>
-
-        <section class="card set-card">
-          <h3 class="set-head" data-i18n="setLangTheme">3 · Language &amp; appearance</h3>
-          <div class="field">
-            <label class="lbl" for="setLang" data-i18n="language">Language</label>
-            <select id="setLang" class="input">
-              <option value="en" data-i18n="langEnglish">English</option>
-              <option value="si" data-i18n="langSinhala">Sinhala</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="lbl" for="setTheme" data-i18n="theme">Theme</label>
-            <select id="setTheme" class="input">
-            <option value="dark" data-i18n="themeDark">Dark</option>
-            <option value="light" data-i18n="themeLight">Light</option>
-            <option value="board" data-i18n="themeBoard">Smart Board High-Contrast</option>
-            </select>
-          </div>
-          <button id="btnReplayGuide" type="button" class="btn btn-sm" data-i18n="guideReplay">🎓 Replay Step-by-Step Voice Guide</button>
-          <label class="checkline" for="setGuideAutoPlay"><input type="checkbox" id="setGuideAutoPlay" checked> <span data-i18n="guideAutoPlay">Auto-play English voice guide on start</span></label>
-        </section>
-
-        <section class="card set-card">
-          <h3 class="set-head" data-i18n="setProgress">4 · Progress &amp; offline storage</h3>
-          <div class="chip-row">
-            <button id="btnExportBackup" type="button" class="btn btn-sm" data-i18n="exportBackup">Export backup</button>
-            <button id="btnImportBackup" type="button" class="btn btn-sm" data-i18n="importBackup">Import backup</button>
-            <input id="importFile" type="file" accept="application/json,.json" class="visually-hidden" tabindex="-1">
-            <button id="btnResetStats" type="button" class="btn btn-sm btn-danger" data-i18n="resetStats">Reset local stats</button>
-            <button id="btnCheckUpdate" type="button" class="btn btn-sm" data-i18n="checkUpdate">Check for session update</button>
-            <button id="btnDownloadClips" type="button" class="btn btn-sm" data-i18n="downloadClips">🔊 Download All 30 Word Audio Clips for Offline Use</button>
-          </div>
-          <p id="settingsSyncStatus" class="muted" role="status" aria-live="polite"></p>
-          <span id="downloadClipsStatus" class="muted"></span>
-          <p id="settingsUpdateStatus" class="muted" role="status" aria-live="polite"></p>
-          <p id="settingsFeedback" class="muted" role="status" aria-live="polite"></p>
-          <p id="storageStatus" class="muted"></p>
-        </section>
-
-        <section id="aboutCard" class="card set-card about-card">
-          <h3 class="set-head" data-i18n="aboutTitle">5 · About this app</h3>
-          <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
-          <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
-          <ul class="about-list">
-            <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.4.b</span></li>
-            <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
-            <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
-          </ul>
-          <footer class="credit-foot">
-            <span class="credits-pill">CREDITS GOES TO Hansana</span>
-            <p class="credit-line">Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)</p>
-            <p class="credit-line credit-line-si" lang="si">නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini</p>
-          </footer>
-        </section>
-      </div>
+    <section class="card set-card">
+     <h3 class="set-head" data-i18n="setProgress">4 · Progress &amp; offline storage</h3>
+     <div class="chip-row">
+      <button id="btnExportBackup" type="button" class="btn btn-sm" data-i18n="exportBackup">Export backup</button>
+      <button id="btnImportBackup" type="button" class="btn btn-sm" data-i18n="importBackup">Import backup</button>
+      <input id="importFile" type="file" accept="application/json,.json" class="visually-hidden" tabindex="-1">
+      <button id="btnResetStats" type="button" class="btn btn-sm btn-danger" data-i18n="resetStats">Reset local stats</button>
+      <button id="btnCheckUpdate" type="button" class="btn btn-sm" data-i18n="checkUpdate">Check for session update</button>
+      <button id="btnDownloadClips" type="button" class="btn btn-sm" ><span data-icon="download" data-icon-size="16"></span><span class="i18n-label" data-i18n="downloadClips"> Download All 30 Word Audio Clips for Offline Use</span></button>
+     </div>
+     <p id="settingsSyncStatus" class="muted" role="status" aria-live="polite"></p>
+     <span id="downloadClipsStatus" class="muted"></span>
+     <p id="settingsUpdateStatus" class="muted" role="status" aria-live="polite"></p>
+     <p id="settingsFeedback" class="muted" role="status" aria-live="polite"></p>
+     <p id="storageStatus" class="muted"></p>
     </section>
 
-    <section class="screen" id="screen-studio" aria-label="Lecturer Admin Studio">
-      <h2 class="card-title screen-title" data-i18n="studioScreenTitle">🎓 Lecturer Admin Studio</h2>
-      <p class="muted" data-i18n="studioScreenSub">Three numbered steps: keys and the 34-clip voice pack, the 30-word session editor, and the classroom settings broadcast.</p>
-      <div id="studioSyncDock" class="studio-sync-dock">
-        <div id="lecturerSyncBar" class="lecturer-sync-bar" role="region" aria-live="polite" hidden>
-          <button type="button" class="btn btn-go" id="btnSyncClassSettings" data-i18n="lecturerSyncBar">📡 Broadcast Current Pacing &amp; Settings (Fast Exam 5s · 2×) to All Classroom Devices</button>
-          <p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncIdle" aria-live="polite" data-state="idle">Not synced yet — press Save &amp; Sync</p>
-        </div>
-      </div>
-      <div id="studioAccordion" class="studio-shell">
-        <div id="studioBody" class="studio-body">
-          <p class="muted" data-i18n="studioLocked">Enter the lecturer PIN to open the studio.</p>
-        </div>
-      </div>
+    <section id="aboutCard" class="card set-card about-card">
+     <h3 class="set-head" data-i18n="aboutTitle">5 · About this app</h3>
+     <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
+     <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
+     <ul class="about-list">
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.4.c</span></li>
+      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-02</span></li>
+      <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
+     </ul>
+     <footer class="credit-foot">
+      <span class="credits-pill">CREDITS GOES TO Hansana</span>
+      <p class="credit-line">Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)</p>
+      <p class="credit-line credit-line-si" lang="si">නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini</p>
+     </footer>
     </section>
+   </div>
+  </section>
 
-  </main>
+  <section class="screen" id="screen-studio" aria-label="Lecturer Admin Studio">
+   <h2 class="card-title screen-title" ><span data-icon="cap" data-icon-size="20"></span><span class="i18n-label" data-i18n="studioScreenTitle"> Lecturer Admin Studio</span></h2>
+   <p class="muted" data-i18n="studioScreenSub">Three numbered steps: keys and the 34-clip voice pack, the 30-word session editor, and the classroom settings broadcast.</p>
+   <div id="studioSyncDock" class="studio-sync-dock">
+    <div id="lecturerSyncBar" class="lecturer-sync-bar" role="region" aria-live="polite" hidden>
+     <button type="button" class="btn btn-go" id="btnSyncClassSettings" ><span data-icon="sync" data-icon-size="16"></span><span class="i18n-label" data-i18n="lecturerSyncBar"> Broadcast Current Pacing &amp; Settings (Fast Exam 5s · 2×) to All Classroom Devices</span></button>
+     <p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncIdle" aria-live="polite" data-state="idle">Not synced yet — press Save &amp; Sync</p>
+    </div>
+   </div>
+   <div id="studioAccordion" class="studio-shell">
+    <div id="studioBody" class="studio-body">
+     <p class="muted" data-i18n="studioLocked">Enter the lecturer PIN to open the studio.</p>
+    </div>
+   </div>
+  </section>
+
+ </main>
 </div>
 
 <nav id="tabbar" aria-label="Sections">
-  <button id="tab-home" type="button" class="tab" data-tab="home" aria-selected="true">
-    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
-    <span data-i18n="tabHome">Home</span></button>
-  <button id="tab-player" type="button" class="tab" data-tab="player" aria-selected="false">
-    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-    <span data-i18n="tabPlayer">Dictation</span></button>
-  <button id="tab-practice" type="button" class="tab" data-tab="practice" aria-selected="false">
-    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
-    <span data-i18n="tabPractice">Practice</span></button>
-  <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false">
-    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
-    <span data-i18n="tabWords">30 Words</span></button>
-  <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false">
-    <span class="tab-ico" aria-hidden="true">
-      <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z"/>
-        </svg>
-      </span>
-    <span data-i18n="tabSettings">Settings</span></button>
-  <button id="tab-studio" type="button" class="tab" data-tab="studio" aria-selected="false">
-    <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
-    <span data-i18n="tabStudio">Lecturer</span></button>
+ <button id="tab-home" type="button" class="tab" data-tab="home" aria-selected="true">
+  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
+  <span data-i18n="tabHome">Home</span></button>
+ <button id="tab-player" type="button" class="tab" data-tab="player" aria-selected="false">
+  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+  <span data-i18n="tabPlayer">Dictation</span></button>
+ <button id="tab-practice" type="button" class="tab" data-tab="practice" aria-selected="false">
+  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
+  <span data-i18n="tabPractice">Practice</span></button>
+ <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false">
+  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
+  <span data-i18n="tabWords">30 Words</span></button>
+ <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false">
+  <span class="tab-ico" aria-hidden="true">
+   <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.8 1.4-1.8 3.1-2.2-.9a7 7 0 0 1-1.7 1L15.2 20h-3.6l-.3-2.5a7 7 0 0 1-1.7-1l-2.2.9-1.8-3.1 1.8-1.4a7 7 0 0 1 0-2l-1.8-1.4 1.8-3.1 2.2.9a7 7 0 0 1 1.7-1L11.6 2.6h3.6l.3 2.5a7 7 0 0 1 1.7 1l2.2-.9 1.8 3.1-1.8 1.4a7 7 0 0 1 0 2z"/>
+    </svg>
+   </span>
+  <span data-i18n="tabSettings">Settings</span></button>
+ <button id="tab-studio" type="button" class="tab" data-tab="studio" aria-selected="false">
+  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
+  <span data-i18n="tabStudio">Lecturer</span></button>
 </nav>
 
 <div id="guideModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle" aria-hidden="true" hidden>
-  <div class="modal-card">
-    <div class="modal-head">
-      <h2 id="guideTitle" data-i18n="howToUse">How to Use</h2>
-      <button id="guideLangPill" type="button" class="pill"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
-    </div>
-    <div id="guideTapBanner" class="guide-tap-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideTapToStart">🔊 Tap anywhere to start the voice guide</div>
-    <div id="guideAutoplayBanner" class="guide-tap-banner guide-autoplay-banner hidden" role="button" tabindex="0" aria-live="polite" data-i18n="guideAutoplayBanner">🔊 Tap Anywhere to Start Voice Guide</div>
-    <!-- R2 (F3): ONE compact spotlight card. Step N of 4, one clean sentence,
-         four dots and exactly two buttons. The hidden <ol> keeps the four steps
-         machine readable (and translated) without ever being read aloud. -->
-    <div id="guideSpotlight" class="guide-spotlight" role="group" aria-live="polite">
-      <p id="guideStepTag" class="guide-step-tag">Step 1 of 4</p>
-      <p id="guideStepText" class="guide-step-text">Press Start Dictation to begin.</p>
-      <div id="guideDots" class="guide-dots" aria-hidden="true">
-        <span class="guide-dot is-active" data-guide-dot="0" aria-current="step"></span>
-        <span class="guide-dot" data-guide-dot="1"></span>
-        <span class="guide-dot" data-guide-dot="2"></span>
-        <span class="guide-dot" data-guide-dot="3"></span>
-      </div>
-      <ol id="guideSteps" class="guide-steps-sr" hidden aria-hidden="true"></ol>
-    </div>
-    <div class="modal-foot">
-      <button id="btnGuideSkipStart" type="button" class="btn btn-go" data-i18n="guideSkipStartNow">▶ Start Dictation Now</button>
-      <button id="btnGuideClose" type="button" class="btn" data-i18n="guideExitBtn">✕ Exit</button>
-    </div>
+ <div class="modal-card">
+  <div class="modal-head">
+   <h2 id="guideTitle" data-i18n="howToUse">How to Use</h2>
+   <button id="guideLangPill" type="button" class="pill"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
   </div>
+  <div id="guideTapBanner" class="guide-tap-banner hidden" role="button" tabindex="0" aria-live="polite" ><span data-icon="volume" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideTapToStart"> Tap anywhere to start the voice guide</span></div>
+  <div id="guideAutoplayBanner" class="guide-tap-banner guide-autoplay-banner hidden" role="button" tabindex="0" aria-live="polite" ><span data-icon="volume" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideAutoplayBanner"> Tap Anywhere to Start Voice Guide</span></div>
+  <!-- R2 (F3): ONE compact spotlight card. Step N of 4, one clean sentence,
+     four dots and exactly two buttons. The hidden <ol> keeps the four steps
+     machine readable (and translated) without ever being read aloud. -->
+  <div id="guideSpotlight" class="guide-spotlight" role="group" aria-live="polite">
+   <p id="guideStepTag" class="guide-step-tag">Step 1 of 4</p>
+   <p id="guideStepText" class="guide-step-text">Press Start Dictation to begin.</p>
+   <div id="guideDots" class="guide-dots" aria-hidden="true">
+    <span class="guide-dot is-active" data-guide-dot="0" aria-current="step"></span>
+    <span class="guide-dot" data-guide-dot="1"></span>
+    <span class="guide-dot" data-guide-dot="2"></span>
+    <span class="guide-dot" data-guide-dot="3"></span>
+   </div>
+   <ol id="guideSteps" class="guide-steps-sr" hidden aria-hidden="true"></ol>
+  </div>
+  <div class="modal-foot">
+   <button id="btnGuideSkipStart" type="button" class="btn btn-go" data-i18n="guideSkipStartNow">▶ Start Dictation Now</button>
+   <button id="btnGuideClose" type="button" class="btn" ><span data-icon="close" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideExitBtn"> Exit</span></button>
+  </div>
+ </div>
 </div>
 
 <!-- E7: guide-spot spotlight — hidden off the active chrome until a step
-     points at a control; never deleted, only hidden (display:none). -->
+   points at a control; never deleted, only hidden (display:none). -->
 <div id="guideSpot" class="guide-spot" hidden>
-  <p id="guideSpotCue" class="guide-spot-cue"></p>
-  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
+ <p id="guideSpotCue" class="guide-spot-cue"></p>
+ <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
 </div>
 
 <div id="sdpDataToast" class="toast toast-hidden" role="status" aria-live="polite"></div>
 
 <script>
 (function () {
-  var TARGET = '0.0.4.b';
-  window.__SDP_BOOT_VERSION__ = TARGET;
-  var doReload = function (remoteVersion) {
-    try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}
-    var node = document.getElementById && document.getElementById('sdpDataToast');
-    if (node) {
-      node.textContent = 'Update found — reloading…';
-      node.hidden = false;
-      try { node.classList.remove('toast-hidden'); } catch (e) {}
-    }
-    var reloadNow = function () { location.reload(); };
-    if (window.caches && caches.keys) {
-      caches.keys().then(function (ks) {
-        return Promise.all(ks.map(function (k) {
-          if (k.indexOf('sdp-') === 0 && k !== 'sdp-youdao-v1' && k !== 'sdp-audio-clips') {
-            return caches.delete(k);
-          }
-          return Promise.resolve(false);
-        }));
-      }).then(reloadNow, reloadNow);
-    } else {
-      reloadNow();
-    }
-  };
-  var checkNow = function () {
-    try {
-      if (typeof fetch !== 'function') return;
-      fetch('./data/version.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (r) { return r && r.ok ? r.json() : null; })
-        .then(function (v) {
-          if (!v || !v.appVersion || v.appVersion === TARGET) return;
-          if (sessionStorage.getItem('sdp_upgraded_to') === v.appVersion) return;
-          doReload(v.appVersion);
-        })
-        .catch(function () {});
-    } catch (e) {}
-  };
-  checkNow();
-  /* D18: this inline script is the ONE-SHOT boot version check only. The 30 s
-     background cadence belongs to SDP.Sync.startWatch(30000), which also feeds
-     every tick into the honest sync badge (D16) — a duplicate setInterval here
-     polled version.json twice as often and painted nothing. */
+ var TARGET = '0.0.4.c';
+ window.__SDP_BOOT_VERSION__ = TARGET;
+ var doReload = function (remoteVersion) {
+  try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}
+  var node = document.getElementById && document.getElementById('sdpDataToast');
+  if (node) {
+   node.textContent = 'Update found — reloading…';
+   node.hidden = false;
+   try { node.classList.remove('toast-hidden'); } catch (e) {}
+  }
+  var reloadNow = function () { location.reload(); };
+  if (window.caches && caches.keys) {
+   caches.keys().then(function (ks) {
+    return Promise.all(ks.map(function (k) {
+     if (k.indexOf('sdp-') === 0 && k !== 'sdp-youdao-v1' && k !== 'sdp-audio-clips') {
+      return caches.delete(k);
+     }
+     return Promise.resolve(false);
+    }));
+   }).then(reloadNow, reloadNow);
+  } else {
+   reloadNow();
+  }
+ };
+ var checkNow = function () {
+  try {
+   if (typeof fetch !== 'function') return;
+   fetch('./data/version.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r && r.ok ? r.json() : null; })
+    .then(function (v) {
+     if (!v || !v.appVersion || v.appVersion === TARGET) return;
+     if (sessionStorage.getItem('sdp_upgraded_to') === v.appVersion) return;
+     doReload(v.appVersion);
+    })
+    .catch(function () {});
+  } catch (e) {}
+ };
+ checkNow();
+ /* D18: this inline script is the ONE-SHOT boot version check only. The 30 s
+   background cadence belongs to SDP.Sync.startWatch(30000), which also feeds
+   every tick into the honest sync badge (D16) — a duplicate setInterval here
+   polled version.json twice as often and painted nothing. */
 })();
 </script>
 
@@ -581,5 +583,6 @@
 <script src="./data/sdp-dictation-engine.js" defer></script>
 <script src="./data/sdp-ui-views.js" defer></script>
 <script src="./data/studio.js" defer></script>
+<script src="./data/sdp-morphe-hooks.js" defer></script>
 </body>
 </html>

@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.4.b'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.4.c'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.4.b');
+    localStorage.setItem('sdp.guide_seen', '0.0.4.c');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -93,10 +93,13 @@ async function bootSettings(page, settings) {
         };
       });
       const tag = viewport.width + 'x' + viewport.height;
-      check('G5.1a [' + tag + '] header is 54px tall (±2px)', Math.abs(geo.headerHeight - 54) <= 2, geo.headerHeight);
+      /* v0.0.4.c GAP 3: one nowrap row, 54px on mobile and up to 64px on the
+         Morphe glass header. Anything taller means the row wrapped again. */
+      check('G5.1a [' + tag + '] header stays a single 54-64px row', geo.headerHeight >= 52 && geo.headerHeight <= 64, geo.headerHeight);
       check('G5.1b [' + tag + '] header sits flush at the top (zero gap)', geo.headerTop === 0, geo.headerTop);
       check('G5.1c [' + tag + '] first card starts <= 68px from the viewport top', geo.cardTop <= 68, geo.cardTop);
-      check('G5.2a [' + tag + '] header uses no backdrop blur', geo.headerBlur === 'none', geo.headerBlur);
+      /* v0.0.4.c GAP 1: the glass blur is the release, so assert it is LIVE. */
+      check('G5.2a [' + tag + '] header uses the locked 12px Morphe glass blur', /blur\(12px\)/.test(String(geo.headerBlur)), geo.headerBlur);
       check('G5.2b [' + tag + '] cards use no backdrop blur', geo.cardBlur === 'none', geo.cardBlur);
       check('G5.1d [' + tag + '] no horizontal page overflow', geo.bodyScrollX <= 0, geo.bodyScrollX);
       const navVisible = await page.evaluate(() => {

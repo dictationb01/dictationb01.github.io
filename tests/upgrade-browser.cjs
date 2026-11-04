@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.4.b-shell';
+const SHELL = 'sdp-v0.0.4.c-s15-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -57,7 +57,7 @@ async function launch() {
 
     /* ── 2 + 3. activating the new worker purges the retired cache ─────── */
     // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 activate handler
-    const activated = await page.evaluate(async () => {
+    const activated = await page.evaluate(async (shellName) => {
       const regs = await navigator.serviceWorker.getRegistrations();
       for (const reg of regs) await reg.unregister();
       await caches.delete('sdp-v0.0.1.d-shell');
@@ -72,18 +72,19 @@ async function launch() {
       await navigator.serviceWorker.ready;
       await new Promise((r) => setTimeout(r, 1200));
       const names = (await caches.keys()).sort();
-      const shell = await caches.open('sdp-v0.0.4.b-shell');
+      const shell = await caches.open(shellName);
       const shellNames = (await shell.keys()).map((req) => new URL(req.url).pathname);
       return { names, shellNames, controller: !!navigator.serviceWorker.controller };
-    }, null);
+    }, SHELL);
 
     check('G6.3a the retired sdp-v60 cache is deleted', activated.names.indexOf(STALE) < 0, activated.names.join(','));
     check('G6.3b the stale youdao dictionary cache is purged on upgrade (PRESERVE_CACHES=[])', activated.names.indexOf(YOUDAO) < 0, activated.names.join(','));
     check('G6.3c the stale lecturer-clip cache is purged on upgrade (PRESERVE_CACHES=[])', activated.names.indexOf(CLIPS) < 0, activated.names.join(','));
     check('G6.2a the 0.0.1.g shell cache exists after install', activated.names.indexOf(SHELL) >= 0, activated.names.join(','));
-    check('G6.2b the shell precaches index.html, the CSS and all six modules',
+    check('G6.2b the shell precaches index.html, the CSS and all seven modules',
       ['/index.html', '/assets/css/sdp-ui.css', '/data/sdp-data-sync.js', '/data/sdp-audio-speech.js',
         '/data/sdp-dictation-engine.js', '/data/sdp-ui-views.js', '/data/studio.js', '/data/data-meter.js',
+        '/data/sdp-morphe-hooks.js',
         '/data/version.json', '/data/config.json', '/data/session.json',
         '/assets/fonts/NotoSansSinhala-Regular.woff2', '/assets/fonts/NotoSansSinhala-Bold.woff2',
         '/manifest.webmanifest', '/data.html', '/data/index.html']
@@ -101,7 +102,7 @@ async function launch() {
     /* the "published" build is derived from the running one, so this fixture
        can never fall out of sync with the release it ships alongside. */
     const LOCAL_VER = JSON.parse(read('data/version.json')).appVersion;
-    /* bump the LAST segment whatever its shape (0.0.4.b → 0.0.4), so the
+    /* bump the LAST segment whatever its shape (0.0.4.c → 0.0.4), so the
        fixture can never coincide with the running build. */
     const REMOTE_VER = LOCAL_VER.replace(/(\d+)([a-z.]*)$/, (n, suf) => String(Number(n) + 1) + suf);
     server.setOverride('/data/version.json', JSON.stringify({

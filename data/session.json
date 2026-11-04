@@ -21,13 +21,13 @@
     "wallpaperVideo": false,
     "words": [
       {
-        "w": "importantly",
-        "p": "/ˈɪmpɔːtæntli/",
-        "pos": "adverb.",
-        "m": "(sentence adverb) Used to mark a statement as having importance.",
-        "si": "වැදගත් ලෙස",
-        "s": "Please write the word importantly carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
+        "w": "important",
+        "p": "/ɪmˈpɔːtənt/",
+        "pos": "adjective.",
+        "m": "Having relevant and crucial value.",
+        "si": "වැදගත්",
+        "s": "It is very important to give your daughter independence in her life so she learns from experience.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
       },
       {
         "w": "impressed",
@@ -49,246 +49,246 @@
       },
       {
         "w": "interested",
-        "p": "/ˈɪntrəstɪd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: interested",
+        "p": "/ˈɪntəɹɛstəd/",
+        "pos": "verb.",
+        "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
         "si": "උනන්දුයි",
-        "s": "Please write the word interested carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
+        "s": "Action films don't really interest me.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
       },
       {
         "w": "jealous",
-        "p": "/ˈdʒeləs/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: jealous",
+        "p": "/ˈdʒɛləs/",
+        "pos": "adjective.",
+        "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
         "si": "ඊර්ෂ්යාව",
-        "s": "Please write the word jealous carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
+        "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
       },
       {
         "w": "married",
-        "p": "/ˈmærid/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: married",
+        "p": "/ˈmæɹ.ɪd/",
+        "pos": "noun.",
+        "m": "A married person.",
         "si": "විවාහකයි",
         "s": "Please write the word married carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
       },
       {
         "w": "miserable",
-        "p": "/ˈmɪzrəbl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: miserable",
+        "p": "/ˈmɪz(ə)ɹəbəl/",
+        "pos": "noun.",
+        "m": "A miserable person; a wretch.",
         "si": "කාලකන්නි",
         "s": "Please write the word miserable carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
       },
       {
         "w": "modern",
-        "p": "/ˈmɒdn/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: modern",
+        "p": "/ˈmɒd(ə)n/",
+        "pos": "noun.",
+        "m": "Someone who lives in modern times.",
         "si": "නවීන",
         "s": "Please write the word modern carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
       },
       {
         "w": "negative",
-        "p": "/ˈnegətɪv/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: negative",
+        "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+        "pos": "noun.",
+        "m": "Refusal or withholding of assents; prohibition, veto",
         "si": "සෘණ",
         "s": "Please write the word negative carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
       },
       {
         "w": "nervous",
         "p": "/ˈnɜːvəs/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: nervous",
+        "pos": "adjective.",
+        "m": "Of sinews and tendons.",
         "si": "ස්නායු",
         "s": "Please write the word nervous carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
       },
       {
         "w": "noisy",
-        "p": "/ˈnɔɪzi/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: noisy",
+        "p": "/ˈnɔːɪzɪ/",
+        "pos": "adjective.",
+        "m": "Making a noise, especially a loud unpleasant sound",
         "si": "ඝෝෂාකාරී",
-        "s": "Please write the word noisy carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
+        "s": "the noisy crowd.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
       },
       {
         "w": "normal",
-        "p": "/ˈnɔːml/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: normal",
+        "p": "/ˈnɔːməl/",
+        "pos": "noun.",
+        "m": "A line or vector that is perpendicular to another line, surface, or plane.",
         "si": "සාමාන්ය",
-        "s": "Please write the word normal carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
+        "s": "Heavy workload is the new normal.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
       },
       {
         "w": "old",
-        "p": "/əʊld/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: old",
+        "p": "/ˈɒʊld/",
+        "pos": "noun.",
+        "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
         "si": "පැරණි",
-        "s": "Please write the word old carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
+        "s": "A civilised society should always look after the old in the community.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
       },
       {
         "w": "fashioned",
         "p": "/ˈfæʃnd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: fashioned",
+        "pos": "verb.",
+        "m": "To make, build or construct, especially in a crude or improvised way.",
         "si": "හැඩගස්වා ඇත",
         "s": "Please write the word fashioned carefully in your dictation book.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
       },
       {
         "w": "ordinary",
-        "p": "/ˈɔːdnri/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: ordinary",
+        "p": "/ˈɔːdənɹi/",
+        "pos": "noun.",
+        "m": "A person with authority; authority, ordinance.",
         "si": "සාමාන්ය",
         "s": "Please write the word ordinary carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
       },
       {
         "w": "original",
-        "p": "/əˈrɪdʒənl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: original",
+        "p": "/əˈɹɪdʒnəl/",
+        "pos": "noun.",
+        "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
         "si": "මුල්",
-        "s": "Please write the word original carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
+        "s": "This manuscript is the original.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
       },
       {
         "w": "patient",
-        "p": "/ˈpeɪʃnt/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: patient",
+        "p": "/ˈpeɪʃənt/",
+        "pos": "noun.",
+        "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
         "si": "රෝගියා",
-        "s": "Please write the word patient carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
+        "s": "The subject of a passive verb is usually a patient.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
       },
       {
         "w": "personal",
-        "p": "/ˈpɜːsənl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: personal",
+        "p": "/ˈpɜː.sən.əl/",
+        "pos": "noun.",
+        "m": "An advertisement by which individuals attempt to meet others with similar interests.",
         "si": "පුද්ගලික",
         "s": "Please write the word personal carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
       },
       {
         "w": "pleasant",
-        "p": "/ˈpleznt/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: pleasant",
+        "p": "/ˈplɛzənt/",
+        "pos": "noun.",
+        "m": "A wit; a humorist; a buffoon.",
         "si": "ප්රසන්න",
         "s": "Please write the word pleasant carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
       },
       {
         "w": "positive",
-        "p": "/ˈpɒzətɪv/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: positive",
+        "p": "/ˈpɒzɪ̈tɪv/",
+        "pos": "noun.",
+        "m": "A thing capable of being affirmed; something real or actual.",
         "si": "ධනාත්මක",
         "s": "Please write the word positive carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
       },
       {
         "w": "realistic",
-        "p": "/ˌriːəˈlɪstɪk/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: realistic",
+        "p": "/ˌɹiːjəˈlɪstɪk/",
+        "pos": "adjective.",
+        "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
         "si": "යථාර්ථවාදී",
-        "s": "Please write the word realistic carefully in your dictation book.",
+        "s": "A realistic appraisal of the situation.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
       },
       {
         "w": "reasonable",
-        "p": "/ˈriːznəbl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: reasonable",
+        "p": "/ˈɹiː.zən.ə.bəl/",
+        "pos": "adjective.",
+        "m": "Having the faculty of reason; rational, reasoning.",
         "si": "සාධාරණයි",
-        "s": "Please write the word reasonable carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
+        "s": "a reasonable demand, amount, or price",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
       },
       {
         "w": "relaxed",
-        "p": "/rɪˈlækst/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: relaxed",
+        "p": "/ɹɪˈlækst/",
+        "pos": "verb.",
+        "m": "To calm down.",
         "si": "සැහැල්ලුවෙන්",
-        "s": "Please write the word relaxed carefully in your dictation book.",
+        "s": "to relax a rope or cord",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
       },
       {
         "w": "reliable",
-        "p": "/rɪˈlaɪbl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: reliable",
+        "p": "/ɹɪˈlaɪəbəl/",
+        "pos": "noun.",
+        "m": "Something or someone reliable or dependable",
         "si": "විශ්වසනීය",
-        "s": "Please write the word reliable carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
+        "s": "the old reliables",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
       },
       {
         "w": "relieved",
-        "p": "/rɪˈliːvd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: relieved",
+        "p": "/ɹɪˈliːvd/",
+        "pos": "verb.",
+        "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
         "si": "සහනයක් ලැබුවා",
-        "s": "Please write the word relieved carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
+        "s": "I was greatly relieved by the jury's verdict.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
       },
       {
         "w": "satisfied",
         "p": "/ˈsætɪsfaɪd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: satisfied",
+        "pos": "verb.",
+        "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
         "si": "තෘප්තිමත්",
-        "s": "Please write the word satisfied carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
+        "s": "I'm not satisfied with the quality of the food here.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
       },
       {
         "w": "special",
-        "p": "/ˈspeʃl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: special",
+        "p": "/ˈspɛ.ʃəl/",
+        "pos": "noun.",
+        "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
         "si": "විශේෂ",
-        "s": "Please write the word special carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
+        "s": "We're running a special on turkey for Thanksgiving.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
       },
       {
         "w": "stupid",
         "p": "/ˈstjuːpɪd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: stupid",
+        "pos": "noun.",
+        "m": "A stupid person; a fool.",
         "si": "මෝඩ",
-        "s": "Please write the word stupid carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
+        "s": "His stupid knows no bounds.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
       },
       {
         "w": "surprised",
-        "p": "/səˈpraɪzd/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: surprised",
+        "p": "/səˈpɹaɪzd/",
+        "pos": "verb.",
+        "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
         "si": "පුදුමයට පත් විය",
-        "s": "Please write the word surprised carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
+        "s": "It surprises me that I owe twice as much as I thought I did.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
       },
       {
         "w": "terrible",
-        "p": "/ˈterəbl/",
-        "pos": "—",
-        "m": "B1 classroom vocabulary word: terrible",
+        "p": "/ˈtɛ.ɹə.bl̩/",
+        "pos": "adjective.",
+        "m": "Dreadful; causing terror, alarm and fear; awesome",
         "si": "භයානකයි",
-        "s": "Please write the word terrible carefully in your dictation book.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
+        "s": "The witch gave him a terrible curse.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
       }
     ]
   },
@@ -303,13 +303,13 @@
       "active": true,
       "words": [
         {
-          "w": "importantly",
-          "p": "/ˈɪmpɔːtæntli/",
-          "pos": "adverb.",
-          "m": "(sentence adverb) Used to mark a statement as having importance.",
-          "si": "වැදගත් ලෙස",
-          "s": "Please write the word importantly carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
+          "w": "important",
+          "p": "/ɪmˈpɔːtənt/",
+          "pos": "adjective.",
+          "m": "Having relevant and crucial value.",
+          "si": "වැදගත්",
+          "s": "It is very important to give your daughter independence in her life so she learns from experience.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
         },
         {
           "w": "impressed",
@@ -331,246 +331,246 @@
         },
         {
           "w": "interested",
-          "p": "/ˈɪntrəstɪd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: interested",
+          "p": "/ˈɪntəɹɛstəd/",
+          "pos": "verb.",
+          "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
           "si": "උනන්දුයි",
-          "s": "Please write the word interested carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
+          "s": "Action films don't really interest me.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
         },
         {
           "w": "jealous",
-          "p": "/ˈdʒeləs/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: jealous",
+          "p": "/ˈdʒɛləs/",
+          "pos": "adjective.",
+          "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
           "si": "ඊර්ෂ්යාව",
-          "s": "Please write the word jealous carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
+          "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
         },
         {
           "w": "married",
-          "p": "/ˈmærid/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: married",
+          "p": "/ˈmæɹ.ɪd/",
+          "pos": "noun.",
+          "m": "A married person.",
           "si": "විවාහකයි",
           "s": "Please write the word married carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
         },
         {
           "w": "miserable",
-          "p": "/ˈmɪzrəbl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: miserable",
+          "p": "/ˈmɪz(ə)ɹəbəl/",
+          "pos": "noun.",
+          "m": "A miserable person; a wretch.",
           "si": "කාලකන්නි",
           "s": "Please write the word miserable carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
         },
         {
           "w": "modern",
-          "p": "/ˈmɒdn/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: modern",
+          "p": "/ˈmɒd(ə)n/",
+          "pos": "noun.",
+          "m": "Someone who lives in modern times.",
           "si": "නවීන",
           "s": "Please write the word modern carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
         },
         {
           "w": "negative",
-          "p": "/ˈnegətɪv/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: negative",
+          "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+          "pos": "noun.",
+          "m": "Refusal or withholding of assents; prohibition, veto",
           "si": "සෘණ",
           "s": "Please write the word negative carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
         },
         {
           "w": "nervous",
           "p": "/ˈnɜːvəs/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: nervous",
+          "pos": "adjective.",
+          "m": "Of sinews and tendons.",
           "si": "ස්නායු",
           "s": "Please write the word nervous carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
         },
         {
           "w": "noisy",
-          "p": "/ˈnɔɪzi/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: noisy",
+          "p": "/ˈnɔːɪzɪ/",
+          "pos": "adjective.",
+          "m": "Making a noise, especially a loud unpleasant sound",
           "si": "ඝෝෂාකාරී",
-          "s": "Please write the word noisy carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
+          "s": "the noisy crowd.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
         },
         {
           "w": "normal",
-          "p": "/ˈnɔːml/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: normal",
+          "p": "/ˈnɔːməl/",
+          "pos": "noun.",
+          "m": "A line or vector that is perpendicular to another line, surface, or plane.",
           "si": "සාමාන්ය",
-          "s": "Please write the word normal carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
+          "s": "Heavy workload is the new normal.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
         },
         {
           "w": "old",
-          "p": "/əʊld/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: old",
+          "p": "/ˈɒʊld/",
+          "pos": "noun.",
+          "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
           "si": "පැරණි",
-          "s": "Please write the word old carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
+          "s": "A civilised society should always look after the old in the community.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
         },
         {
           "w": "fashioned",
           "p": "/ˈfæʃnd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: fashioned",
+          "pos": "verb.",
+          "m": "To make, build or construct, especially in a crude or improvised way.",
           "si": "හැඩගස්වා ඇත",
           "s": "Please write the word fashioned carefully in your dictation book.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
         },
         {
           "w": "ordinary",
-          "p": "/ˈɔːdnri/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: ordinary",
+          "p": "/ˈɔːdənɹi/",
+          "pos": "noun.",
+          "m": "A person with authority; authority, ordinance.",
           "si": "සාමාන්ය",
           "s": "Please write the word ordinary carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
         },
         {
           "w": "original",
-          "p": "/əˈrɪdʒənl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: original",
+          "p": "/əˈɹɪdʒnəl/",
+          "pos": "noun.",
+          "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
           "si": "මුල්",
-          "s": "Please write the word original carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
+          "s": "This manuscript is the original.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
         },
         {
           "w": "patient",
-          "p": "/ˈpeɪʃnt/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: patient",
+          "p": "/ˈpeɪʃənt/",
+          "pos": "noun.",
+          "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
           "si": "රෝගියා",
-          "s": "Please write the word patient carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
+          "s": "The subject of a passive verb is usually a patient.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
         },
         {
           "w": "personal",
-          "p": "/ˈpɜːsənl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: personal",
+          "p": "/ˈpɜː.sən.əl/",
+          "pos": "noun.",
+          "m": "An advertisement by which individuals attempt to meet others with similar interests.",
           "si": "පුද්ගලික",
           "s": "Please write the word personal carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
         },
         {
           "w": "pleasant",
-          "p": "/ˈpleznt/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: pleasant",
+          "p": "/ˈplɛzənt/",
+          "pos": "noun.",
+          "m": "A wit; a humorist; a buffoon.",
           "si": "ප්රසන්න",
           "s": "Please write the word pleasant carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
         },
         {
           "w": "positive",
-          "p": "/ˈpɒzətɪv/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: positive",
+          "p": "/ˈpɒzɪ̈tɪv/",
+          "pos": "noun.",
+          "m": "A thing capable of being affirmed; something real or actual.",
           "si": "ධනාත්මක",
           "s": "Please write the word positive carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
         },
         {
           "w": "realistic",
-          "p": "/ˌriːəˈlɪstɪk/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: realistic",
+          "p": "/ˌɹiːjəˈlɪstɪk/",
+          "pos": "adjective.",
+          "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
           "si": "යථාර්ථවාදී",
-          "s": "Please write the word realistic carefully in your dictation book.",
+          "s": "A realistic appraisal of the situation.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
         },
         {
           "w": "reasonable",
-          "p": "/ˈriːznəbl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: reasonable",
+          "p": "/ˈɹiː.zən.ə.bəl/",
+          "pos": "adjective.",
+          "m": "Having the faculty of reason; rational, reasoning.",
           "si": "සාධාරණයි",
-          "s": "Please write the word reasonable carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
+          "s": "a reasonable demand, amount, or price",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
         },
         {
           "w": "relaxed",
-          "p": "/rɪˈlækst/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: relaxed",
+          "p": "/ɹɪˈlækst/",
+          "pos": "verb.",
+          "m": "To calm down.",
           "si": "සැහැල්ලුවෙන්",
-          "s": "Please write the word relaxed carefully in your dictation book.",
+          "s": "to relax a rope or cord",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
         },
         {
           "w": "reliable",
-          "p": "/rɪˈlaɪbl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: reliable",
+          "p": "/ɹɪˈlaɪəbəl/",
+          "pos": "noun.",
+          "m": "Something or someone reliable or dependable",
           "si": "විශ්වසනීය",
-          "s": "Please write the word reliable carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
+          "s": "the old reliables",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
         },
         {
           "w": "relieved",
-          "p": "/rɪˈliːvd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: relieved",
+          "p": "/ɹɪˈliːvd/",
+          "pos": "verb.",
+          "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
           "si": "සහනයක් ලැබුවා",
-          "s": "Please write the word relieved carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
+          "s": "I was greatly relieved by the jury's verdict.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
         },
         {
           "w": "satisfied",
           "p": "/ˈsætɪsfaɪd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: satisfied",
+          "pos": "verb.",
+          "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
           "si": "තෘප්තිමත්",
-          "s": "Please write the word satisfied carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
+          "s": "I'm not satisfied with the quality of the food here.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
         },
         {
           "w": "special",
-          "p": "/ˈspeʃl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: special",
+          "p": "/ˈspɛ.ʃəl/",
+          "pos": "noun.",
+          "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
           "si": "විශේෂ",
-          "s": "Please write the word special carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
+          "s": "We're running a special on turkey for Thanksgiving.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
         },
         {
           "w": "stupid",
           "p": "/ˈstjuːpɪd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: stupid",
+          "pos": "noun.",
+          "m": "A stupid person; a fool.",
           "si": "මෝඩ",
-          "s": "Please write the word stupid carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
+          "s": "His stupid knows no bounds.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
         },
         {
           "w": "surprised",
-          "p": "/səˈpraɪzd/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: surprised",
+          "p": "/səˈpɹaɪzd/",
+          "pos": "verb.",
+          "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
           "si": "පුදුමයට පත් විය",
-          "s": "Please write the word surprised carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
+          "s": "It surprises me that I owe twice as much as I thought I did.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
         },
         {
           "w": "terrible",
-          "p": "/ˈterəbl/",
-          "pos": "—",
-          "m": "B1 classroom vocabulary word: terrible",
+          "p": "/ˈtɛ.ɹə.bl̩/",
+          "pos": "adjective.",
+          "m": "Dreadful; causing terror, alarm and fear; awesome",
           "si": "භයානකයි",
-          "s": "Please write the word terrible carefully in your dictation book.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
+          "s": "The witch gave him a terrible curse.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
         }
       ]
     },
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-04T20:29:48.635Z",
+  "updatedAt": "2026-11-04T20:38:13.157Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 36,
+  "settingsRev": 37,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,16 +1188,16 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793860000002,
+  "syncRev": 1793860000003,
   "words": [
     {
-      "w": "importantly",
-      "p": "/ˈɪmpɔːtæntli/",
-      "pos": "adverb.",
-      "m": "(sentence adverb) Used to mark a statement as having importance.",
-      "si": "වැදගත් ලෙස",
-      "s": "Please write the word importantly carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
+      "w": "important",
+      "p": "/ɪmˈpɔːtənt/",
+      "pos": "adjective.",
+      "m": "Having relevant and crucial value.",
+      "si": "වැදගත්",
+      "s": "It is very important to give your daughter independence in her life so she learns from experience.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
     },
     {
       "w": "impressed",
@@ -1219,246 +1219,246 @@
     },
     {
       "w": "interested",
-      "p": "/ˈɪntrəstɪd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: interested",
+      "p": "/ˈɪntəɹɛstəd/",
+      "pos": "verb.",
+      "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
       "si": "උනන්දුයි",
-      "s": "Please write the word interested carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
+      "s": "Action films don't really interest me.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
     },
     {
       "w": "jealous",
-      "p": "/ˈdʒeləs/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: jealous",
+      "p": "/ˈdʒɛləs/",
+      "pos": "adjective.",
+      "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
       "si": "ඊර්ෂ්යාව",
-      "s": "Please write the word jealous carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
+      "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
     },
     {
       "w": "married",
-      "p": "/ˈmærid/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: married",
+      "p": "/ˈmæɹ.ɪd/",
+      "pos": "noun.",
+      "m": "A married person.",
       "si": "විවාහකයි",
       "s": "Please write the word married carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
     },
     {
       "w": "miserable",
-      "p": "/ˈmɪzrəbl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: miserable",
+      "p": "/ˈmɪz(ə)ɹəbəl/",
+      "pos": "noun.",
+      "m": "A miserable person; a wretch.",
       "si": "කාලකන්නි",
       "s": "Please write the word miserable carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
     },
     {
       "w": "modern",
-      "p": "/ˈmɒdn/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: modern",
+      "p": "/ˈmɒd(ə)n/",
+      "pos": "noun.",
+      "m": "Someone who lives in modern times.",
       "si": "නවීන",
       "s": "Please write the word modern carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
     },
     {
       "w": "negative",
-      "p": "/ˈnegətɪv/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: negative",
+      "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+      "pos": "noun.",
+      "m": "Refusal or withholding of assents; prohibition, veto",
       "si": "සෘණ",
       "s": "Please write the word negative carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
     },
     {
       "w": "nervous",
       "p": "/ˈnɜːvəs/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: nervous",
+      "pos": "adjective.",
+      "m": "Of sinews and tendons.",
       "si": "ස්නායු",
       "s": "Please write the word nervous carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
     },
     {
       "w": "noisy",
-      "p": "/ˈnɔɪzi/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: noisy",
+      "p": "/ˈnɔːɪzɪ/",
+      "pos": "adjective.",
+      "m": "Making a noise, especially a loud unpleasant sound",
       "si": "ඝෝෂාකාරී",
-      "s": "Please write the word noisy carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
+      "s": "the noisy crowd.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
     },
     {
       "w": "normal",
-      "p": "/ˈnɔːml/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: normal",
+      "p": "/ˈnɔːməl/",
+      "pos": "noun.",
+      "m": "A line or vector that is perpendicular to another line, surface, or plane.",
       "si": "සාමාන්ය",
-      "s": "Please write the word normal carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
+      "s": "Heavy workload is the new normal.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
     },
     {
       "w": "old",
-      "p": "/əʊld/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: old",
+      "p": "/ˈɒʊld/",
+      "pos": "noun.",
+      "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
       "si": "පැරණි",
-      "s": "Please write the word old carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
+      "s": "A civilised society should always look after the old in the community.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
     },
     {
       "w": "fashioned",
       "p": "/ˈfæʃnd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: fashioned",
+      "pos": "verb.",
+      "m": "To make, build or construct, especially in a crude or improvised way.",
       "si": "හැඩගස්වා ඇත",
       "s": "Please write the word fashioned carefully in your dictation book.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
     },
     {
       "w": "ordinary",
-      "p": "/ˈɔːdnri/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: ordinary",
+      "p": "/ˈɔːdənɹi/",
+      "pos": "noun.",
+      "m": "A person with authority; authority, ordinance.",
       "si": "සාමාන්ය",
       "s": "Please write the word ordinary carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
     },
     {
       "w": "original",
-      "p": "/əˈrɪdʒənl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: original",
+      "p": "/əˈɹɪdʒnəl/",
+      "pos": "noun.",
+      "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
       "si": "මුල්",
-      "s": "Please write the word original carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
+      "s": "This manuscript is the original.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
     },
     {
       "w": "patient",
-      "p": "/ˈpeɪʃnt/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: patient",
+      "p": "/ˈpeɪʃənt/",
+      "pos": "noun.",
+      "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
       "si": "රෝගියා",
-      "s": "Please write the word patient carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
+      "s": "The subject of a passive verb is usually a patient.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
     },
     {
       "w": "personal",
-      "p": "/ˈpɜːsənl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: personal",
+      "p": "/ˈpɜː.sən.əl/",
+      "pos": "noun.",
+      "m": "An advertisement by which individuals attempt to meet others with similar interests.",
       "si": "පුද්ගලික",
       "s": "Please write the word personal carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
     },
     {
       "w": "pleasant",
-      "p": "/ˈpleznt/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: pleasant",
+      "p": "/ˈplɛzənt/",
+      "pos": "noun.",
+      "m": "A wit; a humorist; a buffoon.",
       "si": "ප්රසන්න",
       "s": "Please write the word pleasant carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
     },
     {
       "w": "positive",
-      "p": "/ˈpɒzətɪv/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: positive",
+      "p": "/ˈpɒzɪ̈tɪv/",
+      "pos": "noun.",
+      "m": "A thing capable of being affirmed; something real or actual.",
       "si": "ධනාත්මක",
       "s": "Please write the word positive carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
     },
     {
       "w": "realistic",
-      "p": "/ˌriːəˈlɪstɪk/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: realistic",
+      "p": "/ˌɹiːjəˈlɪstɪk/",
+      "pos": "adjective.",
+      "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
       "si": "යථාර්ථවාදී",
-      "s": "Please write the word realistic carefully in your dictation book.",
+      "s": "A realistic appraisal of the situation.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
     },
     {
       "w": "reasonable",
-      "p": "/ˈriːznəbl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: reasonable",
+      "p": "/ˈɹiː.zən.ə.bəl/",
+      "pos": "adjective.",
+      "m": "Having the faculty of reason; rational, reasoning.",
       "si": "සාධාරණයි",
-      "s": "Please write the word reasonable carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
+      "s": "a reasonable demand, amount, or price",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
     },
     {
       "w": "relaxed",
-      "p": "/rɪˈlækst/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: relaxed",
+      "p": "/ɹɪˈlækst/",
+      "pos": "verb.",
+      "m": "To calm down.",
       "si": "සැහැල්ලුවෙන්",
-      "s": "Please write the word relaxed carefully in your dictation book.",
+      "s": "to relax a rope or cord",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
     },
     {
       "w": "reliable",
-      "p": "/rɪˈlaɪbl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: reliable",
+      "p": "/ɹɪˈlaɪəbəl/",
+      "pos": "noun.",
+      "m": "Something or someone reliable or dependable",
       "si": "විශ්වසනීය",
-      "s": "Please write the word reliable carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
+      "s": "the old reliables",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
     },
     {
       "w": "relieved",
-      "p": "/rɪˈliːvd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: relieved",
+      "p": "/ɹɪˈliːvd/",
+      "pos": "verb.",
+      "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
       "si": "සහනයක් ලැබුවා",
-      "s": "Please write the word relieved carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
+      "s": "I was greatly relieved by the jury's verdict.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
     },
     {
       "w": "satisfied",
       "p": "/ˈsætɪsfaɪd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: satisfied",
+      "pos": "verb.",
+      "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
       "si": "තෘප්තිමත්",
-      "s": "Please write the word satisfied carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
+      "s": "I'm not satisfied with the quality of the food here.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
     },
     {
       "w": "special",
-      "p": "/ˈspeʃl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: special",
+      "p": "/ˈspɛ.ʃəl/",
+      "pos": "noun.",
+      "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
       "si": "විශේෂ",
-      "s": "Please write the word special carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
+      "s": "We're running a special on turkey for Thanksgiving.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
     },
     {
       "w": "stupid",
       "p": "/ˈstjuːpɪd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: stupid",
+      "pos": "noun.",
+      "m": "A stupid person; a fool.",
       "si": "මෝඩ",
-      "s": "Please write the word stupid carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
+      "s": "His stupid knows no bounds.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
     },
     {
       "w": "surprised",
-      "p": "/səˈpraɪzd/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: surprised",
+      "p": "/səˈpɹaɪzd/",
+      "pos": "verb.",
+      "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
       "si": "පුදුමයට පත් විය",
-      "s": "Please write the word surprised carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
+      "s": "It surprises me that I owe twice as much as I thought I did.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
     },
     {
       "w": "terrible",
-      "p": "/ˈterəbl/",
-      "pos": "—",
-      "m": "B1 classroom vocabulary word: terrible",
+      "p": "/ˈtɛ.ɹə.bl̩/",
+      "pos": "adjective.",
+      "m": "Dreadful; causing terror, alarm and fear; awesome",
       "si": "භයානකයි",
-      "s": "Please write the word terrible carefully in your dictation book.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
+      "s": "The witch gave him a terrible curse.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
     }
   ],
   "versionFamily": "9.0.0"

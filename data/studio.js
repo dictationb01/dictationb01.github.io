@@ -770,7 +770,7 @@
 
  /* R5: lock always drops in-memory */
  function lock(keepStash) {
-  /* v0.0.4.c Path D: locking the vault silences every voice — the TTS queue
+  /* v0.0.5.c Path D: locking the vault silences every voice — the TTS queue
     and the shared <audio> element — before the unlocked DOM is torn down. */
   try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
   try { if (global.speechSynthesis && global.speechSynthesis.cancel) global.speechSynthesis.cancel(); } catch (e) {}
@@ -865,7 +865,7 @@
  function lbl(forId, text) {
   return '<label class="lbl" for="' + forId + '">' + esc(text) + '</label>';
  }
- /* v0.0.4.c (GAP 2): one icon helper for every studio surface. */
+ /* v0.0.5.c (GAP 2): one icon helper for every studio surface. */
  function ico(name, size) {
   try { if (SDP.Icons && SDP.Icons.icon) return SDP.Icons.icon(name, size || 16); } catch (e) {}
   return '';
@@ -1182,7 +1182,7 @@
  function paintQuickButton() {
   var btn = byId('btnStudioQuick');
   if (!btn) return false;
-  /* D5 + v0.0.4.c: dual-tone lock icon + words, never a bare glyph, and the
+  /* D5 + v0.0.5.c: dual-tone lock icon + words, never a bare glyph, and the
     label keeps its own span so a repaint can never eat the SVG. */
   btn.innerHTML = ico(ST.unlocked ? 'unlock' : 'lock', 16) + '<span class="i18n-label studio-quick-label"></span>';
   var lbl = btn.querySelector ? btn.querySelector('.studio-quick-label') : null;
@@ -3013,7 +3013,7 @@
  }
  /* v0.0.4.a W2: read-only auto-enriched preview badge per row; the six edit
    inputs stay alive inside a hidden .wm-edit-cells block ( toggles it). */
- /* v0.0.4.c: the per-row SVG preview button plays the committed Alice clip
+ /* v0.0.5.c: the per-row SVG preview button plays the committed Alice clip
    (0 credits — it only reads data/elevenlabs-audio.json). */
  function previewWmRow(row) {
   var list = wordManagerWords(), idx = Number(row);

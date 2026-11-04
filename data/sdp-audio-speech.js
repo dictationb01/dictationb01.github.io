@@ -285,7 +285,7 @@
   var unlocked = false;
   function unlockAudio() {
     unlocked = true;
-    /* v0.0.4.c Path B: a first gesture only unlocks playback. Calling
+    /* v0.0.5.c Path B: a first gesture only unlocks playback. Calling
        speechSynthesis.resume() here re-queued the previous utterance, which is
        exactly the stale voice students heard on a cold boot. */
     var el = sharedAudio();
@@ -531,7 +531,7 @@
       if (timer) { try { global.clearTimeout(timer); } catch (e) {} }
       if (state.urlTimer === timer) state.urlTimer = null;
       timer = null;
-      /* R1 Path C + v0.0.4.c Path C: detach the handlers AND drop the finished
+      /* R1 Path C + v0.0.5.c Path C: detach the handlers AND drop the finished
          MP3 buffer, so no stale clip stays attached to the shared element. */
       if (el) {
         el.onended = null;

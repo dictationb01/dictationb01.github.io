@@ -15,7 +15,7 @@
  function isObj(v) { return !!v && typeof v === 'object'; }
  function byId(id) { return doc && doc.getElementById ? doc.getElementById(id) : null; }
  function setText(el, text) { if (el) el.textContent = str(text); }
- /* v0.0.4.c (GAP 2) — the ONE transport painter. It writes the dual-tone SVG
+ /* v0.0.5.c (GAP 2) — the ONE transport painter. It writes the dual-tone SVG
    plus an optional .i18n-label span and never leaves a bare emoji behind, so
    every dictation beat repaint keeps its icon. */
  function setBtnIconLabel(btn, iconName, text, ariaLabel) {
@@ -207,7 +207,7 @@
   }
   /* Phase 5: the single-line cockpit header (WORD #01 / 30). */
   setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + t('progressOf30', ' / 30'));
-  /* v0.0.4.c: an ICON-first deck — the dual-tone SVG is the button, the
+  /* v0.0.5.c: an ICON-first deck — the dual-tone SVG is the button, the
     caption beside it carries the word. aria-label keeps it accessible. */
   setBtnIconLabel(byId('btnPrev'), 'prev', '', t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')');
   setBtnIconLabel(byId('btnNext'), 'next', '', t('btnNextNum', '⏭ Next (#') + Math.min(total, E.index + 2) + ')');

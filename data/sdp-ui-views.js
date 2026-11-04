@@ -78,7 +78,7 @@
     studioTitle: '6 · Lecturer Studio & admin vault', studioLocked: 'Enter the lecturer PIN to open the studio.',
     studioChangePin: 'Change PIN',
     /* Table B additions — UI labels, badges, presets and studio controls */
-    dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
+    dictTitle: '30-Word Session View · #01–#30', dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
     syncBadgeSynced: 'Synced',
     syncShortSyncing: 'Syncing…',
     lecturerSyncBar: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
@@ -319,7 +319,7 @@
     studioTitle: '6 · කථිකාචාර්ය ස්ටුඩියෝ සහ පරිපාලන බඳුන', studioLocked: 'ස්ටුඩියෝ විවෘත කිරීමට කථිකාචාර්ය PIN ඇතුළත් කරන්න.',
     studioChangePin: 'PIN වෙනස් කරන්ඕ.',
     /* Table B additions — Sinhala UI labels, badges, presets and studio controls */
-    dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
+    dictTitle: 'වචන 30 ලැයිස්තුව · #01–#30', dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
     syncBadgeSynced: 'සමමුහුර්තයි',
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
     lecturerSyncBar: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
@@ -542,7 +542,7 @@
       if (!key) continue;
       var value = t(key);
       if (value === undefined) continue;
-      /* v0.0.4.c (GAP 2): never wipe an SVG icon. A [data-i18n] node with a
+      /* v0.0.5.c (GAP 2): never wipe an SVG icon. A [data-i18n] node with a
          .i18n-label child updates only the label, so EN <-> SI keeps its icon. */
       var label = nodes[i].querySelector ? nodes[i].querySelector('.i18n-label') : null;
       if (label) { label.textContent = value; continue; }
@@ -1148,7 +1148,7 @@
     var conf = settings();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    /* v0.0.4.c Path A: a cold boot paints the guide silently. */
+    /* v0.0.5.c Path A: a cold boot paints the guide silently. */
     if (!opts.fromBoot && conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
     armGuideAutoplayWatch();
     var banner = byId('guideTapBanner');
@@ -1329,13 +1329,13 @@
       html += '<article class="dict-card" data-word="' + esc(w.w) + '" data-state="' + rowState + '">' +
         '<div class="d-body">' +
         '<div class="d-top"><span class="d-index">#' + pad2(i + 1) + '</span> <strong class="d-w">' + esc(w.w) + '</strong> <span class="d-pos">' + esc(w.pos) + '</span></div>' +
-        '<div class="d-p">/' + esc(w.p) + '/</div>' +
+        '<div class="d-p">/' + esc(str(w.p).replace(/^\/+|\/+$/g, '')) + '/</div>' +
         '<div class="d-m">' + esc(w.m) + '</div>' +
         '<div class="word-si">' + esc(w.si) + '</div>' +
         '<div class="d-s">' + highlightWordInSentence(str(w.s), str(w.w)) + '</div>' +
         '</div>' +
         '<div class="d-side">' +
-        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '"> Listen</button>' +
+        '<button type="button" class="btn btn-sm d-play" data-play="' + esc(w.w) + '" data-play-word="' + esc(w.w) + '" aria-label="' + esc(t('playAudio')) + ' ' + esc(w.w) + '">' + svgIcon('volume', 16) + ' <span class="i18n-label">' + esc(t('playAudio')) + '</span></button>' +
         '<button type="button" class="btn btn-sm d-mark-correct" data-mark-word="mastered" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isMastered) + '">' + esc(t('markCorrectWord')) + '</button>' +
         '<button type="button" class="btn btn-sm d-mark-weak" data-mark-word="weak" data-word-mark="' + esc(w.w) + '" aria-pressed="' + String(isWeak) + '">' + esc(t('markWeakWord')) + '</button>' +
         '</div>' +
@@ -2355,7 +2355,7 @@
     return true;
   }
 
-  /* v0.0.4.c (GAP 2) — the 56-icon dual-tone bank. Every glyph ships TWO
+  /* v0.0.5.c (GAP 2) — the 56-icon dual-tone bank. Every glyph ships TWO
      paths: .ic-fill (soft solid silhouette, 22% ink) and .ic-stroke (the 1.9px
      line detail). Zero emoji pictographs remain in the DOM; every view, the
      dictation transport and the studio ask this one function for an icon. */

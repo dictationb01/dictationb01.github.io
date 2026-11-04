@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.4.c-s15-shell';
+const SHELL = 'sdp-v0.0.5.c-s15-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -102,7 +102,7 @@ async function launch() {
     /* the "published" build is derived from the running one, so this fixture
        can never fall out of sync with the release it ships alongside. */
     const LOCAL_VER = JSON.parse(read('data/version.json')).appVersion;
-    /* bump the LAST segment whatever its shape (0.0.4.c → 0.0.4), so the
+    /* bump the LAST segment whatever its shape (0.0.5.c → 0.0.4), so the
        fixture can never coincide with the running build. */
     const REMOTE_VER = LOCAL_VER.replace(/(\d+)([a-z.]*)$/, (n, suf) => String(Number(n) + 1) + suf);
     server.setOverride('/data/version.json', JSON.stringify({

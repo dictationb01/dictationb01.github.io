@@ -4,15 +4,13 @@
   "version": "0.0.6.c",
   "buildDate": "2026-11-04",
   "schema": 18,
-  "settingsRev": 37,
+  "settingsRev": 38,
   "session": "8",
   "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-  "updatedAt": "2026-11-04T20:38:13.156Z",
-  "syncRev": 1793860000003,
+  "updatedAt": "2026-11-04T20:42:55.738Z",
+  "syncRev": 1793860000004,
   "payloadFiles": [
-    "data/session.json",
     "data/config.json",
-    "data/elevenlabs-audio.json",
     "data/version.json"
   ]
 }

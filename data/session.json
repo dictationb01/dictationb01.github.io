@@ -21,244 +21,274 @@
     "wallpaperVideo": false,
     "words": [
       {
-        "w": "important",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "w": "importantly",
+        "p": "/ˈɪmpɔːtæntli/",
+        "pos": "adverb.",
+        "m": "(sentence adverb) Used to mark a statement as having importance.",
+        "si": "වැදගත් ලෙස",
+        "s": "Please write the word importantly carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
       },
       {
         "w": "impressed",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ɪmˈpɹɛst/",
+        "pos": "verb.",
+        "m": "To affect (someone) strongly and often favourably.",
+        "si": "පැහැදුණා",
+        "s": "You impressed me with your command of Urdu.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
       },
       {
         "w": "intelligent",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ɪnˈtɛlɪd͡ʒənt/",
+        "pos": "adjective.",
+        "m": "Of high or especially quick cognitive capacity, bright.",
+        "si": "බුද්ධිමත්",
+        "s": "The engineer had a very intelligent design proposal for the new car.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
       },
       {
         "w": "interested",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈɪntrəstɪd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: interested",
+        "si": "උනන්දුයි",
+        "s": "Please write the word interested carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
       },
       {
         "w": "jealous",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈdʒeləs/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: jealous",
+        "si": "ඊර්ෂ්යාව",
+        "s": "Please write the word jealous carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
       },
       {
         "w": "married",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈmærid/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: married",
+        "si": "විවාහකයි",
+        "s": "Please write the word married carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
       },
       {
         "w": "miserable",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈmɪzrəbl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: miserable",
+        "si": "කාලකන්නි",
+        "s": "Please write the word miserable carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
       },
       {
         "w": "modern",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈmɒdn/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: modern",
+        "si": "නවීන",
+        "s": "Please write the word modern carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
       },
       {
         "w": "negative",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈnegətɪv/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: negative",
+        "si": "සෘණ",
+        "s": "Please write the word negative carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
       },
       {
         "w": "nervous",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈnɜːvəs/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: nervous",
+        "si": "ස්නායු",
+        "s": "Please write the word nervous carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
       },
       {
         "w": "noisy",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈnɔɪzi/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: noisy",
+        "si": "ඝෝෂාකාරී",
+        "s": "Please write the word noisy carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
       },
       {
         "w": "normal",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈnɔːml/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: normal",
+        "si": "සාමාන්ය",
+        "s": "Please write the word normal carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
       },
       {
         "w": "old",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/əʊld/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: old",
+        "si": "පැරණි",
+        "s": "Please write the word old carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
       },
       {
         "w": "fashioned",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈfæʃnd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: fashioned",
+        "si": "හැඩගස්වා ඇත",
+        "s": "Please write the word fashioned carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
       },
       {
         "w": "ordinary",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈɔːdnri/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: ordinary",
+        "si": "සාමාන්ය",
+        "s": "Please write the word ordinary carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
       },
       {
         "w": "original",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/əˈrɪdʒənl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: original",
+        "si": "මුල්",
+        "s": "Please write the word original carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
       },
       {
         "w": "patient",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpeɪʃnt/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: patient",
+        "si": "රෝගියා",
+        "s": "Please write the word patient carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
       },
       {
         "w": "personal",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpɜːsənl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: personal",
+        "si": "පුද්ගලික",
+        "s": "Please write the word personal carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
       },
       {
         "w": "pleasant",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpleznt/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: pleasant",
+        "si": "ප්රසන්න",
+        "s": "Please write the word pleasant carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
       },
       {
         "w": "positive",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpɒzətɪv/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: positive",
+        "si": "ධනාත්මක",
+        "s": "Please write the word positive carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
       },
       {
         "w": "realistic",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˌriːəˈlɪstɪk/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: realistic",
+        "si": "යථාර්ථවාදී",
+        "s": "Please write the word realistic carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
       },
       {
         "w": "reasonable",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈriːznəbl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: reasonable",
+        "si": "සාධාරණයි",
+        "s": "Please write the word reasonable carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
       },
       {
         "w": "relaxed",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/rɪˈlækst/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: relaxed",
+        "si": "සැහැල්ලුවෙන්",
+        "s": "Please write the word relaxed carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
       },
       {
         "w": "reliable",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/rɪˈlaɪbl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: reliable",
+        "si": "විශ්වසනීය",
+        "s": "Please write the word reliable carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
       },
       {
         "w": "relieved",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/rɪˈliːvd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: relieved",
+        "si": "සහනයක් ලැබුවා",
+        "s": "Please write the word relieved carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
       },
       {
         "w": "satisfied",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈsætɪsfaɪd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: satisfied",
+        "si": "තෘප්තිමත්",
+        "s": "Please write the word satisfied carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
       },
       {
         "w": "special",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈspeʃl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: special",
+        "si": "විශේෂ",
+        "s": "Please write the word special carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
       },
       {
         "w": "stupid",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈstjuːpɪd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: stupid",
+        "si": "මෝඩ",
+        "s": "Please write the word stupid carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
       },
       {
         "w": "surprised",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/səˈpraɪzd/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: surprised",
+        "si": "පුදුමයට පත් විය",
+        "s": "Please write the word surprised carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
       },
       {
         "w": "terrible",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈterəbl/",
+        "pos": "—",
+        "m": "B1 classroom vocabulary word: terrible",
+        "si": "භයානකයි",
+        "s": "Please write the word terrible carefully in your dictation book.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
       }
     ]
   },
@@ -273,244 +303,274 @@
       "active": true,
       "words": [
         {
-          "w": "important",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "w": "importantly",
+          "p": "/ˈɪmpɔːtæntli/",
+          "pos": "adverb.",
+          "m": "(sentence adverb) Used to mark a statement as having importance.",
+          "si": "වැදගත් ලෙස",
+          "s": "Please write the word importantly carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
         },
         {
           "w": "impressed",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ɪmˈpɹɛst/",
+          "pos": "verb.",
+          "m": "To affect (someone) strongly and often favourably.",
+          "si": "පැහැදුණා",
+          "s": "You impressed me with your command of Urdu.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
         },
         {
           "w": "intelligent",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ɪnˈtɛlɪd͡ʒənt/",
+          "pos": "adjective.",
+          "m": "Of high or especially quick cognitive capacity, bright.",
+          "si": "බුද්ධිමත්",
+          "s": "The engineer had a very intelligent design proposal for the new car.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
         },
         {
           "w": "interested",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈɪntrəstɪd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: interested",
+          "si": "උනන්දුයි",
+          "s": "Please write the word interested carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
         },
         {
           "w": "jealous",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈdʒeləs/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: jealous",
+          "si": "ඊර්ෂ්යාව",
+          "s": "Please write the word jealous carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
         },
         {
           "w": "married",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈmærid/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: married",
+          "si": "විවාහකයි",
+          "s": "Please write the word married carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
         },
         {
           "w": "miserable",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈmɪzrəbl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: miserable",
+          "si": "කාලකන්නි",
+          "s": "Please write the word miserable carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
         },
         {
           "w": "modern",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈmɒdn/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: modern",
+          "si": "නවීන",
+          "s": "Please write the word modern carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
         },
         {
           "w": "negative",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈnegətɪv/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: negative",
+          "si": "සෘණ",
+          "s": "Please write the word negative carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
         },
         {
           "w": "nervous",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈnɜːvəs/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: nervous",
+          "si": "ස්නායු",
+          "s": "Please write the word nervous carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
         },
         {
           "w": "noisy",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈnɔɪzi/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: noisy",
+          "si": "ඝෝෂාකාරී",
+          "s": "Please write the word noisy carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
         },
         {
           "w": "normal",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈnɔːml/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: normal",
+          "si": "සාමාන්ය",
+          "s": "Please write the word normal carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
         },
         {
           "w": "old",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/əʊld/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: old",
+          "si": "පැරණි",
+          "s": "Please write the word old carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
         },
         {
           "w": "fashioned",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈfæʃnd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: fashioned",
+          "si": "හැඩගස්වා ඇත",
+          "s": "Please write the word fashioned carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
         },
         {
           "w": "ordinary",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈɔːdnri/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: ordinary",
+          "si": "සාමාන්ය",
+          "s": "Please write the word ordinary carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
         },
         {
           "w": "original",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/əˈrɪdʒənl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: original",
+          "si": "මුල්",
+          "s": "Please write the word original carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
         },
         {
           "w": "patient",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpeɪʃnt/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: patient",
+          "si": "රෝගියා",
+          "s": "Please write the word patient carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
         },
         {
           "w": "personal",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpɜːsənl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: personal",
+          "si": "පුද්ගලික",
+          "s": "Please write the word personal carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
         },
         {
           "w": "pleasant",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpleznt/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: pleasant",
+          "si": "ප්රසන්න",
+          "s": "Please write the word pleasant carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
         },
         {
           "w": "positive",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpɒzətɪv/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: positive",
+          "si": "ධනාත්මක",
+          "s": "Please write the word positive carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
         },
         {
           "w": "realistic",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˌriːəˈlɪstɪk/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: realistic",
+          "si": "යථාර්ථවාදී",
+          "s": "Please write the word realistic carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
         },
         {
           "w": "reasonable",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈriːznəbl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: reasonable",
+          "si": "සාධාරණයි",
+          "s": "Please write the word reasonable carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
         },
         {
           "w": "relaxed",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/rɪˈlækst/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: relaxed",
+          "si": "සැහැල්ලුවෙන්",
+          "s": "Please write the word relaxed carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
         },
         {
           "w": "reliable",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/rɪˈlaɪbl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: reliable",
+          "si": "විශ්වසනීය",
+          "s": "Please write the word reliable carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
         },
         {
           "w": "relieved",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/rɪˈliːvd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: relieved",
+          "si": "සහනයක් ලැබුවා",
+          "s": "Please write the word relieved carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
         },
         {
           "w": "satisfied",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈsætɪsfaɪd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: satisfied",
+          "si": "තෘප්තිමත්",
+          "s": "Please write the word satisfied carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
         },
         {
           "w": "special",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈspeʃl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: special",
+          "si": "විශේෂ",
+          "s": "Please write the word special carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
         },
         {
           "w": "stupid",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈstjuːpɪd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: stupid",
+          "si": "මෝඩ",
+          "s": "Please write the word stupid carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
         },
         {
           "w": "surprised",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/səˈpraɪzd/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: surprised",
+          "si": "පුදුමයට පත් විය",
+          "s": "Please write the word surprised carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
         },
         {
           "w": "terrible",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈterəbl/",
+          "pos": "—",
+          "m": "B1 classroom vocabulary word: terrible",
+          "si": "භයානකයි",
+          "s": "Please write the word terrible carefully in your dictation book.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
         }
       ]
     },
@@ -816,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-04T20:29:05.668Z",
+  "updatedAt": "2026-11-04T20:29:48.635Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 35,
+  "settingsRev": 36,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1128,247 +1188,277 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793860000001,
+  "syncRev": 1793860000002,
   "words": [
     {
-      "w": "important",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "w": "importantly",
+      "p": "/ˈɪmpɔːtæntli/",
+      "pos": "adverb.",
+      "m": "(sentence adverb) Used to mark a statement as having importance.",
+      "si": "වැදගත් ලෙස",
+      "s": "Please write the word importantly carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=importantly"
     },
     {
       "w": "impressed",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ɪmˈpɹɛst/",
+      "pos": "verb.",
+      "m": "To affect (someone) strongly and often favourably.",
+      "si": "පැහැදුණා",
+      "s": "You impressed me with your command of Urdu.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
     },
     {
       "w": "intelligent",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ɪnˈtɛlɪd͡ʒənt/",
+      "pos": "adjective.",
+      "m": "Of high or especially quick cognitive capacity, bright.",
+      "si": "බුද්ධිමත්",
+      "s": "The engineer had a very intelligent design proposal for the new car.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
     },
     {
       "w": "interested",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈɪntrəstɪd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: interested",
+      "si": "උනන්දුයි",
+      "s": "Please write the word interested carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=interested"
     },
     {
       "w": "jealous",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈdʒeləs/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: jealous",
+      "si": "ඊර්ෂ්යාව",
+      "s": "Please write the word jealous carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jealous"
     },
     {
       "w": "married",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈmærid/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: married",
+      "si": "විවාහකයි",
+      "s": "Please write the word married carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=married"
     },
     {
       "w": "miserable",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈmɪzrəbl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: miserable",
+      "si": "කාලකන්නි",
+      "s": "Please write the word miserable carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=miserable"
     },
     {
       "w": "modern",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈmɒdn/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: modern",
+      "si": "නවීන",
+      "s": "Please write the word modern carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=modern"
     },
     {
       "w": "negative",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈnegətɪv/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: negative",
+      "si": "සෘණ",
+      "s": "Please write the word negative carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=negative"
     },
     {
       "w": "nervous",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈnɜːvəs/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: nervous",
+      "si": "ස්නායු",
+      "s": "Please write the word nervous carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=nervous"
     },
     {
       "w": "noisy",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈnɔɪzi/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: noisy",
+      "si": "ඝෝෂාකාරී",
+      "s": "Please write the word noisy carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=noisy"
     },
     {
       "w": "normal",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈnɔːml/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: normal",
+      "si": "සාමාන්ය",
+      "s": "Please write the word normal carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=normal"
     },
     {
       "w": "old",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/əʊld/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: old",
+      "si": "පැරණි",
+      "s": "Please write the word old carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=old"
     },
     {
       "w": "fashioned",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈfæʃnd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: fashioned",
+      "si": "හැඩගස්වා ඇත",
+      "s": "Please write the word fashioned carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
     },
     {
       "w": "ordinary",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈɔːdnri/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: ordinary",
+      "si": "සාමාන්ය",
+      "s": "Please write the word ordinary carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=ordinary"
     },
     {
       "w": "original",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/əˈrɪdʒənl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: original",
+      "si": "මුල්",
+      "s": "Please write the word original carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=original"
     },
     {
       "w": "patient",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpeɪʃnt/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: patient",
+      "si": "රෝගියා",
+      "s": "Please write the word patient carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=patient"
     },
     {
       "w": "personal",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpɜːsənl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: personal",
+      "si": "පුද්ගලික",
+      "s": "Please write the word personal carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=personal"
     },
     {
       "w": "pleasant",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpleznt/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: pleasant",
+      "si": "ප්රසන්න",
+      "s": "Please write the word pleasant carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pleasant"
     },
     {
       "w": "positive",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpɒzətɪv/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: positive",
+      "si": "ධනාත්මක",
+      "s": "Please write the word positive carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=positive"
     },
     {
       "w": "realistic",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˌriːəˈlɪstɪk/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: realistic",
+      "si": "යථාර්ථවාදී",
+      "s": "Please write the word realistic carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
     },
     {
       "w": "reasonable",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈriːznəbl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: reasonable",
+      "si": "සාධාරණයි",
+      "s": "Please write the word reasonable carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reasonable"
     },
     {
       "w": "relaxed",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/rɪˈlækst/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: relaxed",
+      "si": "සැහැල්ලුවෙන්",
+      "s": "Please write the word relaxed carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
     },
     {
       "w": "reliable",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/rɪˈlaɪbl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: reliable",
+      "si": "විශ්වසනීය",
+      "s": "Please write the word reliable carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=reliable"
     },
     {
       "w": "relieved",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/rɪˈliːvd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: relieved",
+      "si": "සහනයක් ලැබුවා",
+      "s": "Please write the word relieved carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relieved"
     },
     {
       "w": "satisfied",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈsætɪsfaɪd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: satisfied",
+      "si": "තෘප්තිමත්",
+      "s": "Please write the word satisfied carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=satisfied"
     },
     {
       "w": "special",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈspeʃl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: special",
+      "si": "විශේෂ",
+      "s": "Please write the word special carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=special"
     },
     {
       "w": "stupid",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈstjuːpɪd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: stupid",
+      "si": "මෝඩ",
+      "s": "Please write the word stupid carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=stupid"
     },
     {
       "w": "surprised",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/səˈpraɪzd/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: surprised",
+      "si": "පුදුමයට පත් විය",
+      "s": "Please write the word surprised carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=surprised"
     },
     {
       "w": "terrible",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈterəbl/",
+      "pos": "—",
+      "m": "B1 classroom vocabulary word: terrible",
+      "si": "භයානකයි",
+      "s": "Please write the word terrible carefully in your dictation book.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=terrible"
     }
   ],
   "versionFamily": "9.0.0"

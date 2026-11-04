@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.5.c';
+  SDP.version = '0.0.6.a';
   SDP.build = '2026-11-04';
-  SDP.ver = 15;
+  SDP.ver = 16;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.5.c';
-  var SCHEMA = 14;
-  var SETTINGS_REV = 30;
+  var APP_VERSION = '0.0.6.a';
+  var SCHEMA = 16;
+  var SETTINGS_REV = 31;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -59,7 +59,7 @@
   function defaultSettings() {
     return {
       mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 1.5, autoAdvance: true,
-      voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'dark',
+      voiceSource: 'auto', rate: 0.95, volume: 1, lang: 'en', theme: 'light',
       /* Start goes straight to the cockpit unless the lecturer opts the
          walkthrough in (guideAutoPlay: true); the boot guide is unaffected. */
       guideAutoPlay: false, pacingPreset: 'exam', voiceLock: 'unified',
@@ -190,8 +190,9 @@
         delete s.touchedKeys.voiceLock;
         writeJSON(KEYS.settings, s);
       }
-      /* D-UI3: 'board' is a real theme, not a typo for 'dark'. */
-      if (s.theme !== 'light' && s.theme !== 'board') s.theme = 'dark';
+      /* D-UI3: 'board' is a real theme; v0.0.6.a heals an unknown value to
+         the mandatory light default instead of dark. */
+      if (s.theme !== 'dark' && s.theme !== 'board') s.theme = 'light';
       /* R7: which settings the student changed by hand. A remote settingsRev
          bump overrides touchedKeys for the ten classroom keys (R1/SYNC-01). */
       if (!isObj(s.touchedKeys)) s.touchedKeys = {};

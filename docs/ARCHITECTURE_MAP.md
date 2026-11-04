@@ -23,7 +23,7 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 | `data/sdp-ui-views.js` | ≤ 136,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 4.0 spotlight, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
 | `data/studio.js` | ≤ 140,000 B | `SDP.Studio`: PIN vault (`BOOTSTRAP_PIN` recovery + atomic re-seal), 3-card studio, **70-clip** pack dashboard + one-click flow, `sha1Hex` clip hashes, `#btnVerifyEleven`, delta retry, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
-| `data/session.json` | exactly 57,381 B | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
+| `data/session.json` | exactly 44885 B (SHA `b1d178d3…`, v0.0.6.a real British IPA) | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
@@ -502,7 +502,7 @@ ceilings; a ceiling that exists in only one of them fails the release (§H5.4).
 | `data/sdp-ui-views.js` | 119,119 | 128,000 |
 | `data/studio.js` | 115,884 | 116,000 |
 | `data/data-meter.js` | 22,845 | 24,000 |
-| `data/session.json` | 57,381 (exact, SHA `4e80cd95…`) | 57,381 |
+| `data/session.json` | 44885 (exact, SHA `b1d178d3…`) | 44885 |
 | `data/config.json` | 35,469 | 36,000 |
 | `data/version.json` | 366 | 2,000 |
 | `data/elevenlabs-audio.json` | 744 | 2,500,000 |
@@ -561,7 +561,7 @@ only sanctioned way to buy room: **never raise a ceiling to fit a change.**
 
 `tests/check.cjs` `BUDGET` and `tests/audit-v42.cjs` §G9.2 hold the same numbers
 (`data/sdp-data-sync.js` 86,000 · `data/sdp-ui-views.js` 128,000 ·
-`data/studio.js` 116,000 · `data/session.json` 57,381). Bumping one and not the
+`data/studio.js` 176,000 · `data/session.json` 44,881). Bumping one and not the
 other is exactly what turned G9.2a red on this release; both were re-pinned in the
 same commit. G9.3a is a third, independent line: any single `data/*.js` over
 120,000 B fails it, and the 128,000 B ceiling above it is not an exemption. The
@@ -610,7 +610,7 @@ same ceilings; a ceiling that exists in only one of them fails the release.
 | `data/sdp-ui-views.js` | 135,328 | 136,000 |
 | `data/studio.js` | 122,792 | 126,000 |
 | `data/data-meter.js` | 22,845 | 24,000 |
-| `data/session.json` | 57,381 (exact, SHA `c96dbe6d…`) | 57,381 |
+| `data/session.json` | 44885 (exact, SHA `b1d178d3…`) | 44885 |
 | `data/config.json` | 35,477 | 36,000 |
 | `data/version.json` | 369 | 2,000 |
 | `data/elevenlabs-audio.json` | 747 | 2,500,000 |
@@ -649,7 +649,7 @@ same ceilings; a ceiling that exists in only one of them fails the release.
 ### §H6.3 What a release must never move
 
 `config.encVault` (`SDP_ENC_V2:…`, 487 chars) and `config.pinVerifier` (`VlIxxCOF1…`, PIN
-`78987898`) are never rewritten; `data/session.json` (57,381 B), `data/gas-source.txt`
+`78987898`) are never rewritten; `data/session.json` (44,881 B), `data/gas-source.txt`
 (13,764 B) and both Sinhala fonts stay byte-identical; the five localStorage keys stay five;
 strict ES5 with no build step; `/v1/text-to-speech` only from a human click inside
 `data/studio.js`; `version.json` commits last, off one monotonic `syncRev`.

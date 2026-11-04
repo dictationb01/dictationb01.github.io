@@ -147,4 +147,8 @@
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
   else init();
+  document.addEventListener('click', function (e) {
+    var rw = e && e.target && e.target.closest ? e.target.closest('.ring-wrap') : null;
+    if (rw) { var bp = document.getElementById('btnPlayPause'); if (bp) bp.click(); }
+  }, false);
 })();

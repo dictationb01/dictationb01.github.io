@@ -1590,3 +1590,179 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
 .studio-insp-body { padding: 2px 14px 12px; }
 
 body, #appHeader, #brandName { color: var(--text) !important; }
+
+
+/* ── 17 · v0.0.6.c F2 — clock-ring hero cockpit (360x640 fold law) ──────── */
+/* The cockpit card is the FIRST card: ring + phase + transport must fit the
+   first 360x640 viewport. #beat keeps its grid centering; the readout sits
+   INSIDE the ring so the ring doubles as the play/pause home. */
+.cockpit .beat { position: relative; padding: 14px 0 4px; }
+.ring-wrap { position: relative; display: grid; place-items: center; }
+.ring { width: 168px; height: 168px; }
+.ring-track { stroke-width: 7; }
+#beatRing { stroke-width: 7; }
+.beat-readout {
+  position: absolute; inset: 0;
+  display: grid; place-content: center; justify-items: center; gap: 4px;
+  pointer-events: none;
+}
+#beatSeconds { font-size: 40px; }
+.beat-stage { margin-top: 8px; }
+.cockpit-transport { margin-top: 10px; }
+.cockpit-head { margin-bottom: 2px; }
+/* The board bar is a slim classroom strip: transport + word + reveal. */
+.board-class-bar { padding: 10px 12px; }
+.board-transport { display: flex; gap: 8px; flex-wrap: wrap; }
+.board-jumper-drawer { margin: 8px 0 0; }
+.board-jump-toggle {
+  min-height: var(--tap); min-width: var(--tap);
+  display: inline-flex; align-items: center; justify-content: center;
+  font: inherit; font-size: 13.5px; font-weight: 800;
+  color: var(--accent-fg);
+  background: var(--bg-accent-glass);
+  border: 1.5px solid var(--border);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  cursor: pointer; list-style: none;
+  user-select: none;
+}
+.board-jump-toggle::-webkit-details-marker { display: none; }
+.board-jump-toggle::after { content: '\25be'; margin-left: 8px; }
+.board-jumper-drawer[open] .board-jump-toggle::after { content: '\25b8'; }
+.board-jumper { margin-top: 10px; }
+@media (max-width: 400px) {
+  .ring { width: 148px; height: 148px; }
+  #beatSeconds { font-size: 34px; }
+  .bar-wrap { width: 120px; }
+}
+@media (min-width: 1024px) {
+  .ring { width: 184px; height: 184px; }
+  #beatSeconds { font-size: 44px; }
+}
+
+
+/* ── 18 · v0.0.6.c F3/F4 — two-mode chrome + scroll-proof sliders ───────── */
+/* F4: the range INPUT is a visual bar only — a scrolling thumb can never
+   grab it. Steppers (48px) are the tactile path; programmatic value writes
+   + dispatched input/change events still work (G3/G5/G7 contract). */
+.stepper input[type='range'] {
+  pointer-events: none;
+  -webkit-user-select: none; user-select: none;
+  flex: 1 1 130px; max-width: 190px;
+  accent-color: var(--accent);
+  opacity: 0.9;
+}
+.stepper input[type='range'] { touch-action: pan-y; }
+/* F3: the header theme button mirrors the two-mode switch. */
+#btnTheme .sdp-icon { color: var(--accent-fg); }
+
+
+/* ── 19 · v0.0.6.c F1 — red unsaved-changes action state ────────────────── */
+.lecturer-sync-bar { transition: background 0.25s var(--ease), border-color 0.25s var(--ease); }
+.lecturer-sync-bar[data-dirty='true'] {
+  background: var(--danger-glass);
+  border: 2px solid var(--danger);
+  animation: sdp-dirty-pulse 1.6s ease-in-out infinite;
+}
+.lecturer-sync-bar[data-synced='true']:not([data-dirty='true']) {
+  border-color: var(--ok);
+}
+#btnSyncClassSettings[data-dirty='true'] {
+  background: var(--danger) !important;
+  background-image: none;
+  border-color: var(--danger) !important;
+  color: var(--danger-ink) !important;
+}
+.studio-security-bar[data-dirty='true'] {
+  background: var(--danger-glass);
+  border-color: var(--danger);
+}
+#btnPublishWordsAndVoice[data-dirty='true'],
+#btnSsbPublish[data-dirty='true'] {
+  background: var(--danger) !important;
+  background-image: none;
+  border-color: var(--danger) !important;
+}
+@keyframes sdp-dirty-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.35); }
+  50% { box-shadow: 0 0 0 7px rgba(225, 29, 72, 0); }
+}
+html[data-theme='light'] .lecturer-sync-bar[data-dirty='true'] { background: #FFF1F2; }
+html[data-theme='light'] #btnSyncClassSettings[data-dirty='true'] { color: #FFFFFF !important; }
+
+
+/* ── 20 · v0.0.6.c F5 — premium surface details ─────────────────────────── */
+/* Dual-tone inner top-highlight on interactive surfaces; crisp 12/16px
+   radii kept consistent; hairline focus rings. */
+.deck-btn, .board-chip, .prac-option, .stepper-btn, .preset-pill {
+  position: relative;
+}
+.deck-btn::after, .prac-option::after, .stepper-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%);
+  pointer-events: none;
+}
+html[data-theme='light'] .deck-btn::after,
+html[data-theme='light'] .prac-option::after,
+html[data-theme='light'] .stepper-btn::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0) 46%);
+}
+/* Practice: premium flashcard with a smooth flip cue and crisp quiz tiles. */
+.prac-card {
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  background: linear-gradient(180deg, var(--bg-elev), var(--bg-sunken));
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform 0.32s var(--ease-emph), box-shadow 0.32s var(--ease);
+}
+.prac-card:hover { transform: translateY(-2px); }
+.prac-card[data-prac-act='flip']:active { transform: scale(0.985); }
+.prac-word { letter-spacing: 0; text-shadow: 0 1px 0 rgba(0,0,0,0.04); }
+html[data-theme='light'] .prac-word { text-shadow: none; }
+.prac-option {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+}
+.prac-option:hover { border-color: var(--accent); }
+.prac-option[data-state='ok'] { box-shadow: 0 0 0 3px var(--ok-glass); }
+.prac-option[data-state='bad'] { box-shadow: 0 0 0 3px var(--danger-glass); }
+/* Home drill cards: lifted icon medallion + two-line copy rhythm. */
+.practice-card { border-radius: var(--radius); }
+.prac-ico {
+  border-radius: 14px;
+  background: var(--bg-accent-glass);
+  border: 1px solid var(--border);
+}
+/* Dictation cockpit: quieter hero card so the ring carries the hierarchy. */
+.cockpit { border-radius: var(--radius); }
+.cockpit-head h2 { letter-spacing: -0.015em; }
+/* Studio: premium pill + cards. */
+.studio-card { border-radius: var(--radius); }
+.studio-word-count-pill { border-radius: 9999px; }
+/* Word list: balanced card rhythm. */
+.dict-card { border-radius: var(--radius); }
+
+
+/* ── 21 · v0.0.6.c verification fixes — fold law + color-scheme ─────────── */
+html[data-theme='light'] { color-scheme: light; }
+html[data-theme='dark'] { color-scheme: dark; }
+html[data-theme='board'] { color-scheme: dark; }
+@media (max-width: 400px) {
+  .cockpit-head { margin-bottom: 0; }
+  .cockpit-head h2 { font-size: 17px; }
+  .cockpit { padding: 10px; }
+  .beat { padding: 6px 0 0; }
+  .beat-phase-pill { font-size: 12.5px; }
+  .beat-state { font-size: 13px; }
+  .cockpit-transport { margin-top: 4px; }
+  .deck-main { min-width: 60px; min-height: 60px; }
+  .deck-btn { min-width: 48px; }
+  .deck-cap { font-size: 10.5px; }
+}
+
+.ring-track { fill: none !important; }
+.ring-wrap { cursor: pointer; }

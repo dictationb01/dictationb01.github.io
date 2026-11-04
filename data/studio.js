@@ -221,6 +221,11 @@
   unlocked: false,
   /* v0.0.6.b (S4): unpublished word edits — powers the tab-exit guard. */
   dirty: false,
+  /* v0.0.6.c (F1): per-word delta recognition — wordsDirty is true only
+     when a spelling/field actually differs from the committed baseline, so
+     a pacing-only publish can never trigger the word pipeline (G8.6c). */
+  wordsDirty: false,
+  wordDeltas: [],
   envelope: '',
   secrets: {},
   message: '',
@@ -559,6 +564,15 @@
  function saveClassSettings(cb) {
   cb = cb || noop;
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
+  /* v0.0.6.c (F1): word edits ride the SAME button — the unified pipeline
+     enriches, voices and publishes session+config+audio+version — but only
+     when a publish token exists; the token-less failure keeps the original
+     pacing path so the human failure stamp (G12.13l) stays verbatim. A
+     pacing-only change (the G8.6 journey) keeps the config+version path. */
+  try { detectWordDeltas(); } catch (e) {}
+  if (ST.wordsDirty && str(ST.secrets.ghToken)) {
+   return publishWordsAndVoice(function (err, info) { cb(err, info); });
+  }
   var conf = classSettingsPayload();
   if (!sync() || !sync().publishFilesSequential) { cb(new Error('no_sync')); return { ok: false, reason: 'no_sync' }; }
   var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
@@ -778,6 +792,8 @@
   try { if (global.speechSynthesis && global.speechSynthesis.cancel) global.speechSynthesis.cancel(); } catch (e) {}
   ST.unlocked = false;
   ST.dirty = false;
+  ST.wordsDirty = false;
+  ST.wordDeltas = [];
   ST.secrets = {};
   ST.pin = '';
   try { if (vault() && vault().clear && !keepStash) vault().clear(); } catch (e) {}
@@ -993,9 +1009,122 @@
    '</section>';
  }
  /* v0.0.6.a Track 6: live "N / 30 Words Recognized" pill + spring CTA. */
+ /* ══ v0.0.6.c (F1): true per-word delta recognition ═══════════════════
+  * The committed baseline is SDP.Sync.words(). The live edit surface is
+  * #studioBulkWords / #studioWords / .wm-input (through ST.words). Even at
+  * 30/30, one changed spelling flips wordsDirty, lists the changed words in
+  * the recognition pill and clears their stale IPA/meaning so the pipeline
+  * re-enriches them. A pure pacing change leaves wordsDirty false. */
+ function committedWords() {
+  var out = [];
+  try { out = sync() && sync().words ? sync().words() : []; } catch (e) { out = []; }
+  return Array.isArray(out) ? out : [];
+ }
+ function liveStudioWords() {
+  /* F1: the structured ST.words list (what the word manager edits) is the
+     primary live surface — the raw bulk textarea is only authoritative
+     while the lecturer is actually typing in it, because parseBulkWords
+     splits on commas and classroom meanings contain commas. */
+  var bulkEl = byId('studioBulkWords');
+  var bulkActive = !!(bulkEl && str(fieldValue('studioBulkWords')) &&
+   (bulkEl.getAttribute('data-dirty') === '1' || document.activeElement === bulkEl));
+  if (bulkActive) return parseBulkWords(fieldValue('studioBulkWords'));
+  if (ST.words && ST.words.length) return ST.words;
+  return committedWords();
+ }
+ /* F1: before the studio is unlocked/mounted with real content the delta
+    detector must stay silent (no phantom dirty at boot). */
+ function deltaDetectionReady() {
+  return !!(ST.unlocked && (str(fieldValue('studioBulkWords')) || (ST.words && ST.words.length)));
+ }
+ function wordFieldSig(w) {
+  return [str(w && w.w).toLowerCase(), str(w && w.p), str(w && w.pos),
+   str(w && w.m), str(w && w.si), str(w && w.s)].join('~');
+ }
+ /* F1: a live word is a DELTA only when its spelling is new/renamed, or
+  * when a field it actually carries differs from the committed record.
+  * Word-only bulk lines (empty enrich fields awaiting enrichment) never
+  * count as field edits — otherwise every word would flag at once. */
+ function wordIsDelta(live, prior) {
+  if (!prior) return true;
+  var fields = ['p', 'pos', 'm', 'si', 's'], changed = 0, present = 0, i;
+  for (i = 0; i < fields.length; i++) {
+   var v = str(live && live[fields[i]]);
+   if (!v) continue;
+   present++;
+   if (v !== str(prior[fields[i]])) changed++;
+  }
+  return present > 0 && changed > 0;
+ }
+ function detectWordDeltas() {
+  if (!deltaDetectionReady()) { ST.wordsDirty = false; ST.wordDeltas = []; return []; }
+  var live = liveStudioWords();
+  var base = {};
+  var committed = committedWords();
+  var i, deltas = [];
+  for (i = 0; i < committed.length; i++) {
+   base[str(committed[i] && committed[i].w).toLowerCase()] = committed[i];
+  }
+  for (i = 0; i < live.length; i++) {
+   var w = str(live[i] && live[i].w);
+   if (!w) continue;
+   var prior = base[w.toLowerCase()] || null;
+   if (wordIsDelta(live[i], prior)) deltas.push({ w: w, index: i, prior: prior });
+  }
+  ST.wordDeltas = deltas.slice(0, 3);
+  ST.wordsDirty = deltas.length > 0;
+  /* F1: any word change is an unsaved change for the tab-exit guard too. */
+  if (ST.wordsDirty) ST.dirty = true;
+  return deltas;
+ }
+ /* A replaced word must lose the OLD word's stale IPA/meaning so the fast
+  * delta enrich refreshes it, never resurrects it (mergeEnrichRecord keeps
+  * priors only for still-matching spellings). */
+ function clearStaleEnrichOnDeltas(deltas) {
+  var i, k, changed = {};
+  for (i = 0; i < (deltas || []).length; i++) changed[str(deltas[i].w).toLowerCase()] = true;
+  for (i = 0; i < (ST.words || []).length; i++) {
+   var w = str(ST.words[i] && ST.words[i].w).toLowerCase();
+   if (!changed[w]) continue;
+   for (k = 0; k < ST.words.length; k++) {
+    var other = str(ST.words[k] && ST.words[k].w).toLowerCase();
+    if (k !== i && other === w) break;
+   }
+   ST.words[i].p = ''; ST.words[i].pos = ''; ST.words[i].m = '';
+   ST.words[i].si = ''; ST.words[i].s = '';
+  }
+  return true;
+ }
+ /* The RED unsaved-changes warning state on #lecturerSyncBar /
+  * #btnSyncClassSettings / #studioSecurityBar / #btnPublishWordsAndVoice.
+  * data-dirty='true' paints the pulsing #E11D48 action state in CSS. */
+ function paintDirtyState() {
+  var dirty = !!(ST.unlocked && ST.dirty);
+  var ids = ['lecturerSyncBar', 'btnSyncClassSettings', 'studioSecurityBar', 'btnPublishWordsAndVoice'];
+  for (var i = 0; i < ids.length; i++) {
+   var node = byId(ids[i]);
+   if (!node || !node.setAttribute) continue;
+   if (dirty) node.setAttribute('data-dirty', 'true');
+   else node.removeAttribute('data-dirty');
+  }
+  var bar = byId('lecturerSyncBar');
+  if (bar && bar.setAttribute && !dirty) bar.setAttribute('data-synced', 'true');
+  else if (bar && bar.removeAttribute) bar.removeAttribute('data-synced');
+  paintWordCountPill();
+  return dirty;
+ }
+ function deltaPillSuffix() {
+  if (!ST.wordsDirty || !ST.wordDeltas.length) return '';
+  var names = [], i;
+  for (i = 0; i < ST.wordDeltas.length; i++) names.push('\u201c' + ST.wordDeltas[i].w + '\u201d');
+  var more = ST.wordDeltas.length >= 3 ? '\u2026' : '';
+  return ' \u26a0\ufe0f ' + ST.wordDeltas.length + ' ' + t('studioWordModified', 'word(s) modified') +
+   ' (' + names.join(', ') + more + ') \u2014 ' + t('studioClickBroadcast', 'click Broadcast to auto-enrich & sync');
+ }
  function wordCountPillText(n) {
   var full = n >= 30;
-  return String(n) + ' / 30 ' + T('studioWordsRecognized') + (full ? ' ✓' : '');
+  /* v0.0.6.c (F1): even at 30/30 the pill names the modified word(s). */
+  return String(n) + ' / 30 ' + T('studioWordsRecognized') + (full ? ' \u2713' : '') + deltaPillSuffix();
  }
  function paintWordCountPill() {
   var host = byId('studioWordCountPill');
@@ -1182,6 +1311,8 @@
   placeLecturerBar();
   paintPackDashboard();
   paintGenProgress();
+  try { detectWordDeltas(); } catch (e) {}
+  if (deltaDetectionReady()) paintDirtyState();
   try { if (SDP.Views && SDP.Views.paintLecturerBar) SDP.Views.paintLecturerBar(); } catch (e) {}
   try { if (SDP.Views && SDP.Views.paintLecturerBanner) SDP.Views.paintLecturerBanner(); } catch (e) {}
   return true;
@@ -1388,13 +1519,16 @@
    var editor = byId('studioWords');
    ST.dirty = true;
    ST.words = parseWords(editor ? editor.value : '');
+   detectWordDeltas();
    setText(byId('studioCount'), ST.words.length + ' ' + t('studioWordsCount'));
    setText(byId('costPreviewLine'), costPreviewLine(ST.words));
    paintWordManager();
   } else if (id === 'studioBulkWords') {
    ST.dirty = true;
    setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
-   paintWordCountPill();
+   detectWordDeltas();
+   clearStaleEnrichOnDeltas(ST.wordDeltas);
+   paintDirtyState();
    scheduleAutoEnrich();
   } else if (id === 'studioAiKey') {
    var guess = detectProvider(str(target.value));
@@ -1442,7 +1576,7 @@
    paintFreeNoKey();
    return true;
   }
-  if (target && target.getAttribute && target.getAttribute('data-wm')) { ST.dirty = true; return applyWordManagerEdit(target, true); }
+  if (target && target.getAttribute && target.getAttribute('data-wm')) { ST.dirty = true; var okWm = applyWordManagerEdit(target, true); detectWordDeltas(); paintDirtyState(); return okWm; }
   return false;
  }
 
@@ -1519,7 +1653,7 @@
   },
   btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
   btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
-  btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { saveClassSettings(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
+  btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { publishWordsAndVoice(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
   /* E8: atomic PIN change — validate 4–12 digits, confirm match, re-seal the
     vault with the new PIN, publish config.json then version.json last, and
     clear every busy flag on any failure exit. The studio stays unlocked. */
@@ -2132,7 +2266,8 @@ function priorIPAFor(w) {
    var merged = mergeEnrichRecord(word, base, provided);
    var slot = { w: word, prior: base, record: merged };
    slots.push(slot);
-   if (force || !hasFullRecord(merged) || str(merged.enrichSource) === 'lexicon') needs.push(slot);
+   var deltaHit = (Array.isArray(opts.deltaOnly) && opts.deltaOnly.indexOf(word.toLowerCase()) >= 0);
+   if (force || deltaHit || !hasFullRecord(merged) || str(merged.enrichSource) === 'lexicon') needs.push(slot);
   }
   ST.enriching = true;
   var offlineCount = 0, provider = aiProviderName(), capped = false;
@@ -2343,6 +2478,11 @@ function priorIPAFor(w) {
   }, function (err, info) {
    if (err) { clearBusy(); cb(err, info); return; }
    bumpMeterCache();
+   /* v0.0.6.c (F1): a landed atomic publish clears every dirty flag. */
+   ST.dirty = false;
+   ST.wordsDirty = false;
+   ST.wordDeltas = [];
+   try { paintDirtyState(); } catch (e2) {}
    ST.lastPublish = { at: Date.now(), syncRev: syncRev, files: files.map(function (f) { return f.path; }), version: version };
    cb(null, ST.lastPublish);
   });
@@ -2352,21 +2492,64 @@ function priorIPAFor(w) {
  /* D4: generate clips (non-fatal */
  function publishWordsAndVoice(cb) {
   cb = cb || noop;
+  /* v0.0.6.c (F1): Fast Delta Enrich (<2s in-app budget) — ONLY the words
+     whose spelling/fields actually changed get re-enriched; unchanged words
+     keep their committed IPA/Sinhala at zero cost. */
+  function enrichDeltas(next) {
+   try { detectWordDeltas(); } catch (e) {}
+   if (!ST.wordsDirty || !ST.wordDeltas.length) { next(); return; }
+   var names = [], i;
+   for (i = 0; i < ST.wordDeltas.length; i++) names.push(ST.wordDeltas[i].w);
+   var raw = fieldValue('studioBulkWords') || wordsToText(currentWords());
+   var list = parseBulkWords(raw);
+   /* mark ONLY the changed words for the enricher (force the rest off) */
+   var forceNames = names.map(function (n) { return n.toLowerCase(); });
+   for (i = 0; i < list.length; i++) {
+    var w = str(list[i] && list[i].w).toLowerCase();
+    list[i].force = forceNames.indexOf(w) >= 0;
+   }
+   enrichWords(list, { force: false, deltaOnly: forceNames }, function () {
+    paintWordManager();
+    next();
+   });
+  }
+  /* Fast Delta Voice: generateClips already skips every unchanged clip at 0
+     credits (sha1 content hash); a missing/changed word is the only paid
+     call, and only when a real key is present and not in a gate harness. */
+  function voiceDeltas(next) {
+   if (!str(ST.secrets.elevenKey) || !allowAutoGen()) { next(); return; }
+   generateClips({ noCommit: true }, function (e, i) {
+    if (e && !(i && i.tierLimited)) { clearBusy(); msg(t('studioPublishFail'), 'bad'); cb(e, i); return; }
+    next();
+   });
+  }
+  /* D18 mirror: any pipeline failure must clear every busy flag. */
+  function failPipeline(err, info) { clearBusy(); msg(t('studioPublishFail') + ' \u00b7 ' + publishReason(err, info), 'bad'); cb(err, info); }
   function pub() { publishBundle(currentWords(), {}, function (err, info) {
-   if (err) { clearBusy(); msg(t('studioPublishFail') + ' · ' + publishReason(err, info), 'bad'); cb(err, info); return; }
+   if (err) { clearBusy(); msg(t('studioPublishFail') + ' \u00b7 ' + publishReason(err, info), 'bad'); cb(err, info); return; }
    try {
     if (SDP.Speech) {
      if (SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips || {});
      if (SDP.Speech.reloadManifest) SDP.Speech.reloadManifest(true);
     }
    } catch (e) {}
-   var saved = clipCount() + t('studioClipsSaved') + (info && info.syncRev) + ' · data/elevenlabs-audio.json';
+   /* v0.0.6.c (F1): the publish LANDED — clear the red warning, paint the
+      emerald synced state on #lecturerSyncBar. */
+   ST.dirty = false;
+   ST.wordsDirty = false;
+   ST.wordDeltas = [];
+   paintDirtyState();
+   var last = byId('lecturerSyncLast');
+   if (last) {
+    last.textContent = t('lecturerSyncLast') + ' \u00b7 ' + hhmm() + ' \u00b7 Rev #' + str(info && info.syncRev);
+    last.setAttribute('data-state', 'ok');
+   }
+   var saved = clipCount() + t('studioClipsSaved') + (info && info.syncRev) + ' \u00b7 data/elevenlabs-audio.json';
    paintGenProgress(saved);
    paintPackDashboard();
    msg(saved, 'ok'); toast(T('studioPublishOkFull')); cb(null, info);
   }); }
-  if (!str(ST.secrets.elevenKey)) return pub();
-  generateClips({ noCommit: true }, function (e, i) { if (e && !(i && i.tierLimited)) { clearBusy(); msg(t('studioPublishFail'), 'bad'); cb(e, i); return; } pub(); });
+  enrichDeltas(function () { voiceDeltas(pub); });
  }
  /* Re-seal the vault (and recompute */
  function sealVaultNow(cb) {
@@ -3482,6 +3665,11 @@ function priorIPAFor(w) {
   lock: lock,
   isUnlocked: isUnlocked,
   hasUnpublishedEdits: function () { return !!(ST.unlocked && ST.dirty); },
+  /* v0.0.6.c (F1): the delta surface the views and gates read. */
+  wordsDirty: function () { return !!(ST.unlocked && ST.wordsDirty); },
+  wordDeltas: function () { return (ST.wordDeltas || []).slice(); },
+  detectWordDeltas: function () { return detectWordDeltas(); },
+  paintDirtyState: function () { return paintDirtyState(); },
   secrets: secrets,
   setEnvelope: setEnvelope,
   hasVault: hasVault,

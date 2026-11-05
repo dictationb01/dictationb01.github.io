@@ -512,6 +512,15 @@
     opts = opts || {};
     cb = cb || noop;
     var pEpoch = state.speechEpoch;
+    /* v0.0.6.e (B): an explicitly passed epoch that is already stale never
+       opens the element — a rapid Pause/Play tap must resolve aborted at
+       once instead of racing a dead clip down the tier ladder. */
+    if (opts.epoch !== undefined && opts.epoch !== state.speechEpoch) {
+      var staleErr = new Error('aborted');
+      staleErr.aborted = true; staleErr.stale = true;
+      cb(staleErr);
+      return;
+    }
     var el = sharedAudio();
     if (!el) { cb(new Error('no_audio_element')); return; }
     var srcUrl = playableUrl(url);
@@ -538,7 +547,12 @@
         el.onerror = null;
         try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {}
       }
-      if (state.speechEpoch !== pEpoch) return;
+      if (state.speechEpoch !== pEpoch) {
+        var ab = new Error('aborted');
+        ab.aborted = true; ab.stale = true;
+        cb(ab);
+        return;
+      }
       cb(ok ? null : new Error('audio_failed'));
     }
     try {
@@ -552,7 +566,24 @@
       el.onerror = function () { finish(false); };
       var playing = el.play();
       if (playing && typeof playing.then === 'function') {
-        playing.then(null, function () { finish(false); });
+        playing.then(null, function (perr) {
+          /* v0.0.6.e (B): a rapid re-tap aborts the in-flight play promise;
+             resolve { aborted: true } so the ladder never drops to robotic
+             browser TTS on a race the human cancelled on purpose. */
+          if (perr && perr.name === 'AbortError') {
+            if (!done) {
+              done = true;
+              state.audioPlaying = false;
+              if (timer) { try { global.clearTimeout(timer); } catch (e0) {} }
+              try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e1) {}
+              var abp = new Error('aborted');
+              abp.aborted = true; abp.stale = true;
+              cb(abp);
+            }
+            return;
+          }
+          finish(false);
+        });
       }
     } catch (e) { finish(false); return; }
     /* Bounded: a broken URL must hand over to the next tier quickly. */
@@ -891,7 +922,7 @@
     }
     var clipUrl = manifestClip(key);
     if (clipUrl) {
-      playUrl(playableUrl(clipUrl), { rate: 0.92, volume: undefined }, function (err) {
+      playUrl(playableUrl(clipUrl), { rate: 0.92, volume: undefined, epoch: cueEpoch }, function (err) {
         if (state.speechEpoch !== cueEpoch) return;
         if (!err) { state.lastTier = 'eleven'; cb(null); return; }
         if (!text) { cb(null); return; }
@@ -933,6 +964,17 @@
     var gen = 0;
     var wEpoch = state.speechEpoch;
     state.lastTier = '';
+    /* v0.0.6.e (B): log the word synchronously at the very start so the
+       lastUtterances audit reflects intent even when the clip is aborted
+       mid-flight; identical tail entries dedup. */
+    var pw = str(word && word.w ? word.w : word);
+    if (pw) {
+      state.lastUtterances = state.lastUtterances || [];
+      if (state.lastUtterances[state.lastUtterances.length - 1] !== pw) {
+        state.lastUtterances.push(pw);
+        if (state.lastUtterances.length > 25) state.lastUtterances.shift();
+      }
+    }
     /* R1 (a)(b)(c)(d): no word may be produced by a paused engine, by a dead
        epoch, or into a screen the student cannot see. This single gate is the
        one law; the per-tier checks below are only belt and braces. */
@@ -970,12 +1012,29 @@
         wEpoch = state.speechEpoch;
         return;
       }
-      playUrl(current.url, { rate: opts.rate, volume: opts.volume, timeoutMs: opts.timeoutMs }, function (err) {
+      playUrl(current.url, { rate: opts.rate, volume: opts.volume, timeoutMs: opts.timeoutMs, epoch: wEpoch }, function (err) {
         if (myGen !== gen || settled || state.speechEpoch !== wEpoch) return;
         if (!err) {
           state.lastTier = current.tier;
           settled = true;
           cb(null);
+          return;
+        }
+        /* v0.0.6.e (B): an aborted/stale clip (rapid tap, epoch bump, pause)
+           stops the ladder CLEANLY — never falls to Youdao or speechSynthesis. */
+        if (err.aborted || err.stale) {
+          settled = true;
+          state.lastTier = state.lastTier || 'eleven';
+          cb(null);
+          return;
+        }
+        /* v0.0.6.e (B): a genuine failure of the committed Alice clip while
+           online retries the local MP3 once before the ladder continues. */
+        if ((current.tier === 'eleven' || current.tier === 'elevenlabs') && !attempt.retried &&
+            (typeof navigator === 'undefined' || navigator.onLine !== false)) {
+          attempt.retried = true;
+          at -= 1;
+          attempt();
           return;
         }
         attempt();

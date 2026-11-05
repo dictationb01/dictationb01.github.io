@@ -10,8 +10,8 @@
  * purged on upgrade; word audio now comes from the committed Alice pack. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.d-s19';
-var SHELL_CACHE = 'sdp-v0.0.6.d-s19-shell';
+var SW_VERSION = 'sdp-v0.0.6.e-s20';
+var SHELL_CACHE = 'sdp-v0.0.6.e-s20-shell';
 var PRESERVE_CACHES = [];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
@@ -46,7 +46,7 @@ function isYoudaoHost(url) {
   return url.indexOf('dict.youdao.com') >= 0 || url.indexOf('/dictvoice') >= 0;
 }
 function isLecturerClipPath(pathname) {
-  return /\/assets\/audio\/session-w/.test(pathname);
+  return /\/assets\/audio\/session-w/.test(pathname) || /\/audio\/elevenlabs\//.test(pathname);
 }
 function isFontOrIcon(url) {
   return /\.(woff2|woff|ttf|png|svg|ico|webp)(\?|$)/i.test(url) || url.indexOf('/assets/fonts/') >= 0;

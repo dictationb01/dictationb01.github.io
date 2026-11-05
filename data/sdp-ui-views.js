@@ -302,6 +302,20 @@
     ringTapStart: 'Tap to Start',
     ringTapPause: 'Tap to Pause',
     ringTapResume: 'Tap to Resume',
+    /* v0.0.6.e (C/D/E): reveal card, beta channel, update capsule, offline studio, live chips. */
+    revealShow: '👁 Show Current Word', revealHide: '🙈 Hide Word', revealPausedBadge: '⏸ Paused while viewing word',
+    betaOn: 'BETA', betaOff: 'Stable', betaStalePill: '⚠ Out-of-date word list — Tap to sync',
+    updateSyncing: 'New classroom words published — syncing now…', updateAsk: 'Lecturer updated the word list',
+    updateNow: 'Update Now (OK)', updateLater: 'Later',
+    studioOfflineTitle: 'Lecturer Studio needs the internet',
+    studioOfflineBody: 'Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.',
+    sessionNoLabel: 'Session No', sessionTitleLabel: 'Session Topic / Title',
+    pasteWords: '📋 Paste', clearWords: '🧹 Clear', confirmWords: '✓ Confirm Edited Words',
+    liveChipsLabel: 'Live word chips', helperReady: '✓ 30 / 30 words ready',
+    helperOver: '{n} words detected (need 30) — tap ✕ to remove or ⇄ to merge split compound words',
+    helperUnder: '{n} / 30 words — add {need} more',
+    wordsConfirmedOk: '✓ Words confirmed — ready to Broadcast', wordsCleared: 'Word editor cleared',
+    chipMergeLabel: 'Merge with next word', chipRemoveLabel: 'Remove word',
     apiCreditsExhausted: '⚠️ API Credits Exhausted — Please Enter a New API Key in Advanced Tools',
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
@@ -577,6 +591,19 @@
     ringTapStart: 'ආරම්භයට ස්පර්ශ කරන්න',
     ringTapPause: 'විරාමයට ස්පර්ශ කරන්න',
     ringTapResume: 'දිගටම යාමට ස්පර්ශ කරන්න',
+    revealShow: '👁 වත්මන් වචනය පෙන්වන්න', revealHide: '🙈 වචනය සඟවන්න', revealPausedBadge: '⏸ වචනය බලමින් විරාමයි',
+    betaOn: 'බීටා', betaOff: 'ස්ථාවර', betaStalePill: '⚠ වචන ලැයිස්තුව පැරණියි — සමමුහූර්ත කිරීමට ස්පර්ශ කරන්න',
+    updateSyncing: 'නව පන්ති වචන පළ කර ඇත — දැන් සමමුහූර්ත වෙමින්…', updateAsk: 'කථිකාචාර්‍ය වචන ලැයිස්තුව යාවත්කාලීන කළා',
+    updateNow: 'දැන් යාවත්කාලීන කරන්න (OK)', updateLater: 'පසුව',
+    studioOfflineTitle: 'විද්‍යාගාරයට අන්තර්ජාලය අවශ්‍යයි',
+    studioOfflineBody: 'විද්‍යාගාරය සඳහා ක්‍රියාකාරී අන්තර්ජාල සම්බන්ධතාවක් අවශ්‍ය බැවින් සියලු වෙනස්කම් GitHub Cloud වෙත සමමුහූර්ත වේ. සිසු ඩික්ටේෂන් ප්‍රකාරය නොබැඳිව ක්‍රියා කරයි.',
+    sessionNoLabel: 'වාර අංකය', sessionTitleLabel: 'වාර මාතෘකාව',
+    pasteWords: '📋 අලවන්න', clearWords: '🧹 හිස් කරන්න', confirmWords: '✓ වචන තහවුර කරන්න',
+    liveChipsLabel: 'වචන චිප', helperReady: '✓ 30 / 30 වචන සූදානම්',
+    helperOver: '{n} වචන හමු විය (අවශ්‍ය 30) — ඉවත් කිරීමට ✕ හෝ ඒකාංශ කිරීමට ⇄ ස්පර්ශ කරන්න',
+    helperUnder: '{n} / 30 වචන — තව {need}ක් එකතු කරන්න',
+    wordsConfirmedOk: '✓ වචන තහවුරු කළා — විකාශනයට සූදානම්', wordsCleared: 'වචන සංස්කාරකය හිස් කළා',
+    chipMergeLabel: 'ඊළඟ වචනය සමඟ ඒකාංශ කරන්න', chipRemoveLabel: 'වචනය ඉවත් කරන්න',
     apiCreditsExhausted: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
@@ -656,6 +683,7 @@
     renderWords();
     renderPractice();
     renderGuideSteps();
+    paintRevealCard();
     renderSettings();
     if (SDP.Engine) {
       if (SDP.Engine.repaintState) { try { SDP.Engine.repaintState(); } catch (e) {} }
@@ -2247,6 +2275,7 @@
   }
   function toggleBoardWord() {
     boardState.wordShown = !boardState.wordShown;
+    if (boardState.wordShown) autoPauseForReveal();
     paintBoardWord();
     return boardState.wordShown;
   }
@@ -2402,6 +2431,14 @@
       }
     });
     on('btnLang', 'click', toggleLang);
+    on('btnRevealWord', 'click', toggleRevealCard);
+    on('sdpBetaPill', 'click', function () {
+      try { global.localStorage.setItem('sdp_beta_preview', betaActive() ? '0' : '1'); } catch (e) {}
+      try { global.location.reload(); } catch (e2) {}
+    });
+    on('sdpStalePill', 'click', applyUpdateNow);
+    on('sdpUpdateNowBtn', 'click', applyUpdateNow);
+    on('sdpUpdateLaterBtn', 'click', dismissUpdateLater);
     on('guideLangPill', 'click', toggleLang);
     on('btnTheme', 'click', toggleTheme);
     on('btnStart', 'click', function () { markCueSeen('home'); startDictation(); });
@@ -2468,6 +2505,123 @@
     paintCues();
   }
 
+
+  /* ══ v0.0.6.e (C/D/E) — reveal card, beta channel, update capsule, offline studio ══ */
+  function isOfflineNow() {
+    return typeof navigator !== 'undefined' && navigator.onLine === false;
+  }
+  function engineRunningNow() {
+    try { return !!(SDP.Engine && SDP.Engine.isActive && SDP.Engine.isActive() && !(SDP.Engine.isPaused && SDP.Engine.isPaused())); } catch (e) { return false; }
+  }
+  function autoPauseForReveal() {
+    if (!engineRunningNow()) return false;
+    try { if (SDP.Engine && SDP.Engine.pause) SDP.Engine.pause('reveal'); } catch (e) {}
+    return true;
+  }
+  var revealState = { shown: false, pausedFor: false };
+  function paintRevealCard() {
+    var card = byId('revealWordCard'), text = byId('revealWordText'), btn = byId('btnRevealWord'), badge = byId('revealPausedBadge');
+    if (!card) return false;
+    card.hidden = false;
+    var word = currentWordText();
+    if (text) { text.textContent = revealState.shown ? (word || '—') : '••••••'; text.setAttribute('data-revealed', revealState.shown ? 'true' : 'false'); }
+    if (btn) setText(btn, revealState.shown ? t('revealHide', '🙈 Hide Word') : t('revealShow', '👁 Show Current Word'));
+    if (badge) badge.hidden = !(revealState.shown && revealState.pausedFor);
+    return true;
+  }
+  function toggleRevealCard() {
+    revealState.shown = !revealState.shown;
+    if (revealState.shown) revealState.pausedFor = autoPauseForReveal();
+    else revealState.pausedFor = false;
+    paintRevealCard();
+    return revealState.shown;
+  }
+  var lastRevealIdx = -1;
+  function onEngineWordChanged(idx) {
+    if (idx === lastRevealIdx) return true;
+    lastRevealIdx = idx;
+    revealState.shown = false;
+    revealState.pausedFor = false;
+    revealState.wordIdx = idx;
+    paintRevealCard();
+    try { resetBoardReveal(); } catch (e) {}
+    paintBoardWord();
+    return true;
+  }
+  function betaActive() {
+    var ls = '';
+    try { ls = str(global.localStorage && global.localStorage.getItem('sdp_beta_preview')); } catch (e) { ls = ''; }
+    var url = '';
+    try { url = str(global.location && global.location.search) + ' ' + str(global.location && global.location.hash); } catch (e2) { url = ''; }
+    if (ls === '1') return true;
+    if (ls === '0') return false;
+    return url.indexOf('beta') !== -1;
+  }
+  function applyBetaChannel() {
+    var pill = byId('sdpBetaPill');
+    var on = betaActive();
+    try { doc.documentElement.setAttribute('data-sdp-channel', on ? 'beta' : 'stable'); } catch (e) {}
+    if (!pill) return false;
+    pill.hidden = !on;
+    pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+    setText(pill, t('betaOn', 'BETA') + ' v' + APP_VERSION);
+    return true;
+  }
+  function paintUpdateCard(mode) {
+    var card = byId('sdpUpdateCard'), text = byId('sdpUpdateText'), bar = byId('sdpUpdateBar');
+    var nowBtn = byId('sdpUpdateNowBtn'), laterBtn = byId('sdpUpdateLaterBtn');
+    if (!card) return false;
+    card.hidden = false;
+    if (text) setText(text, mode === 'ask' ? t('updateAsk', 'Lecturer updated the word list') : t('updateSyncing', 'New classroom words published — syncing now…'));
+    if (bar) bar.hidden = (mode !== 'sync');
+    if (nowBtn) nowBtn.hidden = (mode !== 'ask');
+    if (laterBtn) laterBtn.hidden = (mode !== 'ask');
+    if (mode === 'sync' && global.setTimeout) {
+      global.setTimeout(function () { applyUpdateNow(); }, 1500);
+    }
+    return true;
+  }
+  function applyUpdateNow() {
+    var card = byId('sdpUpdateCard'), stale = byId('sdpStalePill');
+    if (card) card.hidden = true;
+    if (stale) stale.hidden = true;
+    try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
+    try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
+    renderAll();
+    if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
+    return true;
+  }
+  function dismissUpdateLater() {
+    var card = byId('sdpUpdateCard'), stale = byId('sdpStalePill');
+    if (card) card.hidden = true;
+    if (stale) stale.hidden = false;
+    return true;
+  }
+  function paintStudioOffline(show) {
+    var card = byId('sdpStudioOfflineCard');
+    var tab = byId('tab-studio'), rail = byId('rail-studio');
+    if (card) card.hidden = !show;
+    if (tab) { if (show) tab.classList.add('is-offline'); else tab.classList.remove('is-offline'); }
+    if (rail) { if (show) rail.classList.add('is-offline'); else rail.classList.remove('is-offline'); }
+    if (show) {
+      try { if (SDP.Studio && SDP.Studio.lock) SDP.Studio.lock(); } catch (e) {}
+      try { if (SDP.Studio && SDP.Studio.isUnlocked && !SDP.Studio.isUnlocked() && SDP.Studio.state) {} } catch (e2) {}
+    }
+    return true;
+  }
+  function onNetChange() {
+    var off = isOfflineNow();
+    paintStudioOffline(off);
+    if (!off) return true;
+    var studioOpen = false;
+    try { studioOpen = !!(doc.querySelector && doc.querySelector('#screen-studio.active')); } catch (e) { studioOpen = false; }
+    if (studioOpen) {
+      var body = byId('studioBody');
+      if (body && body.setAttribute) body.setAttribute('aria-live', 'polite');
+    }
+    return true;
+  }
   /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys… */
   function bindTeacherUpdates() {
     if (bindTeacherUpdates._bound || !doc || !doc.addEventListener) return false;
@@ -2498,11 +2652,19 @@
       var d = (ev && ev.detail) || {};
       handleSyncCheckResult(d.err, d.result);
     }, false);
+    /* v0.0.6.e (E): online-only Lecturer Studio — the lock reacts to the real
+       network state and never blocks a programmatic mount() while online. */
+    if (global.addEventListener && !bindTeacherUpdates._netBound) {
+      bindTeacherUpdates._netBound = true;
+      global.addEventListener('offline', function () { onNetChange(); }, false);
+      global.addEventListener('online', function () { onNetChange(); }, false);
+    }
     return true;
   }
 
   /* D6: Studio is a top-level screen; focus the PIN (locked) or the key row. */
   function openStudio() {
+    if (isOfflineNow()) paintStudioOffline(true);
     try { showTab('studio'); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
     var unlocked = false;
@@ -2524,11 +2686,23 @@
      dictation engine to a clean Word #1 cockpit with the new words, hide
      every stale banner and tell the human what happened in the capsule. */
   function onWordsRefresh() {
-    try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
-    try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
-    showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
-    renderAll();
-    if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    /* v0.0.6.e (D): a running dictation is never interrupted mid-word — the
+       ask-mode capsule takes over; an idle player auto-syncs in 1.5s. */
+    var wasRunning = engineRunningNow();
+    if (!wasRunning) {
+      try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
+      try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
+      renderAll();
+      if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    }
+    var lecturerHere = false;
+    try { lecturerHere = !!(doc.querySelector && doc.querySelector('#screen-studio.active')); } catch (e) { lecturerHere = false; }
+    if (lecturerHere) {
+      showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
+      return true;
+    }
+    if (wasRunning) paintUpdateCard('ask');
+    else paintUpdateCard('sync');
     return true;
   }
 
@@ -2560,6 +2734,7 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
+    applyBetaChannel();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
     setText(byId('aboutVersion'), APP_VERSION);
@@ -2735,6 +2910,12 @@
     showToast: showToast,
     showCapsule: showCapsule,
     onWordsRefresh: onWordsRefresh,
+    onEngineWordChanged: onEngineWordChanged,
+    toggleRevealCard: toggleRevealCard,
+    applyBetaChannel: applyBetaChannel,
+    betaActive: betaActive,
+    paintUpdateCard: paintUpdateCard,
+    isOfflineNow: isOfflineNow,
     toastText: toastText,
     checkForUpdate: checkForUpdate,
     setUpdateStatus: setUpdateStatus,

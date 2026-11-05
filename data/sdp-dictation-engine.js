@@ -697,6 +697,33 @@
 
  /* D17: the cockpit badges — repeat position, the paused reason banner and
    the Resume button label all live in one painter. */
+
+ /* v0.0.6.e (C): YouTube-style center burst overlay on the clock ring. The
+   literal "Tap to Start" text is gone from the dial; an SVG glyph now
+   scales 0.6 -> 1.18 and fades over 420ms on every play/pause transition. */
+ var lastBurstPhase = '';
+ function burstRing(icon) {
+  var host = byId('ringTapOverlay');
+  if (!host || !host.classList) return false;
+  host.innerHTML = icon === '\u23f8'
+   ? '<svg viewBox="0 0 24 24" width="46" height="46" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(245,158,11,0.30)"></circle><rect x="7.6" y="7.6" width="3.3" height="8.8" rx="1.1" fill="#FFFFFF"></rect><rect x="13.1" y="7.6" width="3.3" height="8.8" rx="1.1" fill="#FFFFFF"></rect></svg>'
+   : '<svg viewBox="0 0 24 24" width="46" height="46" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(56,189,248,0.30)"></circle><path d="M9.6 7.6v8.8l8-4.4z" fill="#FFFFFF"></path></svg>';
+  host.classList.remove('is-bursting');
+  void host.offsetWidth;
+  host.classList.add('is-bursting');
+  global.setTimeout(function () { if (host.classList) host.classList.remove('is-bursting'); }, 430);
+  return true;
+ }
+ function burstOnPhase(phase) {
+  if (phase === lastBurstPhase) return;
+  var prev = lastBurstPhase;
+  lastBurstPhase = phase;
+  var icon = '';
+  if (phase === 'listening' || phase === 'writing') icon = '\u25b6';
+  else if (phase === 'paused') icon = '\u23f8';
+  if (!icon) return;
+  if (prev === 'idle' || prev === 'paused' || prev === 'listening' || prev === 'writing') burstRing(icon);
+ }
  function renderBadges() {
   var rep = byId('playerRepeatBadge');
   if (rep) {
@@ -729,14 +756,17 @@
      tells a human the ring itself is the tap target. */
   var afford = byId('ringAffordance');
   if (afford) {
-   var icon = '▶', label = '';
-   if (E.phase === 'paused') { icon = '▶'; label = t('ringTapResume', 'Tap to Resume'); }
-   else if (E.phase === 'listening' || E.phase === 'writing') { icon = '⏸'; label = t('ringTapPause', 'Tap to Pause'); }
-   else { icon = '▶'; label = t('ringTapStart', 'Tap to Start'); }
-   setText(afford, icon + ' ' + label);
+   var label = '';
+   if (E.phase === 'paused') { label = t('ringTapResume', 'Tap to Resume'); }
+   else if (E.phase === 'listening' || E.phase === 'writing') { label = t('ringTapPause', 'Tap to Pause'); }
+   else { label = t('ringTapStart', 'Tap to Start'); }
    afford.setAttribute('data-state', E.phase === 'paused' ? 'paused'
     : (E.phase === 'listening' || E.phase === 'writing') ? 'live' : 'idle');
+   afford.setAttribute('aria-label', label);
+   afford.textContent = '';
   }
+  burstOnPhase(E.phase);
+  try { if (SDP.Views && SDP.Views.onEngineWordChanged) SDP.Views.onEngineWordChanged(E.index); } catch (e) {}
   return true;
  }
 
@@ -1468,6 +1498,7 @@
   start: start,
   stop: stop,
   hardReset: hardReset,
+  burstRing: burstRing,
   bind: bind,
   state: state,
   items: items,

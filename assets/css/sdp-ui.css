@@ -1907,3 +1907,50 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
   .header-actions { gap: 4px; }
   .header-actions .hbtn { padding: 0 8px; font-size: 12px; }
 }
+
+
+/* ══ v0.0.6.e — Human-UX layer: burst ring, reveal card, beta/capsule, squircles ══ */
+.board-jumper-drawer{display:none !important}
+.ring-tap-overlay{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0}
+.ring-tap-overlay.is-bursting{animation:sdpRingBurst .42s ease-out}
+@keyframes sdpRingBurst{0%{opacity:0;transform:scale(.6)}30%{opacity:1}100%{opacity:0;transform:scale(1.18)}}
+.reveal-word-card{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;margin:0 0 0px;padding:1px 6px;border-radius:12px;background:rgba(127,127,127,.08);border:1px solid rgba(127,127,127,.18)}
+.reveal-word-card .btn{min-height:48px;padding:4px 10px}
+.reveal-word-text{font-size:14px}
+.reveal-word-card[hidden]{display:none}
+.reveal-word-text{margin:0;font-weight:700;letter-spacing:.02em}
+.reveal-paused-badge{font-size:12px;padding:2px 8px;border-radius:999px;background:#F59E0B;color:#04081A}
+.beta-pill{background:#7C3AED;color:#FFF !important}
+.stale-pill{position:fixed;right:10px;bottom:132px;z-index:61;max-width:62vw;padding:10px 14px;border-radius:999px;border:0;background:#F59E0B;color:#04081A !important;font-weight:700;font-size:13px;box-shadow:0 12px 32px rgba(245,158,11,.42);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.update-card{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:60;max-width:420px;width:calc(100vw - 24px);padding:12px 14px;border-radius:16px;background:#0F1420;color:#F8FAFC;box-shadow:0 18px 48px rgba(2,6,23,.45)}
+.update-card .update-text{margin:0 0 8px;font-weight:600}
+.update-card .update-bar{height:4px;border-radius:999px;overflow:hidden;background:rgba(56,189,248,.25);margin:0 0 8px}
+.update-card .update-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#38BDF8,#10B981);animation:sdpUpdateBar 1.5s linear forwards}
+@keyframes sdpUpdateBar{0%{width:0}100%{width:100%}}
+.update-card .update-actions{display:flex;gap:8px}
+html[data-theme='dark'] .update-card{background:#161D2E}
+.studio-offline-card{margin:8px 0 12px;padding:14px;border-radius:16px;border:1px solid #F59E0B;background:rgba(245,158,11,.12)}
+.studio-offline-title{margin:0 0 6px;font-size:15px;font-weight:700}
+.studio-offline-body{margin:0;font-size:13px;opacity:.9}
+.tab.is-offline,.rail-btn.is-offline{opacity:.55}
+.set-squircle{display:inline-grid;place-items:center;width:30px;height:30px;margin-right:8px;border-radius:10px;flex:none;vertical-align:middle}
+.set-squircle--timing{background:linear-gradient(135deg,#38BDF8,#0EA5E9);color:#04121F}
+.set-squircle--voice{background:linear-gradient(135deg,#10B981,#059669);color:#032118}
+.set-squircle--theme{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#0B0618}
+.set-squircle--cache{background:linear-gradient(135deg,#F59E0B,#D97706);color:#1A1005}
+.set-squircle--cloud{background:linear-gradient(135deg,#60A5FA,#2563EB);color:#040D1F}
+.set-squircle--studio{background:linear-gradient(135deg,#F472B6,#DB2777);color:#1F0512}
+.studio-session-row{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.studio-session-row .lbl{min-width:110px}
+.studio-count-helper{margin:6px 0;font-size:13px}
+.studio-count-helper.is-ready{color:#059669;font-weight:600}
+.studio-count-helper.is-over{display:block;padding:8px 10px;border-radius:12px;background:rgba(245,158,11,.16);border:1px solid #F59E0B;color:#92400E;font-weight:600}
+.studio-count-helper.is-under{opacity:.8}
+.studio-live-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip-word{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:rgba(56,189,248,.16);border:1px solid rgba(56,189,248,.4);font-size:13px}
+.chip-word.chip-extra{background:rgba(245,158,11,.2);border-color:#F59E0B}
+.chip-word b{opacity:.7;font-weight:700}
+.chip-x,.chip-merge{border:0;background:transparent;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px;border-radius:8px}
+.chip-x:hover{background:rgba(239,68,68,.2)}
+.chip-merge:hover{background:rgba(56,189,248,.25)}
+.studio-util-row{margin:6px 0}

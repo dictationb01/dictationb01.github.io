@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.c';
+  SDP.version = '0.0.6.d';
   SDP.build = '2026-11-05';
-  SDP.ver = 18;
+  SDP.ver = 19;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.c';
+  var APP_VERSION = '0.0.6.d';
   var SCHEMA = 17;
-  var SETTINGS_REV = 34;
+  var SETTINGS_REV = 35;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -977,7 +977,20 @@
     return true;
   }
 
+  /* v0.0.6.d (D1): the fingerprint of the ACTIVE word list. applyPayloads()
+     compares it before/after so a changed word list can refresh a stuck
+     cockpit even when no stale draft exists (engine running or paused). */
+  function wordsSignatureOf(list) {
+    var arr = Array.isArray(list) ? list : [], out = [], i;
+    for (i = 0; i < arr.length; i++) {
+      var w = arr[i] || {};
+      out.push(str(typeof w === 'string' ? w : (w.w || w.word || '')).trim().toLowerCase());
+    }
+    return out.join('|');
+  }
+
   function applyPayloads(version, config, session) {
+    var prevWordSig = (state.words && state.words.length) ? wordsSignatureOf(state.words) : '';
     state.version = version || state.version;
     state.config = config || state.config;
     state.session = session || state.session;
@@ -1038,6 +1051,18 @@
     /* D8: repair a released config.json that lost its vault. */
     try { healVaultFromLayerOne(); } catch (e) {}
     state.ready = state.words.length > 0;
+    /* v0.0.6.d (D1): the active word list CHANGED under a running or paused
+       cockpit (local publish, one-click master setup, settings broadcast or a
+       remote adoption). Clear the stale draft, reset the engine to a clean
+       Word #1 cockpit and announce the refresh — never keep dictating the old
+       words. Skipped on the very first boot (no previous list). */
+    try {
+      var nextSig = wordsSignatureOf(state.words);
+      if (prevWordSig && nextSig && prevWordSig !== nextSig) {
+        if (global.SDP && global.SDP.Data && global.SDP.Data.clearSession) global.SDP.Data.clearSession();
+        emit('sdp:words-refresh', { words: state.words.length });
+      }
+    } catch (e2) {}
   }
 
   function finishBoot(err, info) {
@@ -1076,6 +1101,7 @@
     fetchJSON: fetchJSON,
     normalizeWord: normalizeWord,
     applyPayloads: applyPayloads,
+    wordsSignatureOf: wordsSignatureOf,
 
     /* contract: docs/ARCHITECTURE_MAP.md §R6 boot path */
     boot: function (opts, cb) {

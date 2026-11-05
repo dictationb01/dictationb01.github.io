@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -200,25 +200,28 @@ async function unlockStudio(app) {
     app.byId('btnStudioQuick').click();
     await app.settle(8);
     const pin = app.byId('studioPin');
-    check('G12.7a the locked PIN field accepts 4–12 digits',
-      !!pin && pin.getAttribute('maxlength') === '12' && pin.getAttribute('minlength') === '4',
+    check('G12.7a the locked PIN field accepts 4–8 digits',
+      !!pin && pin.getAttribute('maxlength') === '8' && pin.getAttribute('minlength') === '4',
       pin && pin.outerHTML.slice(0, 90));
     check('G12.7b the locked DOM is PIN-only — no keys, words or publish control',
       !app.byId('elKeyInput') && !app.byId('ghTokenInput') && !app.byId('studioWords') &&
       !app.byId('btnOneClickMasterSetup'));
     const dots = app.byId('pinDots');
-    check('G12.7c the dot indicator ships twelve dots', !!dots && dots.querySelectorAll('span').length === 12,
+    check('G12.7c the dot pool ships at most eight spans', !!dots && dots.querySelectorAll('span').length === 8,
       dots && dots.querySelectorAll('span').length);
-    check('G12.7d an empty PIN shows eight dots', !!dots && dots.getAttribute('data-dots') === '8',
+    check('G12.7d an empty PIN shows eight dots (the class default PIN length)',
+      !!dots && dots.getAttribute('data-dots') === '8',
       dots && dots.getAttribute('data-dots'));
-    for (const digit of '123456789012') {
+    for (const digit of '12345678') {
       const key = app.q('#pinPad [data-pin="' + digit + '"]');
       if (key) key.click();
     }
-    check('G12.7e a twelve-digit PIN grows the dots to twelve',
-      app.byId('pinDots').getAttribute('data-dots') === '12', app.byId('pinDots').getAttribute('data-dots'));
+    check('G12.7e the completion hint appears once every PIN digit is in',
+      app.byId('pinCompleteHint').hidden === false && /PIN Complete/.test(app.byId('pinCompleteHint').textContent),
+      app.byId('pinCompleteHint') && app.byId('pinCompleteHint').textContent);
     app.byId('pinPadClear').click();
-    check('G12.7f Clear resets the dots to eight', app.byId('pinDots').getAttribute('data-dots') === '8',
+    check('G12.7f Clear resets the dots and hides the completion hint',
+      app.byId('pinDots').getAttribute('data-dots') === '8' && app.byId('pinCompleteHint').hidden === true,
       app.byId('pinDots').getAttribute('data-dots'));
 
     await unlockStudio(app);

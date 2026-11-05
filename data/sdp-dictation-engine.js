@@ -725,6 +725,18 @@
     setBtnIconLabel(btn, 'play', '', t('btnStartDictation', '▶ Start Dictation'));
    }
   }
+  /* v0.0.6.d (D4): the animated Play/Pause affordance inside the clock ring
+     tells a human the ring itself is the tap target. */
+  var afford = byId('ringAffordance');
+  if (afford) {
+   var icon = '▶', label = '';
+   if (E.phase === 'paused') { icon = '▶'; label = t('ringTapResume', 'Tap to Resume'); }
+   else if (E.phase === 'listening' || E.phase === 'writing') { icon = '⏸'; label = t('ringTapPause', 'Tap to Pause'); }
+   else { icon = '▶'; label = t('ringTapStart', 'Tap to Start'); }
+   setText(afford, icon + ' ' + label);
+   afford.setAttribute('data-state', E.phase === 'paused' ? 'paused'
+    : (E.phase === 'listening' || E.phase === 'writing') ? 'live' : 'idle');
+  }
   return true;
  }
 
@@ -773,7 +785,8 @@
    mountInput();
    bindInput();
    focusInputOnce();
-   try { if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.resumed', noop); } catch (e) {}
+   /* v0.0.6.d (D3): "Session resumed" is never spoken. The countdown picks
+     up immediately — the pause announcement stays, the resume one is gone. */
   } else {
    E.phase = 'listening';
    E.epoch += 1;
@@ -797,10 +810,9 @@
     speakRepeats(epoch, E.repeatsDone || 0);
    };
    E.cueTimer = global.setTimeout(handover, (E.writeSecs && E.writeSecs < 1) ? 20 : 1500);
-   try {
-    if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.resumed', function () { handover(); });
-    else handover();
-   } catch (e) { handover(); }
+   /* v0.0.6.d (D3): no spoken "Session resumed." — the interrupted repetition
+     restarts straight away (short 150 ms handover), never after a cue. */
+   handover();
   }
   saveDraft();
   renderBadges();
@@ -1288,6 +1300,54 @@
   return state();
  }
 
+ /* v0.0.6.d (D1): hardReset — the word list changed under a running/paused
+   cockpit. Stop the beat, drop the stale draft, re-arm the cockpit at Word #1
+   with the NEW 30 words and repaint every stale banner. The engine lands in
+   a clean idle state: the student presses Play (or the ring) to begin. */
+ function hardReset(opts) {
+  opts = opts || {};
+  stop();
+  E.epoch += 1;
+  E.index = 0;
+  E.items = [];
+  E.hints = { pos: false, first: false, si: false, sentence: false };
+  E.repeatsDone = 0;
+  E.repeatShown = 0;
+  E.remainingMs = 0;
+  E.phaseMs = 0;
+  E.startedAt = 0;
+  E.retryOnly = false;
+  E.sessionNo = SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8';
+  applySettings();
+  unmountInput();
+  refreshEls();
+  showResults(false);
+  var banner = byId('playerPausedBanner');
+  if (banner) banner.hidden = true;
+  var paused = byId('resumeBanner');
+  if (paused) paused.hidden = true;
+  if (SDP.Views && SDP.Views.renderHome) { try { SDP.Views.renderHome(); } catch (e) {} }
+  updateMeta();
+  renderBadges();
+  setStateText();
+  paint(0);
+  var words = [];
+  try { words = SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []; } catch (e) { words = []; }
+  if (words.length) {
+   E.items = [];
+   for (var i = 0; i < words.length; i++) {
+    var word = words[i] || {};
+    E.items.push({ i: i + 1, w: str(word.w), typed: '', correct: null, marked: null, word: word, origIndex: i });
+   }
+   E.index = 0;
+   updateMeta();
+   setStateText();
+  }
+  setText(el('beatStateText'), t('readyBeat', 'Ready'));
+  paintPhasePill('idle');
+  return { ok: true, words: E.items.length };
+ }
+
  function bind() {
   refreshEls();
   var map = [
@@ -1314,6 +1374,23 @@
      try { fn(); } catch (e) {}
     });
    })(map[i][0], map[i][1]);
+  }
+  var ring = byId('ringWrap');
+  if (ring && !ring._sdpBound) {
+   ring._sdpBound = true;
+   ring.addEventListener('click', function (ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    /* v0.0.6.d (D4): tapping the clock ring IS the play/pause control. */
+    if (ring.classList) ring.classList.add('ring-pressed');
+    global.setTimeout(function () { if (ring.classList) ring.classList.remove('ring-pressed'); }, 180);
+    try { togglePlayPause(); } catch (e) {}
+   }, false);
+   ring.addEventListener('keydown', function (ev) {
+    var key = ev && (ev.key || ev.keyCode);
+    if (key !== 'Enter' && key !== 13 && key !== ' ' && key !== 32) return;
+    if (ev && ev.preventDefault) ev.preventDefault();
+    try { togglePlayPause(); } catch (e) {}
+   }, false);
   }
   var pills = byId('sessionPills');
   if (pills && !pills._sdpBound) {
@@ -1390,6 +1467,7 @@
  var Engine = {
   start: start,
   stop: stop,
+  hardReset: hardReset,
   bind: bind,
   state: state,
   items: items,

@@ -10,8 +10,8 @@
  * purged on upgrade; word audio now comes from the committed Alice pack. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.c-s18';
-var SHELL_CACHE = 'sdp-v0.0.6.c-s18-shell';
+var SW_VERSION = 'sdp-v0.0.6.d-s19';
+var SHELL_CACHE = 'sdp-v0.0.6.d-s19-shell';
 var PRESERVE_CACHES = [];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';

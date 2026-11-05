@@ -1175,6 +1175,19 @@ tr.is-missed td.r-word { color: var(--danger); }
 .pin-dots > span.on { background: var(--accent); border-color: var(--accent); }
 .pin-dot-off { opacity: 0.35; }
 .pin-dot-extra { width: 8px; height: 8px; align-self: center; }
+/* v0.0.6.d (D8): dots beyond the active PIN length are fully hidden (the
+   8-span pool stays in the DOM but a 4-digit PIN shows exactly 4 dots). */
+.pin-dots > span.pin-dot-off { display: none; }
+.pin-dots[data-complete='true'] > span.on { box-shadow: 0 0 0 3px var(--ok-glass); border-color: var(--ok); background: var(--ok); }
+.pin-complete-hint {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ok-fg);
+}
+html[data-theme='light'] .pin-complete-hint { color: #065F46; }
+.pin-complete-hint[hidden] { display: none; }
 
 /* Studio cards — one console, three calm sections */
 .studio-card {
@@ -1687,6 +1700,29 @@ body, #appHeader, #brandName { color: var(--text) !important; }
   0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.35); }
   50% { box-shadow: 0 0 0 7px rgba(225, 29, 72, 0); }
 }
+
+/* ── 24 · v0.0.6.d D8 — credit banner + non-jumping dirty state ─────────── */
+/* The API Credits Exhausted banner: bilingual, high-contrast, one-click fix. */
+.studio-credit-banner {
+  display: none;
+  margin: 10px 0 4px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger-glass);
+}
+.studio-credit-banner[data-state='visible'] { display: block; }
+.studio-credit-banner .scb-line { margin: 0 0 4px; font-size: 13.5px; font-weight: 800; color: var(--danger-fg); }
+.studio-credit-banner .scb-line[lang='si'] { font-family: var(--font-si); line-height: 1.45; }
+.studio-credit-banner .scb-detail { margin: 2px 0 8px; font-size: 12.5px; color: var(--text-muted); }
+html[data-theme='light'] .studio-credit-banner { background: #FFF1F2; }
+html[data-theme='light'] .studio-credit-banner .scb-line { color: #9F1239; }
+/* The dirty state never changes layout height while the lecturer types in
+   #studioBulkWords: both bars reserve their dirty-mode box up front. */
+.lecturer-sync-bar { min-height: 96px; }
+.studio-security-bar { min-height: 64px; }
+.lecturer-sync-bar[data-dirty='true'] { border-width: 2px; box-sizing: border-box; }
+.studio-security-bar[data-dirty='true'] { border-width: 2px; box-sizing: border-box; }
 html[data-theme='light'] .lecturer-sync-bar[data-dirty='true'] { background: #FFF1F2; }
 html[data-theme='light'] #btnSyncClassSettings[data-dirty='true'] { color: #FFFFFF !important; }
 
@@ -1766,3 +1802,108 @@ html[data-theme='board'] { color-scheme: dark; }
 
 .ring-track { fill: none !important; }
 .ring-wrap { cursor: pointer; }
+
+
+/* ── 22 · v0.0.6.d D4 — clean clock ring + animated Play/Pause affordance ── */
+/* The bar NEVER cuts across the circle: #beatBar lives in .ring-under, a slim
+   full-width track under the ring. Inside the ring, under #beatSeconds, a
+   living Play/Pause badge makes the tap target unmistakable. */
+.ring-under { width: min(220px, 64vw); display: grid; justify-items: stretch; margin-top: 2px; }
+.ring-under .bar-wrap { width: 100%; height: 4px; }
+.ring-affordance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: var(--bg-accent-glass);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  white-space: nowrap;
+  max-width: 92%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-theme='light'] .ring-affordance { color: #1D4ED8; border-color: rgba(37, 99, 235, 0.35); }
+html[lang='si'] .ring-affordance { font-size: 10.5px; line-height: 1.45; }
+/* The affordance breathes while a beat is live, and pings on press. */
+.ring-affordance[data-state='live'] { animation: sdp-ring-breathe 2.4s ease-in-out infinite; }
+.ring-affordance[data-state='paused'] { color: #B45309; background: rgba(217, 119, 6, 0.14); border-color: rgba(217, 119, 6, 0.45); }
+@keyframes sdp-ring-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.92; }
+  50% { transform: scale(1.045); opacity: 1; }
+}
+.ring-pressed .ring-affordance { transform: scale(0.94); }
+.ring-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 9999px; }
+.ring-wrap:active .ring { transform: scale(0.985); }
+.ring { transition: transform 0.18s var(--ease); }
+/* D7 (v0.0.6.d): Samsung One-UI top capsule — never covers the bottom tab bar. */
+#sdpDataToast, .toast {
+  top: calc(var(--header-h) + 8px);
+  bottom: auto;
+  transform: translateX(-50%) translateY(-8px);
+  max-height: 26px;
+  z-index: 85;
+  box-shadow: var(--shadow-soft);
+}
+#sdpDataToast:not(.toast-hidden) { transform: translateX(-50%) translateY(0); }
+@media (min-width: 1024px) {
+  #sdpDataToast, .toast { top: calc(var(--header-h) + 10px); bottom: auto; }
+}
+/* D5 (v0.0.6.d): the CCBE B1 badge stays visible on every viewport — even
+   360x640, where the cluster pill hides but the badge does not. */
+@media (max-width: 400px) {
+  .header-cluster { display: none; }
+  .b1badge { display: inline-block; }
+  #appHeader { gap: 8px; padding: 4px 10px; }
+  #brandName { font-size: 13.5px; }
+  #appHeader .swan { width: 34px; height: 24px; }
+}
+
+
+/* ── 23 · v0.0.6.d D6 — Sinhala typography & layout balance ─────────────── */
+/* Sinhala glyphs sit taller than Latin: give every control room to breathe
+   and keep buttons on one clean line instead of corner-wrapping. */
+html[lang='si'] body { line-height: 1.45; }
+html[lang='si'] .btn,
+html[lang='si'] .pill,
+html[lang='si'] .chip,
+html[lang='si'] .hbtn { line-height: 1.45; padding-top: 7px; padding-bottom: 7px; }
+html[lang='si'] .hero-actions,
+html[lang='si'] .resume-actions,
+html[lang='si'] .chip-row,
+html[lang='si'] .pill-row { flex-wrap: wrap; align-items: center; }
+html[lang='si'] .hero-actions .btn,
+html[lang='si'] .resume-actions .btn { justify-content: center; text-align: center; }
+html[lang='si'] .deck-cap { font-size: 10.5px; line-height: 1.4; }
+html[lang='si'] .practice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html[lang='si'] .prac-title { font-size: 13.5px; }
+html[lang='si'] .prac-sub { font-size: 11.5px; line-height: 1.5; }
+html[lang='si'] .cockpit-head h2 { font-size: 17px; }
+html[lang='si'] .set-head { font-size: 15px; line-height: 1.5; }
+html[lang='si'] .card-title { line-height: 1.5; }
+html[lang='si'] .home-words-preview .hp-w { font-size: 14px; }
+html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
+@media (max-width: 400px) {
+  html[lang='si'] .practice-grid { grid-template-columns: minmax(0, 1fr); }
+  html[lang='si'] .beat-phase-pill { font-size: 11.5px; }
+  html[lang='si'] .btn { font-size: 13.5px; }
+}
+@media (min-width: 1024px) {
+  html[lang='si'] .practice-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* v0.0.6.d 360px brand+b1badge fit */
+@media (max-width: 420px) {
+  #appHeader { gap: 6px; padding: 4px 8px; }
+  #sdpBrand { gap: 6px; }
+  #appHeader .swan { width: 28px; height: 22px; }
+  #brandName { font-size: 13px; }
+  .b1badge { display: inline-flex !important; flex: none; font-size: 9.5px; padding: 2px 6px; }
+  .header-actions { gap: 4px; }
+  .header-actions .hbtn { padding: 0 8px; font-size: 12px; }
+}

@@ -56,7 +56,7 @@
  var WORD_CAP = 30;
  /* R4/D6: the classroom bootstrap PIN */
  var BOOTSTRAP_PIN = '78987898';
- var PIN_MAX = 12;
+ var PIN_MAX = 8;
  var PIN_MIN = 4;
  var DICTIONARY_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
  var SINHALA_API = 'https://api.mymemory.translated.net/get?q=';
@@ -797,6 +797,8 @@
   ST.secrets = {};
   ST.pin = '';
   try { if (vault() && vault().clear && !keepStash) vault().clear(); } catch (e) {}
+  /* v0.0.6.d (D8): no Chrome "Save password?" popup on Lock either. */
+  defusePasswordInputs(byId('studioBody'));
   mount();
   paintQuickButton();
   paintLecturerBar();
@@ -857,16 +859,27 @@
  }
 
  /* ══ rendering… */
- /* D7 / R4: the dot row grows from 8 */
+ /* v0.0.6.d (D8): the PIN length is a first-class fact. The default class
+    PIN is 8 digits (78987898); a lecturer who sets a 4–8 digit PIN stores
+    pinLen in sdp.settings.vaultLock so the dot row always shows exactly the
+    right number of dots — never a hard-coded 8 or 12. */
+ function activePinLen() {
+  var n = 0;
+  try { n = Number(layerOneVault().pinLen); } catch (e) { n = 0; }
+  if (!(n >= PIN_MIN && n <= PIN_MAX)) n = Number(BOOTSTRAP_PIN.length) || 8;
+  return Math.min(PIN_MAX, Math.max(PIN_MIN, n));
+ }
+ /* D7 / R4: the dot row renders exactly pinLen dots. */
  function pinDotCount(len) {
-  return Math.min(PIN_MAX, Math.max(8, Number(len) || 0));
+  return Math.min(PIN_MAX, Math.max(PIN_MIN, Number(len) || activePinLen()));
  }
  function pinDotsMarkup() {
-  var html = '<div id="pinDots" class="pin-dots" data-dots="8" aria-hidden="true">';
+  var shown = activePinLen();
+  var html = '<div id="pinDots" class="pin-dots" data-dots="' + shown + '" aria-hidden="true">';
   for (var i = 1; i <= PIN_MAX; i++) {
-   html += '<span class="pin-dot' + (i > 8 ? ' pin-dot-extra' : '') + '" data-dot="' + i + '"></span>';
+   html += '<span class="pin-dot' + (i > shown ? ' pin-dot-extra' : '') + '" data-dot="' + i + '"></span>';
   }
-  return html + '</div>';
+  return html + '</div><p id="pinCompleteHint" class="pin-complete-hint" role="status" aria-live="polite" hidden></p>';
  }
  /* D-L2: the 56px PIN pad carries */
  function pinPadMarkup() {
@@ -1065,10 +1078,26 @@
   for (i = 0; i < committed.length; i++) {
    base[str(committed[i] && committed[i].w).toLowerCase()] = committed[i];
   }
+  /* v0.0.6.d (D2): slot-by-slot comparison. When the spelling at slot i
+     differs from the committed baseline word at that slot, ALL FIVE fields
+     (p, pos, m, si, s) are wiped for the live record — the old word's part
+     of speech or example sentence can never survive onto the new word. */
   for (i = 0; i < live.length; i++) {
    var w = str(live[i] && live[i].w);
    if (!w) continue;
    var prior = base[w.toLowerCase()] || null;
+   var slotPrior = (i < committed.length && str(committed[i] && committed[i].w).toLowerCase() === w.toLowerCase()) ? committed[i] : null;
+   var renamed = !!(committed.length && i < committed.length && str(committed[i] && committed[i].w).toLowerCase() !== w.toLowerCase());
+   if (renamed) {
+    /* A replaced spelling: brand-new enrichment state, nothing carried over. */
+    if (isObj(live[i])) {
+     live[i].p = str(live[i].p) && !str(slotPrior && slotPrior.p) ? str(live[i].p) : '';
+     if (!slotPrior || str(live[i].p) === str(slotPrior.p)) live[i].p = '';
+     live[i].pos = ''; live[i].m = ''; live[i].si = ''; live[i].s = '';
+    }
+    deltas.push({ w: w, index: i, prior: null, renamed: true });
+    continue;
+   }
    if (wordIsDelta(live[i], prior)) deltas.push({ w: w, index: i, prior: prior });
   }
   ST.wordDeltas = deltas.slice(0, 3);
@@ -1164,13 +1193,13 @@
  /* ══ Card 3 — classroom settings */
  function settingsCardMarkup() {
   return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + T('studioCardSettings') + '</h4>' +
-   '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–12 digits)</label>' +
+   '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–8 digits)</label>' +
    '<input id="studioNewPin" class="input pin-mask" type="text" inputmode="numeric" autocomplete="off" ' +
    'autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" ' +
-   'data-form-type="other" maxlength="12" minlength="4" aria-label="New lecturer PIN">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
+   'data-form-type="other" maxlength="8" minlength="4" aria-label="New lecturer PIN">' + '<label class="lbl" for="studioConfirmPin">' + T('studioPinLabel') + ' — confirm</label>' +
    '<input id="studioConfirmPin" class="input pin-mask" type="text" inputmode="numeric" autocomplete="off" ' +
    'autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" ' +
-   'data-form-type="other" maxlength="12" minlength="4" aria-label="Confirm lecturer PIN">' + btn('btnChangePin', t('studioChangePinBtn'), 'btn-ghost', 'data-atomic-pin="1"') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
+   'data-form-type="other" maxlength="8" minlength="4" aria-label="Confirm lecturer PIN">' + btn('btnChangePin', t('studioChangePinBtn'), 'btn-ghost', 'data-atomic-pin="1"') + btn('btnStudioSyncSettings', t('studioSyncSettings'), 'btn-primary') +
    '<div class="studio-lock-row">' + btn('btnLockStudio', t('studioLockLecturer'), 'btn-ghost') + '</div>' +
    '<h4 class="studio-h4">' + T('studioRecord') + '</h4>' + '<div class="chip-row">' + btn('btnStudioRecord', t('studioRecord')) +
    btn('btnCommitClip', t('studioCommitClip'), 'btn-primary', 'disabled') + '</div>' +
@@ -1207,7 +1236,7 @@
   return '<div id="studioGate" class="studio-gate" role="group" aria-label="' + T('studioPinLabel') + '">' +
    '<h4>' + T('studioScreenTitle') + '</h4>' +
    '<p class="muted">' + T('studioLocked') + '</p>' +
-   '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input pin-mask" type="text" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="12" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
+   '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input pin-mask" type="text" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="8" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
    '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
    pinDotsMarkup() +
    pinPadMarkup() +
@@ -1281,6 +1310,22 @@
   return true;
  }
 
+ /* v0.0.6.d (D8): Chrome fires its "Save password?" heuristic the moment a
+    filled <input type="password"> is removed from the DOM. Every
+    host.innerHTML = … replacement in mount()/lock() neutralises the password
+    fields FIRST (type='text', value='') so the popup can never appear on
+    Unlock or Lock — while the mounted fields stay type='password'. */
+ function defusePasswordInputs(host) {
+  try {
+   var inputs = host && host.querySelectorAll ? host.querySelectorAll('input[type="password"]') : [];
+   for (var i = 0; i < inputs.length; i++) {
+    try { inputs[i].type = 'text'; } catch (e) {}
+    try { inputs[i].value = ''; } catch (e) {}
+   }
+  } catch (e2) {}
+  return true;
+ }
+
  function mount() {
   /* D8: the Layer-1 self-heal runs before */
   try { healFromLayerOne(); } catch (e) {}
@@ -1290,6 +1335,7 @@
   if (!host) return false;
   /* D7: the ONE #lecturerSyncBar node survives every re-render. */
   stashLecturerBar();
+  defusePasswordInputs(host);
   host.innerHTML = ST.unlocked ? unlockedMarkup() : lockedMarkup();
   var msgNode = byId('studioMsg');
   if (msgNode && ST.message) {
@@ -1381,7 +1427,7 @@
  function setPinValue(v) {
   var n = activePinInput();
   if (!n) return '';
-  /* R4 / D7: a lecturer PIN may be 4–12 */
+  /* R4 / D7: a lecturer PIN may be 4–8 */
   n.value = str(v).replace(/[^0-9]/g, '').slice(0, PIN_MAX);
   paintPinDots();
   return n.value;
@@ -1403,14 +1449,27 @@
   if (!host) return false;
   var dots = host.querySelectorAll ? host.querySelectorAll('span') : [];
   var len = pinValue().length;
-  /* D7: 8 dots by default, 9–12 once the */
-  var shown = pinDotCount(len);
+  /* v0.0.6.d (D8): exactly pinLen dots are shown; the extra pool stays in
+     the DOM (hidden) so a PIN-length change never rebuilds the gate. */
+  var shown = pinDotCount(activePinLen());
   for (var i = 0; i < dots.length; i++) {
    if (i < len) dots[i].classList.add('on'); else dots[i].classList.remove('on');
    if (i >= shown) dots[i].classList.add('pin-dot-off'); else dots[i].classList.remove('pin-dot-off');
   }
   host.setAttribute('data-filled', String(len));
   host.setAttribute('data-dots', String(shown));
+  /* D8: the clear "✓ PIN Complete" moment once every digit is in. */
+  var hint = byId('pinCompleteHint');
+  if (hint) {
+   if (len > 0 && len >= shown) {
+    hint.hidden = false;
+    hint.textContent = t('pinComplete', '✓ PIN Complete');
+    host.setAttribute('data-complete', 'true');
+   } else {
+    hint.hidden = true;
+    host.setAttribute('data-complete', 'false');
+   }
+  }
   return true;
  }
  /* D15: the 4-step one-click */
@@ -1654,7 +1713,7 @@
   btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
   btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
   btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { publishWordsAndVoice(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
-  /* E8: atomic PIN change — validate 4–12 digits, confirm match, re-seal the
+  /* E8: atomic PIN change — validate 4–8 digits, confirm match, re-seal the
     vault with the new PIN, publish config.json then version.json last, and
     clear every busy flag on any failure exit. The studio stays unlocked. */
   btnChangePin: function () { withBusy('btnChangePin', function (d) { changePin(function () { d(); }); }); },
@@ -1697,10 +1756,75 @@
  }
  function quotaProbe() {
    /* D2: probeQuota paints the green */
-  refreshQuota(function (err) { if (err) testStatus(quotaError(err), 'bad'); });
+  refreshQuota(function (err) {
+   if (err) { testStatus(quotaError(err), 'bad'); paintCreditBanner(quotaError(err)); return; }
+   hideCreditBanner();
+  });
+ }
+ /* v0.0.6.d (D8): the bilingual API Credits Exhausted warning banner. Shown
+    when ElevenLabs remaining characters fall under 200, or the key returns
+    401/402/429, or the Gemini AI key hits a quota/auth error. One click opens
+    the Advanced drawer and focuses the key input. */
+ function paintCreditBanner(reason) {
+  var host = byId('studioCreditBanner');
+  if (!host) {
+   host = doc.createElement('div');
+   host.id = 'studioCreditBanner';
+   host.className = 'studio-credit-banner';
+   host.setAttribute('role', 'region');
+   host.setAttribute('aria-live', 'polite');
+   host.setAttribute('data-state', 'hidden');
+   host.innerHTML =
+    '<p class="scb-line">' + esc(t('apiCreditsExhausted')) + '</p>' +
+    '<p class="scb-line" lang="si">' + esc(t('apiCreditsExhaustedSi')) + '</p>' +
+    (str(reason) ? '<p class="scb-detail">' + esc(str(reason)) + '</p>' : '') +
+    '<button type="button" class="btn btn-primary btn-sm" id="btnFixApiCredits">' +
+    ico('key', 16) + '<span class="i18n-label">' + esc(t('apiCreditsFixNow')) + '</span></button>';
+   var body = byId('studioBody');
+   if (body && body.firstChild) body.insertBefore(host, body.firstChild);
+   else if (body) body.appendChild(host);
+   var fix = byId('btnFixApiCredits');
+   if (fix && fix.addEventListener) {
+    fix.addEventListener('click', function () {
+     try {
+      var drawer = byId('studioAdvancedDrawer');
+      if (drawer && drawer.setAttribute) drawer.setAttribute('open', 'open');
+      if (drawer && typeof drawer.open === 'boolean') drawer.open = true;
+     } catch (e) {}
+     try {
+      var key = byId('elKeyInput') || byId('studioAiKey');
+      if (key && key.focus) key.focus({ preventScroll: false });
+     } catch (e2) {}
+    }, false);
+   }
+  }
+  var detail = host.querySelector ? host.querySelector('.scb-detail') : null;
+  if (detail) detail.textContent = str(reason) || '';
+  host.setAttribute('data-state', 'visible');
+  host.removeAttribute('hidden');
+  return true;
+ }
+ function hideCreditBanner() {
+  var host = byId('studioCreditBanner');
+  if (host) host.setAttribute('data-state', 'hidden');
+  return true;
+ }
+ function creditExhausted(result, err) {
+  if (err) {
+   var c = Number((err && err.status) || 0);
+   return c === 401 || c === 402 || c === 429;
+  }
+  if (isObj(result) && !result.scoped) {
+   var left = Number(result.remaining);
+   return !isNaN(left) && left < 200;
+  }
+  return false;
  }
  function onElTest(err, result) {
-  if (err) { testStatus(quotaError(err), 'bad'); return; }
+  if (err) { testStatus(quotaError(err), 'bad'); if (creditExhausted(null, err)) paintCreditBanner(quotaError(err)); return; }
+  if (creditExhausted(result, null)) {
+   paintCreditBanner('Remaining: ' + Number(result.remaining) + ' chars');
+  } else { hideCreditBanner(); }
   if (result && result.scoped) {
    var note = str(result.note) || SCOPED_NOTE();
    testStatus(' ' + note, 'ok');
@@ -1744,7 +1868,7 @@
    paintElVerify(elevenKeyHint(), 'bad');
    return false;
   }
-  /* SEC-02 / R4: a new 4–12 digit PIN */
+  /* SEC-02 / R4: a new 4–8 digit PIN */
   var wantPin = newPinValue();
   var confirmPin = confirmPinValue();
   if (wantPin.length >= PIN_MIN || confirmPin.length) {
@@ -1956,18 +2080,102 @@ function priorIPAFor(w) {
   var ipa = str(base.p);
   if (!ipa || ipa === '/' + w + '/') ipa = offlineIPA(w);
   if (!ipa || ipa === '/' + w + '/') ipa = transcribeBritishIPA(w);
+  /* v0.0.6.d (D2): a replaced word never inherits the old slot's POS — the
+     suffix analyzer plus the offline lexicon derive it fresh, so "adv." can
+     never survive onto a noun. */
+  var pos = str(base.pos);
+  if (!pos || pos === '—' || pos === '-') pos = guessPartOfSpeech(w);
+  var m = str(base.m);
+  if (!m || m.indexOf('B1 classroom vocabulary word:') === 0) m = b1Definition(w, pos);
+  var si = str(base.si);
+  var s = str(base.s);
+  if (!s || s.indexOf('Please write the word ' + w) === 0) s = b1Example(w, pos);
   return {
    w: w,
    p: ipa,
-   pos: str(base.pos) || '—',
-   m: str(base.m) || ('B1 classroom vocabulary word: ' + w),
-   si: str(base.si) || '',
-   s: str(base.s) || ('Please write the word ' + w + ' carefully in your dictation book.'),
+   pos: pos,
+   m: m,
+   si: si,
+   s: s,
    audio: str(base.audio) || audioForWord(w),
    exampleSi: str(base.exampleSi),
    /* D14: an offline record says so, so the */
    enrichSource: str(base.enrichSource) || 'lexicon'
   };
+ }
+
+ /* v0.0.6.d (D2): the smart morphological analyzer — suffix rules give an
+    exact part of speech for every changed word, even fully offline. */
+ function guessPartOfSpeech(w) {
+  var s = str(w).toLowerCase().replace(/[^a-z ]/g, '');
+  if (!s) return '—';
+  if (POS_LEXICON[s]) return POS_LEXICON[s];
+  if (/ $|^ /.test(s)) return '—';
+  if (/ly$/.test(s)) return 'adv.';
+  if (/(ness|tion|sion|ment|ity|ship|hood|ance|ence|ism|age|ery)$/.test(s)) return 'n.';
+  if (/(ous|ful|able|ible|ive|al|ic|ish|ant|ent|ary|less|y)$/.test(s) && !/^(day|key|way)$/.test(s)) return 'adj.';
+  if (/(ize|ise|ate|ify|en)$/.test(s) && s.length > 4) return 'v.';
+  if (/(ing)$/.test(s)) return s.length > 6 ? 'v.' : 'n.';
+  if (/(ed)$/.test(s)) return s.length > 5 ? 'adj.' : 'v.';
+  if (/(er|or|ist)$/.test(s) && s.length > 4) return 'n.';
+  return 'n.';
+ }
+ /* A tiny offline POS lexicon for the words a B1 class actually changes to. */
+ var POS_LEXICON = {
+  important: 'adj.', impressed: 'adj.', intelligent: 'adj.', interested: 'adj.',
+  jealous: 'adj.', married: 'adj.', miserable: 'adj.', modern: 'adj.', negative: 'adj.',
+  nervous: 'adj.', noisy: 'adj.', normal: 'adj.', old: 'adj.', ordinary: 'adj.',
+  original: 'adj.', patient: 'adj.', personal: 'adj.', pleasant: 'adj.', positive: 'adj.',
+  realistic: 'adj.', reasonable: 'adj.', relaxed: 'adj.', reliable: 'adj.', relieved: 'adj.',
+  satisfied: 'adj.', special: 'adj.', stupid: 'adj.', surprised: 'adj.', terrible: 'adj.',
+  afraid: 'adj.', brave: 'adj.', calm: 'adj.', careful: 'adj.', cheerful: 'adj.',
+  clever: 'adj.', confident: 'adj.', crazy: 'adj.', cruel: 'adj.', curious: 'adj.',
+  delighted: 'adj.', depressed: 'adj.', disappointed: 'adj.', excited: 'adj.',
+  famous: 'adj.', friendly: 'adj.', generous: 'adj.', guilty: 'adj.', healthy: 'adj.',
+  hungry: 'adj.', lazy: 'adj.', lucky: 'adj.', polite: 'adj.', proud: 'adj.',
+  quiet: 'adj.', rude: 'adj.', serious: 'adj.', shy: 'adj.', smart: 'adj.',
+  useful: 'adj.', worried: 'adj.', angry: 'adj.', anxious: 'adj.', ashamed: 'adj.',
+  amazed: 'adj.', amusing: 'adj.', annoyed: 'adj.', awesome: 'adj.', boring: 'adj.',
+  brilliant: 'adj.', challenging: 'adj.', charming: 'adj.', confusing: 'adj.',
+  delightful: 'adj.', enjoyable: 'adj.', excellent: 'adj.', fantastic: 'adj.',
+  favourite: 'adj.', frightened: 'adj.', guilty_: 'adj.', quickly: 'adv.',
+  slowly: 'adv.', carefully_: 'adv.', suddenly: 'adv.', really: 'adv.', very: 'adv.',
+  never: 'adv.', always: 'adv.', often: 'adv.', usually: 'adv.', early: 'adv.',
+  hard: 'adv.', fast: 'adv.', well: 'adv.', badly: 'adv.', together: 'adv.',
+  journey: 'n.', luggage: 'n.', machine: 'n.', mechanic: 'n.', passenger: 'n.',
+  reception: 'n.', reservation: 'n.', suitcase: 'n.', tunnel: 'n.', vehicle: 'n.',
+  harbour: 'n.', helicopter: 'n.', guidebook: 'n.', passport: 'n.', ticket: 'n.',
+  airport: 'n.', station: 'n.', hotel: 'n.', teacher: 'n.', student: 'n.',
+  doctor: 'n.', engineer: 'n.', library: 'n.', hospital: 'n.', market: 'n.',
+  travel: 'v.', arrive: 'v.', borrow: 'v.', cancel: 'v.', complain: 'v.',
+  describe: 'v.', destroy: 'v.', develop: 'v.', discover: 'v.', discuss: 'v.',
+  embarrass: 'v.', enjoy: 'v.', expect: 'v.', explain: 'v.', feel: 'v.',
+  finish: 'v.', forget: 'v.', happen: 'v.', hurry: 'v.', imagine: 'v.',
+  improve: 'v.', invite: 'v.', laugh: 'v.', learn: 'v.', leave: 'v.',
+  listen: 'v.', live: 'v.', look: 'v.', lose: 'v.', love: 'v.',
+  move: 'v.', need: 'v.', offer: 'v.', own: 'v.', pack: 'v.',
+  practise: 'v.', prefer: 'v.', prepare: 'v.', promise: 'v.', protect: 'v.',
+  reach: 'v.', realise: 'v.', receive: 'v.', recommend: 'v.', refuse: 'v.',
+  remember: 'v.', repair: 'v.', repeat: 'v.', reply: 'v.', require: 'v.',
+  reserve: 'v.', return: 'v.', smile: 'v.', sound: 'v.', stay: 'v.',
+  suggest: 'v.', suppose: 'v.', surprise: 'v.', translate: 'v.', travel_: 'v.'
+ };
+ /* v0.0.6.d (D2): a natural B1 definition and a contextual example sentence
+    that respects the part of speech — never "Please write the word …". */
+ function b1Definition(w, pos) {
+  var p = str(pos);
+  if (p === 'adv.') return 'In the way described by "' + str(w) + '".';
+  if (p === 'v.') return 'To ' + str(w) + ' (something).';
+  if (p === 'adj.') return 'Having the quality of being ' + str(w) + '.';
+  return 'A ' + str(w) + '.';
+ }
+ function b1Example(w, pos) {
+  var word = str(w);
+  var p = str(pos);
+  if (p === 'adv.') return 'She answered the question ' + word + '.';
+  if (p === 'v.') return 'They ' + word + ' together every weekend.';
+  if (p === 'adj.') return 'The story was very ' + word + ' to read.';
+  return 'We saw a ' + word + ' near the station.';
  }
  
  function mergeEnrichRecord(word, prior, provided) {
@@ -1977,13 +2185,25 @@ function priorIPAFor(w) {
   /* v0.0.6.a: a spelling-as-phonetics placeholder is worthless in a B1 class;
      strip it here so only authentic phonemic IPA can reach the payload. */
   if (ipaIn === '/' + str(word) + '/') ipaIn = '';
+  /* v0.0.6.d (D2): never carry the OLD word's POS/meaning/sentence onto a
+     changed spelling — an empty provided field means re-derive, not inherit. */
+  var stalePrior = isObj(prior) && str(prior.w) && str(prior.w).toLowerCase() !== str(word).toLowerCase();
+  var posIn = str(p.pos) || (stalePrior ? '' : '') || '';
+  if (!posIn && !str(p.m) && !str(p.s)) {
+   /* No LLM row landed: the analyzer owns POS, and the generic fallbacks
+      own m/s. A stale prior (different spelling) contributes nothing. */
+   if (stalePrior) { base.pos = guessPartOfSpeech(str(word)); base.m = ''; base.s = ''; }
+  }
+  var mIn = str(p.m);
+  var sIn = str(p.s);
+  var siIn = str(p.si);
   var out = {
    w: str(word),
    p: ipaIn || offlineIPA(str(word)) || transcribeBritishIPA(str(word)),
-   pos: str(p.pos) || base.pos,
-   m: str(p.m) || base.m,
-   si: str(p.si) || base.si,
-   s: str(p.s) || base.s,
+   pos: posIn || base.pos,
+   m: mIn || (stalePrior ? b1Definition(str(word), base.pos) : base.m),
+   si: siIn || (stalePrior ? '' : base.si),
+   s: sIn || (stalePrior ? b1Example(str(word), base.pos) : base.s),
    audio: str(prior && prior.audio) || base.audio,
    exampleSi: str(p.exampleSi) || base.exampleSi,
    enrichSource: str(p.enrichSource) || str(prior && prior.enrichSource) || base.enrichSource
@@ -2141,6 +2361,16 @@ function priorIPAFor(w) {
     /* D11/D12: never discard a known human */
     if (dict.audio) out.audio = str(dict.audio);
    }
+   /* v0.0.6.d (D2): a changed word must land with an EXACT part of speech —
+      dictionaryapi.dev's meanings[0], else the suffix analyzer. Never a stale
+      value and never a bare "—". */
+   if (!str(out.pos) || out.pos === '—' || out.pos === '-') {
+    out.pos = (dict && str(dict.pos)) || guessPartOfSpeech(w);
+   }
+   /* …and a natural B1 example that fits that part of speech. */
+   if (!str(out.s) || out.s.indexOf('Please write the word ' + w) === 0) {
+    out.s = b1Example(w, out.pos);
+   }
    if (si) out.si = si;
    var net = !!(dict || (si && !siLex));
    out.enrichSource = net ? 'free_dict' : 'lexicon';
@@ -2212,6 +2442,10 @@ function priorIPAFor(w) {
     global.fetch(gurl, { method: 'POST', headers: headers, body: JSON.stringify(gbody), cache: 'no-store' })
      .then(function (res) {
       var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+      /* v0.0.6.d (D8): a Gemini quota/auth failure raises the credit banner. */
+      if (st === 401 || st === 402 || st === 429) {
+        try { paintCreditBanner('Gemini ' + st + ' · ' + (st === 429 ? 'quota exceeded' : 'key rejected')); } catch (e3) {}
+      }
       if ((st === 404 || st === 400) && mi + 1 < models.length) { geminiTry(mi + 1); return null; }
       return res && res.json ? res.json() : null;
      })
@@ -2699,7 +2933,7 @@ function priorIPAFor(w) {
   gh = str(ST.secrets.ghToken);
   sealVaultNow(function (sealErr, envelope, verifier) {
    if (!sealErr) writeLayerOne(envelope, verifier || pinVerifier());
-   if (sealErr) { fail(1, 'the vault could not be sealed — check the PIN (4–12 digits) and try again'); return; }
+   if (sealErr) { fail(1, 'the vault could not be sealed — check the PIN (4–8 digits) and try again'); return; }
    if (!gh) { fail(1, 'GitHub token missing — add a ghp_… / github_pat_… token in Key 2'); return; }
    testGitHubToken(gh, function (ghErr) {
     if (ghErr) { fail(1, ghError(ghErr)); return; }
@@ -2978,6 +3212,13 @@ function priorIPAFor(w) {
     ST.envelope = envelope;
     ST.recoveryMode = false;
     writeLayerOne(envelope, verifier);
+    /* v0.0.6.d (D8): remember the new PIN length so the gate renders exactly
+       that many dots (a 4-digit PIN shows 4 dots, not 8). */
+    try {
+     var lock = layerOneVault();
+     lock.pinLen = want.length;
+     data().saveSettings({ vaultLock: lock });
+    } catch (e2) {}
     var cfgBody = sync().config ? JSON.parse(JSON.stringify(sync().config() || {})) : {};
     cfgBody.encVault = envelope;
     cfgBody.pinVerifier = verifier;
@@ -3488,6 +3729,7 @@ function priorIPAFor(w) {
  function parseBulkWords(text) {
   var parts = str(text).split(/[\n,;]+/);
   var out = [], seen = {}, i;
+  var committed = committedWords();
   for (i = 0; i < parts.length; i++) {
    var line = str(parts[i]).replace(/^\s+|\s+$/g, '');
    if (!line) continue;
@@ -3497,13 +3739,21 @@ function priorIPAFor(w) {
    var key = word.toLowerCase();
    if (seen[key]) continue;
    seen[key] = true;
-   out.push({
+   var rec = {
     w: word, p: str(cols[1] || '').replace(/^\s+|\s+$/g, ''),
     pos: str(cols[2] || '').replace(/^\s+|\s+$/g, ''),
     m: str(cols[3] || '').replace(/^\s+|\s+$/g, ''),
     si: str(cols[4] || '').replace(/^\s+|\s+$/g, ''),
     s: str(cols[5] || '').replace(/^\s+|\s+$/g, '')
-   });
+   };
+   /* v0.0.6.d (D2): when the spelling at this slot differs from the committed
+      baseline word, the old slot's p/pos/m/si/s are VOID — a word-only line
+      keeps nothing, so the pipeline re-enriches all five fields. */
+   if (committed.length && i < committed.length &&
+     str(committed[i] && committed[i].w).toLowerCase() !== key) {
+    rec.p = ''; rec.pos = ''; rec.m = ''; rec.si = ''; rec.s = '';
+   }
+   out.push(rec);
    if (out.length >= WORD_CAP) break;
   }
   return out;
@@ -3664,6 +3914,11 @@ function priorIPAFor(w) {
   setup: setup,
   lock: lock,
   isUnlocked: isUnlocked,
+  /* v0.0.6.d (D2): the five-field re-enrichment rule, exposed for the
+     verification harness — a changed spelling must never inherit the old
+     slot's pos/m/si/s. */
+  __mergeEnrichRecordForGate: mergeEnrichRecord,
+  guessPartOfSpeech: guessPartOfSpeech,
   hasUnpublishedEdits: function () { return !!(ST.unlocked && ST.dirty); },
   /* v0.0.6.c (F1): the delta surface the views and gates read. */
   wordsDirty: function () { return !!(ST.unlocked && ST.wordsDirty); },

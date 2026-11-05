@@ -22,13 +22,24 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 1. corrupt storage must never break boot ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 corruption policy
   {
+    /* v0.0.6.d: the shipped config.json carries a live classSettings block
+       (mode: typing, settingsRev 35). Corrupt-storage recovery is about the
+       STORE, not the network: pin appliedSettingsRev above the shipped rev so
+       the adoption path stays quiet and the corrupt sdp.settings really does
+       fall back to the paper default. */
     const app = await createApp({
       before(w) {
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
-      }
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
+        w.localStorage.setItem('sdp.pin_rev_guard', '1');
+      },
+      files: (() => {
+        const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/config.json'), 'utf8'));
+        delete cfg.classSettings;
+        return { 'data/config.json': JSON.stringify(cfg) };
+      })()
     });
     const progress = JSON.parse(app.w.localStorage.getItem('sdp.progress'));
     check('G3.1a corrupt progress JSON resets to defaults without throwing',
@@ -46,7 +57,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
@@ -68,7 +79,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
@@ -87,7 +98,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } });
     /* R7: use a PIN that is NOT the master recovery code, so the lockout
        assertions below still see a plain refusal. */
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
@@ -116,7 +127,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
   // always opens a recovery session, even while the PIN pad is locked out.
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } });
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
@@ -147,13 +158,13 @@ const sinhala = /[\u0D80-\u0DFF]/;
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.c');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.d');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -164,7 +175,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
@@ -244,7 +255,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -282,7 +293,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -323,7 +334,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
         /* The student touched every classroom key — the lecturer still wins. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
@@ -358,7 +369,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -375,7 +386,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.c');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.d');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
@@ -482,7 +493,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     await app.settle(3);
     check('G3.11a the locked studio is a PIN gate, never the three cards',
       !!app.byId('studioGate') && app.qa('.studio-card').length === 0 &&
-      app.qa('#pinDots span').length === 12 && app.qa('#pinPad .pin-key').length === 12,
+      app.qa('#pinDots span').length === 8 && app.qa('#pinPad .pin-key').length === 12,
       app.qa('.studio-card').length + ' cards');
     const barDocked = app.byId('lecturerSyncBar').parentNode.id;
     await new Promise((resolve) => app.SDP.Studio.unlock('78987898', resolve));

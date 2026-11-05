@@ -11,7 +11,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.4.a';
+    return '0.0.6.d';
   })();
 
   function noop() {}
@@ -294,7 +294,19 @@
     guardPublish: '\ud83d\udd34 Publish, Sync & Leave',
     guardLock: '\ud83d\udd12 Discard Changes, Lock & Leave',
     guardStay: '\u270f\ufe0f Stay in Lecturer Mode',
-    studioPublishOkFull: ' Published & synced to all classroom devices'
+    studioPublishOkFull: ' Published & synced to all classroom devices',
+    /* v0.0.6.d (D1/D7/D8): the capsule notices + clock-ring affordance. */
+    wordsRefreshedToast: '🔄 Word list updated — Dictation refreshed & ready from Word #1',
+    toastLoadedCapsule: '📊 Task Data',
+    toastOfflineCapsule: '📊 Offline ready',
+    ringTapStart: 'Tap to Start',
+    ringTapPause: 'Tap to Pause',
+    ringTapResume: 'Tap to Resume',
+    apiCreditsExhausted: '⚠️ API Credits Exhausted — Please Enter a New API Key in Advanced Tools',
+    apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
+    apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
+    pinComplete: '✓ PIN Complete',
+    pinDigitsNeeded: 'digits'
   };
 
   
@@ -303,29 +315,29 @@
     guideBtn: '? උපදෙස්',
     tabHome: 'මුල් පිටුව', tabPlayer: 'ඩික්ටේෂන්', tabPractice: 'අභ්‍යාස', tabWords: 'වචන 30', tabSettings: 'සැකසුම්',
     homeTitle: 'Smart Dictation', homeSub: 'ඔබේ පන්තියේ B1 වචන 30 අසමින් ලියන්න, පසුව පරීක්ෂා කරන්න.',
-    startDictation: 'ඩික්ටේෂන් ආරම්භ කරන්න (වචන #1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
-    paperMode: 'පොතේ ලිවීම', typingMode: 'ටයිප් කිරීම', resumeSession: 'නැවැත්වූ තැනින් ඉදිරියට යන්න',
+    startDictation: 'ඩික්ටේෂන් අරඹන්න (#1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
+    paperMode: 'පොතේ ලිවීම', typingMode: 'ටයිප් කිරීම', resumeSession: 'නැවතැත්වූ තැනින් ඉදිරියට',
     statMastered: 'ප්‍රගුණ කළ වචන', statAccuracy: 'නිවැරදිභාවය', statStreak: 'දින පෙළ',
     quickPractice: 'ක්ෂණික අභ්‍යාස', flashcards: 'ෆ්ලෑෂ් කාඩ්', quiz: 'බහුවරණ ප්‍රශ්න', listening: 'ශ්‍රවණ අභ්‍යාස',
     flashcardsSub: 'වචන 30 ම පෙරළන්න', quizSub: 'නිවැරදි අර්ථය තෝරන්න', listeningSub: 'අහන්න, එතැනින් තෝරන්න', weakWordsSub: 'මඟ හැරි ඒවා නැවත අභ්‍යාස කරන්න',
     weakWords: 'දුර්වල වචන', mastered: 'ප්‍රගුණ කළ', announcements: 'පන්ති දැනුම්දීම',
     creditsLine: 'නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini',
     creditsPill: 'CREDITS GOES TO Hansana',
-    btnPrev: '⏮ පෙර', btnPlayPause: 'අසන්න / නවතන්න', btnNext: 'ඊළඟ වචනය', btnRepeat: 'නැවත අසන්න',
-    btnHint: 'ඉඟියක්', btnModeSwitch: 'පොතේ / ටයිප් මාරුව', btnFinish: 'අවසන් කර පිළිතුරු බලන්න',
+    btnPrev: '⏮ පෙර', btnPlayPause: 'අසන්න / නවතන්න', btnNext: 'ඊළඟ', btnRepeat: 'නැවත අසන්න',
+    btnHint: 'ඉඟියක්', btnModeSwitch: 'මාරුව', btnFinish: 'පිළිතුරු බලන්න',
     readyBeat: 'සූදානම්', listeningBeat: 'අසන්න', writeNowBeat: 'දැන් ලියන්න', pausedBeat: 'තාවකාලිකව නවතා ඇත',
     finishedBeat: 'අවසන් — පිළිතුරු පරීක්ෂා කරන්න', repeatWord: 'වාරය', remainingWord: 'ඉතිරි',
     noWords: 'වචන තවම පූරණය වී නැත', hintPos: 'වචන වර්ගය', hintFirst: 'පළමු අක්ෂරය', hintSi: 'සිංහල තේරුම',
     hintSentence: 'උදාහරණ වාක්‍යය', playAudio: 'හඬ වාදනය',
     resultsTitle: 'ස්වයං පරීක්ෂාව සහ ප්‍රතිඵල', colYourWord: 'ඔබ ලියූ වචනය', colCorrectWord: 'නිවැරදි වචනය', colMark: 'ලකුණු කිරීම',
-    markCorrect: 'නිවැරදි', markMissed: 'වැරදි', markAll: 'සියල්ල නිවැරදි ලෙස ලකුණු කරන්න', toggleMissed: 'වැරදි මාරු කරන්න',
-    btnRetryMissed: 'වැරදුණු වචන පමණක් නැවත ලියන්න', btnNewSession: 'නව වාරයක් අරඹන්න',
+    markCorrect: 'නිවැරදි', markMissed: 'වැරදි', markAll: 'සියල්ල නිවැරදි', toggleMissed: 'ලකුණු මාරු කරන්න',
+    btnRetryMissed: 'වැරදි නැවත ලියන්න', btnNewSession: 'නව වාරයක්',
     filterAll: 'සියල්ල 30', searchWords: 'වචන සොයන්න', noWordsFound: 'වචන හමු නොවීය',
     tapToFlip: 'තේරුම බැලීමට කාඩ්පත ස්පර්ශ කරන්න', nextCard: 'ඊළඟ', prevCard: 'පෙර',
     chooseMeaning: 'නිවැරදි තේරුම තෝරන්න', listenAndChoose: 'අසා නිවැරදි වචනය තෝරන්න',
     weakWordsOnly: 'දුර්වල වචන පමණක්', correctPick: 'නිවැරදි!', wrongPick: 'වැරදි',
     setPacing: '1 · ඩික්ටේෂන් වේගය සහ ආකාරය', modeLabel: 'ආකාරය', writeTime: 'ලිවීමට කාලය', repeats: 'වචන පුනරාවර්තන',
-    pauseBetween: 'පුනරාවර්තන අතර විරාමය', autoAdvance: 'ස්වයංක්‍රීයව ඉදිරියට යන්න',
+    pauseBetween: 'විරාමය', autoAdvance: 'ස්වයංක්‍රීයව ඉදිරියට',
     setAudio: '2 · හඬ සහ උච්චාරණය', voiceSource: 'හඬ මූලාශ්‍රය', voiceAuto: 'ස්වයංක්‍රීය (හොඳම බ්‍රිතාන්‍ය හඬ)',
     voiceLecturer: 'කථිකාචාර්ය පටිගත කිරීම්', voiceAlice: 'Alice (ElevenLabs UK)', voiceDevice: 'උපාංගයේ හඬ',
     rate: 'කථන වේගය', volume: 'හඬ පරිමාව', testVoice: 'හඬ පරීක්ෂා කරන්න',
@@ -337,8 +349,8 @@
     aboutVersionLabel: 'අනුවාදය', aboutBuiltLabel: 'නිර්මිත දිනය',
     aboutDataLink: 'මෙම යෙදුම සුරකින සෑම දත්තයක්ම බලන්න',
     emptyBank: 'තවම වචන ලැයිස්තුවක් නොමැත. එක් වරක් අන්තර්ජාලයට සම්බන්ධ වී, සැකසුම් තුළ "Check for session update" ඔබන්න.',
-    setProgress: '4 · ප්‍රගතිය සහ නොබැඳි ගබඩාව', exportBackup: 'උපස්ථයක් අපනයනය', importBackup: 'උපස්ථයක් ආනයනය',
-    resetStats: 'දේශීය සංඛ්‍යාලේඛන මකන්න', checkUpdate: 'වාර යාවත්කාලීනය පරීක්ෂා කරන්න',
+    setProgress: '4 · ප්‍රගතිය සහ නොබැඳි ගබඩාව', exportBackup: 'උපස්ථය බාගන්න', importBackup: 'උපස්ථය ගෙන්වන්න',
+    resetStats: 'සංඛ්‍යාලේඛන මකන්න', checkUpdate: 'යාවත්කාලීනය පරීක්ෂා කරන්න',
     studioTitle: '6 · කථිකාචාර්ය ස්ටුඩියෝ සහ පරිපාලන බඳුන', studioLocked: 'ස්ටුඩියෝ විවෘත කිරීමට කථිකාචාර්ය PIN ඇතුළත් කරන්න.',
     studioChangePin: 'PIN වෙනස් කරන්ඕ.',
     /* Table B additions — Sinhala UI labels, badges, presets and studio controls */
@@ -361,7 +373,7 @@
     syncBadgeOffline: 'අන්තර්ජාලය නැත — සුරැකි වාරය පෙන්වයි',
     syncBadgeUpdate: 'නව යාවත්කාලීනයක් ඇත — නැවත පූරණයට ඔබන්න',
     syncBadgeRetry: 'පරීක්ෂාව අසාර්ථකයි — නැවත උත්සාහ කරන්න',
-    guideReplay: ' පියවරෙන් පියවර හඬ උපදෙස් නැවත අසන්න',
+    guideReplay: ' හඬ උපදෙස් නැවත අසන්න',
     guideAutoPlay: 'ආරම්භයේදී ඉංග්‍රීසි හඬ උපදෙස් ස්වයංක්‍රීයව වාදනය කරන්න',
     presetHeading: 'ඉක්මන් කාල සැකසුම් (Presets)',
     presetBeginner: ' ආරම්භක මන්දගාමී (තත් 12 · 4×)',
@@ -372,7 +384,7 @@
     voiceLockLabel: 'හඬ අගුල (Voice Lock)',
     voiceLockUnified: 'බ්‍රිතාන්‍ය කාන්තා කථිකාචාර්ය හඬ (ඒකාබදද්ධ 25–35 UK)',
     voiceLockCustom: 'තෝරාගත් හඬ මූලාශ්‍රය අනුව',
-    downloadClips: ' අන්තර්ජාලය නොමැතිව භාවිතයට වචන 30 හඬපට බාගන්න',
+    downloadClips: ' හඬපට 30 බාගන්න (නොබැඳි)',
     downloadClipsDone: 'වචන 30න් 30ම නොබැඳි භාවිතයට සුරැකිණි',
     studioFirstTime: 'පළමු වරට ස්ටුඩියෝ පිහිටුවීම: ඉලක්කම් 4–8 කථිකාචාර්ය PIN අංකය සහ API යතුරු ඇතුළත් කරන්න',
     studioTestEl: 'ElevenLabs යතුර පරීක්ෂා කරන්න',
@@ -406,9 +418,9 @@
     homeJourney2: 'වචන 30 පරීක්ෂා කරන්න',
     homeJourney3: 'දුර්වල වචන පුහුණු වන්න',
     homeReadyBadge: '8 වන වාරය සූදානම් · වචන 30',
-    modePaperFull: ' අභ්‍යාස පොතේ ලිවීම (Paper)',
-    modeTypingFull: 'තිරයේ ටයිප් කිරීම (Typing)',
-    voiceGuideBtn: ' අන්තර්ක්‍රියාකාරී හඬ උපදෙස්',
+    modePaperFull: ' පොතේ ලිවීම',
+    modeTypingFull: 'තිරයේ ටයිප් කිරීම',
+    voiceGuideBtn: ' හඬ උපදෙස්',
     boardShowWord: ' 👁 වචනය පෙන්වන්න',
     boardHideWord: ' 🙈 වචනය සඟවන්න',
     quotaHeading: 'ElevenLabs අක්ෂර සීමාව (ගාස්තු රහිත පරීක්ෂාව)',
@@ -432,7 +444,7 @@
     settingsUpdateLabel: 'යාවත්කාලීනය',
     guiding: 'උපදෙස්',
     /* v0.0.1.f additions (D9, D13, D14, D17, D18) */
-    resumePaused: 'නැවැත්වූ ඩික්ටේෂන් දිගටම කරගෙන යන්න',
+    resumePaused: 'නැවතැත්වූ ඩික්ටේෂන් දිගටම යන්න',
     homePresetBadge: 'වේගවත් විභාග අඩවිය · තත්පර 5 · 2 වාරය · බ්‍රිතාන්‍ය ඉංග්‍රීසි',
     repeatBadge: 'වාරය',
     pausedBanner: 'තාවකාලිකව නවතා ඇත — දිගටම කරගෙන යාමට ස්පර්ශ කරන්න',
@@ -480,21 +492,21 @@
     homeStep1Tag: 'පියවර 1', homeStep2Tag: 'පියවර 2', homeStep3Tag: 'පියවර 3',
     homeWordsTitle: 'වචන 30 ම #1–#30 අනුපිළිවෙලින් පරීක්ෂා කර අධ්‍යයනය කරන්න',
     homeWordsSub: 'සෑම වචනයක්ම පන්ති අනුපිළිවෙලින්, බ්‍රිතාන්‍ය උච්චාරණය, සිංහල තේරුම සහ උදාහරණ වාක්‍යය සමඟ.',
-    homeWordsBtn: ' වචන 30 ලැයිස්තුව විවෘත කරන්න (#1–#30)',
+    homeWordsBtn: ' වචන 30 ලැයිස්තුව විවෘත කරන්න',
     resumeMetaIdle: 'වචන #1 දී නවතා ඇත (වචන 30 න්)',
-    startOver: '↺ වචන #1 සිට නැවත අරඹන්න',
+    startOver: '↺ #1 සිට නැවත අරඹන්න',
     cueStep1: 'පියවර 1 — මෙතැන ඔබන්න',
     cuePlayer: 'මෙතැනින් නවතන්න හෝ දිගටම යන්න',
     cueDict: 'අසන්න වචනයක් ඔබන්න',
     cueStudio: 'ඔබේ PIN ඇතුළත් කරන්න',
-    settingsLecturerActive: ' කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — සැකසුම් විකාශනයට හෝ වචන 30 සංස්කරණයට කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
-    openStudioBtn: ' කථිකාචාර්ය ස්ටූඩියෝව විවෘත කරන්න',
+    settingsLecturerActive: ' කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — විකාශනයට ස්ටූඩියෝව විවෘත කරන්න',
+    openStudioBtn: ' ස්ටූඩියෝව විවෘත කරන්න',
     studioScreenTitle: ' කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
     studioScreenSub: 'අංකිත පියවර තුනක්: යතුරු සහ හඬපට 34 පැකේජය, වචන 30 සංස්කාරකය, සහ පන්ති සැකසුම් විකාශනය.',
     lecturerAdminLocked: ' කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: ' කථිකාචාර්ය පරිපාලනය',
-    btnReplay: ' වචනය නැවත අසන්න',
-    btnPauseDictation: '⏸ ඩික්ටේෂන් නවතන්න',
-    btnResumeWord: '▶ වචන # ට දිගටම යන්න',
+    btnReplay: ' නැවත අසන්න',
+    btnPauseDictation: '⏸ නවතන්න',
+    btnResumeWord: '▶ වචන # දිගටම',
     btnPrevNum: '⏮ පෙර (#', btnNextNum: '⏭ ඊළඟ (#',
     listenCarefully: 'හොඳින් අසන්න (වාරය ', writeInBook: 'වචන #',
     inYourBook: ' ඔබේ පොතේ ලියන්න! (', countdownTail: ' තත්පර ගණන්)',
@@ -504,7 +516,7 @@
     progressWordUpper: 'වචන #', progressOf30: ' / 30', repeatOf: ' න් ', writeSecsBadge: 'තත් ලියන්න',
     capPrev: 'පෙර', capPlay: 'නවත්වන්න', capReplay: 'නැවත', capNext: 'ඊළඟ',
     capRepeat: 'පුනරාවර්තනය', capHint: 'ඉඟිය', capMode: 'ක්‍රමය', capFinish: 'පරීක්ෂාව',
-    pillsDrawer: 'වචන 1–30 වෙත යන්න ▾',
+    pillsDrawer: 'වචන 1–30 යන්න ▾',
     markCorrectWord: ' නිවැරදි', markWeakWord: ' පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
     studioRetryNone: 'නැවත උත්සාහ කිරීමට අසාර්ථක ක්ලිපයක් නැත — සියලු ක්ලිප සුරකිනු ලැබීය.',
     studioRetryOne: '↻ අසාර්ථක වූ ක්ලිපය පමණක් නැවත උත්සාහ කරන්න',
@@ -557,7 +569,19 @@
     guardPublish: '🔴 පළ කර සමව්රාක සිදු යන්න',
     guardLock: '🔒 අතර දමන්න අගුලු දමන්න',
     guardStay: '✏️ කථිකාචාර්‍ය ප්‍රකාරයෙහි රැඳී සිටින්න',
-    studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී'
+    studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී',
+    /* v0.0.6.d (D1/D7/D8) — සිංහල */
+    wordsRefreshedToast: '🔄 වචන ලැයිස්තුව යාවත්කාලීන විය — ඩික්ටේෂන් #1 වචනයේ සිට සූදානම්',
+    toastLoadedCapsule: '📊 දත්ත භාවිතය',
+    toastOfflineCapsule: '📊 නොබැඳිව සූදානම්',
+    ringTapStart: 'ආරම්භයට ස්පර්ශ කරන්න',
+    ringTapPause: 'විරාමයට ස්පර්ශ කරන්න',
+    ringTapResume: 'දිගටම යාමට ස්පර්ශ කරන්න',
+    apiCreditsExhausted: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
+    apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
+    apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
+    pinComplete: '✓ PIN සම්පූර්ණයි',
+    pinDigitsNeeded: 'ඉලක්කම්'
   };
 
   var lang = 'en';
@@ -2298,8 +2322,13 @@
     var offline = false;
     try { offline = SDP.Sync.state.source === 'offline'; } catch (e) {}
     var kb = offline ? 0 : toastBytes();
-    return t(offline ? 'toastOffline' : 'toastLoaded') + ' · ' + kb + ' KB';
+    /* v0.0.6.d (D7): the Samsung One-UI data capsule — the exact task data
+       spend plus the honest offline-cache state, in one line. */
+    return t(offline ? 'toastOfflineCapsule' : 'toastLoadedCapsule') + ' · ' + kb + ' KB';
   }
+  /* v0.0.6.d (D7): showToast keeps its G5.7a-e contract (KB reading, fixed,
+     26px, pointer-events none, ~2.4s fade) — the CSS moved the capsule to the
+     top of the screen so it can never cover the bottom tab bar buttons. */
   function showToast() {
     var node = byId('sdpDataToast');
     if (!node) return;
@@ -2311,6 +2340,22 @@
       if (node.classList) node.classList.add('toast-hidden');
       toastTimer = global.setTimeout(function () { node.hidden = true; }, 420);
     }, 2400);
+  }
+  /* v0.0.6.d (D1/D8): the top capsule for app-level notices (word list
+     refreshed, credits exhausted…). Same 26px / pointer-events:none / ~2.4s
+     fade contract as the data capsule. */
+  function showCapsule(text) {
+    var node = byId('sdpDataToast');
+    if (!node) return false;
+    node.textContent = str(text);
+    node.hidden = false;
+    if (node.classList) node.classList.remove('toast-hidden');
+    if (toastTimer) global.clearTimeout(toastTimer);
+    toastTimer = global.setTimeout(function () {
+      if (node.classList) node.classList.add('toast-hidden');
+      toastTimer = global.setTimeout(function () { node.hidden = true; }, 420);
+    }, 2400);
+    return true;
   }
 
   /* ══ wiring  ══ */
@@ -2438,6 +2483,12 @@
       renderAll();
       if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
     }, false);
+    /* v0.0.6.d (D1): the active word list changed — reset the cockpit to
+       Word #1 with the new words and announce it in the top capsule. */
+    doc.addEventListener('sdp:words-refresh', function () { onWordsRefresh(); }, false);
+    if (global.addEventListener) {
+      global.addEventListener('sdp:words-refresh', function () { onWordsRefresh(); }, false);
+    }
     /* The same event on window, for harnesses that dispatch on window. */
     if (global.addEventListener) {
       global.addEventListener('sdp:update', function () { renderAll(); }, false);
@@ -2465,6 +2516,19 @@
     if (acc && acc.scrollIntoView) { try { acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { try { acc.scrollIntoView(); } catch (e2) {} } }
     try { if (SDP.Studio && SDP.Studio.paintQuickButton) SDP.Studio.paintQuickButton(); } catch (e) {}
     paintCues();
+    return true;
+  }
+
+  /* v0.0.6.d (D1): the active word list changed (local publish, one-click
+     master setup, settings broadcast or a remote adoption). Reset the
+     dictation engine to a clean Word #1 cockpit with the new words, hide
+     every stale banner and tell the human what happened in the capsule. */
+  function onWordsRefresh() {
+    try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
+    try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
+    showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
+    renderAll();
+    if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
     return true;
   }
 
@@ -2520,18 +2584,22 @@
      line detail). Zero emoji pictographs remain in the DOM; every view, the
      dictation transport and the studio ask this one function for an icon. */
   var ICON_PATHS = {
-    play: { f: 'M8 4.5l12 7.5-12 7.5z', s: 'M8 4.5l12 7.5-12 7.5z' },
-    pause: { f: 'M6 5h4v14H6zM14 5h4v14h-4z', s: 'M6 5h4v14H6zM14 5h4v14h-4z' },
-    stop: { f: 'M6 6h12v12H6z', s: 'M6 6h12v12H6z' },
-    prev: { f: 'M6 5h3v14H6zM19 5.5L9 12l10 6.5z', s: 'M6 5h3v14H6zM19 5.5L9 12l10 6.5z' },
-    next: { f: 'M18 5h3v14h-3zM5 5.5L15 12 5 18.5z', s: 'M18 5h3v14h-3zM5 5.5L15 12 5 18.5z' },
-    replay: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 5V2L7 6.5l5 4.5V7a5 5 0 11-5 5H5a7 7 0 107-7z' },
-    repeat: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M4 8a4 4 0 014-4h12M20 16a4 4 0 01-4 4H4M16 1l4 3-4 3M8 23l-4-3 4-3' },
-    volume: { f: 'M11 5L6 9H2v6h4l5 4z', s: 'M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13' },
+    /* v0.0.6.d (D5): refined dual-tone glyphs — a soft solid silhouette plus
+       a crisp 2px line detail. The old flat triangles became rounded-corner
+       transports, the volume cone gained its double soundwave, the bulb a
+       filament, and check a lifted confirmation tick. */
+    play: { f: 'M8.6 5.2a1.4 1.4 0 011.5 0l9.6 5.9a1.4 1.4 0 010 2.4l-9.6 5.9a1.4 1.4 0 01-1.5 0z', s: 'M8.6 5.2a1.4 1.4 0 011.5 0l9.6 5.9a1.4 1.4 0 010 2.4l-9.6 5.9a1.4 1.4 0 01-1.5 0z' },
+    pause: { f: 'M7 5.5a1.5 1.5 0 011.5-1.5h1A1.5 1.5 0 0111 5.5v13A1.5 1.5 0 019.5 20h-1A1.5 1.5 0 017 18.5zM14.5 5.5A1.5 1.5 0 0116 4h1a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0117 20h-1a1.5 1.5 0 01-1.5-1.5z', s: 'M7 5.5a1.5 1.5 0 011.5-1.5h1A1.5 1.5 0 0111 5.5v13A1.5 1.5 0 019.5 20h-1A1.5 1.5 0 017 18.5zM14.5 5.5A1.5 1.5 0 0116 4h1a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0117 20h-1a1.5 1.5 0 01-1.5-1.5z' },
+    stop: { f: 'M6.5 6.5h11v11h-11z', s: 'M6.5 6.5h11v11h-11z' },
+    prev: { f: 'M6 5.5A1.5 1.5 0 017.5 4h1A1.5 1.5 0 0110 5.5v13A1.5 1.5 0 018.5 20h-1A1.5 1.5 0 016 18.5zM19.4 5.6a1.3 1.3 0 011.6 1.2v10.4a1.3 1.3 0 01-1.6 1.2l-8.9-5.2a1.3 1.3 0 010-2.4z', s: 'M6 5.5A1.5 1.5 0 017.5 4h1A1.5 1.5 0 0110 5.5v13A1.5 1.5 0 018.5 20h-1A1.5 1.5 0 016 18.5zM19.4 5.6a1.3 1.3 0 011.6 1.2v10.4a1.3 1.3 0 01-1.6 1.2l-8.9-5.2a1.3 1.3 0 010-2.4z' },
+    next: { f: 'M18 5.5A1.5 1.5 0 0016.5 4h-1A1.5 1.5 0 0014 5.5v13a1.5 1.5 0 001.5 1.5h1a1.5 1.5 0 001.5-1.5zM4.6 5.6a1.3 1.3 0 00-1.6 1.2v10.4a1.3 1.3 0 001.6 1.2l8.9-5.2a1.3 1.3 0 000-2.4z', s: 'M18 5.5A1.5 1.5 0 0016.5 4h-1A1.5 1.5 0 0014 5.5v13a1.5 1.5 0 001.5 1.5h1a1.5 1.5 0 001.5-1.5zM4.6 5.6a1.3 1.3 0 00-1.6 1.2v10.4a1.3 1.3 0 001.6 1.2l8.9-5.2a1.3 1.3 0 000-2.4z' },
+    replay: { f: 'M12 3.2a8.8 8.8 0 11-8.6 10.6 1 1 0 011.9-.5A6.8 6.8 0 1012 5.2V8l4.2-3.2L12 1.6z', s: 'M12 3.2a8.8 8.8 0 11-8.6 10.6 1 1 0 011.9-.5A6.8 6.8 0 1012 5.2V8l4.2-3.2L12 1.6z' },
+    repeat: { f: 'M6.8 7.5A3.3 3.3 0 0110 4.2h8.6a3.3 3.3 0 013.3 3.3v6.4a3.3 3.3 0 01-3.3 3.3H10a3.3 3.3 0 01-3.2-3.3z', s: 'M4 9a4 4 0 014-4h12M20 16a4 4 0 01-4 4H4M16 1l4 3-4 3M8 23l-4-3 4-3' },
+    volume: { f: 'M11 5.4a1 1 0 011.6-.8l4.9 3.6a1 1 0 01-.1 1.7l-4.8 2.8a1 1 0 01-1.6-.9z', s: 'M11 5L6 9H2v6h4l5 4zM14.8 9.2a4.2 4.2 0 010 5.6M17.6 6.4a8.2 8.2 0 010 11.2' },
     volumeOff: { f: 'M11 5L6 9H2v6h4l5 4z', s: 'M11 5L6 9H2v6h4l5 4zM16 9l5 6M21 9l-5 6' },
     mic: { f: 'M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3z', s: 'M8 11a4 4 0 008 0M12 15v4M9 21h6M7 11a5 5 0 0010 0' },
-    bulb: { f: 'M12 3a6 6 0 00-3.6 10.8c.6.5.9 1.2 1 2.2h5.2c.1-1 .4-1.7 1-2.2A6 6 0 0012 3z', s: 'M9.5 16h5M10 19h4M12 2v1M4 5l1 1M20 5l-1 1' },
-    check: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M20 6L9 17l-5-5' },
+    bulb: { f: 'M12 3.2a5.8 5.8 0 00-3.5 10.4c.6.5.9 1.2 1 2.1h5c.1-.9.4-1.6 1-2.1A5.8 5.8 0 0012 3.2z', s: 'M9.5 16.6h5M10 19.4h4M12 1.8v1.2M4 5.2l1.1 1.1M20 5.2l-1.1 1.1M12 6.5v6' },
+    check: { f: 'M12 2.6a9.4 9.4 0 100 18.8 9.4 9.4 0 000-18.8z', s: 'M20 6.5L9.4 17.2l-5.2-5.2' },
     checkCircle: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M8 12.5l2.8 2.8L16 9.5' },
     close: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M6 6l12 12M18 6L6 18' },
     plus: { f: 'M12 2a10 10 0 100 20 10 10 0 000-20z', s: 'M12 5v14M5 12h14' },
@@ -2665,6 +2733,8 @@
     guideAutoplayBannerVisible: guideAutoplayBannerVisible,
     armGuideAutoplayWatch: armGuideAutoplayWatch,
     showToast: showToast,
+    showCapsule: showCapsule,
+    onWordsRefresh: onWordsRefresh,
     toastText: toastText,
     checkForUpdate: checkForUpdate,
     setUpdateStatus: setUpdateStatus,

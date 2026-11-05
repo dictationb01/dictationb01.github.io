@@ -48,7 +48,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.c'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.d'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -397,7 +397,7 @@ function gitHubStub(opts) {
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 15, appVersion: '0.0.6.c', version: '0.0.6.c', schema: 15, settingsRev: nextRev,
+      ver: 15, appVersion: '0.0.6.d', version: '0.0.6.d', schema: 15, settingsRev: nextRev,
       session: '8', title: 'Session 8', syncRev: nextSync,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
@@ -439,7 +439,7 @@ function gitHubStub(opts) {
       classSettings: Object.assign({}, liveCfg.classSettings, { writeSecs: 8 })
     }));
     app.files['data/version.json'] = JSON.stringify({
-      ver: 15, appVersion: '0.0.6.c', version: '0.0.6.c', schema: 15, settingsRev: nextRev2,
+      ver: 15, appVersion: '0.0.6.d', version: '0.0.6.d', schema: 15, settingsRev: nextRev2,
       session: '9', title: 'Session 9', syncRev: nextSync2,
       payloadFiles: ['data/session.json', 'data/config.json', 'data/version.json']
     });

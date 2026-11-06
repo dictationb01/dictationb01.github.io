@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.i'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.j'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.i');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.j');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -156,7 +156,7 @@ async function bootSettings(page, settings) {
       check('G5.4b each card shows IPA, POS, English, Sinhala, sentence and Play', Object.values(cardFields).every(Boolean), JSON.stringify(cardFields));
       const search = await page.evaluate(async () => {
         const input = document.getElementById('dictSearch');
-        /* v0.0.6.i: search for word #1 of the LIVE payload. The classroom word
+        /* v0.0.6.j: search for word #1 of the LIVE payload. The classroom word
            list is lecturer-owned and republished freely, so a hardcoded query
            would silently stop matching. */
         const first = document.querySelector('#dictList .dict-card .d-w, #dictList .dict-card [data-word], #dictList .dict-card');
@@ -398,14 +398,14 @@ async function bootSettings(page, settings) {
       await context.close();
     }
 
-    /* ── 12. v0.0.6.i mobile human-UI law (A1/A2/A3/A6) ──────────────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i — mobile-first human UI
+    /* ── 12. v0.0.6.j mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j — mobile-first human UI
     {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.i');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.j');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -533,20 +533,21 @@ async function bootSettings(page, settings) {
         parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
       check('G5.12i the live chips render as a 2-3 column grid',
         studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
-      check('G5.12j the v0.0.6.i cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      check('G5.12j the v0.0.6.j cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
       await context.close();
     }
 
-    /* ── 13. v0.0.6.i CF-UNIFIED-MAIN: ONE permanent main UI, no channel ──── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i CF-UNIFIED-MAIN — the beta
-    // channel, the Preview/Beta switcher pill and the floating stamp are retired
-    // for good; ?beta / #beta / ?b=1 must land on the SAME unified main UI.
+    /* ── 13. v0.0.6.j BETA-CHANNEL: the governed Beta channel is BACK ────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j — the Creator Briefing
+    // suite is permanent on Main; ?beta / #beta stamp BETA_SUBVERSION
+    // 0.0.6.j.beta, light the header pill + floating stamp and replay the
+    // briefing. ?b=1 is NOT a channel alias; the clean URL stays on Main.
     for (const flag of ['?beta', '#beta', '?b=1', '']) {
       const context = await browser.newContext({ viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.i');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.j');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -559,29 +560,38 @@ async function bootSettings(page, settings) {
       await page.goto(server.origin + '/' + flag, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(600);
       const main = await page.evaluate(() => ({
-        channel: document.documentElement.getAttribute('data-sdp-channel'),
-        betaPill: !!document.getElementById('sdpBetaPill'),
-        betaStamp: !!document.getElementById('sdpBetaStamp'),
+        betaActive: !!(window.SDP && SDP.Views && SDP.Views.betaActive && SDP.Views.betaActive()),
+        betaSub: (window.SDP && SDP.Views && SDP.Views.betaSubversion) ? SDP.Views.betaSubversion() : '',
+        pillPressed: (document.getElementById('sdpBetaPill') || {}).getAttribute('aria-pressed') || '',
+        stampHidden: (document.getElementById('sdpBetaStamp') || {}).hidden,
+        stampText: (document.getElementById('sdpBetaStamp') || {}).textContent || '',
+        briefingOpen: (document.getElementById('briefingModal') || {}).hidden === false,
         headerChildren: Array.from(document.querySelectorAll('#appHeader .header-cluster > *, #appHeader .header-actions > *')).map((n) => n.id).filter(Boolean).join(','),
         verPill: (document.getElementById('sdpVerPill') || {}).textContent || '',
         fixLive: !!document.querySelector('meta[name="darkreader-lock"]') && getComputedStyle(document.getElementById('hintChips')).display === 'none'
       }));
       const tag = flag || '(clean url)';
-      check('G5.13a ' + tag + ' renders the unified main UI with zero Beta/Preview switcher',
-        main.betaPill === false && main.betaStamp === false && main.channel === null &&
-        /beta/i.test(main.headerChildren) === false, JSON.stringify(main));
-      check('G5.13b ' + tag + ' the header keeps only the clean main chrome',
-        main.verPill === 'v0.0.6.i' &&
+      const wantsBeta = flag === '?beta' || flag === '#beta';
+      check('G5.13a ' + tag + ' the governed Beta channel state matches the URL',
+        main.betaActive === wantsBeta && main.betaSub === '0.0.6.j.beta' &&
+        main.pillPressed === (wantsBeta ? 'true' : 'false') &&
+        main.stampHidden === !wantsBeta && /BETA .*0\.0\.6\.j\.beta/.test(main.stampText),
+        JSON.stringify(main));
+      check('G5.13a2 ' + tag + ' the Beta channel replays the Creator Briefing',
+        main.briefingOpen === wantsBeta, JSON.stringify(main));
+      check('G5.13b ' + tag + ' the header keeps the main chrome + the two v0.0.6.j pills',
+        main.verPill === 'v0.0.6.j' &&
         /syncBadge/.test(main.headerChildren) && /btnStudioQuick/.test(main.headerChildren) &&
+        /btnCreatorNote/.test(main.headerChildren) && /sdpBetaPill/.test(main.headerChildren) &&
         /btnLang/.test(main.headerChildren) && /btnTheme/.test(main.headerChildren), JSON.stringify(main));
-      check('G5.13c ' + tag + ' the release fixes are live on the unified main UI', main.fixLive, JSON.stringify(main));
+      check('G5.13c ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }
 
 
-    /* ── 14. v0.0.6.i critical fixes: clock state machine, pinned #tabbar,
+    /* ── 14. v0.0.6.j critical fixes: clock state machine, pinned #tabbar,
        the #tab-settings squircle (CF1 / CF2 / CF3) ────────────────────────
-       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i CF1–CF4 */
+       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j CF1–CF4 */
     for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }]) {
       const tag = viewport.width + 'x' + viewport.height;
       {

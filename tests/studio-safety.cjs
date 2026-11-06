@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.i'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.j'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -97,22 +97,23 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
-    /* v0.0.6.i: the word-character count is a function of the lecturer-owned
+    /* v0.0.6.j: the word-character count is a function of the lecturer-owned
        classroom word list, so the expectation is derived from the studio's own
        costPreview() rather than frozen to one publish's numbers. The structural
        arithmetic (30 words + 30 numbers + 6 commands + 4 guide steps = 70 clips)
        and the rendered sentence stay exact. */
     const preview = app.SDP.Studio.costPreview();
     const esc = (n) => String(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    check('G12.3a the cost preview names words, numbers, commands, guide steps, the total and 70 clips',
+    check('G12.3a the cost preview names words, numbers, commands, guide, intro steps, the total and 78 clips',
       new RegExp(preview.count + ' words = ' + esc(preview.words) + ' chars').test(line) &&
       new RegExp('30 numbers = ' + esc(preview.numbers) + ' chars').test(line) &&
       new RegExp('6 commands = ' + esc(preview.commands) + ' chars').test(line) &&
       new RegExp('4 guide steps = ' + esc(preview.guide) + ' chars').test(line) &&
+      new RegExp('8 intro steps = ' + esc(preview.intro) + ' chars').test(line) &&
       new RegExp('total ' + esc(preview.total) + ' chars').test(line) &&
-      preview.count === 30 && preview.clips === 70 &&
-      preview.total === preview.words + preview.numbers + preview.commands + preview.guide &&
-      /70 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(line), line);
+      preview.count === 30 && preview.clips === 78 &&
+      preview.total === preview.words + preview.numbers + preview.commands + preview.guide + preview.intro &&
+      /78 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps \+ 8 intro steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
     check('G12.3d the delta generator exists and is the primary action',
@@ -499,8 +500,8 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 14. v0.0.6.i A3: comma/newline-only parser + non-destructive chips ── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i — the 31-word law
+  /* ── 14. v0.0.6.j A3: comma/newline-only parser + non-destructive chips ── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j — the 31-word law
   {
     const app = await createApp(base);
     await unlockStudio(app);

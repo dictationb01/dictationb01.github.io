@@ -675,3 +675,80 @@ G10 26/0 · G11 74/0 · G12 94/0 — 636 assertions, 0 FAIL (`cd tests && npm ru
 * `data/sdp-audio-speech.js`: `normKey()` / `hydrateClips()` / `canBlobUrl()`, boolean `reloadManifest(force)`, fast handover for unplayable clips.
 * `data/elevenlabs-audio.json`: 100 clips, b64 only, ~2.27 MB (H1 cap 2,500,000 B). `assets/css/sdp-ui.css` carries the v0.0.4.b tactile pill system (cap 82,000 B).
 * Stamp: `0.0.4.b` / `ver 14` / `schema 14` / `settingsRev 27` / `syncRev 1793710000000` across all nine surfaces.
+
+## §H7 — v0.0.6.j release tree, feature surface and module deltas (2026-11-06)
+
+ver 24 · schema 24 · settingsRev 40 · `SDP.version '0.0.6.j'` · release `syncRev`
+1794100000000 · `SW_VERSION 'sdp-v0.0.6.j-s25'` / `SHELL_CACHE 'sdp-v0.0.6.j-s25-shell'`
+· `BETA_SUBVERSION '0.0.6.j.beta'`. No new file; the twelve-gate suite is unchanged
+in shape — the new features are asserted inside G1 §13, G3 §3b, G5 §13 and G7 §1.
+
+### §H7.1 New public surface (R10 additions)
+
+```js
+SDP.Diagnostics     // sdp-data-sync.js — bounded privacy-safe ring (160) +
+                    //   AES-GCM review capture/decrypt + snapshot builders +
+                    //   the pure ES5 CRC32/STORE zip writer (zipStore)
+SDP.Views.openBriefing/closeBriefing/briefingSentences/briefingSeen/
+        briefingGateLeft/briefingSeek/betaSubversion/betaActive/
+        applyBetaChannel/onFinished/sendReview
+SDP.Speech.playBriefingStep/briefingClipUrl/pickMaleVoice/maleVoiceName/clipCount
+SDP.Studio          // keyPoolEntries/rotateElevenKey/probePoolKeys/
+                    //   verifyPronunciationWord/verifyWmRow/resynthWmRow/
+                    //   generateClips({intro:true})/buildDiagZip/paintDiagSummary
+```
+
+### §H7.2 New structural DOM ids (H2 additions)
+
+Briefing: `#briefingModal`, `#briefingTitle`, `#briefingPersona`,
+`#briefingLyrics` (8 `.b-line`), `#briefingBar`, `#briefingCount`,
+`#btnBriefingContinue`, `#btnBriefingSkip`, `#btnCreatorNote`.
+Review: `#reviewCard`, `#reviewPills` (`.rpill` fast/clear/issue),
+`#btnVoiceReview`, `#reviewVoiceStatus`, `#reviewTextInput`, `#btnSendReview`,
+`#btnSkipReview`, `#reviewE2eeBadge`.
+Studio: `#studioKeyPool` (`#kpProv1..5`, `#kpSlot1..5`, `.kp-badge`),
+`#btnProbePool`, `#btnGenIntroClips`, `#kpStatus`, `#studioCardDiag`,
+`#diagSummary`, `#btnDownloadDiagZip`, `#btnClearDiag`, `#diagStatus`,
+per-row `data-action="verifyWmRow|resynthWmRow"` + `.wm-vbadge`.
+Beta: `#sdpBetaPill`, `#sdpBetaStamp`.
+
+### §H7.3 Laws this release adds
+
+* The 10-second briefing gate: `BRIEFING_GATE_MS = 10000`; `closeBriefing()`
+  refuses dismissal while `gateLeft > 0`; completion stamps
+  `sdp.settings.briefingSeen = 1` once (five-key R8 law holds); the guide
+  takes over exactly as before (R2).
+* The static clip vault: `STATIC_CLIP_KEYS` (6 cmd + 30 num + 4 guide + 8
+  intro) is immutable once committed; delta generation skips it unless a
+  human forces a text change; the pack arithmetic is 78 clips.
+* The key pool: rotation order = the primary ElevenLabs field, then Key
+  Slots #1..#5 typed `elevenlabs`; 401/402/429 rotates mid-batch once per
+  remaining key; every rotation is a diagnostics event.
+* Reviews are sealed with `SDP_ENC_V2` (AES-GCM, device-local key) BEFORE
+  storage; nothing readable ever hits disk; the `.zip` decrypts them only
+  inside the unlocked studio.
+
+### §H7.4 Bytes measured on the release tree (`wc -c`)
+
+| File | Bytes | Ceiling |
+|---|---|---|
+| `index.html` | 52,261 | 56,000 |
+| `assets/css/sdp-ui.css` | 116,931 | 120,000 |
+| `data/sdp-data-sync.js` | 100,719 | 106,000 |
+| `data/sdp-audio-speech.js` | 58,271 | 63,000 |
+| `data/sdp-dictation-engine.js` | 63,868 | 76,000 |
+| `data/sdp-ui-views.js` | 192,736 | 196,000 |
+| `data/studio.js` | 207,389 | 212,000 (G9.3a line 210,000, moved in lockstep after a 21.9 KB comment compaction) |
+| `data/session.json` | 55,764 (exact, SHA `ee7b5294…`) | preserved |
+| `data/elevenlabs-audio.json` | 2,867,317 (131 Alice clips, all preserved; header ver 24/schema 24) | 3,000,000 |
+| `data/config.json` | 40,026 | 42,000 |
+| `data/version.json` | 428 | 2,000 |
+| `data.html` = `data/index.html` | 29,782 each | 34,000 |
+| `sw.js` | 10,934 | 13,000 |
+
+### §H7.5 Gate results on this tree
+
+G1 147/0 · G2 12/0 · G3 122/0 · G4 8/0 · G5 103/0 · G6 15/0 · G7 58/0 ·
+G8 39/0 · G9 47/0 · G10 38/0 · G11 74/0 · G12 103/0 — **764 assertions,
+0 FAIL** (`cd tests && npm run gates`), plus the CI preserved-payloads step
+(all four SHA-256 locks OK).

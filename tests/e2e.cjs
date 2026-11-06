@@ -63,7 +63,7 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.i'); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.j'); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -84,24 +84,53 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
   const server = await start({ root: ROOT });
   const browser = await launch();
   try {
-    /* ── 1. first visit: unmissable guide ─────────────────────────────── */
-    // contract: docs/ARCHITECTURE_MAP.md §R2 priority #2
+    /* ── 1. first visit: Creator Briefing, then the unmissable guide ───── */
+    // contract: docs/ARCHITECTURE_MAP.md §v0.0.6.j Pillar 1 + §R2 — the
+    // briefing is the new front door: synced transcript, 10s locked gate,
+    // then the student guide takes over exactly as before.
     const { ctx, page, errors } = await newPage(browser, server.origin, { settings: FAST });
     await page.waitForTimeout(700);
-    const firstRun = await page.evaluate(() => ({
+    const briefing = await page.evaluate(() => ({
+      briefingOpen: document.getElementById('briefingModal').hidden === false,
       guideOpen: document.getElementById('guideModal').hidden === false,
-      steps: document.getElementById('guideSteps').children.length,
+      beats: document.querySelectorAll('#briefingLyrics .b-line').length,
+      ctaLocked: document.getElementById('btnBriefingContinue').disabled === true,
+      skipLocked: document.getElementById('btnBriefingSkip').disabled === true,
+      count: (document.getElementById('briefingCount') || {}).textContent || '',
       homeActive: document.querySelector('.screen.active').id,
       header: getComputedStyle(document.getElementById('appHeader')).position,
       headerHeight: document.getElementById('appHeader').getBoundingClientRect().height
     }));
-    check('G7.1a the guide opens by itself on the first visit', firstRun.guideOpen === true);
-    check('G7.1b the guide shows four steps', firstRun.steps === 4, firstRun.steps);
+    check('G7.1a the Creator Briefing opens by itself on a brand-new visit',
+      briefing.briefingOpen === true && briefing.guideOpen === false);
+    check('G7.1a2 the synced transcript carries the 8 creator beats',
+      briefing.beats === 8, briefing.beats);
+    check('G7.1a3 both exit CTAs are locked behind the 10-second gate',
+      briefing.ctaLocked === true && briefing.skipLocked === true, JSON.stringify(briefing.count));
+    check('G7.1a4 the live countdown starts at 10s', /\(10s\)/.test(briefing.count), briefing.count);
+    check('G7.1a5 Home is already rendered underneath', briefing.homeActive === 'screen-home', briefing.homeActive);
+    await page.waitForFunction(
+      () => document.getElementById('btnBriefingContinue') && document.getElementById('btnBriefingContinue').disabled === false,
+      null, { timeout: 20000 });
+    await page.click('#btnBriefingContinue');
+    await page.waitForTimeout(600);
+    const firstRun = await page.evaluate(() => ({
+      guideOpen: document.getElementById('guideModal').hidden === false,
+      briefingClosed: document.getElementById('briefingModal').hidden === true,
+      steps: document.getElementById('guideSteps').children.length,
+      homeActive: document.querySelector('.screen.active').id
+    }));
+    check('G7.1b continue hands over to the guide (briefing closed)',
+      firstRun.guideOpen === true && firstRun.briefingClosed === true);
+    check('G7.1b2 the guide shows four steps', firstRun.steps === 4, firstRun.steps);
     check('G7.1c Home is already rendered underneath', firstRun.homeActive === 'screen-home', firstRun.homeActive);
     await page.click('#btnGuideClose');
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.i', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.j', afterGuide);
+    const briefingStamp = await page.evaluate(() => localStorage.getItem('sdp.settings'));
+    check('G7.1d2 the briefing completion is stamped inside sdp.settings',
+      /"briefingSeen":1/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
 
     /* ── 2. credits: on Home and in About, never floating ─────────────── */
     // contract: docs/ARCHITECTURE_MAP.md §R7 attribution placement
@@ -355,11 +384,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0.0.6.i\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0.0.6.j\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.i', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.j', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F8FAFC">
-<!-- v0.0.6.i (A1): Dark Reader and every dark-mode extension are locked out —
+<!-- v0.0.6.j (A1): Dark Reader and every dark-mode extension are locked out —
    Light Mode is the unconditional default; only the app's own theme button
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player v0.0.6.i — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.j — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -19,7 +19,7 @@
    %3Cpath d='M21 23.5c.6-2.2 1.5-3.6 2.4-4.9.9 1.3 1.8 2.7 2.4 4.9' stroke='%23A5F3FC' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='25' cy='26.5' r='1' fill='%23FFFFFF'/%3E%3C/svg%3E">
 <style id="sdpCloak">html,body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Inter,system-ui,sans-serif}html[data-theme='dark'] body{background:#0F1420}html[data-theme='board'] body{background:#000000}.screen{display:none!important}.screen.active{display:block!important}</style>
 <script>(function(){var d=document.documentElement;try{var s=JSON.parse(localStorage.getItem('sdp.settings')||'{}');var t=s&&s.theme;if(t!=='dark'&&t!=='board')t='light';d.setAttribute('data-theme',t);}catch(e){}
-/* v0.0.6.i (A1): the strict light-mode lock. The app NEVER reads
+/* v0.0.6.j (A1): the strict light-mode lock. The app NEVER reads
    the OS dark preference — light is the default. syncScheme() flips the
    color-scheme meta only when the app's own theme button sets data-theme. */
 function syncScheme(){var t=d.getAttribute('data-theme');var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute('content',(t==='dark'||t==='board')?'dark':'only light');}
@@ -54,11 +54,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
   <span class="b1badge">CCBE B1</span>
  </div>
  <div class="header-cluster">
-  <span id="sdpVerPill">v0.0.6.i</span>
+  <span id="sdpVerPill">v0.0.6.j</span>
+  <button id="sdpBetaPill" class="hbtn beta-pill" type="button" aria-pressed="false" title="Toggle the v0.0.6.j Beta channel (Creator Briefing, Multi-API key pool, Reviews, Diagnostics)">Beta</button>
   <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
   <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
  </div>
  <div class="header-actions">
+  <button id="btnCreatorNote" type="button" class="hbtn" data-i18n="creatorNoteBtn" aria-label="Replay the Creator briefing with synced transcript"><span aria-hidden="true">♪</span> <span class="creator-note-label">Creator Note</span></button>
   <button id="btnGuideTop" type="button" class="hbtn" data-i18n="guideBtn" aria-label="Open the student guide">? Guide</button>
   <button id="btnLang" type="button" class="hbtn" aria-label="Switch language between English and Sinhala"><span class="lang-on">EN</span><span class="lang-sep">|</span><span class="lang-off">SI</span></button>
   <button id="btnTheme" type="button" class="hbtn hbtn-icon" aria-label="Switch theme between dark and light"><span id="themeIcon" data-icon="moon" data-icon-size="20" aria-hidden="true"></span></button>
@@ -341,6 +343,26 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <button id="btnNewSession" type="button" class="btn" data-i18n="btnNewSession">Start new session</button>
     </div>
    </div>
+
+   <div id="reviewCard" class="card review-card" role="region" aria-labelledby="reviewTitle" hidden>
+    <h3 id="reviewTitle" class="card-title" data-i18n="reviewTitle">Help Improve Smart Dictation — Share Your Quick Review</h3>
+    <p class="muted" data-i18n="reviewSub">100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.</p>
+    <p id="reviewE2eeBadge" class="review-e2ee" role="status">🔒 100% End-to-End Encrypted — Your privacy is completely protected.</p>
+    <div id="reviewPills" class="pill-row" role="group" aria-label="Quick rating">
+     <button type="button" class="pill rpill" data-rpill="fast" aria-pressed="false">⚡ Fast &amp; Smooth</button>
+     <button type="button" class="pill rpill" data-rpill="clear" aria-pressed="false">🔊 Voice Clear</button>
+     <button type="button" class="pill rpill" data-rpill="issue" aria-pressed="false">🐞 Found an Issue</button>
+    </div>
+    <button id="btnVoiceReview" type="button" class="btn" data-i18n="reviewVoiceBtn">🎤 Record / Speak Review (English or Sinhala)</button>
+    <p id="reviewVoiceStatus" class="muted" role="status" aria-live="polite" hidden></p>
+    <div class="review-send-row">
+     <input id="reviewTextInput" class="input" type="text" maxlength="300" autocomplete="off" data-i18n-placeholder="reviewTextPh" placeholder="Or type a quick note (optional)…">
+     <button id="btnSendReview" type="button" class="btn btn-primary" data-i18n="reviewSendBtn">Send Review</button>
+    </div>
+    <div class="chip-row">
+     <button id="btnSkipReview" type="button" class="btn btn-ghost" data-i18n="reviewSkipBtn">Skip — no thanks</button>
+    </div>
+   </div>
   </section>
 
   <section id="screen-practice" class="screen" aria-labelledby="pracTitle">
@@ -503,7 +525,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.i</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.j</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-06</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
@@ -599,6 +621,35 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
 </div>
 
+<!-- v0.0.6.j Pillar 1: Creator Briefing — Apple-Music-style live synced
+   transcript with a charismatic British male voice, narrated
+   sentence-by-sentence while this line highlights. The 10-second timed gate
+   below keeps the primary CTA locked until the countdown finishes. -->
+<div id="briefingModal" class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle" aria-hidden="true" hidden>
+ <div class="modal-card briefing-card">
+  <div class="modal-head briefing-head">
+   <div>
+    <h2 id="briefingTitle" data-i18n="briefingTitle">The Creator's Note · Who built this?</h2>
+    <p id="briefingPersona" class="briefing-persona" data-i18n="briefingPersona">British voice narration · Live synced transcript</p>
+   </div>
+   <span id="briefingBeatBadge" class="briefing-beat" aria-hidden="true">♪ synced</span>
+  </div>
+  <div id="briefingLyrics" class="briefing-lyrics" aria-live="polite"></div>
+  <div class="briefing-progress" aria-hidden="true"><div id="briefingBar"></div></div>
+  <p id="briefingCount" class="briefing-count" role="status" aria-live="polite">Please listen / read (10s)…</p>
+  <p class="briefing-links">
+   <a href="https://github.com/dictationb1/dictationb1.github.io" target="_blank" rel="noopener" data-i18n="briefingLinkCode">Inspect the code on GitHub ↗</a>
+   <a href="https://github.com/dictationb1" target="_blank" rel="noopener" data-i18n="briefingLinkProfile">Explore Hansana's GitHub ↗</a>
+  </p>
+  <div class="modal-foot briefing-foot">
+   <button id="btnBriefingContinue" type="button" class="btn btn-go" disabled data-i18n="briefingContinue">Continue to Smart Dictation →</button>
+   <button id="btnBriefingSkip" type="button" class="btn btn-ghost" disabled data-i18n="briefingSkip">Skip &amp; Enter App</button>
+  </div>
+ </div>
+</div>
+
+<span id="sdpBetaStamp" class="beta-stamp" hidden>BETA · 0.0.6.j.beta</span>
+
 <div id="sdpDataToast" class="toast toast-hidden" role="status" aria-live="polite"></div>
 <button id="sdpStalePill" class="stale-pill" type="button" hidden>⚠ Using older word list — Tap here to refresh</button>
 <div id="sdpUpdateCard" class="update-card" role="region" aria-live="polite" hidden>
@@ -612,7 +663,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.i';
+ var TARGET = '0.0.6.j';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-/* v0.0.6.i (CF-UNIFIED-MAIN) proof captures: the unified permanent Main
+/* v0.0.6.j (CF-UNIFIED-MAIN) proof captures: the unified permanent Main
  * Production UI at the clean URL, plus the same proof with ?beta / #beta /
  * ?b=1 present — the URLs must stay on the unified main UI too, because the
  * beta channel no longer exists anywhere in the shipped bytes. Native-dark
@@ -34,7 +34,7 @@ async function launch() {
     });
     await ctx.addInitScript((o) => {
       try {
-        localStorage.setItem('sdp.guide_seen', '0.0.6.i');
+        localStorage.setItem('sdp.guide_seen', '0.0.6.j');
         const s = JSON.parse(localStorage.getItem('sdp.settings') || '{}');
         if (o && o.dark) s.theme = 'dark';
         localStorage.setItem('sdp.settings', JSON.stringify(s));

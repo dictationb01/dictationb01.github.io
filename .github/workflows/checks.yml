@@ -1,8 +1,12 @@
 name: release gates
 
-# contract: docs/ARCHITECTURE_MAP.md §12 — the twelve v0.0.1.d release gates.
-# Every gate is a plain Node script; the browser gates launch the Chromium that
-# ships inside @sparticuz/chromium and unpack their own AL2023 libraries.
+# contract: docs/ARCHITECTURE_MAP.md §12 — the twelve release gates plus the
+# v0.0.6.j preserved-payload SHA step (Step 13). Every gate is a plain Node
+# script; the browser gates launch the Chromium that ships inside
+# @sparticuz/chromium and unpack their own AL2023 libraries.
+# v0.0.6.j feature surface (Creator Briefing + 10s gate, 5-key Multi-API pool
+# + pronunciation verifier, post-session review card, Studio diagnostics
+# .zip, governed ?beta channel) is asserted by G1 §13 and G3 §3b/G5 §13/G7 §1.
 on:
   push:
     branches: [main]

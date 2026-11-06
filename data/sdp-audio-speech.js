@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — speech & audio pipeline (v0.0.3)
+/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.j)
  * Strict ES5, dependency free.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 audio priority chain
  * Dictionary audio always plays through a plain <audio> element; element audio
@@ -281,6 +281,52 @@
     return cachedProfVoice ? str(cachedProfVoice.name) : '';
   }
 
+  /* ══ v0.0.6.j Pillar 1: the British Male narrator ═════════
+   * The Creator Briefing speaks with a young male persona — the exact
+   * opposite bias of the professor scorer above. When the lecturer has not
+   * published the _intro_male_N clips yet (or the device is offline), this
+   * picker pins the best en-GB male voice the device offers so the narration
+   * still sounds like a charismatic young British man, never the female
+   * professor and never a robotic US default. */
+  var MALE_BRIT_RE = /\b(daniel|oliver|ryan|george|harry|arthur|arthur.*male|david|mark|james|thomas|richard|fred|guy|male|man)\b/i;
+  var FEMALE_BRIT_RE = /\b(female|woman|sonia|libby|maisie|serena|kate|martha|ava|amelia|hazel|susan|catherine|karen|alice|samantha|victoria|zira|aria|jenny|allison)\b/i;
+  function scoreMaleVoice(v) {
+    if (!v || !v.lang) return -1;
+    var name = str(v.name || '').toLowerCase();
+    var lang = str(v.lang).toLowerCase().replace(/_/g, '-');
+    var uri = str(v.voiceURI || '').toLowerCase();
+    var hay = name + ' ' + uri;
+    if (FEMALE_BRIT_RE.test(hay)) return -100;
+    var score = -1;
+    if (lang.indexOf('en-gb') === 0 && /google uk english male|daniel|oliver|ryan|george|arthur|harry/i.test(hay)) score = 100;
+    else if (lang.indexOf('en-gb') === 0 && MALE_BRIT_RE.test(hay)) score = 70;
+    else if (lang.indexOf('en') === 0 && MALE_BRIT_RE.test(hay)) score = 40;
+    if (score > 0 && v.localService === false) score += 5;
+    return score;
+  }
+  var cachedMaleVoice = null;
+  function selectMaleVoice(cb) {
+    cb = cb || noop;
+    var synth = global.speechSynthesis;
+    if (!synth || typeof synth.getVoices !== 'function') { cb(null); return; }
+    var voices = [];
+    try { voices = synth.getVoices() || []; } catch (e) { voices = []; }
+    var best = null, bestScore = -1, i, s;
+    for (i = 0; i < voices.length; i++) {
+      s = scoreMaleVoice(voices[i]);
+      if (s > bestScore) { best = voices[i]; bestScore = s; }
+    }
+    cb(bestScore > 0 ? best : null);
+  }
+  function pickMaleVoice() {
+    if (cachedMaleVoice) return cachedMaleVoice;
+    selectMaleVoice(function (v) { if (v) cachedMaleVoice = v; });
+    return cachedMaleVoice;
+  }
+  function maleVoiceName() {
+    return cachedMaleVoice ? str(cachedMaleVoice.name) : '';
+  }
+
   /* First-gesture unlock shared by every player surface (D-V6, R3). */
   var unlocked = false;
   function unlockAudio() {
@@ -356,8 +402,12 @@
      *   lang 'en-GB' · rate 0.92 (or the caller's explicit rate) · pitch 1.03.
      * 'custom' keeps the per-tier behaviour. */
     var locked = str(conf.voiceLock || 'unified') === 'unified';
+    /* v0.0.6.j: persona 'male' reserves the utterance for the Creator
+       Briefing narrator — a young British male voice with a slightly lower
+       pitch, never the female professor. */
+    var wantMale = opts.persona === 'male';
     var rate = Math.min(1.2, Math.max(0.7, Number(opts.rate || (locked ? 0.92 : conf.rate)) || 0.95));
-    var pitch = locked ? 1.03 : Number(opts.pitch || 1);
+    var pitch = wantMale ? 0.95 : (locked ? 1.03 : Number(opts.pitch || 1));
     var utterLang = locked ? 'en-GB' : str(opts.lang || 'en-GB');
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
     var synth = global.speechSynthesis;
@@ -396,8 +446,9 @@
         utter.rate = rate;
         utter.volume = volume;
         utter.pitch = pitch;
-        /* D-V1/D-V2: cached professor voice, always female, always en-GB. */
-        var voice = pickVoice(utterLang);
+        /* D-V1/D-V2: cached professor voice, always female, always en-GB —
+           unless the caller reserved the young British male narrator. */
+        var voice = wantMale ? pickMaleVoice() : pickVoice(utterLang);
         if (voice) utter.voice = voice;
         var advanced = false;
         var guardExtended = false;
@@ -886,6 +937,41 @@
     return false;
   }
 
+  /* ══ v0.0.6.j Pillar 1: Creator Briefing narration ══════════════════════
+   * Tier 1: the permanently cached _intro_male_N British-male clip from
+   *        data/elevenlabs-audio.json (zero latency, zero re-spend).
+   * Tier 2: the pinned British male device voice (persona
+   *        'male' above) — always available offline, before the lecturer
+   *        has generated the clips. The callback ALWAYS fires so the synced
+   *        transcript can never stall mid-sentence. */
+  function briefingClipUrl(idx) {
+    if (idx === null || idx === undefined || idx < 0) return '';
+    var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
+    if (!clips) return '';
+    var n = Number(idx);
+    var entry = clips['_intro_male_' + (n + 1)] || clips['intro.en.' + n] || null;
+    return entryUrl(entry);
+  }
+  function playBriefingStep(stepIdx, stepText, cb) {
+    cb = cb || noop;
+    var text = str(stepText);
+    if (!text) { cb(null); return true; }
+    var clip = briefingClipUrl(stepIdx);
+    if (clip) {
+      var bEpoch = state.speechEpoch;
+      state.speaking = true;
+      playUrl(playableUrl(clip), { rate: 0.97 }, function (err) {
+        if (state.speechEpoch !== bEpoch) return;
+        state.speaking = false;
+        if (!err) { state.lastTier = 'intro_male_clip'; cb(null); return; }
+        say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
+      });
+      return true;
+    }
+    say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
+    return false;
+  }
+
   /* ══ R3: spoken button cues (`cmd.*` and `num.<n>`) ══════════════════════
    * Every cue has three tiers and none of them bills a character:
    *   1. the committed 70-clip pack clip (state.manifest.clips[key])
@@ -1044,6 +1130,14 @@
           attempt();
           return;
         }
+        /* v0.0.6.j Pillar 3: an honest audio-tier fallback is a diagnostics
+           event (privacy-safe, no personal data) so the lecturer can see why
+           a word fell back to Youdao or the device voice. */
+        try {
+          if (global.SDP && SDP.Diagnostics) {
+            SDP.Diagnostics.log('audio_tier_fallback', { word: pw.slice(0, 40), from: current.tier, to: (tiers[at] && tiers[at].tier) || 'end' });
+          }
+        } catch (e) {}
         attempt();
       });
     }
@@ -1124,6 +1218,14 @@
     pickVoice: pickVoice,
     warmProfessorVoice: warmProfessorVoice,
     voiceName: voiceName,
+    /* v0.0.6.j: the young British male narrator + Creator Briefing steps. */
+    pickMaleVoice: pickMaleVoice,
+    maleVoiceName: maleVoiceName,
+    playBriefingStep: playBriefingStep,
+    briefingClipUrl: briefingClipUrl,
+    clipCount: function () {
+      return (state.manifest && isObj(state.manifest.clips)) ? Object.keys(state.manifest.clips).length : 0;
+    },
     unlockAudio: unlockAudio,
     isUnlocked: isUnlocked,
     playableUrl: playableUrl,

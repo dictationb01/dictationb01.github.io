@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.j)
+/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.k)
  * Strict ES5, dependency free.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 audio priority chain
  * Dictionary audio always plays through a plain <audio> element; element audio
@@ -281,15 +281,18 @@
     return cachedProfVoice ? str(cachedProfVoice.name) : '';
   }
 
-  /* ══ v0.0.6.j Pillar 1: the British Male narrator ═════════
-   * The Creator Briefing speaks with a young male persona — the exact
-   * opposite bias of the professor scorer above. When the lecturer has not
-   * published the _intro_male_N clips yet (or the device is offline), this
-   * picker pins the best en-GB male voice the device offers so the narration
-   * still sounds like a charismatic young British man, never the female
-   * professor and never a robotic US default. */
-  var MALE_BRIT_RE = /\b(daniel|oliver|ryan|george|harry|arthur|arthur.*male|david|mark|james|thomas|richard|fred|guy|male|man)\b/i;
-  var FEMALE_BRIT_RE = /\b(female|woman|sonia|libby|maisie|serena|kate|martha|ava|amelia|hazel|susan|catherine|karen|alice|samantha|victoria|zira|aria|jenny|allison)\b/i;
+  /* ══ v0.0.6.k Pillar 1: the British Male narrator — NEVER a female voice ══
+   * The Project Briefing speaks with a warm, mature male persona. Why the
+   * phone played a girl's voice before: on Android/iOS Chrome,
+   * speechSynthesis.getVoices() lists female voices first or labels them
+   * generically ("English (United Kingdom)"), and the old picker fell back
+   * to that default whenever the _intro_male_N clips were absent. This
+   * picker now hard-rejects every known female name AND generic unisex
+   * defaults, prioritises deep British male voices (Daniel, Arthur, Oliver,
+   * George, Ryan, Thomas, Malcolm), and say() pins pitch 0.82 / rate 0.98
+   * for the male persona so device synthesis never sounds shrill or female. */
+  var MALE_BRIT_RE = /\b(daniel|oliver|ryan|george|harry|arthur|david|mark|james|thomas|richard|fred|guy|malcolm|alex|aaron|male|man)\b/i;
+  var FEMALE_BRIT_RE = /\b(female|woman|girl|sonia|libby|maisie|serena|kate|martha|ava|amelia|hazel|susan|catherine|karen|alice|victoria|zira|samantha|moira|tessa|fiona|aria|jenny|allison|nicky|female_1)\b/i;
   function scoreMaleVoice(v) {
     if (!v || !v.lang) return -1;
     var name = str(v.name || '').toLowerCase();
@@ -297,9 +300,15 @@
     var uri = str(v.voiceURI || '').toLowerCase();
     var hay = name + ' ' + uri;
     if (FEMALE_BRIT_RE.test(hay)) return -100;
+    /* v0.0.6.k: "Google UK English Female" and friends are caught above; a
+       GENERIC default ("English (United Kingdom)", no male marker) is also
+       rejected so the fallback never lands on a random (often female)
+       system voice. Only an explicitly male-named or male-flagged voice
+       scores. */
     var score = -1;
-    if (lang.indexOf('en-gb') === 0 && /google uk english male|daniel|oliver|ryan|george|arthur|harry/i.test(hay)) score = 100;
+    if (lang.indexOf('en-gb') === 0 && /google uk english male|microsoft ryan|microsoft george|microsoft thomas|daniel|oliver|ryan|george|arthur|harry|malcolm/i.test(hay)) score = 100;
     else if (lang.indexOf('en-gb') === 0 && MALE_BRIT_RE.test(hay)) score = 70;
+    else if (lang.indexOf('en') === 0 && /male/i.test(hay)) score = 55;
     else if (lang.indexOf('en') === 0 && MALE_BRIT_RE.test(hay)) score = 40;
     if (score > 0 && v.localService === false) score += 5;
     return score;
@@ -402,12 +411,13 @@
      *   lang 'en-GB' · rate 0.92 (or the caller's explicit rate) · pitch 1.03.
      * 'custom' keeps the per-tier behaviour. */
     var locked = str(conf.voiceLock || 'unified') === 'unified';
-    /* v0.0.6.j: persona 'male' reserves the utterance for the Creator
-       Briefing narrator — a young British male voice with a slightly lower
-       pitch, never the female professor. */
+    /* v0.0.6.k: persona 'male' reserves the utterance for the Project
+       Briefing narrator — a deep, warm British male voice pinned to pitch
+       0.82 / rate 0.98 so device synthesis never sounds shrill, juvenile
+       or female. */
     var wantMale = opts.persona === 'male';
-    var rate = Math.min(1.2, Math.max(0.7, Number(opts.rate || (locked ? 0.92 : conf.rate)) || 0.95));
-    var pitch = wantMale ? 0.95 : (locked ? 1.03 : Number(opts.pitch || 1));
+    var rate = wantMale ? 0.98 : Math.min(1.2, Math.max(0.7, Number(opts.rate || (locked ? 0.92 : conf.rate)) || 0.95));
+    var pitch = wantMale ? 0.82 : (locked ? 1.03 : Number(opts.pitch || 1));
     var utterLang = locked ? 'en-GB' : str(opts.lang || 'en-GB');
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
     var synth = global.speechSynthesis;
@@ -937,13 +947,16 @@
     return false;
   }
 
-  /* ══ v0.0.6.j Pillar 1: Creator Briefing narration ══════════════════════
-   * Tier 1: the permanently cached _intro_male_N British-male clip from
-   *        data/elevenlabs-audio.json (zero latency, zero re-spend).
-   * Tier 2: the pinned British male device voice (persona
-   *        'male' above) — always available offline, before the lecturer
-   *        has generated the clips. The callback ALWAYS fires so the synced
-   *        transcript can never stall mid-sentence. */
+  /* ══ v0.0.6.k Pillar 1: Project Briefing narration ══════════════════════
+   * Tier 1: the permanently cached _intro_male_N deep British-male clip
+   *        from data/elevenlabs-audio.json (zero latency, zero re-spend).
+   *        The Studio one-click generator bakes them with the ElevenLabs
+   *        George/Daniel deep British male voice.
+   * Tier 2: the pinned deep British male device voice (persona 'male'
+   *        above — pitch 0.82 / rate 0.98, hard female-name rejection) —
+   *        always available offline, before the lecturer has generated the
+   *        clips. The callback ALWAYS fires so the synced transcript can
+   *        never stall mid-sentence. */
   function briefingClipUrl(idx) {
     if (idx === null || idx === undefined || idx < 0) return '';
     var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
@@ -1130,7 +1143,7 @@
           attempt();
           return;
         }
-        /* v0.0.6.j Pillar 3: an honest audio-tier fallback is a diagnostics
+        /* v0.0.6.k Pillar 3: an honest audio-tier fallback is a diagnostics
            event (privacy-safe, no personal data) so the lecturer can see why
            a word fell back to Youdao or the device voice. */
         try {
@@ -1218,7 +1231,7 @@
     pickVoice: pickVoice,
     warmProfessorVoice: warmProfessorVoice,
     voiceName: voiceName,
-    /* v0.0.6.j: the young British male narrator + Creator Briefing steps. */
+    /* v0.0.6.k: the deep British male narrator + Project Briefing steps. */
     pickMaleVoice: pickMaleVoice,
     maleVoiceName: maleVoiceName,
     playBriefingStep: playBriefingStep,

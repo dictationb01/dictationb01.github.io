@@ -63,7 +63,7 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.j'); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.k'); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -85,9 +85,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
   const browser = await launch();
   try {
     /* ── 1. first visit: Creator Briefing, then the unmissable guide ───── */
-    // contract: docs/ARCHITECTURE_MAP.md §v0.0.6.j Pillar 1 + §R2 — the
-    // briefing is the new front door: synced transcript, 10s locked gate,
-    // then the student guide takes over exactly as before.
+    // contract: docs/ARCHITECTURE_MAP.md §v0.0.6.k Pillar 1 + §R2 — the
+    // briefing is the new front door: synced transcript (project summary
+    // first), 10s locked gate, then the student guide takes over.
     const { ctx, page, errors } = await newPage(browser, server.origin, { settings: FAST });
     await page.waitForTimeout(700);
     const briefing = await page.evaluate(() => ({
@@ -103,8 +103,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     }));
     check('G7.1a the Creator Briefing opens by itself on a brand-new visit',
       briefing.briefingOpen === true && briefing.guideOpen === false);
-    check('G7.1a2 the synced transcript carries the 8 creator beats',
-      briefing.beats === 8, briefing.beats);
+    check('G7.1a2 the synced transcript carries the 4 executive beats',
+      briefing.beats === 4, briefing.beats);
     check('G7.1a3 both exit CTAs are locked behind the 10-second gate',
       briefing.ctaLocked === true && briefing.skipLocked === true, JSON.stringify(briefing.count));
     check('G7.1a4 the live countdown starts at 10s', /\(10s\)/.test(briefing.count), briefing.count);
@@ -127,7 +127,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     await page.click('#btnGuideClose');
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.j', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.k', afterGuide);
     const briefingStamp = await page.evaluate(() => localStorage.getItem('sdp.settings'));
     check('G7.1d2 the briefing completion is stamped inside sdp.settings',
       /"briefingSeen":1/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
@@ -384,11 +384,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0.0.6.j\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0.0.6.k\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.j', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.k', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

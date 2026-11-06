@@ -1476,10 +1476,8 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
   /* v0.0.6.i (CF-UNIFIED-MAIN): with the Preview/Beta switcher removed the
      header keeps only the brand, the B1 badge and the guide pill at 360px;
      the version pill, sync badge and lecturer launcher yield their space. */
-  .header-cluster { display: flex; gap: 6px; }
-  .header-cluster #sdpVerPill,
-  .header-cluster .sync-badge,
-  .header-cluster .studio-quick { display: none; }
+  /* v0.0.6.k (CF1): the ultra-clean header needs no 360px pill hiding —
+     only the brand block and the two toggle buttons exist up top. */
   .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .stat { padding: 10px 6px; }
   .stat strong { font-size: 17px; }
@@ -1814,9 +1812,6 @@ html[data-theme='board'] { color-scheme: dark; }
 @media (max-width: 400px) {
   /* v0.0.6.i (CF-UNIFIED-MAIN): the unified main header keeps the brand,
      the B1 badge and the guide pill at 360px. */
-  .header-cluster #sdpVerPill,
-  .header-cluster .sync-badge,
-  .header-cluster .studio-quick { display: none; }
   .b1badge { display: inline-block; }
   #appHeader { gap: 8px; padding: 4px 10px; }
   #brandName { font-size: 13.5px; }
@@ -2447,34 +2442,45 @@ html[data-theme='dark'] #screen-settings .checkline input[type='checkbox'] { bac
 .about-card .about-line { padding: 10px 2px 0; }
 
 
-/* ═════════ v0.0.6.j — Pillar 1: Creator Briefing (live synced transcript) ═════════
+/* ═════════ v0.0.6.k — Pillar 1: Project-First Executive Briefing (synced transcript) ═════════
    Apple-Music-style narration: the active sentence is crisp and large
    (19px, #0F172A) while past/upcoming sentences stay readable at softer
    opacity, with a smooth auto-scroll and a live progress bar. The 10-second
    timed gate keeps both exit buttons locked until the countdown completes. */
 .briefing-modal { z-index: 95; }
-.briefing-card { width: min(680px, 100%); max-height: min(86vh, 780px); display: flex; flex-direction: column; }
-.briefing-head { align-items: flex-start; }
-.briefing-head h2 { font-size: 19px; line-height: 1.25; }
-.briefing-persona { margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted); }
+/* v0.0.6.k (CF2): the executive Product Briefing Card — sleek, spacious and
+   mature. All three core project summary beats are visible at once on a
+   390x844 phone with zero scrolling; Beat 4 stays readable just below. */
+.briefing-card { width: min(680px, 100%); max-height: min(88vh, 800px); display: flex; flex-direction: column; }
+.briefing-head { align-items: flex-start; border-bottom: 1px solid var(--stroke); padding-bottom: 12px; }
+.briefing-eyebrow {
+  margin: 0 0 6px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #0369A1; background: #E0F2FE;
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+}
+.briefing-head h2 { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; }
+.briefing-persona { margin: 5px 0 0; font-size: 12.5px; font-weight: 650; color: var(--text-muted); }
 .briefing-beat { flex: none; margin-left: auto; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px; background: #E0F2FE; color: #0369A1; }
 .briefing-lyrics {
   flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  max-height: 46vh; margin: 6px 0 10px; padding: 4px 2px 4px 0;
-  scroll-behavior: smooth; mask-image: linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
+  max-height: 52vh; margin: 10px 0 10px; padding: 2px 2px 2px 0;
+  scroll-behavior: smooth;
 }
 .b-line {
-  margin: 0 0 14px; padding: 2px 0 2px 12px; border-left: 3px solid transparent;
-  font-size: 19px; line-height: 1.42; font-weight: 500; color: #0F172A;
-  opacity: 0.62; transition: opacity 260ms ease, border-color 260ms ease, transform 260ms ease;
+  margin: 0 0 12px; padding: 8px 10px 8px 14px; border-left: 3px solid transparent;
+  border-radius: 0 12px 12px 0;
+  font-size: 15.5px; line-height: 1.5; font-weight: 500; color: #0F172A;
+  opacity: 0.72; transition: opacity 260ms ease, border-color 260ms ease, background 260ms ease, transform 260ms ease;
   cursor: pointer;
 }
-.b-line[data-state='past'] { opacity: 0.45; }
+.b-line[data-state='past'] { opacity: 0.5; }
 .b-line.on {
-  opacity: 1; font-weight: 750; border-left-color: #0EA5E9; transform: translateX(2px);
+  opacity: 1; font-weight: 700; border-left-color: #0EA5E9; transform: translateX(2px);
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.10), rgba(14, 165, 233, 0) 70%);
 }
 html[data-theme='dark'] .b-line { color: #E2E8F0; }
-html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
+html[data-theme='dark'] .b-line.on { background: linear-gradient(90deg, rgba(14, 165, 233, 0.22), rgba(14, 165, 233, 0) 70%); }
+html[data-theme='dark'] .briefing-beat, html[data-theme='dark'] .briefing-eyebrow { background: #0C4A6E; color: #BAE6FD; }
 .briefing-progress { height: 6px; border-radius: 999px; background: #E2E8F0; overflow: hidden; }
 #briefingBar { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #0EA5E9, #6366F1); transition: width 420ms ease; }
 .briefing-count {
@@ -2490,7 +2496,7 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
 #btnBriefingContinue[disabled], #btnBriefingSkip[disabled] { opacity: 0.55; cursor: not-allowed; filter: grayscale(0.25); }
 #btnBriefingContinue[disabled]::after { content: ' ⏳'; }
 
-/* ═════════ v0.0.6.j — Pillar 3: post-session review card ═════════ */
+/* ═════════ v0.0.6.k — Pillar 3: post-session review card ═════════ */
 .review-card { margin-top: 14px; border: 1.5px solid #C7D2FE; }
 .review-e2ee {
   margin: 2px 0 10px; padding: 7px 11px; border-radius: 10px; display: inline-block;
@@ -2503,7 +2509,7 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
 #btnVoiceReview.listening::before { content: '●'; color: #DC2626; margin-right: 6px; animation: sdpPulse 1s ease infinite; }
 @keyframes sdpPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
-/* ═════════ v0.0.6.j — Pillar 2: the 5-slot Multi-API key pool ═════════ */
+/* ═════════ v0.0.6.k — Pillar 2: the 5-slot Multi-API key pool (4× Groq + 1× ElevenLabs backup) ═════════ */
 .kp-grid { display: grid; gap: 8px; margin: 6px 0 10px; }
 .kp-row { display: grid; grid-template-columns: 86px minmax(120px, 168px) 1fr 22px; gap: 8px; align-items: center; }
 .kp-no { font-size: 11.5px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.2px; }
@@ -2518,7 +2524,7 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
   .kp-badge { display: none; }
 }
 
-/* ═════════ v0.0.6.j — Pillar 3: the diagnostics vault card ═════════ */
+/* ═════════ v0.0.6.k — Pillar 3: the diagnostics vault card ═════════ */
 .studio-card-diag { border: 1.5px dashed #A5B4FC; }
 .diag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0 10px; }
 .diag-cell {
@@ -2532,22 +2538,18 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
 @media (min-width: 640px) { .diag-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .diag-cell-wide { grid-column: 1 / -1; } }
 .studio-diag-row { margin: 6px 0; }
 
-/* ═════════ v0.0.6.j — per-word pronunciation verifier + single-word re-synth ═════════ */
+/* ═════════ v0.0.6.k — per-word pronunciation verifier + single-word re-synth ═════════ */
 .wm-verify, .wm-resynth { padding: 3px 9px; font-size: 13px; line-height: 1; }
 .wm-verify { color: #0369A1; border-color: #BAE6FD; }
 .wm-resynth { color: #7C3AED; border-color: #DDD6FE; }
 .wm-vbadge { font-size: 12px; font-weight: 850; color: #10B981; margin-left: 4px; }
 
-/* ═════════ v0.0.6.j — the governed Beta channel (?beta / header pill) ═════════ */
-.beta-pill { font-size: 11.5px; font-weight: 800; letter-spacing: 0.3px; padding: 5px 10px; border-radius: 999px; background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
-.beta-pill.on { background: #4338CA; color: #FFFFFF; border-color: #4338CA; }
-.beta-stamp {
-  position: fixed; right: 12px; bottom: calc(var(--tabbar-h, 60px) + 12px); z-index: 60;
-  max-width: min(78vw, 420px); padding: 8px 12px; border-radius: 12px;
-  font-size: 11.5px; font-weight: 750; line-height: 1.35; color: #E0E7FF;
-  background: rgba(49, 46, 129, 0.92); border: 1px solid #6366F1;
-  box-shadow: 0 10px 24px rgba(49, 46, 129, 0.35);
-}
-@media (min-width: 1024px) { .beta-stamp { bottom: 16px; } }
-.creator-note-label { transition: max-width 200ms ease, opacity 200ms ease; }
-@media (max-width: 520px) { .creator-note-label { display: none; } }
+/* ═════════ v0.0.6.k — relocated header tools (CF1 ultra-clean header) ═════════
+   The Beta pill and floating Beta stamp are RETIRED from the top status
+   bar; the secondary triggers (version pill, sync badge, Project Briefing,
+   ? Guide, Lecturer Admin) now live in the Settings About card. */
+.about-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+.about-tools #sdpVerPill { margin-right: auto; }
+.about-links-row { margin: 4px 0 10px; flex-wrap: wrap; }
+.about-links-row .btn { flex: 0 1 auto; }
+.creator-note-label { white-space: nowrap; }

@@ -75,18 +75,33 @@
   gemini: { url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', model: 'gemini-2.5-flash' }
  };
 
- /* ══ v0.0.6.j Pillar 2 — Multi-API Key Pool (up to 5 keys) ══════════════ */
+ /* ══ v0.0.6.k Pillar 2 — Multi-API Key Pool: 4× Groq + 1× ElevenLabs ════ */
  var KEY_POOL_SLOTS = 5;
  var POOL_PROVIDERS = {
-  elevenlabs: { label: 'ElevenLabs · voice', keyHint: 'sk_…' },
+  elevenlabs: { label: 'ElevenLabs · backup voice', keyHint: 'sk_…' },
   gemini: { label: 'Gemini · free tier', keyHint: 'AIza…' },
   openrouter: { label: 'OpenRouter · free models', keyHint: 'sk-or-…' },
   groq: { label: 'Groq · free tier', keyHint: 'gsk_…' },
   cloudflare: { label: 'Cloudflare Workers AI', keyHint: 'key / token' }
  };
- var POOL_PROVIDER_ORDER = ['elevenlabs', 'gemini', 'openrouter', 'groq', 'cloudflare'];
- /* The dedicated British male narrator for the Creator */
- var INTRO_VOICE = { id: 'pNInz6obpgDQGcFmaJgB', name: 'British Male · 21', model: 'eleven_flash_v2_5' };
+ var POOL_PROVIDER_ORDER = ['groq', 'elevenlabs', 'gemini', 'openrouter', 'cloudflare'];
+ /* v0.0.6.k: the creator's exact default architecture — Slots 1-4 default
+    to Groq (free AI IPA / Sinhala / lexical engine with auto-rotation on
+    HTTP 429) and Slot 5 defaults to the ElevenLabs backup key (instant
+    failover the moment the primary key's credits run out). */
+ var POOL_DEFAULT_PROVIDERS = ['groq', 'groq', 'groq', 'groq', 'elevenlabs'];
+ var POOL_DEFAULT_HINTS = [
+  'gsk_… (Groq API Key #1 — AI IPA, Sinhala & Lexical Engine)',
+  'gsk_… (Groq API Key #2 — Auto-Rotation Failover)',
+  'gsk_… (Groq API Key #3 — Auto-Rotation Failover)',
+  'gsk_… (Groq API Key #4 — Auto-Rotation Failover)',
+  'sk_… (Backup ElevenLabs Key when primary credits run out)'
+ ];
+ /* The dedicated deep British male narrators for the Project Briefing:
+    George (warm British male storyteller) is the default; Daniel
+    (authoritative British male) is the drop-in alternative. */
+ var INTRO_VOICE = { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George · deep British male', model: 'eleven_flash_v2_5' };
+ var INTRO_VOICE_ALT = { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel · authoritative British male', model: 'eleven_flash_v2_5' };
 
  /* ══ R5: synchronous pure-ES5 SHA-1 (no async, no build step) ══════════ */
  function utf8Bytes(text) {
@@ -151,7 +166,7 @@
   return 'sha1:' + sha1Hex(str(text) + '|' + str(voiceId || activeVoiceId) + '|' + str(modelId || VOICE_MODEL));
  }
 
- /* R5 (F6): the whole 70-clip pack — 30 words, 30 numbers, 6 commands, 4 */
+ /* R5 (F6): the whole 74-clip pack — 30 words, 30 numbers, 6 commands, 4 */
  var CMD_CLIPS = [
   { key: 'cmd.preparing', text: 'Preparing lesson. Listen carefully.' },
   { key: 'cmd.paused', text: 'Session paused.' },
@@ -168,14 +183,14 @@
  ];
  function numberClipText(n) { return 'Number ' + n + '.'; }
 
- /* ══ v0.0.6.j Pillar 2 — the Permanent Static Clip Vault ════════════════ */
+ /* ══ v0.0.6.k Pillar 2 — the Permanent Static Clip Vault ════════════════ */
  var STATIC_CLIP_KEYS = (function () {
   var keys = [], i;
   for (i = 0; i < CMD_CLIPS.length; i++) keys.push(CMD_CLIPS[i].key);
   for (i = 1; i <= WORD_CAP; i++) keys.push('num.' + i);
   for (i = 0; i < GUIDE_CLIP_TEXTS.length; i++) keys.push('guide.en.' + i);
   for (i = 1; i <= 4; i++) keys.push('_guide_' + i);
-  for (i = 1; i <= 8; i++) keys.push('_intro_male_' + i);
+  for (i = 1; i <= 4; i++) keys.push('_intro_male_' + i);
   return keys;
  })();
  function isStaticClipKey(key) { return STATIC_CLIP_KEYS.indexOf(str(key)) >= 0; }
@@ -183,10 +198,13 @@
   /* The canonical sentences live in sdp-ui-views.js so the briefing always */
   var lines = [], i;
   try {
-    if (global.SDP && SDP.Views && SDP.Views.briefingSentences) lines = SDP.Views.briefingSentences();
+   if (global.SDP && SDP.Views && SDP.Views.briefingSentences) lines = SDP.Views.briefingSentences();
   } catch (e) { lines = []; }
   var out = [];
-  for (i = 0; i < lines.length && i < 8; i++) out.push({ key: '_intro_male_' + (i + 1), text: str(lines[i]) });
+  /* v0.0.6.k: the executive briefing carries exactly 4 beats — the three
+     project-summary beats inside the 10-second gate plus the end-of-note
+     creator context. */
+  for (i = 0; i < lines.length && i < 4; i++) out.push({ key: '_intro_male_' + (i + 1), text: str(lines[i]) });
   return out;
  }
  function staticVaultStats() {
@@ -198,17 +216,24 @@
   return { total: total, locked: locked, keys: STATIC_CLIP_KEYS.slice() };
  }
 
- /* ══ v0.0.6.j Pillar 2 — pool storage, health and rotation ═════════════ */
- function normalizePoolEntry(e) {
-  if (!isObj(e)) return { p: 'elevenlabs', k: '' };
+ /* ══ v0.0.6.k Pillar 2 — pool storage, health and rotation ═════════════ */
+ function poolDefaultProvider(slotIndex) {
+  var i = Number(slotIndex);
+  if (!(i >= 0) || i >= POOL_DEFAULT_PROVIDERS.length) return 'groq';
+  return POOL_DEFAULT_PROVIDERS[i];
+ }
+ function normalizePoolEntry(e, slotIndex) {
+  var fallbackP = poolDefaultProvider(slotIndex);
+  if (!isObj(e)) return { p: fallbackP, k: '' };
   var p = str(e.p);
-  if (!POOL_PROVIDERS[p]) p = 'elevenlabs';
+  if (!p) p = fallbackP;
+  if (!POOL_PROVIDERS[p]) p = fallbackP;
   return { p: p, k: trimmedKey(str(e.k)) };
  }
  function keyPoolEntries() {
   var raw = isObj(ST.secrets) && Array.isArray(ST.secrets.keyPool) ? ST.secrets.keyPool : [];
   var out = [], i;
-  for (i = 0; i < KEY_POOL_SLOTS; i++) out.push(normalizePoolEntry(raw[i]));
+  for (i = 0; i < KEY_POOL_SLOTS; i++) out.push(normalizePoolEntry(raw[i], i));
   return out;
  }
  function mergeKeyPoolInputs() {
@@ -250,6 +275,43 @@
    if (str(pool[i].k) && pool[i].p !== 'elevenlabs') out.push({ p: pool[i].p, k: str(pool[i].k) });
   }
   return out;
+ }
+ /* ══ v0.0.6.k: the 4× Groq rotation engine ══════════════════════════════
+  * The four Groq slots (1 → 2 → 3 → 4) auto-rotate whenever any key hits
+  * HTTP 429 (rate limit) or quota exhaustion, at $0 cost for the IPA /
+  * Sinhala / lexical / pronunciation-verification work. Groq slots are
+  * tried in order before the other LLM providers, so the free tier always
+  * carries the load and a paid/free-tier Gemini or OpenRouter key is only
+  * a graceful extra. */
+ function groqKeyPool() {
+  var out = [], pool = keyPoolEntries(), i;
+  for (i = 0; i < pool.length; i++) {
+   if (pool[i].p === 'groq' && str(pool[i].k)) out.push({ p: 'groq', k: str(pool[i].k), slot: i + 1 });
+  }
+  return out;
+ }
+ function llmCandidates(preferred) {
+  /* The chosen provider + key first, then every Groq slot in order (the
+     4× free Groq pool leads), then the remaining LLM slots. */
+  var out = [], seen = {};
+  var first = { p: str(preferred && preferred.p), k: str(preferred && preferred.k) };
+  if (first.k && LLM_ENDPOINTS[first.p]) { out.push(first); seen[first.k] = 1; }
+  var groq = groqKeyPool(), i;
+  for (i = 0; i < groq.length; i++) {
+   if (!seen[groq[i].k]) { out.push({ p: 'groq', k: groq[i].k }); seen[groq[i].k] = 1; }
+  }
+  var pool = llmKeyPool();
+  for (i = 0; i < pool.length; i++) {
+   if (!seen[pool[i].k]) { out.push({ p: pool[i].p, k: pool[i].k }); seen[pool[i].k] = 1; }
+  }
+  return out;
+ }
+ function logGroqRotation(reason, slot) {
+  try {
+   if (global.SDP && SDP.Diagnostics) {
+    SDP.Diagnostics.log('groq_key_rotated', { reason: str(reason || ''), slot: Number(slot) || 0 });
+   }
+  } catch (e) {}
  }
  var poolCursor = 0;
  function resolveElevenKey() {
@@ -1105,11 +1167,14 @@
   return p === 'free_dict' || p === 'pollinations_free';
  }
  /* ══ Card 1 — rebuilt for */
- /* v0.0.6.j: the five pool slots — a provider select + a masked key input */
+ /* v0.0.6.k: the five pool slots — a provider select + a masked key input.
+    Defaults ship the creator's exact architecture: Slots 1-4 = Groq free
+    tier (auto-rotation on 429), Slot 5 = ElevenLabs backup voice key. */
  function keyPoolMarkup() {
   var pool = keyPoolEntries(), html = '<div id="studioKeyPool" class="kp-grid">', i, j;
   for (i = 0; i < KEY_POOL_SLOTS; i++) {
-   var e = pool[i] || { p: 'elevenlabs', k: '' };
+   var e = pool[i] || { p: poolDefaultProvider(i), k: '' };
+   var hint = POOL_DEFAULT_HINTS[i] || POOL_PROVIDERS[e.p].keyHint;
    html += '<div class="kp-row"><span class="kp-no">Key Slot #' + (i + 1) + '</span>' +
     '<select id="kpProv' + (i + 1) + '" class="input kp-prov" aria-label="Key Slot #' + (i + 1) + ' provider">';
    for (j = 0; j < POOL_PROVIDER_ORDER.length; j++) {
@@ -1118,13 +1183,13 @@
    }
    html += '</select>' +
     '<input id="kpSlot' + (i + 1) + '" class="input kp-key" type="password" autocomplete="off" data-pristine="1"' +
-    ' placeholder="' + esc(POOL_PROVIDERS[e.p].keyHint) + '" value="' + esc(e.k) + '"' +
+    ' placeholder="' + esc(hint) + '" value="' + esc(e.k) + '"' +
     (e.k ? ' data-sealed="1"' : '') + '>' +
     '<span class="kp-badge" data-kp-badge="' + (i + 1) + '"' + (e.k ? ' data-on="1"' : '') + '>' + (e.k ? '●' : '○') + '</span></div>';
   }
   return html + '</div>';
  }
- /* v0.0.6.j Pillar 3: the Troubleshooting & Session Diagnostics Vault card — */
+ /* v0.0.6.k Pillar 3: the Troubleshooting & Session Diagnostics Vault card — */
  function diagCardMarkup() {
   return '<details id="studioCardDiag" class="studio-card studio-card-diag">' +
    '<summary class="studio-h4"><span class="studio-step-tag">DIAG</span> Troubleshooting &amp; Session Diagnostics Vault</summary>' +
@@ -1151,12 +1216,12 @@
    '<p id="studioFreeNoKey" class="studio-free-badge"' + (freeNoKeyVisible() ? '' : ' hidden') + '>' + T('studioFreeNoKey') + '</p>' +
    keyRowMarkup('studioAiKey', t('studioAiKey'), 'gsk_… / AIza… / sk-or-…', 'Ai') +
    '<label class="lbl" for="studioGasUrl">Apps Script relay URL</label>' + '<div class="key-row">' + '<input id="studioGasUrl" class="input" type="url" autocomplete="off" data-pristine="1" placeholder="https://script.google.com/…">' + btn('btnClearGasUrl', t('studioClear')) + '</div>' +
-   /* ══ v0.0.6.j Pillar 2: the Multi-API Key Pool (5 slots) ══ */
-   '<label class="lbl">Multi-API Key Pool · up to 5 keys — automatic rotation &amp; quota failover</label>' +
+   /* ══ v0.0.6.k Pillar 2: the Multi-API Key Pool (4× Groq + 1× ElevenLabs) ══ */
+   '<label class="lbl">Multi-API Key Pool · 5 slots — 4× Groq Free Tier (auto-rotation on 429) + 1× ElevenLabs Backup (credit-exhaustion failover)</label>' +
    keyPoolMarkup() +
    '<div class="chip-row studio-pool-row">' +
    btn('btnProbePool', ' Check Pool Health &amp; Rotate') +
-   btn('btnGenIntroClips', ' Generate Creator Briefing Voice (British Male · 8 clips)', 'btn-ghost') +
+   btn('btnGenIntroClips', ' Generate Project Briefing Voice (Deep British Male · 4 clips)', 'btn-ghost') +
    '</div>' +
    '<p id="kpStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div class="chip-row studio-compat-row">' +
@@ -1408,7 +1473,7 @@
  function packDashboardText() {
   var vault = vaultBadgeVisible() ? t('studioPackVault') : 'Vault: —';
   var gh = str(ST.secrets.ghToken) ? t('studioPackGithub') : 'GitHub: —';
-  /* v0.0.6.j Pillar 2: the immutable static vault is part of the honest */
+  /* v0.0.6.k Pillar 2: the immutable static vault is part of the honest */
   var stats = staticVaultStats();
   var pool = keyPoolCount();
   return vault + ' | ' + gh + ' | ' + t('studioPackClips') + clipCount() + t('studioClipsUnit') +
@@ -1836,7 +1901,7 @@
   btnClearAi: function () { clearSecretField('studioAiKey', 'aiKey'); },
   btnClearGasUrl: function () { clearSecretField('studioGasUrl', 'gasUrl'); },
   btnCheckQuota: function () { quotaProbe(); },
-  /* ══ v0.0.6.j: key pool, briefing voice, diagnostics vault ══ */
+  /* ══ v0.0.6.k: key pool, briefing voice, diagnostics vault ══ */
   btnProbePool: function () {
    withBusy('btnProbePool', function (d) {
     mergeKeyPoolInputs();
@@ -1849,20 +1914,26 @@
         (results[i].ok ? ('OK (' + str(results[i].tier) + ')') : 'unreachable');
       }
      }
+     /* v0.0.6.k: the Groq half of the pool is free-tier — report its shape. */
+     var groq = groqKeyPool();
+     line += groq.length ? (' · Groq free-tier slots: ' + groq.length + '/4') : ' · No Groq free-tier keys yet (Slots #1–#4)';
      var node = byId('kpStatus');
      if (node) { node.textContent = line; }
      msg(' ' + line, results && results.length ? 'ok' : 'bad');
-     try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('key_pool_probed', { keys: results ? results.length : 0 }); } catch (e) {}
+     try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('key_pool_probed', { keys: results ? results.length : 0, groq: groq.length }); } catch (e) {}
      d();
     });
    });
   },
   btnGenIntroClips: function () {
    withBusy('btnGenIntroClips', function (d) {
+    /* v0.0.6.k: one click bakes the 4 executive briefing beats with the
+       deep British male voice (George), failing over to the Slot #5
+       backup ElevenLabs key the moment the primary credits run out. */
     generateClips({ intro: true }, function (err, info) {
      d();
-     if (err) { msg(' Creator Briefing voice failed · ' + quotaError(err), 'bad'); return; }
-     msg(' Creator Briefing voice ready · ' + (info ? info.made.length : 0) + ' new · ' +
+     if (err) { msg(' Project Briefing voice failed · ' + quotaError(err), 'bad'); return; }
+     msg(' Project Briefing voice ready · ' + (info ? info.made.length : 0) + ' new · ' +
       (info ? info.skipped : 0) + ' locked · ' + INTRO_VOICE.name, 'ok');
     });
    });
@@ -1961,7 +2032,7 @@
    toggleWmRow(actEl.getAttribute('data-row'));
    return;
   }
-  /* v0.0.6.j Pillar 2: the per-word verifier + single-word re-synthesis. */
+  /* v0.0.6.k Pillar 2: the per-word verifier + single-word re-synthesis. */
   if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'verifyWmRow') {
    if (ev.preventDefault) ev.preventDefault();
    verifyWmRow(actEl.getAttribute('data-row'));
@@ -2096,7 +2167,7 @@
   }
   p.aiProvider = aiProviderName(); p.updatedAt = Date.now();
   for (k in p) if (Object.prototype.hasOwnProperty.call(p, k)) s[k] = p[k];
-  /* v0.0.6.j: the five pool slots ride the same sealed vault write. */
+  /* v0.0.6.k: the five pool slots ride the same sealed vault write. */
   mergeKeyPoolInputs();
   ST.aiProvider = p.aiProvider; ST.aiKey = p.aiKey;
   return s;
@@ -2652,8 +2723,18 @@ function priorIPAFor(w) {
   /* D10: pollinations_free is a zero-key */
   if (info.needsKey !== false && !key) { cb(new Error('no_key')); return false; }
   if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
-  /* v0.0.6.j: the pronunciation verifier injects its own strict prompt. */
+  /* v0.0.6.k: the pronunciation verifier injects its own strict prompt. */
   var prompt = str(promptOverride) || llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
+  /* v0.0.6.k: every provider branch names the HTTP status on failure so the
+     caller can rotate Groq slots on 429 / quota exhaustion. */
+  var statusOf = function (res) {
+   return res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+  };
+  var failWith = function (status) {
+   var err = new Error(status === 429 ? 'groq_rate_limited' : 'llm_failed');
+   err.status = Number(status) || 0;
+   cb(err);
+  };
   if (provider === 'gemini') {
    /* v0.0.4.a W2: model cascade — gemini-2.0-flash → gemini-flash-latest → */
    var models = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
@@ -2696,9 +2777,17 @@ function priorIPAFor(w) {
   }
   try {
    global.fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), cache: 'no-store' })
-    .then(function (res) { return res && res.json ? res.json() : null; })
-    .then(function (json) { cb(null, llmRows(provider, json)); },
-     function (err) { cb(err || new Error('llm_failed')); });
+    .then(function (res) {
+     /* v0.0.6.k: a non-2xx OpenAI-compatible answer (Groq 429 rate limit,
+        401/402 key trouble) fails WITH its status so the caller can rotate
+        to the next Groq slot instead of parsing an error body as JSON. */
+     if (!res || !res.ok) { failWith(statusOf(res)); return null; }
+     return res && res.json ? res.json() : null;
+    })
+    .then(function (json) {
+     if (json === null) return;
+     cb(null, llmRows(provider, json));
+    }, function (err) { cb(err || new Error('llm_failed')); });
   } catch (e) { cb(e || new Error('llm_failed')); return false; }
   return true;
  }
@@ -3236,7 +3325,7 @@ function priorIPAFor(w) {
 
  /* ══ D-C1..C7: credit-safe Alice */
  function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + activeVoiceId; }
-/* v0.0.6.j: the Creator Briefing clips synthesize with the dedicated
+/* v0.0.6.k: the Project Briefing clips synthesize with the dedicated
    British male narrator voice (human click only, W5 credit safety). */
 function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + INTRO_VOICE.id; }
  function guideSteps() {
@@ -3265,7 +3354,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   for (i = 0; i < cmds.length; i++) cmdChars += cmds[i].text.length;
   var steps = guideSteps(), guideChars = 0;
   for (i = 0; i < steps.length; i++) guideChars += steps[i].text.length;
-  /* v0.0.6.j Pillar 1: the 8 Creator Briefing sentences (British male). */
+  /* v0.0.6.k Pillar 1: the 4 Project Briefing beats (deep British male). */
   var intro = introSteps(), introChars = 0;
   for (i = 0; i < intro.length; i++) introChars += intro[i].text.length;
   var clips = count + numbers.length + cmds.length + steps.length + intro.length;
@@ -3276,11 +3365,11 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
  }
  function costPreviewLine(words) {
   var c = costPreview(words);
-  /* R5: the 78-clip arithmetic, always stated, never guessed. */
+  /* R5: the 74-clip arithmetic, always stated, never guessed. */
   return c.count + ' words = ' + c.words + ' chars · 30 numbers = ' + c.numbers +
    ' chars · 6 commands = ' + c.commands + ' chars · 4 guide steps = ' + c.guide +
-   ' chars · 8 intro steps = ' + c.intro + ' chars · total ' + c.total + ' chars · ' + c.clips +
-   ' clips (30 words + 30 numbers + 6 commands + 4 guide steps + 8 intro steps)';
+   ' chars · 4 intro steps = ' + c.intro + ' chars · total ' + c.total + ' chars · ' + c.clips +
+   ' clips (30 words + 30 numbers + 6 commands + 4 guide steps + 4 intro steps)';
  }
  /* D2: 403 / missing_permissions / */
  /* D5/D16: human error sentences. */
@@ -3634,12 +3723,17 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   else { opts = isObj(a) ? a : {}; cb = typeof b === 'function' ? b : noop; }
   if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
   if (!ST.voicePack.loaded) loadVoicePack(noop);
-  /* v0.0.6.j Pillar 2: the active key comes from the pool (primary field */
+  /* v0.0.6.k Pillar 2: the active key comes from the pool (primary field
+     first, then the Slot #5 ElevenLabs backup). A 401/402/429 from the
+     primary mid-batch rotates to the backup key instantly — the batch
+     keeps its progress and the backup's credits carry on until the
+     creator updates the primary key. */
   poolCursor = 0;
   var apiKey = resolveElevenKey();
   if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
   var introMode = !!opts.intro;
-  /* v0.0.6.j Pillar 1: the Creator Briefing clips use the dedicated young */
+  /* v0.0.6.k Pillar 1: the Project Briefing clips use the dedicated deep
+     British male George voice (ElevenLabs JBFqnCBsd6RMkjVDRZzb). */
   var genVoiceId = introMode ? INTRO_VOICE.id : activeVoiceId;
   var genModel = introMode ? INTRO_VOICE.model : VOICE_MODEL;
   var genUrl = introMode ? introVoiceTtsUrl() : elevenUrl();
@@ -3695,7 +3789,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash */
    var itemHash = clipContentHash(item.text, genVoiceId, genModel);
    var existing = ST.voicePack.clips[item.key];
-   /* v0.0.6.j Pillar 2: immutable static system audio (commands, numbers, */
+   /* v0.0.6.k Pillar 2: immutable static system audio (commands, numbers, */
    if (!force && clipExists(item.key)) {
     if (isStaticClipKey(item.key)) { skipped += 1; next(); return; }
     var storedHash = isObj(existing) ? str(existing.hash) : '';
@@ -3706,7 +3800,9 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    var rotationsThisItem = 0;
    requestClip(item, apiKey, function (err, entry) {
     if (err) {
-     /* v0.0.6.j Pillar 2: key-level failures rotate to the next pool slot */
+     /* v0.0.6.k Pillar 2: key-level failures rotate to the next pool slot
+        (primary field → Slot #5 backup ElevenLabs key) MID-BATCH without
+        losing progress; the backup's credits carry the rest of the run. */
      var st = Number((err && err.status) || 0);
      if ((st === 401 || st === 402 || st === 429) && rotationsThisItem < elevenKeyPool().length - 1) {
       var rotated = rotateElevenKey('http_' + st);
@@ -3770,7 +3866,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return { ok: true, started: queue.length, calls: 0 };
  }
 
- /* ══ v0.0.6.j Pillar 3 — the in-browser .zip diagnostics exporter ═══════ */
+ /* ══ v0.0.6.k Pillar 3 — the in-browser .zip diagnostics exporter ═══════ */
  function buildDiagZip(cb) {
   cb = cb || noop;
   var Diag = null;
@@ -3869,7 +3965,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
     }
     if (!todo.length) {
      repaint();
-     msg('All 70 voice pack clips are already loaded and verified (0 credits spent).', 'ok');
+     msg('All 74 voice pack clips are already loaded and verified (0 credits spent).', 'ok');
      cb(null, { recovered: 0 });
      return;
     }
@@ -3972,7 +4068,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return false;
  }
 
- /* ══ v0.0.6.j Pillar 2 — AI British Pronunciation Pre-Verifier ══════════ */
+ /* ══ v0.0.6.k Pillar 2 — AI British Pronunciation Pre-Verifier ══════════ */
  function britishizeIpa(raw) {
   var ipa = str(raw).replace(/^\s+|\s+$/g, '').replace(/^\/+|\/+$/g, '');
   if (!ipa) return '';
@@ -3995,12 +4091,10 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   cb = cb || noop;
   var w = str(word && word.w ? word.w : word);
   if (!w) { cb(new Error('no_word')); return false; }
-  /* Provider cascade: the chosen provider + key first, then every LLM slot */
-  var candidates = [{ p: aiProviderName(), k: str(ST.secrets.aiKey) || fieldValue('studioAiKey') }];
-  var pool = llmKeyPool(), i;
-  for (i = 0; i < pool.length; i++) {
-   if (pool[i].k !== candidates[0].k) candidates.push(pool[i]);
-  }
+  /* v0.0.6.k provider cascade: the chosen provider + key first, then the
+     four Groq slots in order (free tier leads), then every other LLM slot.
+     A 429 / quota-exhausted key rotates to the NEXT Groq slot instantly. */
+  var candidates = llmCandidates({ p: aiProviderName(), k: str(ST.secrets.aiKey) || fieldValue('studioAiKey') });
   var at = 0;
   function attemptOne() {
    if (at >= candidates.length) { cb(new Error('llm_failed')); return; }
@@ -4013,6 +4107,9 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
      cb(null, rec);
      return;
     }
+    /* v0.0.6.k: HTTP 429 / 401 / 429-style failures rotate the Groq pool */
+    var st = Number((err && err.status) || 0);
+    if (st === 429 && c.p === 'groq') logGroqRotation('http_429', at);
     attemptOne();
    }, verifyPrompt(w));
   }
@@ -4092,7 +4189,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
     '" aria-label="Play the Alice clip for row ' + (i + 1) + '">' + ico('volume', 15) + '</button>' +
     ' <button type="button" class="btn btn-sm wm-toggle" data-action="toggleWmRow" data-row="' + i +
     '" aria-label="Edit row ' + (i + 1) + '">' + ico('edit', 15) + '</button>' +
-    /* v0.0.6.j Pillar 2: per-word Verify & Preview Pronunciation (♪) and */
+    /* v0.0.6.k Pillar 2: per-word Verify & Preview Pronunciation (♪) and */
     ' <button type="button" class="btn btn-sm wm-verify" data-action="verifyWmRow" data-row="' + i +
     '" title="Verify &amp; preview pronunciation (Cambridge B1 British)" aria-label="Verify and preview pronunciation for row ' + (i + 1) + '">\u266a</button>' +
     ' <button type="button" class="btn btn-sm wm-resynth" data-action="resynthWmRow" data-row="' + i +

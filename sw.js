@@ -10,8 +10,8 @@
  * repeating the same session spends 0 KB of mobile data. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.j-s25';
-var SHELL_CACHE = 'sdp-v0.0.6.j-s25-shell';
+var SW_VERSION = 'sdp-v0.0.6.k-s26';
+var SHELL_CACHE = 'sdp-v0.0.6.k-s26-shell';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';

@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.j'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.k'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.j');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.k');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -156,18 +156,22 @@ async function bootSettings(page, settings) {
       check('G5.4b each card shows IPA, POS, English, Sinhala, sentence and Play', Object.values(cardFields).every(Boolean), JSON.stringify(cardFields));
       const search = await page.evaluate(async () => {
         const input = document.getElementById('dictSearch');
-        /* v0.0.6.j: search for word #1 of the LIVE payload. The classroom word
+        /* v0.0.6.k: search for word #1 of the LIVE payload. The classroom word
            list is lecturer-owned and republished freely, so a hardcoded query
-           would silently stop matching. */
+           would silently stop matching. The expected count is derived with the
+           renderer's own predicate (word / Sinhala / English meaning). */
         const first = document.querySelector('#dictList .dict-card .d-w, #dictList .dict-card [data-word], #dictList .dict-card');
         const query = (window.__SDP_SESSION__ && window.__SDP_SESSION__.words && window.__SDP_SESSION__.words[0] && window.__SDP_SESSION__.words[0].w) ||
           (window.SDP && window.SDP.Sync && window.SDP.Sync.word && (window.SDP.Sync.word(0) || {}).w) || '';
+        const list = (window.SDP && window.SDP.Sync && window.SDP.Sync.words) ? window.SDP.Sync.words() : [];
+        const q = String(query).toLowerCase();
+        const expected = list.filter((w) => String(w.w).toLowerCase().indexOf(q) >= 0 || String(w.si).indexOf(q) >= 0 || String(w.m).toLowerCase().indexOf(q) >= 0).length;
         input.value = query;
         input.dispatchEvent(new Event('input'));
         await new Promise((r) => setTimeout(r, 60));
-        return { count: document.querySelectorAll('#dictList .dict-card').length, query: query };
+        return { count: document.querySelectorAll('#dictList .dict-card').length, query: query, expected: expected };
       });
-      check('G5.4c search narrows the list instantly', search.count === 1, JSON.stringify(search));
+      check('G5.4c search narrows the list instantly', search.count === search.expected && search.count >= 1, JSON.stringify(search));
       check('G5.3b no page errors while routing', errors.length === 0, errors.join(' | '));
       errorsAll.push(...errors);
       await context.close();
@@ -398,14 +402,14 @@ async function bootSettings(page, settings) {
       await context.close();
     }
 
-    /* ── 12. v0.0.6.j mobile human-UI law (A1/A2/A3/A6) ──────────────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j — mobile-first human UI
+    /* ── 12. v0.0.6.k mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k — mobile-first human UI
     {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.j');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -533,22 +537,23 @@ async function bootSettings(page, settings) {
         parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
       check('G5.12i the live chips render as a 2-3 column grid',
         studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
-      check('G5.12j the v0.0.6.j cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      check('G5.12j the v0.0.6.k cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
       await context.close();
     }
 
-    /* ── 13. v0.0.6.j BETA-CHANNEL: the governed Beta channel is BACK ────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j — the Creator Briefing
+    /* ── 13. v0.0.6.k CF1: the ULTRA-CLEAN header + the URL Beta channel ─── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k — the Project Briefing
     // suite is permanent on Main; ?beta / #beta stamp BETA_SUBVERSION
-    // 0.0.6.j.beta, light the header pill + floating stamp and replay the
-    // briefing. ?b=1 is NOT a channel alias; the clean URL stays on Main.
+    // 0.0.6.k.beta and replay the briefing. The header keeps ONLY the brand
+    // block + EN|SI + Theme; ?b=1 is NOT a channel alias; the clean URL
+    // stays on Main.
     for (const flag of ['?beta', '#beta', '?b=1', '']) {
       const context = await browser.newContext({ viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.j');
-          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light' }));
+          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light', briefingSeen: 1 }));
         } catch (e) {}
       });
       const page = await context.newPage();
@@ -557,41 +562,47 @@ async function bootSettings(page, settings) {
         if (url.startsWith(server.origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
         return route.abort();
       });
-      await page.goto(server.origin + '/' + flag, { waitUntil: 'domcontentloaded' });
+      await page.goto(server.origin + '/index.html' + flag, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(600);
       const main = await page.evaluate(() => ({
         betaActive: !!(window.SDP && SDP.Views && SDP.Views.betaActive && SDP.Views.betaActive()),
-        betaSub: (window.SDP && SDP.Views && SDP.Views.betaSubversion) ? SDP.Views.betaSubversion() : '',
-        pillPressed: (document.getElementById('sdpBetaPill') || {}).getAttribute('aria-pressed') || '',
-        stampHidden: (document.getElementById('sdpBetaStamp') || {}).hidden,
-        stampText: (document.getElementById('sdpBetaStamp') || {}).textContent || '',
+        betaSub: (window.SDP && window.SDP.Views && SDP.Views.betaSubversion) ? SDP.Views.betaSubversion() : '',
+        pillInHeader: !!document.querySelector('#appHeader #sdpBetaPill'),
+        stampInDom: !!document.getElementById('sdpBetaStamp'),
         briefingOpen: (document.getElementById('briefingModal') || {}).hidden === false,
-        headerChildren: Array.from(document.querySelectorAll('#appHeader .header-cluster > *, #appHeader .header-actions > *')).map((n) => n.id).filter(Boolean).join(','),
+        headerChildren: Array.from(document.querySelectorAll('#appHeader > *')).map((n) => n.id).filter(Boolean).join(','),
+        headerNodes: document.querySelectorAll('#appHeader > *').length,
+        headerBtns: Array.from(document.querySelectorAll('#appHeader button')).map((n) => n.id).filter(Boolean).join(','),
+        headerText: (document.getElementById('appHeader') || {}).textContent.trim() || '',
         verPill: (document.getElementById('sdpVerPill') || {}).textContent || '',
+        aboutTools: !!document.querySelector('#aboutCard .about-tools'),
+        aboutRelocated: ['btnCreatorNote', 'btnGuideTop', 'btnStudioQuick', 'syncBadge'].every((id) => !!document.querySelector('#aboutCard #' + id)),
         fixLive: !!document.querySelector('meta[name="darkreader-lock"]') && getComputedStyle(document.getElementById('hintChips')).display === 'none'
       }));
       const tag = flag || '(clean url)';
       const wantsBeta = flag === '?beta' || flag === '#beta';
       check('G5.13a ' + tag + ' the governed Beta channel state matches the URL',
-        main.betaActive === wantsBeta && main.betaSub === '0.0.6.j.beta' &&
-        main.pillPressed === (wantsBeta ? 'true' : 'false') &&
-        main.stampHidden === !wantsBeta && /BETA .*0\.0\.6\.j\.beta/.test(main.stampText),
+        main.betaActive === wantsBeta && main.betaSub === '0.0.6.k.beta',
         JSON.stringify(main));
-      check('G5.13a2 ' + tag + ' the Beta channel replays the Creator Briefing',
+      check('G5.13a2 ' + tag + ' the Beta channel replays the Project Briefing',
         main.briefingOpen === wantsBeta, JSON.stringify(main));
-      check('G5.13b ' + tag + ' the header keeps the main chrome + the two v0.0.6.j pills',
-        main.verPill === 'v0.0.6.j' &&
-        /syncBadge/.test(main.headerChildren) && /btnStudioQuick/.test(main.headerChildren) &&
-        /btnCreatorNote/.test(main.headerChildren) && /sdpBetaPill/.test(main.headerChildren) &&
-        /btnLang/.test(main.headerChildren) && /btnTheme/.test(main.headerChildren), JSON.stringify(main));
-      check('G5.13c ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
+      check('G5.13b ' + tag + ' the ULTRA-CLEAN header keeps only brand + EN|SI + Theme',
+        main.headerChildren === 'sdpBrand' && main.headerNodes === 2 &&
+        main.headerBtns === 'btnLang,btnTheme' &&
+        !main.pillInHeader && !main.stampInDom &&
+        /Smart Dictation/.test(main.headerText) && /CCBE B1/.test(main.headerText) &&
+        !/Beta|Creator Note|Guide|Synced|Lecturer Admin|v0\.0\.6/.test(main.headerText),
+        JSON.stringify(main));
+      check('G5.13c ' + tag + ' the relocated triggers live inside the About card',
+        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.k', JSON.stringify(main));
+      check('G5.13d ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }
 
 
-    /* ── 14. v0.0.6.j critical fixes: clock state machine, pinned #tabbar,
+    /* ── 14. v0.0.6.k critical fixes: clock state machine, pinned #tabbar,
        the #tab-settings squircle (CF1 / CF2 / CF3) ────────────────────────
-       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.j CF1–CF4 */
+       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k CF1–CF4 */
     for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }]) {
       const tag = viewport.width + 'x' + viewport.height;
       {

@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.j';
+  SDP.version = '0.0.6.k';
   SDP.build = '2026-11-06';
-  SDP.ver = 24;
+  SDP.ver = 25;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.j';
-  var SCHEMA = 24;
-  var SETTINGS_REV = 40;
+  var APP_VERSION = '0.0.6.k';
+  var SCHEMA = 25;
+  var SETTINGS_REV = 41;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */

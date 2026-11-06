@@ -9,9 +9,9 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
-  /* v0.0.6.j (P1/P3): the governed Beta channel is BACK for the Creator
-     Briefing suite. The v0.0.6.j features are permanent on Main; ?beta or
-     the header pill stamps BETA_SUBVERSION 0.0.6.j.beta and replays the
+  /* v0.0.6.k (P1/P3): the governed Beta channel stays URL-driven for the
+     Project Briefing suite. The v0.0.6.k features are permanent on Main;
+     ?beta or #beta stamps BETA_SUBVERSION 0.0.6.k.beta and replays the
      briefing so the whole suite is verifiable on a phone in one tap. */
 
   function noop() {}
@@ -186,7 +186,7 @@
     studioAiKey: 'Free AI key (optional)',
     studioTestAi: 'Test Free AI / Dictionary Engine',
     studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
-    studioOneClick: ' Generate 70 British Professor Voices & Sync All Devices',
+    studioOneClick: ' Generate 74 British Professor Voices & Sync All Devices',
     studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
@@ -249,10 +249,10 @@
     studioStep2Head: 'STEP 2 — 30-WORD SESSION EDITOR & FREE AI AUTO-FILL',
     studioStep3Head: 'STEP 3 — CLASSROOM SETTINGS BROADCAST & PIN SECURITY',
     studioPackVault: 'Vault: Saved ', studioPackGithub: 'GitHub: Connected ', studioPackClips: 'Voice Pack: ',
-    studioClipsUnit: '/70 Clips', studioGenPrefix: 'Generating clip ',
-    studioGenCharsTail: ' chars used', studioClipsSaved: '/70 Clips Saved to GitHub · syncRev ',
+    studioClipsUnit: '/74 Clips', studioGenPrefix: 'Generating clip ',
+    studioGenCharsTail: ' chars used', studioClipsSaved: '/74 Clips Saved to GitHub · syncRev ',
     studioRetryFailed: 'Retry missing clips',
-    studioOneClick34: ' Generate 70 British Professor Voices & Sync All Devices',
+    studioOneClick34: ' Generate 74 British Professor Voices & Sync All Devices',
     studioSaveOnly: ' Save Keys to Vault Only',
     studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
     studioOneClickFull: 'Publish & Sync 30 Words',
@@ -322,19 +322,20 @@
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
     pinComplete: '✓ PIN Complete',
     pinDigitsNeeded: 'digits',
-    /* ══ v0.0.6.j — Creator Briefing, Beta channel, Post-Session Review ══ */
-    creatorNoteBtn: '♪ Creator Note',
-    briefingTitle: "The Creator's Note · Who built this?",
-    briefingPersona: 'British voice narration · Live synced transcript',
-    briefingLinkCode: 'Inspect the code on GitHub ↗',
-    briefingLinkProfile: "Explore Hansana's GitHub ↗",
+    /* ══ v0.0.6.k — Project-First Executive Briefing, Beta channel, Review ══ */
+    creatorNoteBtn: '♪ Project Briefing',
+    briefingEyebrow: 'OPEN-SOURCE PROJECT BRIEFING · AUTOMATED SYSTEM',
+    briefingTitle: 'Smart Dictation · Project Overview',
+    briefingPersona: 'Automated Open-Source Web System · Started 2 Weeks Ago · $0 Cost',
+    briefingLinkCode: 'Inspect Open-Source Code on GitHub ↗',
+    briefingLinkProfile: "Explore Hansana's GitHub & RDB Project ↗",
     briefingContinue: 'Continue to Smart Dictation →',
     briefingSkip: 'Skip & Enter App',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.j.beta — Creator Briefing · Multi-API · Reviews · Diagnostics',
-    betaOnToast: 'Beta channel ON — the v0.0.6.j suite is highlighted and the Creator Briefing will replay',
+    betaStampLabel: 'BETA · 0.0.6.k.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaOnToast: 'Beta channel ON — the v0.0.6.k suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
     reviewSub: '100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.',
@@ -566,7 +567,7 @@
     studioStep2Head: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioStep3Head: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
     studioPackVault: 'බඳුන: සුරකින ලදී ', studioPackGithub: 'GitHub: සම්බන්ධයි ', studioPackClips: 'හඬ පැකේජය: ',
-    studioClipsUnit: '/හඬපට 70', studioGenPrefix: 'හඬපට සාදමින් ',
+    studioClipsUnit: '/හඬපට 74', studioGenPrefix: 'හඬපට සාදමින් ',
     studioGenCharsTail: ' අක්ෂර භාවිතය', studioClipsSaved: '/හඬපට 34 GitHub වෙත සුරකින ලදී · syncRev ',
     studioRetryFailed: ' ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
     studioOneClick34: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
@@ -638,19 +639,20 @@
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
     pinComplete: '✓ PIN සම්පූර්ණයි',
     pinDigitsNeeded: 'ඉලක්කම්',
-    /* ══ v0.0.6.j — නිර්මාණකරුගේ හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
-    creatorNoteBtn: '♪ නිර්මාණකරුගේ සටහන',
-    briefingTitle: 'නිර්මාණකරුගේ සටහන · මේක හදපු කවුද?',
-    briefingPersona: 'බ්‍රිතාන්‍ය හඬ පැහැදිලි කිරීම · සජීවී ට්‍රාන්ස්ක්‍රිප්ට්',
-    briefingLinkCode: 'GitHub හි කේතය බලන්න ↗',
-    briefingLinkProfile: "Hansana ගේ GitHub එක බලන්න ↗",
+    /* ══ v0.0.6.k — ව්‍යාපෘති හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
+    creatorNoteBtn: '♪ ව්‍යාපෘති හඳුන්වාදීම',
+    briefingEyebrow: 'විවෘත කේත ව්‍යාපෘති සාරාංශය · ස්වයංක්‍රීය පද්ධතිය',
+    briefingTitle: 'Smart Dictation · ව්‍යාපෘති දළ විශ්ලේෂණය',
+    briefingPersona: 'ස්වයංක්‍රීය විවෘත-කේත වෙබ් පද්ධතියක් · සති දෙකකට පෙර ආරම්භ විය · $0 වියදම',
+    briefingLinkCode: 'GitHub හි විවෘත කේතය බලන්න ↗',
+    briefingLinkProfile: "Hansana ගේ GitHub සහ RDB ව්‍යාපෘතිය බලන්න ↗",
     briefingContinue: 'Smart Dictation වෙත පිවිසෙන්න →',
     briefingSkip: 'මඟහරින්න සහ යෙදුමට පිවිසෙන්න',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
-    betaStampLabel: 'බීටා · 0.0.6.j.beta — නිර්මාණකරුගේ සටහන · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
-    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.j පොදිය ඉස්මතියේ තිබේ',
+    betaStampLabel: 'බීටා · 0.0.6.k.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
+    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.k පොදිය ඉස්මතියේ තිබේ',
     betaOffToast: 'බීටා නාලිකාව වසා ඇත — සාමාන්‍ය ප්‍රධාන කොක්පිට් එකට ආපසු',
     reviewTitle: 'Smart Dictation වඩාත් හොඳ කරන්න — ඔබේ ඉක්මන් සමාලෝචනය බෙදාගන්න',
     reviewSub: '100% අවශ්‍ය නැත — තට්ටු දෙකක් හෝ කෙටි කටහඬක්. එය කේතනය කර නිර්මාණකරුට යයි.',
@@ -2442,12 +2444,15 @@
   }
 
   function bindShell() {
+    /* v0.0.6.k (CF1): btnGuideTop / btnCreatorNote / btnStudioQuick moved
+       from the header into the Settings About card — the same ids keep
+       their contracts, only the roof they live under changed. */
     on('btnGuideTop', 'click', openGuide);
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
-    /* v0.0.6.j: the Creator Note pill replays the synced-lyrics briefing. */
+    /* v0.0.6.k: the relocated Project Briefing button replays the synced
+       executive briefing from the About card. */
     on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
-    on('sdpBetaPill', 'click', function () { applyBetaChannel(!betaActive()); });
     on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
     on('btnBriefingSkip', 'click', function () { closeBriefing('skip'); });
     var bModal = byId('briefingModal');
@@ -2837,25 +2842,23 @@
     return true;
   }
 
-  /* ══ v0.0.6.j Pillar 1 — Creator Briefing: live synced transcript ════════
-   * Eight short beats in simple, warm English narrated by a charismatic
-   * British male voice (ElevenLabs intro clips when published, otherwise a
-   * pinned en-GB male Web Speech voice). The active sentence highlights in
-   * large type while past/next sentences stay readable at softer opacity, so
-   * the student can always read ahead or scroll back. The primary CTA stays
-   * locked behind a 10-second live countdown — never an unclosable wall. */
-  var BETA_SUBVERSION = '0.0.6.j.beta';
+  /* ══ v0.0.6.k Pillar 1 — Project-First Executive Briefing ════════════════
+   * Four crisp beats narrated by a warm British male voice (ElevenLabs
+   * George/Daniel intro clips when published, otherwise a pinned deep
+   * en-GB male device voice). Beats 1-3 are the 10-second core: the user
+   * gets 100% of the essential project summary (started 2 weeks ago,
+   * 100% open-source GitHub Pages, $0 cost, automated system, limited IT
+   * knowledge, and the direct request to help by reporting issues) inside
+   * the gate; personal background stays succinct at the very end (Beat 4).
+   * No age detail is ever shown or spoken. */
+  var BETA_SUBVERSION = '0.0.6.k.beta';
   var BRIEFING_GATE_MS = 10000;
   var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false };
   var BRIEFING_SENTENCES = [
-    "Hi — I'm Hansana. Just two months ago I finished my A/L exams: Combined Mathematics, Physics and Chemistry.",
-    "I have very little formal ICT education. This whole system was architected and developed by me — powered by multiple autonomous AI agents hosted and orchestrated on my own system, guided purely by my critical thinking and problem-solving.",
-    "I didn't build this to seek attention. It is a personal testbed to sharpen my thinking — and honestly, seeing you use it makes me happy.",
-    "Everything here was built with zero money invested — one hundred percent free and open-source resources. You can inspect every line of the code on GitHub.",
-    "Smart Dictation is only a side testbed. I'm also building bigger open-source engineering projects — including my RDB project and a massive flagship project aimed at changing the future of the IT field.",
-    "The app is engineered to run lag-free on any phone or computer. Lecturers can unlock Lecturer Mode and update classroom words step-by-step — the automated pipeline handles everything else.",
-    "If anything feels off, you can share a quick voice or text review after each session. Every review is one hundred percent end-to-end encrypted, so your privacy is completely safe.",
-    "That's the whole story. Now — let's train some English together. Enjoy your session!"
+    "Welcome to Smart Dictation — a fully automated, zero-cost, open-source GitHub Pages web app started just two weeks ago so anyone can inspect, use, or build upon the code.",
+    "I built this system with limited formal IT knowledge using critical thinking and problem-solving — so if you spot any issue or have an idea to improve it, please help me by sharing a quick encrypted review at the end of your session.",
+    "Everything here runs automatically and lag-free on any phone or computer, and lecturers can update classroom word lists anytime through Lecturer Mode.",
+    "About the creator: I'm Hansana. After finishing my A/L exams in Combined Maths, Physics, and Chemistry, I architected this project with autonomous AI agents hosted on my own system as a side testbed alongside my GitHub RDB project and a larger flagship IT project — enjoy your session!"
   ];
   function briefingSentences() { return BRIEFING_SENTENCES.slice(); }
   function briefingSeen() {
@@ -3004,27 +3007,24 @@
     return true;
   }
 
-  /* ══ v0.0.6.j — the governed Beta channel (?beta / header pill) ════════
-   * The v0.0.6.j suite (Creator Briefing, 5-key Multi-API pool, post-session
+  /* ══ v0.0.6.k — the governed Beta channel (?beta / #beta URL only) ══════
+   * The v0.0.6.k suite (Project Briefing, 5-key Multi-API pool, post-session
    * reviews, diagnostics .zip) is live on the MAIN cockpit by default; the
-   * Beta channel is a visible testing state that stamps the sub-version and
-   * replays the briefing so it can be verified on a phone in one tap. */
+   * Beta channel is a URL-driven testing state that stamps the sub-version
+   * and replays the briefing so it can be verified on a phone in one tap.
+   * The header stays ultra-clean: no pill, no floating stamp. */
   function betaFlag() { return 'sdp.beta.channel'; }
   function betaActive() {
     try { if (global.sessionStorage && global.sessionStorage.getItem(betaFlag()) === '1') return true; } catch (e) {}
     return false;
   }
   function paintBeta() {
-    var pill = byId('sdpBetaPill'), stamp = byId('sdpBetaStamp'), on = betaActive();
-    if (pill) {
-      pill.setAttribute('aria-pressed', on ? 'true' : 'false');
-      pill.textContent = t('betaPillLabel', 'Beta');
-      if (pill.classList) { if (on) pill.classList.add('on'); else pill.classList.remove('on'); }
-    }
-    if (stamp) {
-      stamp.textContent = t('betaStampLabel', 'BETA · 0.0.6.j.beta');
-      stamp.hidden = !on;
-    }
+    /* v0.0.6.k (CF1): the Beta pill left the ultra-clean header — the
+       governed channel is still available at ?beta / #beta and through
+       SDP.Views.applyBetaChannel(); the floating stamp is retired with it. */
+    var on = betaActive();
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('beta_paint', { on: !!on }); } catch (e) {}
+    return on;
   }
   function applyBetaChannel(on, quiet) {
     try {
@@ -3048,7 +3048,7 @@
     return betaActive();
   }
 
-  /* ══ v0.0.6.j Pillar 3 — frictionless post-session review card ════════ */
+  /* ══ v0.0.6.k Pillar 3 — frictionless post-session review card ════════ */
   var reviewState = { pills: {}, listening: false, recog: null, voiceText: '', done: false };
   function reviewRecogCtor() {
     return global.SpeechRecognition || global.webkitSpeechRecognition || null;
@@ -3184,7 +3184,7 @@
     paintIconHosts();
     bindTeacherUpdates();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
-    setText(byId('sdpVerPill'), 'v' + APP_VERSION);
+    setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.k: pill lives in the About card */
     setText(byId('aboutVersion'), APP_VERSION);
     setText(byId('brandName'), 'Smart Dictation');
     initBetaFromUrl();
@@ -3201,7 +3201,7 @@
     renderGuideSteps();
     renderSettings();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
-    /* v0.0.6.j Pillar 1: a brand-new visitor gets the Creator Briefing first;
+    /* v0.0.6.k Pillar 1: a brand-new visitor gets the Project Briefing first;
        the student guide follows the moment the briefing closes. Returning
        students (any guide_seen stamp) are never interrupted again. */
     if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true });
@@ -3339,7 +3339,7 @@
     sessionIntroShown: function () { return !!sessionState.introShown; },
     openStudio: openStudio,
     startOver: startOver,
-    /* ══ v0.0.6.j public surface: briefing, beta channel, review card ══ */
+    /* ══ v0.0.6.k public surface: briefing, beta channel, review card ══ */
     openBriefing: openBriefing,
     closeBriefing: closeBriefing,
     briefingSentences: briefingSentences,

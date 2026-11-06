@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.k'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.l'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -97,7 +97,7 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
-    /* v0.0.6.k: the word-character count is a function of the lecturer-owned
+    /* v0.0.6.l: the word-character count is a function of the lecturer-owned
        classroom word list, so the expectation is derived from the studio's own
        costPreview() rather than frozen to one publish's numbers. The structural
        arithmetic (30 words + 30 numbers + 6 commands + 4 guide steps + 4 intro
@@ -500,8 +500,8 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 14. v0.0.6.k A3: comma/newline-only parser + non-destructive chips ── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k — the 31-word law
+  /* ── 14. v0.0.6.l A3: comma/newline-only parser + non-destructive chips ── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.l — the 31-word law
   {
     const app = await createApp(base);
     await unlockStudio(app);

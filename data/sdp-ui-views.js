@@ -9,9 +9,9 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
-  /* v0.0.6.k (P1/P3): the governed Beta channel stays URL-driven for the
-     Project Briefing suite. The v0.0.6.k features are permanent on Main;
-     ?beta or #beta stamps BETA_SUBVERSION 0.0.6.k.beta and replays the
+  /* v0.0.6.l (P1/P3): the governed Beta channel stays URL-driven for the
+     Project Briefing suite. The v0.0.6.l features are permanent on Main;
+     ?beta or #beta stamps BETA_SUBVERSION 0.0.6.l.beta and replays the
      briefing so the whole suite is verifiable on a phone in one tap. */
 
   function noop() {}
@@ -322,7 +322,7 @@
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
     pinComplete: '✓ PIN Complete',
     pinDigitsNeeded: 'digits',
-    /* ══ v0.0.6.k — Project-First Executive Briefing, Beta channel, Review ══ */
+    /* ══ v0.0.6.l — Project-First Executive Briefing, Beta channel, Review ══ */
     creatorNoteBtn: '♪ Project Briefing',
     briefingEyebrow: 'OPEN-SOURCE PROJECT BRIEFING · AUTOMATED SYSTEM',
     briefingTitle: 'Smart Dictation · Project Overview',
@@ -334,22 +334,48 @@
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.k.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
-    betaOnToast: 'Beta channel ON — the v0.0.6.k suite is highlighted and the Project Briefing will replay',
+    betaStampLabel: 'BETA · 0.0.6.l.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaOnToast: 'Beta channel ON — the v0.0.6.l suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
     reviewSub: '100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.',
-    reviewVoiceBtn: '🎤 Record / Speak Review (English or Sinhala)',
+    reviewPopupTitle: 'How was your dictation session?',
+    reviewPopupSub: 'Help us improve in 1 tap:',
+    reviewVoiceBtn: '🎤 Record Voice Review (English or Sinhala)',
     reviewTextPh: 'Or type a quick note (optional)…',
     reviewSendBtn: 'Send Review',
     reviewSkipBtn: 'Skip — no thanks',
     reviewSentToast: 'Thank you! Your encrypted review was saved for the creator.',
-    reviewSkipToast: 'No problem — enjoy the rest of your class!',
+    reviewSkipToast: 'No problem — your encrypted session telemetry still helps the creator. Enjoy your class!',
     reviewVoiceListening: 'Listening… speak now, then press the button again to stop.',
     reviewVoiceHeard: 'Heard: “{t}” — send it or edit the text box.',
     reviewVoiceOff: 'Voice review is not supported on this browser — typing works everywhere.',
     reviewVoiceError: 'Could not hear you — try again or type your note instead.',
-    reviewFast: '⚡ Fast & Smooth', reviewClear: '🔊 Voice Clear', reviewIssue: '🐞 Found an Issue'
+    reviewRecLive: '🔴 Recording {t}… Tap to Stop & Attach',
+    reviewRecAttached: '🎤 Voice note attached ({t}) — press ▶ to hear it before sending.',
+    reviewRecShort: 'Recording was too short — tap again and speak for a few seconds.',
+    reviewRecMicDenied: 'Microphone permission was blocked — allow the mic or type your note instead.',
+    reviewFast: '⚡ Fast & Smooth', reviewClear: '🔊 Voice Clear', reviewIssue: '🐞 Found an Issue',
+    /* v0.0.6.l Pillar 3: the five human-centric diagnostic chips. */
+    chipFast: '⚡ Fast & Smooth', chipVoiceOk: '🔊 Voice Clear', chipVoiceBad: '🔇 Voice / Pronunciation Issue',
+    chipIncomplete: '⏳ Dictation Words Incomplete', chipBug: '🐞 UI / Button Issue',
+    /* v0.0.6.l Pillar 4: the Paper-mode 1-tap self-check helper. */
+    markAllUnmarked: '✓ Mark All Unmarked as Correct',
+    markAllUnmarkedToast: 'All unmarked words marked correct — your Missed marks are kept.',
+    /* v0.0.6.l Pillar 3: the floating Feedback / Quick-Help launcher. */
+    fabTitle: 'Feedback & Quick Help',
+    fabSub: 'Instant answers — zero AI credits. Or send the creator a 1-tap encrypted review.',
+    fabReviewNote: '🔒 Every review is end-to-end encrypted — nothing readable ever leaves your device unsealed.',
+    fabBadge: 'Spot an issue? Tell us',
+    fabFaqAudio: '🔇 No sound, or a robotic browser voice?',
+    fabFaqAudioA: 'Tap once anywhere on the briefing — a brand-new browser session blocks audio until your first tap, so the briefing waits for it. Also check the phone silent switch and the volume keys. The committed British male briefing clips and the 30 word clips play offline once loaded.',
+    fabFaqPacing: '⏳ Words too fast or too slow?',
+    fabFaqPacingA: 'On the player screen tap Slower for a 0.72 rate, or open Settings → Pacing to set the writing seconds (3–60), the repeats (1/2/3) and the pause between words. Paper Mode gets two readings and a five-second writing period by default.',
+    fabFaqPaper: '📝 Paper Mode vs Typing Mode?',
+    fabFaqPaperA: 'Paper Mode is for writing in your exercise book: listen twice, write, and at the results screen tap “✓ Mark All Unmarked as Correct”, then tap Missed on just the one or two words you got wrong. Typing Mode checks your spelling automatically.',
+    fabFaqSync: '🔄 Classroom words not updating?',
+    fabFaqSyncA: 'Check your internet connection and the sync badge on Home. Lecturers publish new words through Lecturer Mode at any time; your device picks them up automatically. Already-downloaded words keep working offline.',
+    fabFromAnywhere: 'Send a review from any screen — it reaches the creator even if you skip the results card.'
   };
 
   
@@ -639,7 +665,7 @@
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
     pinComplete: '✓ PIN සම්පූර්ණයි',
     pinDigitsNeeded: 'ඉලක්කම්',
-    /* ══ v0.0.6.k — ව්‍යාපෘති හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
+    /* ══ v0.0.6.l — ව්‍යාපෘති හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
     creatorNoteBtn: '♪ ව්‍යාපෘති හඳුන්වාදීම',
     briefingEyebrow: 'විවෘත කේත ව්‍යාපෘති සාරාංශය · ස්වයංක්‍රීය පද්ධතිය',
     briefingTitle: 'Smart Dictation · ව්‍යාපෘති දළ විශ්ලේෂණය',
@@ -651,22 +677,45 @@
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
-    betaStampLabel: 'බීටා · 0.0.6.k.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
-    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.k පොදිය ඉස්මතියේ තිබේ',
+    betaStampLabel: 'බීටා · 0.0.6.l.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
+    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.l පොදිය ඉස්මතියේ තිබේ',
     betaOffToast: 'බීටා නාලිකාව වසා ඇත — සාමාන්‍ය ප්‍රධාන කොක්පිට් එකට ආපසු',
     reviewTitle: 'Smart Dictation වඩාත් හොඳ කරන්න — ඔබේ ඉක්මන් සමාලෝචනය බෙදාගන්න',
     reviewSub: '100% අවශ්‍ය නැත — තට්ටු දෙකක් හෝ කෙටි කටහඬක්. එය කේතනය කර නිර්මාණකරුට යයි.',
+    reviewPopupTitle: 'ඔබේ ඩික්ටේෂන් සැසිය කොහොමද වුණේ?',
+    reviewPopupSub: 'එක් තට්ටුවකින් අපට උදව් කරන්න:',
     reviewVoiceBtn: '🎤 සමාලෝචනය කථනයෙන් පටිගත කරන්න (ඉංග්‍රීසි හෝ සිංහල)',
     reviewTextPh: 'හෝ කෙටි සටහනක් ලියන්න (අවශ්‍ය නම්)…',
     reviewSendBtn: 'සමාලෝචනය යවන්න',
     reviewSkipBtn: 'මඟහරින්න — අවශ්‍ය නැත',
     reviewSentToast: 'ස්තූතියි! ඔබේ කේතනය කළ සමාලෝචනය සුරැකුණා.',
-    reviewSkipToast: 'කමක් නැත — ඉතිරි පන්තිය නිදහසේ භුක්ති විඳින්න!',
+    reviewSkipToast: 'කමක් නැත — ඔබේ කේතනය කළ සැසි දත්තත් නිර්මාණකරුට උදව් වෙනවා. පන්තිය නිදහසේ භුක්ති විඳින්න!',
     reviewVoiceListening: 'අහමින්… දැන් කථනය කරන්න, නවත්වන්න නම් නැවත තට්ටු කරන්න.',
     reviewVoiceHeard: 'ඇහුණා: “{t}” — යවන්න නැතහොත් පෙළ සංස්කරණය කරන්න.',
     reviewVoiceOff: 'මෙම බ්‍රව්සරයේ කටහඬ සමාලෝචනය ලැබෙන්නේ නැත — ලිවීම හැම තැනම වැඩ.',
     reviewVoiceError: 'කටහඬ ඇහුණේ නැත — නැවත උත්සාහ කරන්න හෝ ලියන්න.',
-    reviewFast: '⚡ ඉක්මන් සහ නිරවද්‍යයි', reviewClear: '🔊 කටහඬ පැහැදිලියි', reviewIssue: '🐞 ගැටලුවක් හමුවුණා'
+    reviewRecLive: '🔴 පටිගත වෙමින් {t}… නවත්වා ඇමිණීමට තට්ටු කරන්න',
+    reviewRecAttached: '🎤 කටහඬ සටහන ඇමිණුණා ({t}) — යැවීමට පෙර ▶ වෙන් අහන්න.',
+    reviewRecShort: 'පටිගත කිරීම තරමක් කෙටියි — නැවත තට්ටු කර තත්පර කිහිපයක් කථනය කරන්න.',
+    reviewRecMicDenied: 'මයික්‍රොෆෝන් අවසරය අවහිර වී ඇත — මයික් අවසර දෙන්න නැතහොත් ලියන්න.',
+    reviewFast: '⚡ ඉක්මන් සහ නිරවද්‍යයි', reviewClear: '🔊 කටහඬ පැහැදිලියි', reviewIssue: '🐞 ගැටලුවක් හමුවුණා',
+    chipFast: '⚡ ඉක්මන් සහ නිරවද්‍යයි', chipVoiceOk: '🔊 කටහඬ පැහැදිලියි', chipVoiceBad: '🔇 කටහඬ / උච්චාරණ ගැටලුවක්',
+    chipIncomplete: '⏳ ඩික්ටේෂන් වචන අසම්පූර්ණයි', chipBug: '🐞 UI / බොත්තම් ගැටලුවක්',
+    markAllUnmarked: '✓ ලකුණු නොකළ සියල්ල නිවැරදි ලෙස සලකුණු කරන්න',
+    markAllUnmarkedToast: 'ලකුණු නොකළ වචන සියල්ල නිවැරදි ලෙස සලකුණු කළා — ඔබේ “වැරදුණා” ලකුණු ආරක්ෂා වේ.',
+    fabTitle: 'ප්‍රතිචාර සහ ඉක්මන් උපකාරය',
+    fabSub: 'විනාඩියක් ඇතුළත පිළිතුරු — AI ශ්‍රේය්ණියක් වත් නැත. නැතහොත් නිර්මාණකරුට එක් තට්ටුවකින් කේතනය කළ සමාලෝචනයක් යවන්න.',
+    fabReviewNote: '🔒 සෑම සමාලෝචනයක්ම අන්ත සිට අන්තට කේතනය කර ඇත — කියවිය හැකි කිසිවක් ඔබේ උපාංගයෙන් පිටතට නොයයි.',
+    fabBadge: 'ගැටලුවක් දැක්කාද? කියන්න',
+    fabFaqAudio: '🔇 හඬක් නැති වුණා, නැතහොත් යන්ත්‍ර සේවක කටහඬක් ඇහුණාද?',
+    fabFaqAudioA: 'සාරාංශය මත ඕනෑම තැනක එක් තට්ටුවක් කරන්න — අලුත් බ්‍රව්සර් සැසියක ඔබේ පළමු තට්ටුව වන තුරු හඬ අඟහරි වේ, එබැවින් සාරාංශය එයට රැඳී සිටියි. දුරකථනයේ නිශ්ශබ්ද ස්විචය සහ ශබ්ද ප්‍රමාණයද පරීක්ෂා කරන්න. බ්‍රිතාන්‍ය පිරිමි හඬ ක්ලිප් සහ වචන 30 ක්ලිප් එක් වරක් පූරණය වූ පසු ඕෆ්ලයින් වැඩ කරයි.',
+    fabFaqPacing: '⏳ වචන ඉතා ඉක්මන් හෝ මන්දගාමීද?',
+    fabFaqPacingA: 'ධාවක තිරයේ “මන්දගාමී” බොත්තම තට්ටු කරන්න (0.72 වේගය), නැතහොත් සැකසුම් → වේගයෙන් ලිවීමේ තත්පර (3–60), පුනරාවර්තන (1/2/3) සහ වචන අතර විරාමය සකසන්න. කඩදාසි ප්‍රකාරයේ පෙරනිමිය කියවීම් දෙකක් සහ තත්පර පහක ලිවීමේ කාලයකි.',
+    fabFaqPaper: '📝 කඩදාසි ප්‍රකාරය සහ ටයිප් කිරීමේ ප්‍රකාරය?',
+    fabFaqPaperA: 'කඩදාසි ප්‍රකාරය ලේඛන පොතේ ලිවීමට: දෙවරක් අසා, ලියා, ප්‍රතිඵල තිරයේ “✓ ලකුණු නොකළ සියල්ල නිවැරදි ලෙස සලකුණු කරන්න” තට්ටු කර, වැරදුණු එක් දෙකකට පමණක් “වැරදුණා” තට්ටු කරන්න. ටයිප් කිරීමේ ප්‍රකාරය ඔබේ අක්ෂර වින්‍යාසය ස්වයංක්‍රීයව පරීක්ෂා කරයි.',
+    fabFaqSync: '🔄 පන්ති වචන යාවත්කාලීන නොවෙනවාද?',
+    fabFaqSyncA: 'අන්තර්ජාල සම්බන්ධතාවය සහ මුල් පිටුවේ සමමුහූර්ත ලාංඡනය පරීක්ෂා කරන්න. දේශනවරු ඕනෑම වේලාවක නව වචන ප්‍රකාශයට පත් කරති; ඔබේ උපාංගය ඒවා ස්වයංක්‍රීයව ලබා ගනී. බාගත කළ වචන ඕෆ්ලයින්වත් වැඩ කරයි.',
+    fabFromAnywhere: 'ඕනෑම තිරයකින් සමාලෝචනයක් යවන්න — ප්‍රතිඵල කාඩ්පත මඟහැරුවත් එය නිර්මාණකරුට ළඟා වේ.'
   };
 
   var lang = 'en';
@@ -2444,13 +2493,13 @@
   }
 
   function bindShell() {
-    /* v0.0.6.k (CF1): btnGuideTop / btnCreatorNote / btnStudioQuick moved
+    /* v0.0.6.l (CF1): btnGuideTop / btnCreatorNote / btnStudioQuick moved
        from the header into the Settings About card — the same ids keep
        their contracts, only the roof they live under changed. */
     on('btnGuideTop', 'click', openGuide);
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
-    /* v0.0.6.k: the relocated Project Briefing button replays the synced
+    /* v0.0.6.l: the relocated Project Briefing button replays the synced
        executive briefing from the About card. */
     on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
     on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
@@ -2842,25 +2891,63 @@
     return true;
   }
 
-  /* ══ v0.0.6.k Pillar 1 — Project-First Executive Briefing ════════════════
-   * Four crisp beats narrated by a warm British male voice (ElevenLabs
-   * George/Daniel intro clips when published, otherwise a pinned deep
-   * en-GB male device voice). Beats 1-3 are the 10-second core: the user
-   * gets 100% of the essential project summary (started 2 weeks ago,
-   * 100% open-source GitHub Pages, $0 cost, automated system, limited IT
-   * knowledge, and the direct request to help by reporting issues) inside
-   * the gate; personal background stays succinct at the very end (Beat 4).
+  /* ══ v0.0.6.l Pillar 1 — Dynamic Oct-22 Weekly Briefing ════════════════
+   * Re-architected around how a brand-new visitor actually experiences the
+   * briefing on a fresh Chrome session:
+   *   - the week counter is COMPUTED from PROJECT_START_ISO (2026-10-22), so
+   *     "Started N Weeks Ago" bumps itself every week without code edits;
+   *   - Beat 2 states the 100% E2EE privacy law upfront (a core purpose);
+   *   - narration is word-by-word karaoke flow (.b-word is-spoken/is-current)
+   *     with all 4 beats visible for read-ahead / read-back;
+   *   - the 4 beats ship as REAL warm British male clips (_intro_male_1..4
+   *     in data/elevenlabs-audio.json), so a fresh session hears studio
+   *     audio instead of a robotic browser voice; the Studio's
+   *     autoEnsureSystemClips() keeps them current (week-count drift);
+   *   - fresh-Chrome autoplay handshake: when Audio.play() is blocked
+   *     (NotAllowedError) or no speech voices exist yet, a pulsing
+   *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
+   *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.k.beta';
+  var BETA_SUBVERSION = '0.0.6.l.beta';
   var BRIEFING_GATE_MS = 10000;
-  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false };
+  var PROJECT_START_ISO = '2026-10-22';
+  function weeksSinceStart() {
+    var t0 = Date.parse(PROJECT_START_ISO + 'T00:00:00+05:30');
+    if (!(t0 > 0)) t0 = Date.parse(PROJECT_START_ISO);
+    if (!(t0 > 0)) return 2;
+    return Math.max(2, Math.floor((Date.now() - t0) / (7 * 86400000)));
+  }
+  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [] };
+  /* {W} is replaced with the live weeksSinceStart() at render time, so the
+     committed clip text and the spoken sentence stay in drift-check sync. */
   var BRIEFING_SENTENCES = [
-    "Welcome to Smart Dictation — a fully automated, zero-cost, open-source GitHub Pages web app started just two weeks ago so anyone can inspect, use, or build upon the code.",
-    "I built this system with limited formal IT knowledge using critical thinking and problem-solving — so if you spot any issue or have an idea to improve it, please help me by sharing a quick encrypted review at the end of your session.",
-    "Everything here runs automatically and lag-free on any phone or computer, and lecturers can update classroom word lists anytime through Lecturer Mode.",
-    "About the creator: I'm Hansana. After finishing my A/L exams in Combined Maths, Physics, and Chemistry, I architected this project with autonomous AI agents hosted on my own system as a side testbed alongside my GitHub RDB project and a larger flagship IT project — enjoy your session!"
+    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system started on October 22 ({W} weeks ago) to make English dictation effortless and lag-free on any device.",
+    "Your privacy is one hundred percent protected: no personal data is ever shared, no unnecessary data is collected, and all session diagnostics and reviews are end-to-end encrypted.",
+    "Lecturers update classroom words anytime through the automated Lecturer Mode — and because I built this using critical thinking with limited formal IT training, please share a quick voice or text review after your session if you spot anything to improve.",
+    "Created by Hansana after A/L Combined Maths, Physics, and Chemistry — powered by autonomous AI agents on my own system alongside my GitHub RDB project and flagship IT project. Enjoy your session!"
   ];
-  function briefingSentences() { return BRIEFING_SENTENCES.slice(); }
+  function briefingSentence(i) {
+    var n = Number(i);
+    if (!(n >= 0) || n >= BRIEFING_SENTENCES.length) return '';
+    return BRIEFING_SENTENCES[n].replace('{W}', String(weeksSinceStart()));
+  }
+  function briefingSentences() {
+    var out = [], i;
+    for (i = 0; i < BRIEFING_SENTENCES.length; i++) out.push(briefingSentence(i));
+    return out;
+  }
+  function briefingWeekLabel() {
+    var w = weeksSinceStart();
+    return (lang === 'si') ? ('සති ' + w + 'කට පෙර ආරම්භ විය') : ('Started ' + w + ' Weeks Ago');
+  }
+  function paintBriefingPersona() {
+    var persona = byId('briefingPersona');
+    if (!persona) return false;
+    persona.textContent = (lang === 'si')
+      ? ('ස්වයංක්‍රීය විවෘත-කේත වෙබ් පද්ධතියක් · ' + briefingWeekLabel() + ' · $0 වියදම')
+      : ('Automated Open-Source Web System · ' + briefingWeekLabel() + ' · $0 Cost');
+    return true;
+  }
   function briefingSeen() {
     var s = settings();
     return !!(s && (s.briefingSeen === 1 || s.briefingSeen === '1' || s.briefingSeen === true));
@@ -2869,14 +2956,84 @@
     try { SDP.Data.saveSettings({ briefingSeen: 1 }); } catch (e) {}
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_seen', { ver: APP_VERSION }); } catch (e) {}
   }
+  /* Word-by-word flow: every beat is tokenized into .b-word spans so the
+     active sentence illuminates smoothly while the other beats stay
+     readable for read-ahead and read-back. */
   function renderBriefingLyrics() {
     var host = byId('briefingLyrics');
     if (!host) return false;
-    var html = '', i;
+    var html = '', i, j, words, k;
     for (i = 0; i < BRIEFING_SENTENCES.length; i++) {
-      html += '<p class="b-line" data-bline="' + i + '">' + esc(BRIEFING_SENTENCES[i]) + '</p>';
+      html += '<p class="b-line" data-bline="' + i + '">';
+      words = briefingSentence(i).split(/\s+/);
+      for (j = 0; j < words.length; j++) {
+        if (!words[j]) continue;
+        html += '<span class="b-word" data-bword="' + j + '">' + esc(words[j]) + '</span>' + (j < words.length - 1 ? ' ' : '');
+      }
+      html += '</p>';
     }
     host.innerHTML = html;
+    return true;
+  }
+  function briefingLineNode(idx) {
+    var host = byId('briefingLyrics');
+    if (!host || !host.querySelector) return null;
+    return host.querySelector('.b-line[data-bline="' + Number(idx) + '"]');
+  }
+  function clearBriefingWordTimers() {
+    var i;
+    for (i = 0; i < briefingState.wordTimers.length; i++) {
+      try { global.clearTimeout(briefingState.wordTimers[i]); } catch (e) {}
+    }
+    briefingState.wordTimers = [];
+  }
+  function resetBriefingWords(idx) {
+    var line = briefingLineNode(idx);
+    if (!line) return false;
+    var words = line.querySelectorAll('.b-word'), i;
+    for (i = 0; i < words.length; i++) {
+      if (words[i].classList) { words[i].classList.remove('is-spoken'); words[i].classList.remove('is-current'); }
+    }
+    return true;
+  }
+  function paintBriefingWordFlow(idx, wordIdx) {
+    var line = briefingLineNode(idx);
+    if (!line) return false;
+    var words = line.querySelectorAll('.b-word'), i;
+    for (i = 0; i < words.length; i++) {
+      if (!words[i].classList) continue;
+      if (i < wordIdx) { words[i].classList.add('is-spoken'); words[i].classList.remove('is-current'); }
+      else if (i === wordIdx) { words[i].classList.add('is-spoken'); words[i].classList.add('is-current'); }
+      else { words[i].classList.remove('is-spoken'); words[i].classList.remove('is-current'); }
+    }
+    return true;
+  }
+  /* Distribute the real clip duration across the words (weighted by word
+     length) so the illumination tracks the British male narration. Without
+     a clip duration an estimate keeps the flow moving gracefully. */
+  function startBriefingWordFlow(idx, durSec, epoch) {
+    var line = briefingLineNode(idx);
+    if (!line) return false;
+    var words = line.querySelectorAll('.b-word');
+    if (!words.length) return false;
+    var lens = [], total = 0, i;
+    for (i = 0; i < words.length; i++) {
+      lens.push(Math.max(2, (words[i].textContent || '').length + 2));
+      total += lens[i];
+    }
+    var dur = Number(durSec);
+    if (!(dur > 0)) dur = (words.length * 0.36) + (total * 0.012);
+    dur = Math.max(1200, Math.min(90000, dur * 1000));
+    var at = 0;
+    for (i = 0; i < words.length; i++) {
+      at += lens[i];
+      (function (wordIdx, t) {
+        briefingState.wordTimers.push(global.setTimeout(function () {
+          if (!briefingState.open || epoch !== briefingState.epoch) return;
+          paintBriefingWordFlow(idx, wordIdx);
+        }, Math.round((t / total) * dur)));
+      })(i, at);
+    }
     return true;
   }
   function paintBriefingLine(idx) {
@@ -2889,7 +3046,7 @@
         node.classList.remove('on');
         if (i < idx) { node.setAttribute('data-state', 'past'); node.style.opacity = '0.45'; }
         else if (i === idx) { node.setAttribute('data-state', 'on'); node.classList.add('on'); node.style.opacity = ''; }
-        else { node.setAttribute('data-state', 'next'); node.style.opacity = '0.62'; }
+        else { node.setAttribute('data-state', 'next'); node.style.opacity = '0.72'; }
       }
     }
     var bar = byId('briefingBar');
@@ -2900,12 +3057,39 @@
     }
     return true;
   }
+  function briefingShowTapPill() {
+    briefingState.waitGesture = true;
+    var pill = byId('briefingTapPill');
+    if (pill) pill.hidden = false;
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_autoplay_wait', { ver: APP_VERSION }); } catch (e) {}
+    return true;
+  }
+  function briefingHideTapPill() {
+    var pill = byId('briefingTapPill');
+    if (pill) pill.hidden = true;
+  }
+  /* The very first tap anywhere on the briefing modal (fresh Chrome, sticky
+     autoplay block) restarts the narration from the current beat with the
+     gesture-activated audio. */
+  function briefingGestureUnlock() {
+    if (!briefingState.open || !briefingState.waitGesture) return false;
+    briefingState.waitGesture = false;
+    briefingState.gestureArmed = true;
+    briefingHideTapPill();
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_gesture_unlock', { idx: briefingState.idx }); } catch (e) {}
+    var idx = (briefingState.idx >= 0) ? briefingState.idx : 0;
+    briefingState.epoch += 1;
+    briefingNarrate(idx, briefingState.epoch);
+    return true;
+  }
   function briefingNarrate(idx, epoch) {
     if (!briefingState.open || epoch !== briefingState.epoch) return;
     if (idx >= BRIEFING_SENTENCES.length) { briefingFinishNarration(epoch); return; }
     briefingState.idx = idx;
     paintBriefingLine(idx);
-    var text = BRIEFING_SENTENCES[idx];
+    clearBriefingWordTimers();
+    resetBriefingWords(idx);
+    var text = briefingSentence(idx);
     var advanced = false;
     var next = function () {
       if (advanced || epoch !== briefingState.epoch) return;
@@ -2917,16 +3101,46 @@
     var guardMs = 2200 + (text.length * 95);
     var guard = global.setTimeout(next, guardMs);
     var realNext = function () { global.clearTimeout(guard); next(); };
+    var flowStarted = false;
+    var startFlow = function (durSec) {
+      if (flowStarted || !briefingState.open || epoch !== briefingState.epoch) return;
+      flowStarted = true;
+      startBriefingWordFlow(idx, durSec, epoch);
+    };
     try {
-      if (SDP.Speech && SDP.Speech.playBriefingStep) SDP.Speech.playBriefingStep(idx, text, realNext);
-      else realNext();
-    } catch (e) { realNext(); }
+      if (SDP.Speech && SDP.Speech.playBriefingStep) {
+        SDP.Speech.playBriefingStep(idx, text, function (res) {
+          if (epoch !== briefingState.epoch) return;
+          /* Fresh-Chrome autoplay handshake: the browser blocked the audio
+             (NotAllowedError / zero voices) — HOLD this beat behind the tap
+             pill instead of skipping it silently. After the user's first
+             gesture we never hold again (estimate flow keeps it moving). */
+          if (res && res.autoplayBlocked && !briefingState.gestureArmed) {
+            global.clearTimeout(guard);
+            briefingShowTapPill();
+            return;
+          }
+          realNext();
+        }, {
+          onStarted: function () { briefingHideTapPill(); },
+          onDuration: function (durSec) { startFlow(durSec); }
+        });
+        /* If neither the clip duration nor a rejection arrives (silent
+           browser), an estimate keeps the karaoke flowing gracefully. */
+        global.setTimeout(function () { if (flowStarted || epoch !== briefingState.epoch || !briefingState.open) return; startFlow(0); }, 1100);
+      } else {
+        startFlow(0);
+        realNext();
+      }
+    } catch (e) { startFlow(0); realNext(); }
   }
   function briefingFinishNarration(epoch) {
     if (epoch !== briefingState.epoch) return;
     paintBriefingLine(BRIEFING_SENTENCES.length - 1);
     var bar = byId('briefingBar');
     if (bar) bar.style.width = '100%';
+    var i;
+    for (i = 0; i < BRIEFING_SENTENCES.length; i++) paintBriefingWordFlow(i, 9999);
   }
   function briefingTickGate() {
     if (!briefingState.open) return;
@@ -2957,9 +3171,12 @@
     briefingState.open = true;
     briefingState.epoch += 1;
     briefingState.idx = -1;
+    briefingState.waitGesture = false;
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
+    paintBriefingPersona();
     renderBriefingLyrics();
     paintBriefingLine(-1);
+    briefingHideTapPill();
     var bar = byId('briefingBar');
     if (bar) bar.style.width = '0%';
     var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
@@ -2972,7 +3189,7 @@
     if (modal.classList) modal.classList.remove('b-gate-open');
     if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
-    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive() }); } catch (e) {}
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive(), weeks: weeksSinceStart() }); } catch (e) {}
     var epoch = briefingState.epoch;
     global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
     return true;
@@ -2983,11 +3200,14 @@
     /* The 10-second law: the briefing cannot be dismissed while gated. */
     if (briefingState.gateLeft > 0) return false;
     briefingState.open = false;
+    briefingState.waitGesture = false;
     briefingState.epoch += 1;
+    clearBriefingWordTimers();
     if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
     modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
     if (modal.classList) modal.classList.remove('is-open');
+    briefingHideTapPill();
     try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
     markBriefingSeen();
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_close', { via: viaButton || 'other' }); } catch (e) {}
@@ -3003,12 +3223,14 @@
     var i = Number(idx);
     if (!(i >= 0) || i >= BRIEFING_SENTENCES.length) return false;
     briefingState.epoch += 1;
+    briefingState.waitGesture = false;
+    briefingHideTapPill();
     briefingNarrate(i, briefingState.epoch);
     return true;
   }
 
-  /* ══ v0.0.6.k — the governed Beta channel (?beta / #beta URL only) ══════
-   * The v0.0.6.k suite (Project Briefing, 5-key Multi-API pool, post-session
+  /* ══ v0.0.6.l — the governed Beta channel (?beta / #beta URL only) ══════
+   * The v0.0.6.l suite (Project Briefing, 5-key Multi-API pool, post-session
    * reviews, diagnostics .zip) is live on the MAIN cockpit by default; the
    * Beta channel is a URL-driven testing state that stamps the sub-version
    * and replays the briefing so it can be verified on a phone in one tap.
@@ -3019,7 +3241,7 @@
     return false;
   }
   function paintBeta() {
-    /* v0.0.6.k (CF1): the Beta pill left the ultra-clean header — the
+    /* v0.0.6.l (CF1): the Beta pill left the ultra-clean header — the
        governed channel is still available at ?beta / #beta and through
        SDP.Views.applyBetaChannel(); the floating stamp is retired with it. */
     var on = betaActive();
@@ -3048,88 +3270,242 @@
     return betaActive();
   }
 
-  /* ══ v0.0.6.k Pillar 3 — frictionless post-session review card ════════ */
-  var reviewState = { pills: {}, listening: false, recog: null, voiceText: '', done: false };
+  /* ══ v0.0.6.l Pillar 3 — instant review popup + dual-engine voice ════
+   * Human-factors rework of the post-session review:
+   *   - the card renders at the TOP of the results view (above all 30 rows)
+   *     the moment a session finishes, so it can never be missed again;
+   *   - five 1-tap diagnostic chips (fast / voice_ok / voice_bad /
+   *     incomplete / bug); picking any chip immediately highlights
+   *     "Send Review" for a 1-second submit;
+   *   - the voice review is DUAL-ENGINE: MediaRecorder captures a real
+   *     compact audio clip (opus/mp4, <= 20 s, base64 inside the E2EE
+   *     payload) while SpeechRecognition transcribes live in parallel;
+   *     a live "Recording 0:04…" timer and a ▶ preview let the student
+   *     verify 100% that their voice was recorded;
+   *   - the floating corner Feedback / Quick-Help launcher (#sdpFeedbackFab)
+   *     offers offline-first troubleshooting (0 AI credits) and accepts a
+   *     review from ANY screen at ANY time.
+   * Both "Send Review" AND "Skip — no thanks" seal the encrypted session
+   * telemetry (Pillar 4) — a skip never loses the authenticity data. */
+  var REVIEW_REC_MAX_MS = 20000;
+  var REVIEW_B64_CAP = 160000;
+  var reviewState = { pills: {}, listening: false, recog: null, voiceText: '', done: false, rec: null, recStream: null, recChunks: [], recMime: '', recStartAt: 0, recTimer: 0, recSecs: 0, voiceB64: '', voiceMime: '', previewUrl: '' };
   function reviewRecogCtor() {
     return global.SpeechRecognition || global.webkitSpeechRecognition || null;
   }
+  function fmtReviewTimer(secs) {
+    var m = Math.floor(secs / 60), s = secs % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function reviewStatusLine(msg, keepOpen) {
+    var a = byId('reviewVoiceStatus'), b = byId('fabVoiceStatus');
+    if (a) {
+      if (!msg && !keepOpen) { a.hidden = true; a.textContent = ''; }
+      else { a.hidden = false; a.textContent = str(msg); }
+    }
+    if (b) {
+      if (!msg && !keepOpen) { b.hidden = true; b.textContent = ''; }
+      else { b.hidden = false; b.textContent = str(msg); }
+    }
+    return true;
+  }
+  function engineTelemetry() {
+    try { if (SDP.Engine && SDP.Engine.sessionTelemetry) return SDP.Engine.sessionTelemetry(); } catch (e) {}
+    return null;
+  }
+  function syncReviewPills() {
+    var pills = doc.querySelectorAll ? doc.querySelectorAll('.rpill') : [], i, node, key;
+    for (i = 0; i < pills.length; i++) {
+      node = pills[i];
+      key = str(node.getAttribute('data-rpill'));
+      node.setAttribute('aria-pressed', reviewState.pills[key] ? 'true' : 'false');
+      if (node.classList) { if (reviewState.pills[key]) node.classList.add('pressed'); else node.classList.remove('pressed'); }
+    }
+    var send = byId('btnSendReview'), any = false, k;
+    for (k in reviewState.pills) { if (reviewState.pills.hasOwnProperty(k) && reviewState.pills[k]) { any = true; break; } }
+    if (send && send.classList) { if (any) send.classList.add('rpc-ready'); else send.classList.remove('rpc-ready'); }
+    return true;
+  }
   function paintReviewCard(model) {
-    var card = byId('reviewCard');
+    var card = byId('reviewPopupCard');
     if (!card) return false;
     reviewState.pills = {}; reviewState.voiceText = ''; reviewState.done = false;
-    var pills = doc.querySelectorAll('#reviewPills .rpill'), i;
-    for (i = 0; i < pills.length; i++) {
-      pills[i].setAttribute('aria-pressed', 'false');
-      if (pills[i].classList) pills[i].classList.remove('pressed');
-    }
+    reviewState.voiceB64 = ''; reviewState.voiceMime = ''; reviewState.recSecs = 0;
+    syncReviewPills();
     var input = byId('reviewTextInput');
     if (input) input.value = '';
-    var status = byId('reviewVoiceStatus');
-    if (status) { status.hidden = true; status.textContent = ''; }
+    var fabInput = byId('fabReviewText');
+    if (fabInput) fabInput.value = '';
+    var preview = byId('reviewVoicePreview');
+    if (preview) { try { preview.pause(); } catch (e) {} preview.hidden = true; preview.removeAttribute('src'); }
+    reviewStatusLine('');
     card.hidden = false;
     try { card.scrollIntoView({ block: 'nearest' }); } catch (e) {}
     var total = isObj(model) ? Number(model.total) || 0 : 0;
     var correct = isObj(model) ? Number(model.correct) || 0 : 0;
+    var tel = engineTelemetry();
+    var logBody = { total: total, correct: correct, mode: isObj(model) ? str(model.mode) : '', ver: APP_VERSION };
+    if (tel) logBody.telemetry = tel;
     try {
-      if (SDP.Diagnostics) SDP.Diagnostics.log('session_complete', {
-        total: total, correct: correct, mode: isObj(model) ? str(model.mode) : '', ver: APP_VERSION
-      });
+      if (SDP.Diagnostics) SDP.Diagnostics.log('session_complete', logBody);
     } catch (e) {}
     return true;
   }
   function hideReviewCard() {
-    var card = byId('reviewCard');
+    var card = byId('reviewPopupCard');
     if (card) card.hidden = true;
-    stopReviewVoice();
+    stopReviewVoice(false);
   }
-  function stopReviewVoice() {
+  function stopReviewTracks0(stream) {
+    try {
+      var tracks = stream && stream.getTracks ? stream.getTracks() : [], i;
+      for (i = 0; i < tracks.length; i++) { try { tracks[i].stop(); } catch (e) {} }
+    } catch (e) {}
+  }
+  function stopReviewTracks() {
+    stopReviewTracks0(reviewState.recStream);
+    reviewState.recStream = null;
+  }
+  function assembleReviewClip() {
+    stopReviewTracks();
+    var chunks = reviewState.recChunks;
+    reviewState.recChunks = [];
+    if (!chunks.length) return false;
+    try {
+      var blob = new global.Blob(chunks, { type: reviewState.recMime || 'audio/webm' });
+      if (reviewState.previewUrl && global.URL && global.URL.revokeObjectURL) {
+        try { global.URL.revokeObjectURL(reviewState.previewUrl); } catch (e) {}
+      }
+      reviewState.previewUrl = (global.URL && global.URL.createObjectURL) ? global.URL.createObjectURL(blob) : '';
+      var fr = new global.FileReader();
+      fr.onload = function () {
+        var s = str(fr.result), comma = s.indexOf(',');
+        reviewState.voiceB64 = comma >= 0 ? s.slice(comma + 1) : s;
+        reviewState.voiceMime = reviewState.recMime || 'audio/webm';
+        var preview = byId('reviewVoicePreview');
+        if (preview && reviewState.previewUrl) {
+          preview.src = reviewState.previewUrl;
+          preview.hidden = false;
+        }
+        reviewStatusLine(t('reviewRecAttached', '🎤 Voice note attached ({t}) — press ▶ to hear it before sending.').replace('{t}', fmtReviewTimer(reviewState.recSecs)));
+        try { if (SDP.Diagnostics) SDP.Diagnostics.log('review_voice_attached', { secs: reviewState.recSecs, bytes: Math.round(reviewState.voiceB64.length * 0.75) }); } catch (e) {}
+      };
+      fr.readAsDataURL(blob);
+      return true;
+    } catch (e) { return false; }
+  }
+  function stopReviewVoice(attach) {
     reviewState.listening = false;
+    if (reviewState.recTimer) { global.clearInterval(reviewState.recTimer); reviewState.recTimer = 0; }
+    var btn = byId('btnVoiceReview'), fabBtn = byId('btnFabVoiceNote');
+    if (btn && btn.classList) btn.classList.remove('listening');
+    if (fabBtn && fabBtn.classList) fabBtn.classList.remove('listening');
     if (reviewState.recog) {
-      try { reviewState.recog.stop(); } catch (e) {}
+      try { reviewState.recog.onend = null; reviewState.recog.stop(); } catch (e) {}
       reviewState.recog = null;
     }
-    var btn = byId('btnVoiceReview');
-    if (btn && btn.classList) btn.classList.remove('listening');
+    var rec = reviewState.rec;
+    reviewState.rec = null;
+    if (rec) {
+      try {
+        if (attach && rec.state !== 'inactive') { rec.stop(); return true; }
+        if (rec.state !== 'inactive') { rec.onstop = null; rec.stop(); }
+      } catch (e) {}
+      stopReviewTracks();
+      reviewState.recChunks = [];
+    }
+    return true;
+  }
+  function startReviewRecognition() {
+    var SR = reviewRecogCtor();
+    if (!SR) return false;
+    try {
+      var recog = new SR();
+      reviewState.recog = recog;
+      try { recog.lang = (lang === 'si') ? 'si-LK' : 'en-GB'; } catch (e) {}
+      try { recog.interimResults = false; recog.continuous = false; } catch (e) {}
+      recog.onresult = function (ev) {
+        var said = '';
+        try {
+          var r = ev && ev.results ? ev.results[0] : null;
+          if (r && r[0] && r[0].transcript) said = str(r[0].transcript);
+        } catch (e) {}
+        if (said) {
+          reviewState.voiceText = said;
+          var input = byId('reviewTextInput');
+          if (input) input.value = said;
+          var fabInput = byId('fabReviewText');
+          if (fabInput) fabInput.value = said;
+        }
+      };
+      recog.onerror = function () {};
+      recog.onend = function () { reviewState.recog = null; };
+      recog.start();
+      return true;
+    } catch (e) { reviewState.recog = null; return false; }
   }
   function toggleReviewVoice() {
-    var SR = reviewRecogCtor();
-    var status = byId('reviewVoiceStatus');
-    if (!SR) {
-      if (status) { status.hidden = false; status.textContent = t('reviewVoiceOff'); }
+    if (reviewState.listening) { stopReviewVoice(true); return true; }
+    var hasMR = !!(global.navigator && global.navigator.mediaDevices && global.navigator.mediaDevices.getUserMedia && global.MediaRecorder);
+    var hasSR = !!reviewRecogCtor();
+    if (!hasMR && !hasSR) {
+      reviewStatusLine(t('reviewVoiceOff', 'Voice review is not supported on this browser — typing works everywhere.'));
       return false;
     }
-    if (reviewState.listening) { stopReviewVoice(); return true; }
-    var recog = new SR();
-    reviewState.recog = recog;
     reviewState.listening = true;
-    var btn = byId('btnVoiceReview');
+    reviewState.recChunks = [];
+    reviewState.voiceB64 = '';
+    reviewState.recSecs = 0;
+    reviewState.recStartAt = Date.now();
+    var btn = byId('btnVoiceReview'), fabBtn = byId('btnFabVoiceNote');
     if (btn && btn.classList) btn.classList.add('listening');
-    if (status) { status.hidden = false; status.textContent = t('reviewVoiceListening'); }
-    try { recog.lang = (lang === 'si') ? 'si-LK' : 'en-GB'; } catch (e) {}
-    try { recog.interimResults = false; recog.continuous = false; } catch (e) {}
-    recog.onresult = function (ev) {
-      var said = '';
+    if (fabBtn && fabBtn.classList) fabBtn.classList.add('listening');
+    reviewStatusLine(t('reviewRecLive', '🔴 Recording {t}… Tap to Stop & Attach').replace('{t}', '0:00'));
+    reviewState.recTimer = global.setInterval(function () {
+      reviewState.recSecs = Math.floor((Date.now() - reviewState.recStartAt) / 1000);
+      reviewStatusLine(t('reviewRecLive', '🔴 Recording {t}… Tap to Stop & Attach').replace('{t}', fmtReviewTimer(reviewState.recSecs)), true);
+    }, 250);
+    /* Engine B: the live transcript (best effort — never blocks Engine A). */
+    startReviewRecognition();
+    /* Engine A: the REAL audio clip, <= 20 s, compact opus/mp4. */
+    if (hasMR) {
       try {
-        var r = ev && ev.results ? ev.results[0] : null;
-        if (r && r[0] && r[0].transcript) said = str(r[0].transcript);
-      } catch (e) {}
-      reviewState.voiceText = said;
-      var input = byId('reviewTextInput');
-      if (input && said) input.value = said;
-      if (status && said) status.textContent = t('reviewVoiceHeard').replace('{t}', said.slice(0, 90));
-      stopReviewVoice();
-    };
-    recog.onerror = function () {
-      if (status) { status.hidden = false; status.textContent = t('reviewVoiceError'); }
-      stopReviewVoice();
-    };
-    recog.onend = function () { stopReviewVoice(); };
-    try { recog.start(); } catch (e) { stopReviewVoice(); }
+        global.navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+          if (!reviewState.listening) { stopReviewTracks0(stream); return; }
+          reviewState.recStream = stream;
+          var mime = '';
+          try {
+            if (global.MediaRecorder.isTypeSupported) {
+              if (global.MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
+              else if (global.MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+              else if (global.MediaRecorder.isTypeSupported('audio/webm')) mime = 'audio/webm';
+            }
+          } catch (e3) {}
+          var rec = null;
+          try { rec = mime ? new global.MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 24000 }) : new global.MediaRecorder(stream); }
+          catch (e2) { try { rec = new global.MediaRecorder(stream); } catch (e4) { rec = null; } }
+          if (!rec) { reviewStatusLine(t('reviewVoiceError', 'Could not hear you — try again or type your note instead.')); stopReviewVoice(false); return; }
+          reviewState.rec = rec;
+          reviewState.recMime = str(rec.mimeType) || mime;
+          rec.ondataavailable = function (ev) { if (ev && ev.data && ev.data.size) reviewState.recChunks.push(ev.data); };
+          rec.onstop = function () { assembleReviewClip(); };
+          rec.start(400);
+          global.setTimeout(function () { if (reviewState.listening) stopReviewVoice(true); }, REVIEW_REC_MAX_MS);
+        }, function () {
+          reviewStatusLine(t('reviewRecMicDenied', 'Microphone permission was blocked — allow the mic or type your note instead.'));
+          if (!reviewState.recog) stopReviewVoice(false);
+        });
+      } catch (e) {
+        if (!reviewState.recog) { reviewStatusLine(t('reviewVoiceError', 'Could not hear you — try again or type your note instead.')); stopReviewVoice(false); }
+      }
+    }
     return true;
   }
   function sendReview(skipped) {
+    if (reviewState.done) { hideReviewCard(); return true; }
     var input = byId('reviewTextInput');
-    var text = reviewState.voiceText || str(input && input.value);
+    var fabInput = byId('fabReviewText');
+    var text = reviewState.voiceText || str(input && input.value) || str(fabInput && fabInput.value);
     var pills = reviewState.pills || {};
     var picked = [];
     for (var k in pills) { if (pills.hasOwnProperty(k) && pills[k]) picked.push(k); }
@@ -3137,20 +3513,79 @@
       kind: 'student_review',
       skipped: !!skipped,
       pills: picked,
-      text: text.slice(0, 300),
+      text: str(text).slice(0, 300),
       lang: lang,
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      source: feedbackDrawerOpen() ? 'fab_drawer' : 'results_card',
+      ver: APP_VERSION
     };
+    if (reviewState.voiceB64 && reviewState.voiceB64.length <= REVIEW_B64_CAP) {
+      payload.voiceClip = { mime: reviewState.voiceMime, secs: reviewState.recSecs, b64: reviewState.voiceB64 };
+    } else if (reviewState.voiceB64) {
+      try { if (SDP.Diagnostics) SDP.Diagnostics.log('review_voice_oversize', { chars: reviewState.voiceB64.length }); } catch (e) {}
+    }
+    /* Pillar 4: the sealed session authenticity telemetry rides along on
+       BOTH paths — Send Review and Skip — No Thanks. */
+    var tel = engineTelemetry();
+    if (tel) payload.telemetry = tel;
     try {
       if (SDP.Diagnostics) SDP.Diagnostics.captureReview(payload);
     } catch (e) {}
     reviewState.done = true;
+    stopReviewVoice(false);
     hideReviewCard();
+    toggleFeedbackDrawer(false);
     showCapsule(skipped ? t('reviewSkipToast') : t('reviewSentToast'));
     return true;
   }
+  /* ══ v0.0.6.l Pillar 3: the floating Feedback / Quick-Help launcher ══ */
+  function feedbackDrawerOpen() {
+    var drawer = byId('sdpFeedbackDrawer');
+    return !!(drawer && !drawer.hidden);
+  }
+  function fabBadgeSeen() {
+    var s = settings();
+    return !!(s && (s.fabBadgeSeen === 1 || s.fabBadgeSeen === '1' || s.fabBadgeSeen === true));
+  }
+  function paintFeedbackFab() {
+    var fab = byId('sdpFeedbackFab');
+    if (!fab) return false;
+    fab.setAttribute('data-badge', fabBadgeSeen() ? '0' : '1');
+    return true;
+  }
+  function markFabBadgeSeen() {
+    try { SDP.Data.saveSettings({ fabBadgeSeen: 1 }); } catch (e) {}
+    paintFeedbackFab();
+  }
+  function toggleFeedbackDrawer(open) {
+    var drawer = byId('sdpFeedbackDrawer');
+    var fab = byId('sdpFeedbackFab');
+    if (!drawer) return false;
+    var want = (open === undefined || open === null) ? !!drawer.hidden : !!open;
+    drawer.hidden = !want;
+    if (fab) fab.setAttribute('aria-expanded', want ? 'true' : 'false');
+    if (want) { markFabBadgeSeen(); renderFabFaq(); }
+    return want;
+  }
+  /* Offline-first FAQ: every answer is a real, checkable in-app fact —
+     zero AI credits are ever spent on help text. */
+  function renderFabFaq() {
+    var host = byId('fabFaq');
+    if (!host) return false;
+    if (host.getAttribute('data-built') === '1') return true;
+    var items = [['fabFaqAudio', 'fabFaqAudioA'], ['fabFaqPacing', 'fabFaqPacingA'], ['fabFaqPaper', 'fabFaqPaperA'], ['fabFaqSync', 'fabFaqSyncA']];
+    var html = '', i;
+    for (i = 0; i < items.length; i++) {
+      html += '<details><summary>' + esc(t(items[i][0])) + '</summary><p>' + esc(t(items[i][1])) + '</p></details>';
+    }
+    host.innerHTML = html;
+    host.setAttribute('data-built', '1');
+    return true;
+  }
   function bindReviewCard() {
-    var pills = doc.querySelectorAll ? doc.querySelectorAll('#reviewPills .rpill') : [];
+    /* One state, every chip surface: the results popup card and the FAB
+       drawer share reviewState.pills through data-rpill. */
+    var pills = doc.querySelectorAll ? doc.querySelectorAll('.rpill') : [];
     for (var i = 0; i < pills.length; i++) {
       (function (node) {
         if (node._sdpBound) return;
@@ -3158,14 +3593,27 @@
         node.addEventListener('click', function () {
           var key = str(node.getAttribute('data-rpill'));
           reviewState.pills[key] = !reviewState.pills[key];
-          node.setAttribute('aria-pressed', reviewState.pills[key] ? 'true' : 'false');
-          if (node.classList) { if (reviewState.pills[key]) node.classList.add('pressed'); else node.classList.remove('pressed'); }
+          syncReviewPills();
         });
       })(pills[i]);
     }
     on('btnVoiceReview', 'click', toggleReviewVoice);
+    on('btnFabVoiceNote', 'click', toggleReviewVoice);
     on('btnSendReview', 'click', function () { sendReview(false); });
     on('btnSkipReview', 'click', function () { sendReview(true); });
+    on('btnFabSendReview', 'click', function () { sendReview(false); });
+    /* The floating launcher: open / close + the one-time micro-badge. */
+    on('sdpFeedbackFab', 'click', function () { toggleFeedbackDrawer(); });
+    on('btnFabClose', 'click', function () { toggleFeedbackDrawer(false); });
+    /* The fresh-Chrome autoplay handshake: the very first tap anywhere on
+       the briefing modal (pill, text, links — anything) unlocks the voice. */
+    var bModal = byId('briefingModal');
+    if (bModal && !bModal._sdpGestureBound) {
+      bModal._sdpGestureBound = true;
+      bModal.addEventListener('pointerdown', function () { briefingGestureUnlock(); });
+      bModal.addEventListener('click', function () { briefingGestureUnlock(); });
+    }
+    paintFeedbackFab();
     return true;
   }
   function onFinished(model) {
@@ -3184,7 +3632,7 @@
     paintIconHosts();
     bindTeacherUpdates();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
-    setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.k: pill lives in the About card */
+    setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.l: pill lives in the About card */
     setText(byId('aboutVersion'), APP_VERSION);
     setText(byId('brandName'), 'Smart Dictation');
     initBetaFromUrl();
@@ -3201,7 +3649,7 @@
     renderGuideSteps();
     renderSettings();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
-    /* v0.0.6.k Pillar 1: a brand-new visitor gets the Project Briefing first;
+    /* v0.0.6.l Pillar 1: a brand-new visitor gets the Project Briefing first;
        the student guide follows the moment the briefing closes. Returning
        students (any guide_seen stamp) are never interrupted again. */
     if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true });
@@ -3339,7 +3787,7 @@
     sessionIntroShown: function () { return !!sessionState.introShown; },
     openStudio: openStudio,
     startOver: startOver,
-    /* ══ v0.0.6.k public surface: briefing, beta channel, review card ══ */
+    /* ══ v0.0.6.l public surface: briefing, beta channel, review card ══ */
     openBriefing: openBriefing,
     closeBriefing: closeBriefing,
     briefingSentences: briefingSentences,

@@ -1,6 +1,6 @@
 # Smart Dictation Player
 
-> **Current release: v0.0.6.j** (Creator Briefing with live synced transcript + 21-year-old British male voice and a 10-second timed gate · 5-slot Multi-API key pool with automatic rotation and an AI British pronunciation pre-verifier · frictionless post-session voice/text reviews · end-to-end encrypted diagnostics ring with a one-click in-browser `.zip` export — introduced completely through the governed `?beta` channel, `BETA_SUBVERSION 0.0.6.j.beta`, and fully live on the main cockpit) — 12/12 automated gates green, 764 assertions, 0 FAIL.
+> **Current release: v0.0.6.l** (Dynamic Oct-22 weekly briefing — the week counter computes itself, the four beats ship as committed real British-male audio with word-by-word karaoke flow, and a fresh-Chrome tap pill replaces every silent skip · the exact 6-key $0 pool — 1 primary + 1 backup ElevenLabs, 2 Groq, 2 OpenRouter — with autoEnsureSystemClips keeping every system clip synced automatically · the instant post-session review popup with five 1-tap chips and a dual-engine voice recorder · the floating Feedback/Help launcher with offline-first answers · Paper-mode 1-tap grading plus session authenticity telemetry (Genuine vs Rapid-Skip) sealed end-to-end encrypted on BOTH send and skip, inspectable in the Lecturer Studio) — 12/12 automated gates green, 888 assertions, 0 FAIL.
 
 Smart Dictation Player is a self-contained English dictation app for CCBE Galle Branch. The player is `index.html`; the interactive bilingual data report is available at `/data` and `/data.html`.
 

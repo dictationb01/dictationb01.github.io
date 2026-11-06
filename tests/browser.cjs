@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.k'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.l'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.l');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -156,7 +156,7 @@ async function bootSettings(page, settings) {
       check('G5.4b each card shows IPA, POS, English, Sinhala, sentence and Play', Object.values(cardFields).every(Boolean), JSON.stringify(cardFields));
       const search = await page.evaluate(async () => {
         const input = document.getElementById('dictSearch');
-        /* v0.0.6.k: search for word #1 of the LIVE payload. The classroom word
+        /* v0.0.6.l: search for word #1 of the LIVE payload. The classroom word
            list is lecturer-owned and republished freely, so a hardcoded query
            would silently stop matching. The expected count is derived with the
            renderer's own predicate (word / Sinhala / English meaning). */
@@ -402,14 +402,14 @@ async function bootSettings(page, settings) {
       await context.close();
     }
 
-    /* ── 12. v0.0.6.k mobile human-UI law (A1/A2/A3/A6) ──────────────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k — mobile-first human UI
+    /* ── 12. v0.0.6.l mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.l — mobile-first human UI
     {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -537,14 +537,14 @@ async function bootSettings(page, settings) {
         parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
       check('G5.12i the live chips render as a 2-3 column grid',
         studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
-      check('G5.12j the v0.0.6.k cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      check('G5.12j the v0.0.6.l cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
       await context.close();
     }
 
-    /* ── 13. v0.0.6.k CF1: the ULTRA-CLEAN header + the URL Beta channel ─── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k — the Project Briefing
+    /* ── 13. v0.0.6.l CF1: the ULTRA-CLEAN header + the URL Beta channel ─── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.l — the Project Briefing
     // suite is permanent on Main; ?beta / #beta stamp BETA_SUBVERSION
-    // 0.0.6.k.beta and replay the briefing. The header keeps ONLY the brand
+    // 0.0.6.l.beta and replay the briefing. The header keeps ONLY the brand
     // block + EN|SI + Theme; ?b=1 is NOT a channel alias; the clean URL
     // stays on Main.
     for (const flag of ['?beta', '#beta', '?b=1', '']) {
@@ -552,7 +552,7 @@ async function bootSettings(page, settings) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light', briefingSeen: 1 }));
         } catch (e) {}
       });
@@ -582,7 +582,7 @@ async function bootSettings(page, settings) {
       const tag = flag || '(clean url)';
       const wantsBeta = flag === '?beta' || flag === '#beta';
       check('G5.13a ' + tag + ' the governed Beta channel state matches the URL',
-        main.betaActive === wantsBeta && main.betaSub === '0.0.6.k.beta',
+        main.betaActive === wantsBeta && main.betaSub === '0.0.6.l.beta',
         JSON.stringify(main));
       check('G5.13a2 ' + tag + ' the Beta channel replays the Project Briefing',
         main.briefingOpen === wantsBeta, JSON.stringify(main));
@@ -594,15 +594,15 @@ async function bootSettings(page, settings) {
         !/Beta|Creator Note|Guide|Synced|Lecturer Admin|v0\.0\.6/.test(main.headerText),
         JSON.stringify(main));
       check('G5.13c ' + tag + ' the relocated triggers live inside the About card',
-        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.k', JSON.stringify(main));
+        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.l', JSON.stringify(main));
       check('G5.13d ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }
 
 
-    /* ── 14. v0.0.6.k critical fixes: clock state machine, pinned #tabbar,
+    /* ── 14. v0.0.6.l critical fixes: clock state machine, pinned #tabbar,
        the #tab-settings squircle (CF1 / CF2 / CF3) ────────────────────────
-       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.k CF1–CF4 */
+       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.l CF1–CF4 */
     for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }]) {
       const tag = viewport.width + 'x' + viewport.height;
       {

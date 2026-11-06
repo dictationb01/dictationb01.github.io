@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.k';
+  SDP.version = '0.0.6.l';
   SDP.build = '2026-11-06';
-  SDP.ver = 25;
+  SDP.ver = 26;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.k';
-  var SCHEMA = 25;
-  var SETTINGS_REV = 41;
+  var APP_VERSION = '0.0.6.l';
+  var SCHEMA = 26;
+  var SETTINGS_REV = 42;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -814,7 +814,22 @@
       var patch = {};
       patch[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key };
       Data.saveSettings(patch);
-    } catch (e) {}
+    } catch (e) {
+      /* v0.0.6.l: a voice-note review can outgrow the localStorage quota —
+         drop the OLDEST sealed reviews (never the ring) until it fits, so
+         one large clip never wipes the whole diagnostics vault. */
+      var guard = 0;
+      while (diagState.reviews.length > 1 && guard < 40) {
+        guard += 1;
+        diagState.reviews = diagState.reviews.slice(1);
+        try {
+          var retry = {};
+          retry[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key };
+          Data.saveSettings(retry);
+          return;
+        } catch (e2) {}
+      }
+    }
   }
   function diagPersistThrottled() {
     if (diagState.timer) return;
@@ -928,7 +943,7 @@
     /* The pure ES5 zip writer used by the Studio diagnostics export. */
     zipStore: zipStore,
     crc32Bytes: crc32Bytes,
-    /* Assemble the five documented artifacts for the Studio .zip export. */
+    /* Assemble the six documented artifacts for the Studio .zip export. */
     buildDiagFiles: function () {
       var summary = Diagnostics.summary();
       var files = [
@@ -937,6 +952,33 @@
         { name: 'config-snapshot.json', text: JSON.stringify(Diagnostics.configSnapshot(), null, 2) }
       ];
       return Diagnostics.decryptReviews().then(function (list) {
+        list = Array.isArray(list) ? list : [];
+        /* v0.0.6.l Pillar 4: the dedicated session-authenticity artifact —
+           every captured session with its Genuine / Rapid-Skip / Incomplete
+           verdict, duration, completion and rapid-skip counts, plus the
+           aggregate summary the Studio drawer shows. */
+        var sessions = [], counts = { GENUINE_FULL: 0, RAPID_SKIP_SUSPECT: 0, PARTIAL_INCOMPLETE: 0 };
+        list.forEach(function (row) {
+          if (!row || !row.ok || !isObj(row.review)) return;
+          var rv = row.review;
+          var tel = isObj(rv.telemetry) ? rv.telemetry : null;
+          if (tel && counts[str(tel.authenticityStatus)] !== undefined) counts[str(tel.authenticityStatus)] += 1;
+          sessions.push({
+            at: str(rv.at), skipped: !!rv.skipped, source: str(rv.source || ''),
+            pills: Array.isArray(rv.pills) ? rv.pills.slice() : [],
+            hasVoiceClip: !!(rv.voiceClip && str(rv.voiceClip.b64)),
+            voiceSecs: rv.voiceClip ? Number(rv.voiceClip.secs) || 0 : 0,
+            text: str(rv.text || ''),
+            telemetry: tel
+          });
+        });
+        files.push({ name: 'session-telemetry.json', text: JSON.stringify({
+          note: 'Authenticity analysis of every captured session — sealed AES-GCM (SDP_ENC_V2) at capture; decrypted inside the unlocked Lecturer Studio.',
+          appVersion: APP_VERSION,
+          exportedAt: new Date().toISOString(),
+          summary: { sessions: sessions.length, genuine: counts.GENUINE_FULL, rapidSkip: counts.RAPID_SKIP_SUSPECT, partial: counts.PARTIAL_INCOMPLETE },
+          sessions: sessions
+        }, null, 2) });
         files.push({ name: 'student-reviews.json', text: JSON.stringify({
           note: 'Decrypted inside the unlocked Lecturer Studio — AES-GCM (SDP_ENC_V2) at capture.',
           count: list.length, reviews: list
@@ -954,6 +996,10 @@
         '      device responsiveness). Non-personal, privacy-safe, bounded ring buffer.\r\n' +
         '  student-reviews.json — post-session voice/text reviews, decrypted here inside the\r\n' +
         '      unlocked Lecturer Studio (AES-GCM end-to-end encrypted at capture).\r\n' +
+        '  session-telemetry.json — the authenticity analysis of every captured session\r\n' +
+        '      (GENUINE_FULL / RAPID_SKIP_SUSPECT / PARTIAL_INCOMPLETE with duration,\r\n' +
+        '      words completed, rapid-skip counts and marked words), captured on BOTH\r\n' +
+        '      "Send Review" and "Skip — No Thanks".\r\n' +
         '  session-snapshot.json — the current 30 classroom words and pacing.\r\n' +
         '  config-snapshot.json — version, schema, voice pack and device state (no secrets).\r\n\r\n' +
         'SUMMARY\r\n' +

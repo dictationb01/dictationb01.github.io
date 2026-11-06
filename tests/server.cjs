@@ -57,8 +57,8 @@ test('Server failed multi-cell publish leaves committed words/version intact and
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 — the frozen SDP_ENC_V2 wire format ships with the studio */
 test('v0.0.6.e release metadata: public JSON is secret-free, GitHub-only studio and AES-GCM v2 runtime ship together',()=>{
  const read=f=>JSON.parse(fs.readFileSync(require('path').join(__dirname,'..',f),'utf8'));
- const rel=read('data/version.json');assert.equal(rel.ver,25);assert.equal(rel.appVersion,'0.0.6.k');assert.equal(rel.schema,25);assert.equal(rel.settingsRev, 41);assert.equal(Number(rel.syncRev),1794200000000);
- const cfg=read('data/config.json');assert.equal(cfg.ver,25);assert.equal(cfg.appVersion,'0.0.6.k');assert.equal(cfg.schema,25);assert.equal(cfg.settingsRev, 41);assert.equal(Number(cfg.syncRev),1794200000000);assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
+ const rel=read('data/version.json');assert.equal(rel.ver,26);assert.equal(rel.appVersion,'0.0.6.l');assert.equal(rel.schema,26);assert.equal(rel.settingsRev, 42);assert.equal(Number(rel.syncRev),1794300000000);
+ const cfg=read('data/config.json');assert.equal(cfg.ver,26);assert.equal(cfg.appVersion,'0.0.6.l');assert.equal(cfg.schema,26);assert.equal(cfg.settingsRev, 42);assert.equal(Number(cfg.syncRev),1794300000000);assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
  for(const jf of ['data/version.json','data/config.json','data/session.json','data/elevenlabs-audio.json']){const d=read(jf);assert.ok(d.adminPin===undefined||d.adminPin==='',jf);assert.ok(!d.vaultCiphertext,jf+' no public vault');assert.ok(!d.keysTopic&&!d.wordsTopic&&!d.audioTopic,jf+' no relays');}
  const vault=read('data/elevenlabs-audio.json');assert.equal(vault.voiceId,'Xb7hH8MSUJpSbSDYk0k2');assert.equal(vault.voiceName,'Alice');assert.equal(vault.modelId,'eleven_flash_v2_5');assert.equal(vault.strictAdminOnly,true);assert.equal(typeof vault.clips,'object');
  const file=n=>require('path').join(__dirname,'..',n);
@@ -83,10 +83,10 @@ test('v0.0.6.e release metadata: public JSON is secret-free, GitHub-only studio 
   const sessionBytes=fsx.statSync(pth.join(__dirname,'..','data','session.json')).size;
   assert.equal(page,twin,'data.html and data/index.html stay byte-identical');
   assert.ok(page.indexOf('var SESSION_BYTES = '+sessionBytes+';')>0,'/data quotes the real session.json byte count ('+sessionBytes+')');
-  assert.ok(page.indexOf("var TARGET = '0.0.6.k';")>0,'/data boots at the release target');
-  assert.ok(page.indexOf('v0.0.6.k')>0,'/data shows the release pill');
+  assert.ok(page.indexOf("var TARGET = '0.0.6.l';")>0,'/data boots at the release target');
+  assert.ok(page.indexOf('v0.0.6.l')>0,'/data shows the release pill');
   const meter=fsx.readFileSync(pth.join(__dirname,'..','data','data-meter.js'),'utf8');
-  assert.ok(/CACHE_VERSION = 'sdp-v0.0.6.k'/.test(meter),'the meter cache is keyed to this release (D20)');
+  assert.ok(/CACHE_VERSION = 'sdp-v0.0.6.l'/.test(meter),'the meter cache is keyed to this release (D20)');
   assert.ok(/clearCache/.test(meter),'the meter cache can be invalidated by a publish (D20)');
  }
  if(html){

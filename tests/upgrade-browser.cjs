@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.6.f-s21-shell';
+const SHELL = 'sdp-v0.0.6.g-s22-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -78,7 +78,7 @@ async function launch() {
     }, SHELL);
 
     check('G6.3a the retired sdp-v60 cache is deleted', activated.names.indexOf(STALE) < 0, activated.names.join(','));
-    /* v0.0.6.f (R5): both audio caches are now PRESERVED across upgrades so a
+    /* v0.0.6.g (R5): both audio caches are now PRESERVED across upgrades so a
        student repeating a session spends 0 KB of mobile data. */
     check('G6.3b the youdao dictionary cache survives the upgrade (R5 PRESERVE_CACHES)', activated.names.indexOf(YOUDAO) >= 0, activated.names.join(','));
     check('G6.3c the lecturer-clip cache survives the upgrade (R5 PRESERVE_CACHES)', activated.names.indexOf(CLIPS) >= 0, activated.names.join(','));

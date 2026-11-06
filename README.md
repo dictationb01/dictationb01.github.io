@@ -1,8 +1,16 @@
 # Smart Dictation Player
 
-> **Current release: v0.0.6.f** (Complete Human-UI Orbital Cockpit) — 12/12 automated gates green.
+> **Current release: v0.0.6.g** (Mobile-First Human UI + Sinhala Blueprint, beta-preview v0.0.6.f.a) — 12/12 automated gates green.
 
 Smart Dictation Player is a self-contained English dictation app for CCBE Galle Branch. The player is `index.html`; the interactive bilingual data report is available at `/data` and `/data.html`.
+
+## Credits
+
+**CREDITS GOES TO Hansana**
+
+Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)
+
+නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini
 
 ## Release 9.0.0.3 — v60
 

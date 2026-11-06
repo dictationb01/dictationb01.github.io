@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.f'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -485,6 +485,46 @@ async function unlockStudio(app) {
       String(e401).indexOf('Bad credentials') > 0 && String(e403).indexOf('Bad credentials') < 0, e401);
     check('G12.13p the class-settings failure also leaves no busy flag behind (D18)',
       app.SDP.Studio.isBusy() === false, JSON.stringify(app.SDP.Studio.isBusy()));
+    app.close();
+  }
+
+  /* ── 14. v0.0.6.g A3: comma/newline-only parser + non-destructive chips ── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.g — the 31-word law
+  {
+    const app = await createApp(base);
+    await unlockStudio(app);
+    const S = app.SDP.Studio;
+    const pasted = 'old-fashioned, over-drive, bus station\n1. important;   ,  #02 brave';
+    const parsed = S.parseBulkWords(pasted);
+    check('G12.14a compound and multi-word items stay ONE dictation word',
+      parsed.length === 5 && parsed[0].w === 'old-fashioned' && parsed[1].w === 'over-drive' && parsed[2].w === 'bus station',
+      JSON.stringify(parsed.map((x) => x.w)));
+    check('G12.14b pasted numbering and blank gaps are stripped',
+      parsed[3].w === 'important' && parsed[4].w === 'brave', JSON.stringify(parsed.map((x) => x.w)));
+    const thirtyOne = [];
+    for (let i = 0; i < 31; i++) thirtyOne.push({ w: 'word' + (i + 1) });
+    S.setStudioWords(thirtyOne, 'bulk');
+    const live = S.currentParsed();
+    const extra = app.qa('#studioLiveChips .chip-word.chip-extra');
+    const helper = app.byId('studioWordsCountHelper');
+    check('G12.14c 31 pasted words are never auto-deleted',
+      live.length === 31, String(live.length));
+    check('G12.14d chip #31 is flagged amber (.chip-extra)',
+      extra.length === 1 && /31/.test(extra[0].textContent), JSON.stringify(extra.map((n) => n.textContent)));
+    check('G12.14e the helper stays calm amber (state=over), never a red wall',
+      !!helper && helper.getAttribute('data-state') === 'over', helper && helper.getAttribute('data-state'));
+    const chipsHtml = String(app.byId('studioLiveChips').innerHTML);
+    check('G12.14f chips carry real \u21c4 / \u2715 glyphs (never HTML entities)',
+      chipsHtml.indexOf('\u21c4') > 0 && chipsHtml.indexOf('\u2715') > 0 && chipsHtml.indexOf('&#') < 0, 'glyph law');
+    check('G12.14g the chip grid wraps every word in .chip-w',
+      app.qa('#studioLiveChips .chip-w').length === 31, String(app.qa('#studioLiveChips .chip-w').length));
+    const beforeMerge = S.currentParsed().length;
+    S.chipMerge(0);
+    check('G12.14h one-tap \u21c4 merge folds two chips into one compound word',
+      S.currentParsed().length === beforeMerge - 1 && S.currentParsed()[0].w === 'word1-word2', S.currentParsed()[0].w);
+    S.chipRemove(0);
+    check('G12.14i one-tap \u2715 removes exactly one word',
+      S.currentParsed().length === beforeMerge - 2, String(S.currentParsed().length));
     app.close();
   }
 

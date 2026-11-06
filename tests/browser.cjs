@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.h');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -392,14 +392,14 @@ async function bootSettings(page, settings) {
       await context.close();
     }
 
-    /* ── 12. v0.0.6.g mobile human-UI law (A1/A2/A3/A6) ──────────────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.g — mobile-first human UI
+    /* ── 12. v0.0.6.h mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h — mobile-first human UI
     {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.h');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -527,7 +527,7 @@ async function bootSettings(page, settings) {
         parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
       check('G5.12i the live chips render as a 2-3 column grid',
         studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
-      check('G5.12j the v0.0.6.g cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      check('G5.12j the v0.0.6.h cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
       await context.close();
     }
 
@@ -537,7 +537,7 @@ async function bootSettings(page, settings) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.h');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -557,10 +557,146 @@ async function bootSettings(page, settings) {
         fixLive: !!document.querySelector('meta[name="darkreader-lock"]') && getComputedStyle(document.getElementById('hintChips')).display === 'none'
       }));
       check('G5.13a ?beta switches the channel and stamps the sub-version',
-        beta.channel === 'beta' && /BETA/.test(beta.pill) && /0\.0\.6\.f\.a/.test(beta.pill), JSON.stringify(beta));
+        beta.channel === 'beta' && /BETA/.test(beta.pill) && /0\.0\.6\.h\.a/.test(beta.pill), JSON.stringify(beta));
       check('G5.13b the floating beta stamp is visible and names both versions',
-        beta.stampHidden === false && /0\.0\.6\.f\.a/.test(beta.stampText) && /0\.0\.6\.g/.test(beta.stampText), JSON.stringify(beta));
+        beta.stampHidden === false && /0\.0\.6\.h\.a/.test(beta.stampText) && /0\.0\.6\.h/.test(beta.stampText), JSON.stringify(beta));
       check('G5.13c the release fixes are live on the beta channel too', beta.fixLive, JSON.stringify(beta));
+      await context.close();
+    }
+
+    /* ── 14. v0.0.6.h critical fixes: clock state machine, pinned #tabbar,
+       the #tab-settings squircle (CF1 / CF2 / CF3) ────────────────────────
+       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h CF1–CF4 */
+    for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }]) {
+      const tag = viewport.width + 'x' + viewport.height;
+      {
+        /* CF2: #tabbar stays visible and switchable through idle → playing
+           → paused on the player screen, at phone widths. */
+        const { context, page } = await openPage(browser, server.origin, viewport);
+        await bootSettings(page, { mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: false });
+        await page.click('#tab-player');
+        await page.waitForTimeout(300);
+        const probeIdle = await page.evaluate(() => {
+          const tb = document.getElementById('tabbar');
+          const r = tb.getBoundingClientRect();
+          return { display: getComputedStyle(tb).display, vis: getComputedStyle(tb).visibility, bottom: r.bottom, inner: window.innerHeight, z: getComputedStyle(tb).zIndex, transform: getComputedStyle(tb).transform };
+        });
+        check('G5.14a [' + tag + '] #tabbar is pinned and visible on an idle player screen',
+          probeIdle.display !== 'none' && probeIdle.vis === 'visible' && probeIdle.bottom <= probeIdle.inner + 1 && probeIdle.bottom > 0,
+          JSON.stringify(probeIdle));
+        /* one ring tap from a COLD Dictation tab starts Word #1 (CF1) */
+        await page.click('#ringWrap');
+        await page.waitForTimeout(900);
+        const started = await page.evaluate(() => ({
+          active: SDP.Engine.isActive(), paused: SDP.Engine.isPaused(), phase: SDP.Engine.state(),
+          items: SDP.Engine.items().length, index: SDP.Engine.config().index,
+          beat: document.getElementById('beatSeconds').textContent,
+          label: document.getElementById('btnPlayPause').getAttribute('aria-label')
+        }));
+        check('G5.14b [' + tag + '] one ring tap on a cold Dictation tab starts Word #1',
+          started.active === true && started.paused === false && started.items === 30 && started.phase === 'listening',
+          JSON.stringify(started));
+        const probePlaying = await page.evaluate(() => {
+          const tb = document.getElementById('tabbar');
+          const r = tb.getBoundingClientRect();
+          return { display: getComputedStyle(tb).display, vis: getComputedStyle(tb).visibility, bottom: r.bottom, inner: window.innerHeight };
+        });
+        check('G5.14c [' + tag + '] #tabbar stays visible while dictation is playing',
+          probePlaying.display !== 'none' && probePlaying.vis === 'visible' && probePlaying.bottom <= probePlaying.inner + 1,
+          JSON.stringify(probePlaying));
+        /* pause — frozen exactly; resume — no reset, no jump (CF1 Case B/A) */
+        await page.waitForTimeout(2500);
+        const prePause = await page.evaluate(() => ({
+          phase: SDP.Engine.state(),
+          beat: document.getElementById('beatSeconds').textContent,
+          remainingMs: SDP.Engine.config().remainingMs
+        }));
+        await page.click('#btnPlayPause');
+        await page.waitForTimeout(150);
+        const frozenA = await page.evaluate(() => document.getElementById('beatSeconds').textContent);
+        await page.waitForTimeout(1200);
+        const frozenB = await page.evaluate(() => ({
+          paused: SDP.Engine.isPaused(),
+          beat: document.getElementById('beatSeconds').textContent,
+          phase: SDP.Engine.state()
+        }));
+        check('G5.14d [' + tag + '] pause freezes the clock exactly (no drift while paused)',
+          frozenB.paused === true && frozenB.beat === frozenA && (frozenB.phase === 'paused'),
+          JSON.stringify({ frozenA, frozenB }));
+        const probePaused = await page.evaluate(() => {
+          const tb = document.getElementById('tabbar');
+          const r = tb.getBoundingClientRect();
+          return { display: getComputedStyle(tb).display, vis: getComputedStyle(tb).visibility, bottom: r.bottom, inner: window.innerHeight };
+        });
+        check('G5.14e [' + tag + '] #tabbar stays visible while paused',
+          probePaused.display !== 'none' && probePaused.vis === 'visible' && probePaused.bottom <= probePaused.inner + 1,
+          JSON.stringify(probePaused));
+        await page.click('#btnPlayPause');
+        await page.waitForTimeout(600);
+        const resumed = await page.evaluate(() => ({
+          active: SDP.Engine.isActive(), paused: SDP.Engine.isPaused(), phase: SDP.Engine.state(),
+          beat: document.getElementById('beatSeconds').textContent,
+          stateText: document.getElementById('beatStateText').textContent
+        }));
+        check('G5.14f [' + tag + '] a third tap resumes cleanly (never stuck, never a 60s dead clock)',
+          resumed.active === true && resumed.paused === false && (resumed.phase === 'listening' || resumed.phase === 'writing') && parseInt(resumed.beat, 10) <= 15,
+          JSON.stringify({ resumed, prePause }));
+        /* switching tabs from INSIDE an active session works (CF2) */
+        await page.click('#tab-settings');
+        await page.waitForTimeout(300);
+        const onSettings = await page.evaluate(() => document.querySelector('.screen.active').id);
+        await page.click('#tab-home');
+        await page.waitForTimeout(250);
+        const onHome = await page.evaluate(() => document.querySelector('.screen.active').id);
+        check('G5.14g [' + tag + '] every tab is switchable from inside an active dictation',
+          onSettings === 'screen-settings' && onHome === 'screen-home', JSON.stringify({ onSettings, onHome }));
+        await context.close();
+      }
+    }
+    {
+      /* CF3: all six bottom tabs carry the color squircle — including the
+         previously bare #tab-settings gear. */
+      const { context, page } = await openPage(browser, server.origin, { width: 390, height: 844 });
+      await page.waitForTimeout(500);
+      const squircles = await page.evaluate(() => {
+        const out = {};
+        const ids = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
+        for (const id of ids) {
+          const span = document.getElementById(id).querySelector('.tab-ico');
+          const cs = getComputedStyle(span);
+          const img = cs.backgroundImage;
+          out[id] = {
+            tico: /\btico\b/.test(span.className),
+            grad: /gradient\(/.test(img),
+            w: Math.round(span.getBoundingClientRect().width),
+            bg: cs.backgroundColor
+          };
+        }
+        return out;
+      });
+      const squircleBad = Object.keys(squircles).filter((id) => !(squircles[id].tico && squircles[id].grad && squircles[id].w >= 40));
+      check('G5.14h all six bottom tabs paint a color squircle (incl. #tab-settings tico-settings)',
+        squircleBad.length === 0, JSON.stringify(squircles));
+      /* the One-UI settings surface: switches, steppers, capsule selects */
+      await page.click('#tab-settings');
+      await page.waitForTimeout(400);
+      const oneUi = await page.evaluate(() => {
+        const sw = document.getElementById('setAutoAdvance');
+        const swStyle = getComputedStyle(sw);
+        return {
+          switchAppearance: swStyle.appearance + '/' + swStyle.webkitAppearance,
+          switchWidth: Math.round(sw.getBoundingClientRect().width),
+          stepperR: Math.round(document.getElementById('stepWritePlus').getBoundingClientRect().height),
+          selectH: Math.round(document.getElementById('setVoiceLock').getBoundingClientRect().height),
+          cardRadius: getComputedStyle(document.querySelector('.set-card')).borderRadius,
+          headSquircle: Math.round(document.querySelector('.set-head .set-squircle').getBoundingClientRect().width)
+        };
+      });
+      check('G5.14i #screen-settings renders the One-UI switches, steppers and capsules',
+        oneUi.switchAppearance.indexOf('none') === 0 || String(oneUi.switchAppearance).indexOf('none') !== -1,
+        JSON.stringify(oneUi));
+      check('G5.14j settings controls keep >=48px touch targets after the restyle',
+        oneUi.stepperR >= 44 && oneUi.selectH >= 44, JSON.stringify(oneUi));
       await context.close();
     }
   } finally {

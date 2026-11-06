@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F8FAFC">
-<!-- v0.0.6.g (A1): Dark Reader and dark-mode extensions are locked out; the
+<!-- v0.0.6.h (A1): Dark Reader and dark-mode extensions are locked out; the
    color-scheme meta follows only this page's own theme button. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.g — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
-<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.g</title>
+<meta name="description" content="Smart Dictation Player 0.0.6.h — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
+<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.h</title>
 <script>
 (function () {
   var vUrl = location.pathname.indexOf('/data/') !== -1 ? './version.json' : './data/version.json';
-  var TARGET = '0.0.6.g';
+  var TARGET = '0.0.6.h';
   if (typeof fetch !== 'function') return;
   fetch(vUrl + '?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { return r && r.ok ? r.json() : null; })
@@ -273,7 +273,7 @@
 
   var lang = 'en';
   var theme = 'dark';
-  var SESSION_BYTES = 44885; /* D20: measured data/session.json on 0.0.6.f (sha256 b1d178d3...); re-derived live below */
+  var SESSION_BYTES = 61576; /* D20: measured data/session.json on 0.0.6.h (sha256 fadde370...); re-derived live below */
   var APP_BYTES = 421000; /* D20: measured shell + six modules on 0.0.5.c */
   function utf8Bytes(text) { try { return new TextEncoder().encode(str(text || '')).length; } catch (e) { return String(text || '').length; } }
   function deriveSessionBytes() {
@@ -313,7 +313,7 @@
     theme = next === 'light' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', theme);
     $('themeIcon').textContent = theme === 'light' ? '◑' : '◐';
-    /* v0.0.6.g (A1): the color-scheme meta follows ONLY this page's own theme. */
+    /* v0.0.6.h (A1): the color-scheme meta follows ONLY this page's own theme. */
     var schemeMeta = document.querySelector('meta[name="color-scheme"]');
     if (schemeMeta) schemeMeta.setAttribute('content', theme === 'dark' ? 'dark' : 'only light');
     try { localStorage.setItem('sdp.dataPage.theme', theme); } catch (e) {}
@@ -359,7 +359,7 @@
   }
 
   function renderCaches() {
-    var roles = { 'sdp-v0.0.6.f-s16-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
+    var roles = { 'sdp-v0.0.6.h-s23-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
     function paint(entries) {
       var html = '', i;
       if (!entries) { $('cacheTable').innerHTML = '<tr><td colspan="3" class="muted">' + tr('noCaches') + '</td></tr>'; return; }
@@ -464,7 +464,7 @@
     try { window.SDPDataMeter.start({ interval: false }); } catch (e) {}
   }
 
-  /* v0.0.6.g (A1): active Dark Reader shield — strip any injected extension
+  /* v0.0.6.h (A1): active Dark Reader shield — strip any injected extension
      attributes/styles and keep the darkreader-lock meta in place. */
   (function () {
     var d = document.documentElement, h = document.head;

@@ -9,9 +9,11 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
-  /* v0.0.6.g (A6): the beta-preview sub-version of this release family — the
-     ?beta channel stamps it until the fixes are promoted to main. */
-  var BETA_SUBVERSION = '0.0.6.f.a';
+  /* v0.0.6.h (A6): the beta-preview sub-version of the NEXT release family —
+     the ?beta channel names it for future previews. The perfected v0.0.6.h
+     fixes are now the MAIN production experience; the floating stamp only
+     ever appears when ?beta / #beta / ?b=1 is in the URL. */
+  var BETA_SUBVERSION = '0.0.6.h.a';
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -304,7 +306,7 @@
     /* v0.0.6.e (C/D/E): reveal card, beta channel, update capsule, offline studio, live chips. */
     revealShow: 'Show Current Word', revealHide: 'Hide Word', revealPausedBadge: '⏸ Paused while viewing word',
     betaOn: 'BETA', betaOff: 'Stable', betaPreview: 'Preview', betaStalePill: '⚠ Using older word list — Tap here to refresh',
-    updateSyncing: '🔄 New classroom update detected — refreshing in a moment…', updateAsk: 'New classroom words are ready. Refresh now?',
+    updateSyncing: '🔄 Updating — refreshing automatically…', updateAsk: 'New classroom words are ready. Refresh now?',
     updateNow: 'Update Now (OK)', updateLater: 'Later',
     studioOfflineTitle: 'Lecturer Studio needs the internet',
     studioOfflineBody: 'Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.',
@@ -2593,9 +2595,10 @@
     var pill = byId('sdpBetaPill');
     var on = betaActive();
     try { doc.documentElement.setAttribute('data-sdp-channel', on ? 'beta' : 'stable'); } catch (e) {}
-    /* v0.0.6.g (A6): the beta channel names its sub-version — the header pill
-       and the floating stamp pin the preview line v0.0.6.f.a and the main
-       release (v0.0.6.g) it promotes to. */
+    /* v0.0.6.h (A6): the beta channel names its sub-version — the header pill
+       and the floating stamp pin the preview line v0.0.6.h.a and the main
+       release (v0.0.6.h) it rides on. On the clean main URL the stamp stays
+       hidden and the header keeps the sleek v0.0.6.h pill only. */
     var stamp = byId('sdpBetaStamp');
     if (stamp) {
       stamp.hidden = !on;
@@ -2614,7 +2617,9 @@
     var nowBtn = byId('sdpUpdateNowBtn'), laterBtn = byId('sdpUpdateLaterBtn');
     if (!card) return false;
     card.hidden = false;
-    if (text) setText(text, mode === 'ask' ? t('updateAsk', 'New classroom words are ready. Refresh now?') : t('updateSyncing', '🔄 New classroom update detected — refreshing in a moment…'));
+    if (text) setText(text, mode === 'ask'
+      ? t('updateAsk', 'New classroom words are ready. Refresh now?')
+      : t('updateSyncing', '🔄 Updating to v' + APP_VERSION + ' — refreshing automatically…'));
     if (bar) bar.hidden = (mode !== 'sync');
     if (nowBtn) nowBtn.hidden = (mode !== 'ask');
     if (laterBtn) laterBtn.hidden = (mode !== 'ask');

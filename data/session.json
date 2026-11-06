@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "ver": 61,
+  "ver": 22,
   "session": {
     "no": "8",
     "day": "Thursday",
@@ -875,9 +875,9 @@
   ],
   "announcement": null,
   "comments": [],
-  "appVersion": "0.0.6.a",
+  "appVersion": "0.0.6.h",
   "updatedAt": "2026-11-06T02:17:18.448Z",
-  "version": "0.0.6.a",
+  "version": "0.0.6.h",
   "buildDate": "2026-10-31",
   "settingsRev": 38,
   "keyboard": {
@@ -979,7 +979,7 @@
   "voice": "Amy",
   "lockedVoice": "Amy",
   "updatedAtMs": 1793448000000,
-  "schema": 60,
+  "schema": 22,
   "pastSessions": [
     {
       "no": "7",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793931438447,
+  "syncRev": 1793900000000,
   "words": [
     {
       "w": "important",

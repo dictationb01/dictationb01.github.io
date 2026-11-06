@@ -30,6 +30,9 @@
   var state = {
     manifest: null,
     manifestRequested: false,
+    /* D15/R9: paid clips are mirrored here because a manifest load already in
+       flight when they were paid for replaces state.manifest wholesale. */
+    injectedClips: {},
     manifestRetryBound: false,
     lastTier: '',
     lastUtterances: [],
@@ -790,9 +793,25 @@
     state.manifest = data && isObj(data) ? data : { clips: {} };
     if (!isObj(state.manifest.clips)) state.manifest.clips = {};
     hydrateClips(state.manifest.clips);
+    reapplyInjectedClips();
     state.manifestSyncRev = Number(state.manifest.syncRev || 0);
     state.manifestRequested = false;
     return state.manifest;
+  }
+  /* Re-stamp injected (paid-for) clips onto the manifest the load just built;
+     the newest paid take always wins, so a stale reload cannot revert it. */
+  function reapplyInjectedClips() {
+    var o = state.injectedClips, m = state.manifest, k, v, n = 0;
+    if (!isObj(o) || !isObj(m)) return 0;
+    if (!isObj(m.clips)) m.clips = {};
+    for (k in o) {
+      if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
+      v = o[k];
+      if (v === null || v === undefined || v === '') continue;
+      m.clips[k] = v; n += 1;
+    }
+    if (n) hydrateClips(m.clips);
+    return n;
   }
   /* D2 / R2: the manifest is read through SDP.Sync.fetchFreshDataJson, so a
      freshly published Alice pack is heard from raw.githubusercontent.com even
@@ -844,12 +863,15 @@
     if (!isObj(clipsMap)) return 0;
     if (!isObj(state.manifest)) state.manifest = { clips: {} };
     if (!isObj(state.manifest.clips)) state.manifest.clips = {};
+    if (!isObj(state.injectedClips)) state.injectedClips = {};
     var added = 0, k;
     for (k in clipsMap) {
       if (!Object.prototype.hasOwnProperty.call(clipsMap, k)) continue;
       var entry = clipsMap[k];
       if (entry === null || entry === undefined || entry === '') continue;
-      state.manifest.clips[normKey(k)] = entry;
+      var nk = normKey(k);
+      state.manifest.clips[nk] = entry;
+      state.injectedClips[nk] = entry; /* D15/R9: survives later reloads */
       added += 1;
     }
     hydrateClips(state.manifest.clips);

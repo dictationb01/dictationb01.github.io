@@ -238,18 +238,18 @@
       },
       {
         "w": "fireworks",
-        "p": "/ˈfɜːewɔːks/",
-        "pos": "n.",
-        "m": "A fireworks.",
+        "p": "/ˈfaɪ̯.ə.wɜːks/",
+        "pos": "noun.",
+        "m": "A device using gunpowder and other chemicals which, when lit, emits a combination of coloured flames, sparks, whistles or bangs, and sometimes made to rocket high into the sky before exploding, used for entertainment or celebration.",
         "si": "ගිනිකෙළි",
-        "s": "We saw a fireworks near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+        "s": "Commercial firework displays are commonly launched from boats or other vessels",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
       },
       {
         "w": "folk music",
         "p": "/ˈfɒlk ˈmʌsɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being folk music.",
+        "pos": "noun.",
+        "m": "Any genre of music originating from the ethnic community of a specific region, often passed down through oral tradition, without recorded songwriters and possessing a clear purpose or social function.",
         "si": "ජන සංගීතය",
         "s": "The story was very folk music to read.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
@@ -257,8 +257,8 @@
       {
         "w": "guitarist",
         "p": "/ˈɡʌɪtɑːɪst/",
-        "pos": "n.",
-        "m": "A guitarist.",
+        "pos": "noun.",
+        "m": "Someone who plays a guitar.",
         "si": "ගිටාර් වාදකයෙක්",
         "s": "We saw a guitarist near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
@@ -283,12 +283,12 @@
       },
       {
         "w": "heroine",
-        "p": "/ˈhəɔɪn/",
-        "pos": "n.",
-        "m": "A heroine.",
+        "p": "/ˈhɛɹoʊɪn/",
+        "pos": "noun.",
+        "m": "A female hero.",
         "si": "වීරවරියක්",
         "s": "We saw a heroine near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
       }
     ]
   },
@@ -520,18 +520,18 @@
         },
         {
           "w": "fireworks",
-          "p": "/ˈfɜːewɔːks/",
-          "pos": "n.",
-          "m": "A fireworks.",
+          "p": "/ˈfaɪ̯.ə.wɜːks/",
+          "pos": "noun.",
+          "m": "A device using gunpowder and other chemicals which, when lit, emits a combination of coloured flames, sparks, whistles or bangs, and sometimes made to rocket high into the sky before exploding, used for entertainment or celebration.",
           "si": "ගිනිකෙළි",
-          "s": "We saw a fireworks near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+          "s": "Commercial firework displays are commonly launched from boats or other vessels",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
         },
         {
           "w": "folk music",
           "p": "/ˈfɒlk ˈmʌsɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being folk music.",
+          "pos": "noun.",
+          "m": "Any genre of music originating from the ethnic community of a specific region, often passed down through oral tradition, without recorded songwriters and possessing a clear purpose or social function.",
           "si": "ජන සංගීතය",
           "s": "The story was very folk music to read.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
@@ -539,8 +539,8 @@
         {
           "w": "guitarist",
           "p": "/ˈɡʌɪtɑːɪst/",
-          "pos": "n.",
-          "m": "A guitarist.",
+          "pos": "noun.",
+          "m": "Someone who plays a guitar.",
           "si": "ගිටාර් වාදකයෙක්",
           "s": "We saw a guitarist near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
@@ -565,12 +565,12 @@
         },
         {
           "w": "heroine",
-          "p": "/ˈhəɔɪn/",
-          "pos": "n.",
-          "m": "A heroine.",
+          "p": "/ˈhɛɹoʊɪn/",
+          "pos": "noun.",
+          "m": "A female hero.",
           "si": "වීරවරියක්",
           "s": "We saw a heroine near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
         }
       ]
     },
@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T11:10:59.493Z",
+  "updatedAt": "2026-11-06T11:11:19.644Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 42,
@@ -1408,18 +1408,18 @@
     },
     {
       "w": "fireworks",
-      "p": "/ˈfɜːewɔːks/",
-      "pos": "n.",
-      "m": "A fireworks.",
+      "p": "/ˈfaɪ̯.ə.wɜːks/",
+      "pos": "noun.",
+      "m": "A device using gunpowder and other chemicals which, when lit, emits a combination of coloured flames, sparks, whistles or bangs, and sometimes made to rocket high into the sky before exploding, used for entertainment or celebration.",
       "si": "ගිනිකෙළි",
-      "s": "We saw a fireworks near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+      "s": "Commercial firework displays are commonly launched from boats or other vessels",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
     },
     {
       "w": "folk music",
       "p": "/ˈfɒlk ˈmʌsɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being folk music.",
+      "pos": "noun.",
+      "m": "Any genre of music originating from the ethnic community of a specific region, often passed down through oral tradition, without recorded songwriters and possessing a clear purpose or social function.",
       "si": "ජන සංගීතය",
       "s": "The story was very folk music to read.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
@@ -1427,8 +1427,8 @@
     {
       "w": "guitarist",
       "p": "/ˈɡʌɪtɑːɪst/",
-      "pos": "n.",
-      "m": "A guitarist.",
+      "pos": "noun.",
+      "m": "Someone who plays a guitar.",
       "si": "ගිටාර් වාදකයෙක්",
       "s": "We saw a guitarist near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
@@ -1453,12 +1453,12 @@
     },
     {
       "w": "heroine",
-      "p": "/ˈhəɔɪn/",
-      "pos": "n.",
-      "m": "A heroine.",
+      "p": "/ˈhɛɹoʊɪn/",
+      "pos": "noun.",
+      "m": "A female hero.",
       "si": "වීරවරියක්",
       "s": "We saw a heroine near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
     }
   ],
   "versionFamily": "9.0.0"

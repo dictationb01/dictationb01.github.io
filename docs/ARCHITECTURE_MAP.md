@@ -13,21 +13,21 @@ a change needs a new file, it needs a new row in §H1 and a new budget in
 
 | File | Budget | Owner / role |
 | --- | --- | --- |
-| `index.html` | ≤ 38,000 B | Shell: 54px header, **6 screens** (`home/player/practice/dict/settings/studio`), guide modal, `#resumeBanner`, toast, boot check, 6 deferred modules |
-| `assets/css/sdp-ui.css` | ≤ 68,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.3 tactile tokens). No runtime CSS injection, ever |
+| `index.html` | ≤ 58,000 B | Shell: 54px header, **6 screens** (`home/player/practice/dict/settings/studio`), guide modal, `#resumeBanner`, toast, boot check, 6 deferred modules |
+| `assets/css/sdp-ui.css` | ≤ 128,000 B | The single stylesheet (Zinc + Sky flat matte, v0.0.3 tactile tokens). No runtime CSS injection, ever |
 | `assets/fonts/NotoSansSinhala-Regular.woff2` | exactly 48,520 B | **Preserved read-only**, SHA-256 locked |
 | `assets/fonts/NotoSansSinhala-Bold.woff2` | exactly 48,748 B | **Preserved read-only**, SHA-256 locked |
-| `data/sdp-data-sync.js` | ≤ 86,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
-| `data/sdp-audio-speech.js` | ≤ 52,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
-| `data/sdp-dictation-engine.js` | ≤ 62,000 B | `SDP.Engine`: beat machine, ring/bar timer, glyph transport deck + 30-pill `#sessionPills`, verbatim phase lines, Paper/Typing, hints, 30-row self-check |
-| `data/sdp-ui-views.js` | ≤ 136,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 4.0 spotlight, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
-| `data/studio.js` | ≤ 140,000 B | `SDP.Studio`: PIN vault (`BOOTSTRAP_PIN` recovery + atomic re-seal), 3-card studio, **70-clip** pack dashboard + one-click flow, `sha1Hex` clip hashes, `#btnVerifyEleven`, delta retry, session editor, recorder, ElevenLabs, publish |
+| `data/sdp-data-sync.js` | ≤ 106,000 B | `SDP.Data` (5 keys), `SDP.Sync` (fetch/reconcile/publish/SW), `SDP.Sync.Vault` (`SDP_ENC_V2`) |
+| `data/sdp-audio-speech.js` | ≤ 63,000 B | `SDP.Speech`: `say()` normaliser, 4-tier `playWord()`, shared `<audio>` |
+| `data/sdp-dictation-engine.js` | ≤ 78,000 B | `SDP.Engine`: beat machine, ring/bar timer, glyph transport deck + 30-pill `#sessionPills`, verbatim phase lines, Paper/Typing, hints, 30-row self-check |
+| `data/sdp-ui-views.js` | ≤ 226,000 B | `SDP.Views`: `STRINGS_EN`/`STRINGS_SI`, 6-tab router, Home, Guide 4.0 spotlight, Words (`#01..#30`), Practice, Settings, Studio mounts, cues, toast |
+| `data/studio.js` | ≤ 234,000 B | `SDP.Studio`: PIN vault (`BOOTSTRAP_PIN` recovery + atomic re-seal), 3-card studio, **70-clip** pack dashboard + one-click flow, `sha1Hex` clip hashes, `#btnVerifyEleven`, delta retry, session editor, recorder, ElevenLabs, publish |
 | `data/data-meter.js` | ≤ 24,000 B | Preserved metering engine, `METER_VERSION = '0.0.1.a'`, `SCHEMA = 1` |
 | `data/session.json` | exactly 44885 B (SHA `b1d178d3…`, v0.0.6.a real British IPA) | **Preserved read-only**: 30 Session 8 words + 30 archived Session 7 words + plan |
 | `data/config.json` | ≤ 36,000 B | Preserved backend payload; only `ver/appVersion/version/schema/settingsRev` are ours |
 | `data/version.json` | ≤ 2,000 B | Slim pointer schema (H3) |
 | `data/gas-source.txt` | exactly 13,764 B | **Preserved read-only**: Apps Script backend |
-| `data/elevenlabs-audio.json` | ≤ 2,500,000 B | **App-written** Charlotte voice pack (D-UI11, `hashAlgo: 'sha1'`); header asserted, clips travel with the repo |
+| `data/elevenlabs-audio.json` | ≤ 3,600,000 B | **App-written** Charlotte voice pack (D-UI11, `hashAlgo: 'sha1'`); header asserted, clips travel with the repo |
 | `data.html` | ≤ 34,000 B | `/data` transparency route |
 | `data/index.html` | ≤ 34,000 B | Byte-identical twin of `data.html` |
 | `sw.js` | ≤ 13,000 B | `sdp-v0.0.3` service worker |
@@ -85,7 +85,10 @@ Any id below is a public interface: tests, CSS and the engine depend on it.
 - **Screens:** `#screen-home`, `#screen-player`, `#screen-practice`, `#screen-dict`, `#screen-settings`, `#screen-studio`
 - **Home:** `#homeHero`, `#homeTitle`, `#homeSub`, `#btnStart`, `#btnGuide`, `#homeStatsRow`, `#homeQuickPractice`, `#homeAnn`, `#homeWordsPreview`, `#resumeBanner`, `#btnResumeWord`, `#btnStartOver`, `.cue[data-cue="home"]`, `#creditFoot`
 - **Cockpit:** `#sessionProgressStrip`, `#sessionPills` (30 `.word-pill`), `#sessionProgressCount`, `#playerRepeatBadge`, `#playerPresetBadge`, `#cockpitBar`, `#sessionTitle`, `#wordPosBadge`, `#cockpitProgress`, `#beatRing`, `#beatBar`, `#beatSeconds`, `#beatStage`, `#beatStateText`, `#playerPausedBanner`, `#hintChips`, `#typeInput` (**typing mode only**), `#btnPrev`, `#btnPlayPause`, `#btnReplay`, `#btnNext`, `#btnRepeat`, `#btnHint`, `#btnModeSwitch`, `#btnFinish`
-- **Results:** `#resultsPanel`, `#resultsTable`, `#scoreValue`, `#scorePct`, `#btnMarkAll`, `#btnToggleMissed`, `#btnRetryMissed`, `#btnNewSession`
+- **Results:** `#resultsPanel`, `#resultsTable`, `#scoreValue`, `#scorePct`, `#btnMarkAllCorrect` (v0.0.6.l: fills only UNMARKED rows — Missed marks kept), `#btnMarkAll`, `#btnToggleMissed`, `#btnRetryMissed`, `#btnNewSession`
+- **Review popup + launcher (v0.0.6.l):** `#reviewPopupCard` (TOP of the results view, above the table), `#reviewPills` (`.rpill` × 5: `fast`/`voice_ok`/`voice_bad`/`incomplete`/`bug`), `#btnVoiceReview`, `#reviewVoiceStatus`, `#reviewVoicePreview`, `#reviewTextInput`, `#btnSendReview`, `#btnSkipReview`, `#sdpFeedbackFab`, `#sdpFeedbackDrawer`, `#fabFaq`, `#fabQuickChips`, `#btnFabVoiceNote`, `#btnFabSendReview`
+- **Briefing (v0.0.6.l):** `#briefingUpdateBadge`, `#briefingTapPill`, `.b-line[data-bline]` > `.b-word[data-bword]` karaoke tokens
+- **Studio reviews vault (v0.0.6.l):** `#studioCardReviews`, `#reviewsSummary`, `#studioReviewsList`, `#btnDownloadReviewsZip`, `#btnRefreshReviews`
 - **Guide:** `#guideModal`, `#guideSteps` (4 `.guide-step` cards, each with a `.guide-mock`), `#btnGuideSkipStart`, `#guideLangPill`, `#guideSpeak`, `#btnGuideClose`
 - **Words:** `#dictSearch`, `#dictFilterRow`, `#dictList` (30 `.dict-card`, `#01..#30`, each with `[data-play-word]`, `[data-mark-word="mastered"]`, `[data-mark-word="weak"]`), `#dictEmpty`
 - **Practice:** `#pracMode`, `#pracStage`, `#pracWeakOnly`

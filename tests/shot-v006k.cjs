@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-/* v0.0.6.k proof captures: ultra-clean header, executive briefing, 5-slot pool. */
+/* v0.0.6.l proof captures: ultra-clean header, executive briefing, 5-slot pool. */
 const path = require('node:path');
 const fs = require('node:fs');
 const { chromium } = require('playwright-core');
@@ -28,7 +28,7 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: 1, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -93,7 +93,7 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.k');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: 1, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });

@@ -77,7 +77,15 @@
   sessionNo: '8',
   finished: false,
   pauseReason: '',
-  startedAt: 0
+  startedAt: 0,
+  /* v0.0.6.l Pillar 4 — session authenticity telemetry: startedAt/endedAt
+     bracket the run; wordsCompletedCount counts words that reached their
+     full listen/write beat naturally (vs. manual Next jumps);
+     rapidSkipCount counts Next taps within 2.5 s of a word starting. */
+  endedAt: 0,
+  wordStartAt: 0,
+  rapidSkipCount: 0,
+  wordsCompletedCount: 0
  };
 
  var els = {};
@@ -498,6 +506,9 @@
   }
   if (E.phase === 'writing') {
    saveDraft();
+   /* Pillar 4: only a word whose full listen/write beat ran out naturally
+      counts as completed — a manual Next jump never inflates this. */
+   E.wordsCompletedCount += 1;
    if (E.autoAdvance) {
     if (E.index + 1 >= E.items.length) finish();
     else enterWord(E.index + 1);
@@ -646,6 +657,7 @@
   E.index = index;
   E.finished = false;
   E.paused = false;
+  E.wordStartAt = now();
   E.hints = { pos: false, first: false, si: false, sentence: false };
   updateMeta();
   /* v0.0.6.a Track 3: every new beat re-arms the hidden reveal so the next
@@ -960,6 +972,9 @@
  }
 
  function goNext() {
+  /* Pillar 4: a Next tap within 2.5 s of the word starting is a rapid
+     skip — the student never listened to the full beat. */
+  if (E.wordStartAt && (now() - E.wordStartAt) < 2500 && !E.paused) E.rapidSkipCount += 1;
   if (E.index + 1 >= E.items.length) { finish(); return; }
   enterWord(E.index + 1);
  }
@@ -1172,6 +1187,31 @@
   renderResults();
   syncMastery();
  }
+ /* ══ v0.0.6.l Pillar 4 — the Paper-mode 1-tap self-check helper ════════
+  * Real students write in their exercise book and look at the 30 words to
+  * check their spelling; they never tap Correct/Missed 30 times. This
+  * helper fills ONLY the unmarked rows as correct, so the 1-2 words the
+  * student explicitly marked Missed keep their marks: tap Missed on the
+  * wrong ones, then "✓ Mark All Unmarked as Correct" once — done. */
+ function markAllUnmarkedCorrect() {
+  var changed = 0, i;
+  for (i = 0; i < E.items.length; i++) {
+   var item = E.items[i];
+   if (item.marked !== 'correct' && item.marked !== 'missed') {
+    item.marked = 'correct';
+    item.correct = true;
+    changed += 1;
+   }
+  }
+  if (changed) {
+   renderResults();
+   syncMastery();
+   if (SDP.Views && SDP.Views.showToast) {
+    try { SDP.Views.showToast(t('markAllUnmarkedToast', 'All unmarked words marked correct — your Missed marks are kept.')); } catch (e) {}
+   }
+  }
+  return changed;
+ }
  /* ENG-07: one stray Smart Board tap used to score 0/30. The first tap only
    arms the action; the second one inside 3 s actually inverts every row. */
  function toggleMissed() {
@@ -1251,6 +1291,64 @@
   if (panel) panel.hidden = !show;
  }
 
+ /* ══ v0.0.6.l Pillar 4 — Session Authenticity & Engagement Analyzer ════
+  * Classifies every finished run from timing + interaction evidence:
+  *   GENUINE_FULL        >= 25 words listened to their full beat AND a
+  *                         realistic duration (>= 90 s);
+  *   RAPID_SKIP_SUSPECT  rapidSkipCount >= 10, or all 30 words "finished"
+  *                         in under 45 s — the student spammed Next;
+  *   PARTIAL_INCOMPLETE  finished early / fewer than 25 full words.
+  * The verdict is sealed into the encrypted review payload on BOTH
+  * "Send Review" and "Skip — No Thanks" (see Views.sendReview). */
+ var AUTH_MIN_FULL_WORDS = 25;
+ var AUTH_MIN_REALISTIC_SEC = 90;
+ var AUTH_RAPID_SKIPS = 10;
+ var AUTH_RUSH_SEC = 45;
+ function countMarks() {
+  var correct = 0, missed = 0, unmarked = 0, i;
+  for (i = 0; i < E.items.length; i++) {
+   var m = E.items[i].marked;
+   if (m === 'correct') correct += 1;
+   else if (m === 'missed') missed += 1;
+   else unmarked += 1;
+  }
+  return { correct: correct, missed: missed, unmarked: unmarked };
+ }
+ function analyzeSession() {
+  var durMs = Math.max(0, (E.endedAt || now()) - (E.startedAt || 0));
+  var durSec = Math.round(durMs / 1000);
+  var marks = countMarks();
+  var full = E.wordsCompletedCount;
+  var total = E.items.length || 30;
+  var auth;
+  if ((E.rapidSkipCount >= AUTH_RAPID_SKIPS) || (total >= 20 && durSec > 0 && durSec < AUTH_RUSH_SEC)) {
+   auth = 'RAPID_SKIP_SUSPECT';
+  } else if (full >= AUTH_MIN_FULL_WORDS && durSec >= AUTH_MIN_REALISTIC_SEC) {
+   auth = 'GENUINE_FULL';
+  } else {
+   auth = 'PARTIAL_INCOMPLETE';
+  }
+  return {
+   authenticityStatus: auth,
+   durationSec: durSec,
+   wordsTotal: total,
+   wordsCompletedCount: full,
+   rapidSkipCount: E.rapidSkipCount,
+   markedCorrectCount: marks.correct,
+   markedMissedCount: marks.missed,
+   unmarkedCount: marks.unmarked,
+   mode: E.mode,
+   startedAt: E.startedAt ? new Date(E.startedAt).toISOString() : '',
+   endedAt: E.endedAt ? new Date(E.endedAt).toISOString() : ''
+  };
+ }
+ function sessionTelemetry() {
+  if (!E.items.length) return null;
+  var out = analyzeSession();
+  out.ver = '26';
+  return out;
+ }
+
  function finish() {
   if (!E.items.length) return;
   stopTicker();
@@ -1260,6 +1358,7 @@
   E.finished = true;
   E.remainingMs = 0;
   E.paused = false;
+  E.endedAt = now();
   try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
   paint(0);
   setStateText();
@@ -1270,6 +1369,12 @@
   grade();
   renderResults();
   showResults(true);
+  /* Pillar 4: the authenticity verdict is computed and logged the moment
+     the run ends — it then rides inside the encrypted review payload on
+     BOTH Send Review and Skip — No Thanks. */
+  try {
+   if (SDP.Diagnostics) SDP.Diagnostics.log('session_telemetry', sessionTelemetry());
+  } catch (e) {}
   try {
    if (SDP.Data) {
     SDP.Data.recordResult(buildModel());
@@ -1367,6 +1472,11 @@
   E.pauseReason = '';
   E.remainingMs = 0;
   E.startedAt = now();
+  /* Pillar 4: every run opens with a clean authenticity slate. */
+  E.endedAt = 0;
+  E.wordStartAt = 0;
+  E.rapidSkipCount = 0;
+  E.wordsCompletedCount = 0;
   /* R3/R6: the opening cue belongs to the FIRST word of this run only, and
     the fallback persona is pinned for the whole run. */
   E.needPreparingCue = true;
@@ -1461,6 +1571,7 @@
    ['btnModeSwitch', toggleMode],
    ['btnFinish', finish],
    ['btnMarkAll', markAll],
+   ['btnMarkAllCorrect', markAllUnmarkedCorrect],
    ['btnToggleMissed', toggleMissed],
    ['btnRetryMissed', retryMissedOnly],
    ['btnNewSession', startNewSession]
@@ -1607,6 +1718,10 @@
   toggleMode: toggleMode,
   applySettings: applySettings,
   renderResults: renderResults,
+  /* ══ v0.0.6.l Pillar 4: session authenticity telemetry surface ══ */
+  analyzeSession: analyzeSession,
+  sessionTelemetry: sessionTelemetry,
+  markAllUnmarkedCorrect: markAllUnmarkedCorrect,
   renderHints: renderHints,
   saveDraft: saveDraft,
   refreshEls: refreshEls,

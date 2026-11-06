@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.k)
+/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.l)
  * Strict ES5, dependency free.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 audio priority chain
  * Dictionary audio always plays through a plain <audio> element; element audio
@@ -281,7 +281,7 @@
     return cachedProfVoice ? str(cachedProfVoice.name) : '';
   }
 
-  /* ══ v0.0.6.k Pillar 1: the British Male narrator — NEVER a female voice ══
+  /* ══ v0.0.6.l Pillar 1: the British Male narrator — NEVER a female voice ══
    * The Project Briefing speaks with a warm, mature male persona. Why the
    * phone played a girl's voice before: on Android/iOS Chrome,
    * speechSynthesis.getVoices() lists female voices first or labels them
@@ -300,7 +300,7 @@
     var uri = str(v.voiceURI || '').toLowerCase();
     var hay = name + ' ' + uri;
     if (FEMALE_BRIT_RE.test(hay)) return -100;
-    /* v0.0.6.k: "Google UK English Female" and friends are caught above; a
+    /* v0.0.6.l: "Google UK English Female" and friends are caught above; a
        GENERIC default ("English (United Kingdom)", no male marker) is also
        rejected so the fallback never lands on a random (often female)
        system voice. Only an explicitly male-named or male-flagged voice
@@ -411,7 +411,7 @@
      *   lang 'en-GB' · rate 0.92 (or the caller's explicit rate) · pitch 1.03.
      * 'custom' keeps the per-tier behaviour. */
     var locked = str(conf.voiceLock || 'unified') === 'unified';
-    /* v0.0.6.k: persona 'male' reserves the utterance for the Project
+    /* v0.0.6.l: persona 'male' reserves the utterance for the Project
        Briefing narrator — a deep, warm British male voice pinned to pitch
        0.82 / rate 0.98 so device synthesis never sounds shrill, juvenile
        or female. */
@@ -606,6 +606,8 @@
       if (el) {
         el.onended = null;
         el.onerror = null;
+        el.onloadedmetadata = null;
+        el.onplaying = null;
         try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {}
       }
       if (state.speechEpoch !== pEpoch) {
@@ -625,6 +627,20 @@
       try { el.playbackRate = Math.min(1.2, Math.max(0.7, Number(opts.rate || conf.rate) || 1)); } catch (e) {}
       el.onended = function () { finish(true); };
       el.onerror = function () { finish(false); };
+      /* v0.0.6.l (Pillar 1): the briefing narration needs the clip's real
+         duration (word-flow karaoke timing) and a positive "audio actually
+         started" signal (the fresh-Chrome autoplay handshake). */
+      var hooks = isObj(opts.hooks) ? opts.hooks : null;
+      el.onloadedmetadata = function () {
+        if (hooks && typeof hooks.onDuration === 'function' && isFinite(el.duration) && el.duration > 0) {
+          try { hooks.onDuration(el.duration); } catch (e1) {}
+        }
+      };
+      el.onplaying = function () {
+        if (hooks && typeof hooks.onStarted === 'function') {
+          try { hooks.onStarted(); } catch (e2) {}
+        }
+      };
       var playing = el.play();
       if (playing && typeof playing.then === 'function') {
         playing.then(null, function (perr) {
@@ -640,6 +656,28 @@
               var abp = new Error('aborted');
               abp.aborted = true; abp.stale = true;
               cb(abp);
+            }
+            return;
+          }
+          /* v0.0.6.l (Pillar 1): Chrome's autoplay policy on a brand-new
+             session rejects play() with NotAllowedError — surface it so the
+             briefing holds its beat behind the tap pill instead of falling
+             to a robotic browser voice or skipping silently. */
+          if (perr && perr.name === 'NotAllowedError') {
+            if (!done) {
+              done = true;
+              state.audioPlaying = false;
+              if (timer) { try { global.clearTimeout(timer); } catch (e3) {} }
+              try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e4) {}
+              if (state.speechEpoch !== pEpoch) {
+                var abn = new Error('aborted');
+                abn.aborted = true; abn.stale = true;
+                cb(abn);
+                return;
+              }
+              var na = new Error('autoplay_blocked');
+              na.autoplayBlocked = true;
+              cb(na);
             }
             return;
           }
@@ -947,16 +985,19 @@
     return false;
   }
 
-  /* ══ v0.0.6.k Pillar 1: Project Briefing narration ══════════════════════
-   * Tier 1: the permanently cached _intro_male_N deep British-male clip
-   *        from data/elevenlabs-audio.json (zero latency, zero re-spend).
-   *        The Studio one-click generator bakes them with the ElevenLabs
-   *        George/Daniel deep British male voice.
+  /* ══ v0.0.6.l Pillar 1: Project Briefing narration ══════════════════════
+   * Tier 1: the committed real British-male clip _intro_male_N from
+   *        data/elevenlabs-audio.json (zero latency, zero re-spend) — the
+   *        hooks report its true duration (word-flow timing) and the
+   *        positive onStarted signal for the autoplay handshake.
    * Tier 2: the pinned deep British male device voice (persona 'male'
-   *        above — pitch 0.82 / rate 0.98, hard female-name rejection) —
-   *        always available offline, before the lecturer has generated the
-   *        clips. The callback ALWAYS fires so the synced transcript can
-   *        never stall mid-sentence. */
+   *        — pitch 0.82 / rate 0.98, hard female-name rejection) — before
+   *        the lecturer has regenerated the clips.
+   * Fresh-Chrome autoplay law: a NotAllowedError from Audio.play(), or a
+   *        speechSynthesis with zero voices, resolves { autoplayBlocked }
+   *        so the briefing HOLDS the beat behind the "Tap Anywhere" pill
+   *        and never silently skips or falls to a robotic voice. The
+   *        callback ALWAYS fires so the synced transcript can never stall. */
   function briefingClipUrl(idx) {
     if (idx === null || idx === undefined || idx < 0) return '';
     var clips = state.manifest && isObj(state.manifest.clips) ? state.manifest.clips : null;
@@ -965,22 +1006,38 @@
     var entry = clips['_intro_male_' + (n + 1)] || clips['intro.en.' + n] || null;
     return entryUrl(entry);
   }
-  function playBriefingStep(stepIdx, stepText, cb) {
+  function playBriefingStep(stepIdx, stepText, cb, hooks) {
     cb = cb || noop;
+    hooks = isObj(hooks) ? hooks : {};
     var text = str(stepText);
     if (!text) { cb(null); return true; }
     var clip = briefingClipUrl(stepIdx);
     if (clip) {
       var bEpoch = state.speechEpoch;
       state.speaking = true;
-      playUrl(playableUrl(clip), { rate: 0.97 }, function (err) {
+      playUrl(playableUrl(clip), {
+        rate: 0.97,
+        hooks: {
+          onStarted: function () { if (typeof hooks.onStarted === 'function') { try { hooks.onStarted(); } catch (e1) {} } },
+          onDuration: function (d) { if (typeof hooks.onDuration === 'function') { try { hooks.onDuration(d); } catch (e2) {} } }
+        }
+      }, function (err) {
         if (state.speechEpoch !== bEpoch) return;
         state.speaking = false;
         if (!err) { state.lastTier = 'intro_male_clip'; cb(null); return; }
+        if (err && err.autoplayBlocked) { cb({ autoplayBlocked: true, tier: 'clip' }); return; }
+        /* A broken cached clip must still narrate the step. */
         say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
       });
       return true;
     }
+    /* Tier 2: a brand-new Chrome session often has ZERO speechSynthesis
+       voices and blocks speak() until the first gesture — that exact state
+       resolves autoplayBlocked (the tap pill), never a silent skip. */
+    var synth = global.speechSynthesis;
+    var voiceCount = 0;
+    try { if (synth && synth.getVoices) voiceCount = synth.getVoices().length; } catch (e0) {}
+    if (synth && voiceCount === 0) { cb({ autoplayBlocked: true, tier: 'device', noVoices: true }); return false; }
     say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
     return false;
   }
@@ -1143,7 +1200,7 @@
           attempt();
           return;
         }
-        /* v0.0.6.k Pillar 3: an honest audio-tier fallback is a diagnostics
+        /* v0.0.6.l Pillar 3: an honest audio-tier fallback is a diagnostics
            event (privacy-safe, no personal data) so the lecturer can see why
            a word fell back to Youdao or the device voice. */
         try {
@@ -1231,7 +1288,7 @@
     pickVoice: pickVoice,
     warmProfessorVoice: warmProfessorVoice,
     voiceName: voiceName,
-    /* v0.0.6.k: the deep British male narrator + Project Briefing steps. */
+    /* v0.0.6.l: the deep British male narrator + Project Briefing steps. */
     pickMaleVoice: pickMaleVoice,
     maleVoiceName: maleVoiceName,
     playBriefingStep: playBriefingStep,

@@ -3,8 +3,8 @@
   "appVersion": "0.0.6.g",
   "ver": 21,
   "schema": 21,
-  "settingsRev": 37,
-  "syncRev": 1793890000000,
+  "settingsRev": 38,
+  "syncRev": 1793931430253,
   "voiceId": "Xb7hH8MSUJpSbSDYk0k2",
   "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
@@ -1027,9 +1027,9 @@
   "voiceModel": "eleven_flash_v2_5",
   "generatedAt": "2026-11-01T00:00:00.000Z",
   "buildDate": "2026-11-04",
-  "updatedAt": "2026-11-04T20:38:13.159Z",
+  "updatedAt": "2026-11-06T02:17:10.267Z",
   "versionFamily": "0.0.1",
-  "manifestSource": "origin",
+  "manifestSource": "raw",
   "persona": "British English female educator (Alice-class)",
   "hashAlgo": "sha1"
 }

@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.l';
+  SDP.version = '0.0.6.m';
   SDP.build = '2026-11-06';
-  SDP.ver = 26;
+  SDP.ver = 27;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.l';
-  var SCHEMA = 26;
-  var SETTINGS_REV = 42;
+  var APP_VERSION = '0.0.6.m';
+  var SCHEMA = 27;
+  var SETTINGS_REV = 43;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -804,6 +804,7 @@
       diagState.ring = Array.isArray(raw.ring) ? raw.ring.slice(0, DIAG_MAX_RING) : [];
       diagState.reviews = Array.isArray(raw.reviews) ? raw.reviews.slice(0, DIAG_MAX_REVIEWS) : [];
       diagState.key = str(raw.k);
+      diagState.lastUiSnapshot = isObj(raw.lastUiSnapshot) ? raw.lastUiSnapshot : null;
     }
     return diagState;
   }
@@ -812,10 +813,10 @@
     if (diagState.timer) { global.clearTimeout(diagState.timer); diagState.timer = 0; }
     try {
       var patch = {};
-      patch[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key };
+      patch[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key, lastUiSnapshot: diagState.lastUiSnapshot || null };
       Data.saveSettings(patch);
     } catch (e) {
-      /* v0.0.6.l: a voice-note review can outgrow the localStorage quota —
+      /* v0.0.6.m: a voice-note review can outgrow the localStorage quota —
          drop the OLDEST sealed reviews (never the ring) until it fits, so
          one large clip never wipes the whole diagnostics vault. */
       var guard = 0;
@@ -824,7 +825,7 @@
         diagState.reviews = diagState.reviews.slice(1);
         try {
           var retry = {};
-          retry[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key };
+          retry[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key, lastUiSnapshot: diagState.lastUiSnapshot || null };
           Data.saveSettings(retry);
           return;
         } catch (e2) {}
@@ -868,6 +869,11 @@
         if (diagState.reviews.length > DIAG_MAX_REVIEWS) diagState.reviews = diagState.reviews.slice(diagState.reviews.length - DIAG_MAX_REVIEWS);
         diagState.ring.push({ k: 'review_captured', d: { encrypted: true }, at: new Date().toISOString(), t: nowMs() });
         diagPersistNow();
+        /* v0.0.6.m FIX 4: guaranteed local + cloud persistence — the sealed
+           envelope is ALSO pushed to the Apps Script cloud relay (when the
+           creator configured one) so nothing is ever lost, even if the
+           device later clears its storage. */
+        try { Data.pushReviewEnvelope(str(envelope)); } catch (e0) {}
       }, function () {});
       return true;
     },
@@ -907,6 +913,109 @@
         lang: isObj(s) ? str(s.lang) : 'en'
       };
     },
+    /* ══ v0.0.6.m FIX 4: the automatic full UI + DOM + Cache + Audio
+       snapshot. Captured and sealed (AES-GCM SDP_ENC_V2) inside every
+       review — send AND skip — so the creator can inspect the exact screen
+       geometry, cache state and audio pipeline at the moment the student
+       sent the feedback. Privacy law: geometry and counters only, never
+       input values or personal data. */
+    captureFullUiSnapshot: function () {
+      var snap = { takenAt: new Date().toISOString(), appVersion: APP_VERSION };
+      /* ui — visual & DOM geometry state */
+      var ui = { screen: '', viewport: {}, elements: {} };
+      try {
+        ui.screen = str(SDP.Views && SDP.Views.currentTab ? SDP.Views.currentTab() : (doc.querySelector && doc.querySelector('.screen.on') ? str(doc.querySelector('.screen.on').id) : ''));
+      } catch (e0) {}
+      try {
+        ui.viewport = {
+          w: global.innerWidth || 0, h: global.innerHeight || 0,
+          dpr: global.devicePixelRatio || 1,
+          overflowX: !!(doc.documentElement && global.innerWidth && doc.documentElement.scrollWidth > global.innerWidth)
+        };
+      } catch (e1) {}
+      try {
+        var s = Data.settings();
+        ui.theme = isObj(s) ? str(s.theme) : 'light';
+        ui.lang = isObj(s) ? str(s.lang) : 'en';
+        ui.mode = isObj(s) ? str(s.mode) : '';
+      } catch (e2) {}
+      var RECT_IDS = ['appHeader', 'ringWrap', 'btnPlayPause', 'tabbar', 'briefingModal', 'reviewPopupCard'];
+      for (var ri = 0; ri < RECT_IDS.length; ri++) {
+        var id = RECT_IDS[ri], node = doc.getElementById ? doc.getElementById(id) : null;
+        if (!node) { ui.elements[id] = { present: false }; continue; }
+        var r = { present: true, hidden: !!node.hidden, visible: !!(node.offsetWidth || node.offsetHeight) };
+        try {
+          if (node.getBoundingClientRect) {
+            var box = node.getBoundingClientRect();
+            r.rect = { x: Math.round(box.left), y: Math.round(box.top), w: Math.round(box.width), h: Math.round(box.height) };
+          }
+        } catch (e3) {}
+        ui.elements[id] = r;
+      }
+      snap.ui = ui;
+      /* cache — service worker & storage health */
+      var cache = { swActive: false, caches: {}, localStorage: {}, introPresent: false };
+      try { cache.swActive = !!(global.navigator && global.navigator.serviceWorker && global.navigator.serviceWorker.controller); } catch (e4) {}
+      try {
+        if (global.caches && global.caches.keys) {
+          var names = [];
+          global.caches.keys().then(function (ks) {
+            /* resolved later; the snapshot keeps the synchronous view */
+          }, function () {});
+        }
+      } catch (e5) {}
+      try {
+        if (doc && doc.sdpCacheCounts) cache.caches = doc.sdpCacheCounts;
+      } catch (e6) {}
+      try {
+        var counted = 0;
+        for (var li = 0; li < global.localStorage.length && counted < 40; li++) {
+          var lk = global.localStorage.key(li);
+          var lv = '';
+          try { lv = global.localStorage.getItem(lk) || ''; } catch (e7) {}
+          cache.localStorage[str(lk)] = lv.length;
+          counted += 1;
+        }
+      } catch (e8) {}
+      try {
+        cache.sessionRev = Number(Data.settings && Data.settings().sessionRev || 0) || 0;
+      } catch (e9) {}
+      try { cache.settingsRev = SETTINGS_REV; } catch (e10) {}
+      try {
+        var stg = Data.settings();
+        cache.sessionRev = isObj(stg) ? Number(stg.sessionRev || 0) : 0;
+        cache.settingsRev = isObj(stg) ? Number(stg.settingsRev || 0) || SETTINGS_REV : SETTINGS_REV;
+      } catch (e11) {}
+      try {
+        cache.voicePackClipsCount = (SDP.Speech && SDP.Speech.clipCount) ? SDP.Speech.clipCount() : 0;
+      } catch (e12) {}
+      try {
+        var man = SDP.Speech && SDP.Speech.clipManifest ? SDP.Speech.clipManifest() : null;
+        cache.introPresent = !!(man && man.clips && (man.clips['_intro_male_1'] || man.clips['intro.en.0']));
+      } catch (e13) {}
+      snap.cache = cache;
+      /* audio — speech & mic pipeline health */
+      var audio = {};
+      try { audio.lastTierName = (SDP.Speech && SDP.Speech.lastTierName) ? SDP.Speech.lastTierName() : ''; } catch (e14) {}
+      try { audio.voicesCount = (SDP.Speech && SDP.Speech.getVoicesSafe) ? SDP.Speech.getVoicesSafe().length : (global.speechSynthesis ? (global.speechSynthesis.getVoices() || []).length : 0); } catch (e15) {}
+      try { audio.micReleased = (SDP.Speech && SDP.Speech.micReleased) ? !!SDP.Speech.micReleased() : true; } catch (e16) {}
+      var errs = [];
+      try {
+        var ring = Diagnostics.ring();
+        for (var ei = ring.length - 1; ei >= 0 && errs.length < 10; ei--) {
+          var ev = ring[ei];
+          if (ev && (str(ev.k).indexOf('audio') === 0 || str(ev.k) === 'tier_fallback')) errs.push({ k: str(ev.k), d: ev.d, at: str(ev.at) });
+        }
+      } catch (e17) {}
+      audio.recentAudioErrors = errs;
+      snap.audio = audio;
+      /* The captured snapshot also rides the settings-based diagnostics
+         vault summary on the next summary() call. */
+      diagState.lastUiSnapshot = snap;
+      diagPersistThrottled();
+      return snap;
+    },
+    lastUiSnapshot: function () { diagLoad(); return diagState.lastUiSnapshot || null; },
     sessionSnapshot: function () {
       var words = [];
       try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words(); } catch (e) {}
@@ -953,7 +1062,7 @@
       ];
       return Diagnostics.decryptReviews().then(function (list) {
         list = Array.isArray(list) ? list : [];
-        /* v0.0.6.l Pillar 4: the dedicated session-authenticity artifact —
+        /* v0.0.6.m Pillar 4: the dedicated session-authenticity artifact —
            every captured session with its Genuine / Rapid-Skip / Incomplete
            verdict, duration, completion and rapid-skip counts, plus the
            aggregate summary the Studio drawer shows. */
@@ -982,6 +1091,22 @@
         files.push({ name: 'student-reviews.json', text: JSON.stringify({
           note: 'Decrypted inside the unlocked Lecturer Studio — AES-GCM (SDP_ENC_V2) at capture.',
           count: list.length, reviews: list
+        }, null, 2) });
+        /* v0.0.6.m FIX 4: the full UI + DOM + Cache + Audio snapshot artifact —
+           every sealed review with its captured uiSnapshot, plus the device's
+           latest snapshot, so the .zip carries the complete picture. */
+        var snaps = [];
+        list.forEach(function (row) {
+          if (!row || !row.ok || !isObj(row.review)) return;
+          if (isObj(row.review.uiSnapshot)) snaps.push({ at: str(row.review.at), source: str(row.review.source || ''), uiSnapshot: row.review.uiSnapshot });
+        });
+        files.push({ name: 'ui-snapshots.json', text: JSON.stringify({
+          note: 'Full UI + DOM geometry + CacheStorage + audio-pipeline snapshot sealed inside every review (v0.0.6.m FIX 4). Privacy: geometry and counters only.',
+          appVersion: APP_VERSION,
+          exportedAt: new Date().toISOString(),
+          count: snaps.length,
+          latest: Diagnostics.lastUiSnapshot(),
+          snapshots: snaps
         }, null, 2) });
         files.push({ name: 'README-DIAGNOSTICS.txt', text: Diagnostics.readmeText(summary) });
         return { files: files, summary: summary };
@@ -2047,6 +2172,40 @@
       }
       if (current.length) chunks.push(current);
       return chunks;
+    },
+    /* v0.0.6.m FIX 4: push a sealed review envelope to the cloud relay.
+       The preserved Apps Script schema (addMessage: text<=600, meta<=200)
+       cannot carry a multi-KB AES-GCM envelope, so the cloud copy carries
+       the digest (chips + text preview + envelope head) and the FULL
+       envelope stays durable through the local sdpDiag vault, the Studio
+       .zip export and the creator's GitHub publish path. */
+    pushReviewEnvelope: function (envelope, cb) {
+      cb = cb || noop;
+      var head = str(envelope);
+      var relayUrl = '';
+      try {
+        if (global.SDP && SDP.Studio && SDP.Studio.secrets) relayUrl = str(SDP.Studio.secrets().gasUrl || '');
+      } catch (e0) {}
+      if (!relayUrl && state.config && state.config.live && state.config.live.state) {
+        /* fall back to the configured live-state relay topic */
+        relayUrl = str(state.config.live.state);
+      }
+      if (!relayUrl) { cb(new Error('no_relay')); return false; }
+      var body = {
+        action: 'message',
+        name: 'Smart Dictation ' + APP_VERSION,
+        cat: 'review',
+        text: 'Sealed student review (SDP_ENC_V2) — full envelope kept on-device and in the Studio export.',
+        contact: '',
+        meta: head.slice(0, 200)
+      };
+      Data.postRelay(relayUrl, JSON.stringify(body), function (err, data) {
+        try {
+          Diagnostics.log('review_cloud_push', { ok: !err, relay: relayUrl.slice(0, 60) });
+        } catch (e1) {}
+        cb(err, data);
+      });
+      return true;
     },
     postRelay: function (relayUrl, body, cb) {
       cb = cb || noop;

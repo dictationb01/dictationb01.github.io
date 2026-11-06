@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.6.d-s19-shell';
+const SHELL = 'sdp-v0.0.6.f-s21-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -78,8 +78,10 @@ async function launch() {
     }, SHELL);
 
     check('G6.3a the retired sdp-v60 cache is deleted', activated.names.indexOf(STALE) < 0, activated.names.join(','));
-    check('G6.3b the stale youdao dictionary cache is purged on upgrade (PRESERVE_CACHES=[])', activated.names.indexOf(YOUDAO) < 0, activated.names.join(','));
-    check('G6.3c the stale lecturer-clip cache is purged on upgrade (PRESERVE_CACHES=[])', activated.names.indexOf(CLIPS) < 0, activated.names.join(','));
+    /* v0.0.6.f (R5): both audio caches are now PRESERVED across upgrades so a
+       student repeating a session spends 0 KB of mobile data. */
+    check('G6.3b the youdao dictionary cache survives the upgrade (R5 PRESERVE_CACHES)', activated.names.indexOf(YOUDAO) >= 0, activated.names.join(','));
+    check('G6.3c the lecturer-clip cache survives the upgrade (R5 PRESERVE_CACHES)', activated.names.indexOf(CLIPS) >= 0, activated.names.join(','));
     check('G6.2a the 0.0.1.g shell cache exists after install', activated.names.indexOf(SHELL) >= 0, activated.names.join(','));
     check('G6.2b the shell precaches index.html, the CSS and all seven modules',
       ['/index.html', '/assets/css/sdp-ui.css', '/data/sdp-data-sync.js', '/data/sdp-audio-speech.js',
@@ -90,11 +92,15 @@ async function launch() {
         '/manifest.webmanifest', '/data.html', '/data/index.html']
         .every((p) => activated.shellNames.indexOf(p) >= 0),
       activated.shellNames.join(','));
-    const preservedY = await page.evaluate(async (name) => {
-      const cache = await caches.open(name);
-      return (await cache.keys()).length;
-    }, YOUDAO);
-    check('G6.3d the purged audio cache stays empty', preservedY === 0, preservedY);
+    const preservedY = await page.evaluate(async (names) => {
+      const out = {};
+      const y = await caches.open(names.youdao);
+      out.youdao = (await y.keys()).length;
+      const c = await caches.open(names.clips);
+      out.clips = (await c.keys()).length;
+      return out;
+    }, { youdao: YOUDAO, clips: CLIPS });
+    check('G6.3d the preserved audio caches keep their seeded clips (R5)', preservedY.youdao === 1 && preservedY.clips === 1, JSON.stringify(preservedY));
     await context.close();
 
     /* ── 4. the boot version check reloads exactly once ────────────────── */

@@ -1,7 +1,3 @@
-/*! Smart Dictation Player — views, i18n & router (v0.0.4.a)
- * Strict ES5, dependency free, no runtime CSS injection.
- * contract: docs/UI_COMPONENT_GUIDE.md §Components
- * contract: docs/ARCHITECTURE_MAP.md §R3 single-active-screen, §R9 data toast */
 (function (global) {
   'use strict';
 
@@ -226,7 +222,7 @@
     settingsLecturerActive: ' Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
     openStudioBtn: ' Open Lecturer Admin Studio',
     studioScreenTitle: ' Lecturer Admin Studio',
-    studioScreenSub: 'Three numbered steps: keys and the 70-clip voice pack, the 30-word session editor, and the classroom settings broadcast.',
+    studioScreenSub: 'Unlock with the lecturer PIN \u2014 paste 30 words, check the session number, then broadcast to every classroom device.',
     lecturerAdminLocked: ' Lecturer Admin', lecturerAdminUnlocked: ' Lecturer Admin',
     btnReplay: ' Replay Word',
     btnPauseDictation: '⏸ Pause Dictation',
@@ -302,6 +298,21 @@
     ringTapStart: 'Tap to Start',
     ringTapPause: 'Tap to Pause',
     ringTapResume: 'Tap to Resume',
+    /* v0.0.6.e (C/D/E): reveal card, beta channel, update capsule, offline studio, live chips. */
+    revealShow: 'Show Current Word', revealHide: 'Hide Word', revealPausedBadge: '⏸ Paused while viewing word',
+    betaOn: 'BETA', betaOff: 'Stable', betaPreview: 'Preview', betaStalePill: '⚠ Using older word list — Tap here to refresh',
+    updateSyncing: '🔄 New classroom update detected — refreshing in a moment…', updateAsk: 'New classroom words are ready. Refresh now?',
+    updateNow: 'Update Now (OK)', updateLater: 'Later',
+    studioOfflineTitle: 'Lecturer Studio needs the internet',
+    studioOfflineBody: 'Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.',
+    sessionNoLabel: 'Session No', sessionTitleLabel: 'Session Topic / Title',
+    pasteWords: '📋 Paste', clearWords: '🧹 Clear', confirmWords: '✓ Confirm Edited Words',
+    liveChipsLabel: 'Live word chips', helperReady: '✓ 30 / 30 words ready',
+    helperOver: '{n} words detected (need 30) — tap ⇄ on a split word to merge it, or tap ✕ to remove an extra word',
+    studioStep1: 'STEP 1 · ONE-TIME SETUP', studioStep2: 'STEP 2 · PASTE 30 WORDS', studioStep3: 'STEP 3 · BROADCAST TO CLASS',
+    helperUnder: '{n} / 30 words — add {need} more',
+    wordsConfirmedOk: '✓ Words confirmed — ready to Broadcast', wordsCleared: 'Word editor cleared',
+    chipMergeLabel: 'Merge with next word', chipRemoveLabel: 'Remove word',
     apiCreditsExhausted: '⚠️ API Credits Exhausted — Please Enter a New API Key in Advanced Tools',
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
@@ -502,7 +513,7 @@
     settingsLecturerActive: ' කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — විකාශනයට ස්ටූඩියෝව විවෘත කරන්න',
     openStudioBtn: ' ස්ටූඩියෝව විවෘත කරන්න',
     studioScreenTitle: ' කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
-    studioScreenSub: 'අංකිත පියවර තුනක්: යතුරු සහ හඬපට 34 පැකේජය, වචන 30 සංස්කාරකය, සහ පන්ති සැකසුම් විකාශනය.',
+    studioScreenSub: 'කථිකාචාර්ය PIN එකෙන් විවෘත කරන්න \u2014 වචන 30 අලවන්න, සැසියේ අංකය පරීක්ෂා කර, සියලුම පන්ති උපාංගවලට විකාශනය කරන්න.',
     lecturerAdminLocked: ' කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: ' කථිකාචාර්ය පරිපාලනය',
     btnReplay: ' නැවත අසන්න',
     btnPauseDictation: '⏸ නවතන්න',
@@ -577,6 +588,20 @@
     ringTapStart: 'ආරම්භයට ස්පර්ශ කරන්න',
     ringTapPause: 'විරාමයට ස්පර්ශ කරන්න',
     ringTapResume: 'දිගටම යාමට ස්පර්ශ කරන්න',
+    revealShow: 'වත්මන් වචනය පෙන්වන්න', revealHide: 'වචනය සඟවන්න', revealPausedBadge: '⏸ වචනය බලමින් විරාමයි',
+    betaOn: 'බීටා', betaOff: 'ස්ථාවර', betaPreview: 'පෙරදැක්ම', betaStalePill: '⚠ පැරණි වචන ලැයිස්තුව — නැවුම් කිරීමට ස්පර්ශ කරන්න',
+    updateSyncing: '🔄 නව පන්ති යාවත්කාලීනයක් හමුවිය — මොහොතකින් නැවුම් වෙමින්…', updateAsk: 'නව පන්ති වචන සූදානම්. දැන් නැවුම් කරන්නද?',
+    updateNow: 'දැන් යාවත්කාලීන කරන්න (OK)', updateLater: 'පසුව',
+    studioOfflineTitle: 'විද්‍යාගාරයට අන්තර්ජාලය අවශ්‍යයි',
+    studioOfflineBody: 'විද්‍යාගාරය සඳහා ක්‍රියාකාරී අන්තර්ජාල සම්බන්ධතාවක් අවශ්‍ය බැවින් සියලු වෙනස්කම් GitHub Cloud වෙත සමමුහූර්ත වේ. සිසු ඩික්ටේෂන් ප්‍රකාරය නොබැඳිව ක්‍රියා කරයි.',
+    sessionNoLabel: 'වාර අංකය', sessionTitleLabel: 'වාර මාතෘකාව',
+    pasteWords: '📋 අලවන්න', clearWords: '🧹 හිස් කරන්න', confirmWords: '✓ වචන තහවුර කරන්න',
+    liveChipsLabel: 'වචන චිප', helperReady: '✓ 30 / 30 වචන සූදානම්',
+    helperOver: '{n} වචන හමු විය (අවශ්‍ය 30) — ඉවත් කිරීමට ✕ හෝ ඒකාංශ කිරීමට ⇄ ස්පර්ශ කරන්න',
+    studioStep1: 'පියවර 1 · එක් වරක් සැකසීම', studioStep2: 'පියවර 2 · වචන 30 අලවන්න', studioStep3: 'පියවර 3 · පන්තියට විකාශනය',
+    helperUnder: '{n} / 30 වචන — තව {need}ක් එකතු කරන්න',
+    wordsConfirmedOk: '✓ වචන තහවුරු කළා — විකාශනයට සූදානම්', wordsCleared: 'වචන සංස්කාරකය හිස් කළා',
+    chipMergeLabel: 'ඊළඟ වචනය සමඟ ඒකාංශ කරන්න', chipRemoveLabel: 'වචනය ඉවත් කරන්න',
     apiCreditsExhausted: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
@@ -656,6 +681,7 @@
     renderWords();
     renderPractice();
     renderGuideSteps();
+    paintRevealCard();
     renderSettings();
     if (SDP.Engine) {
       if (SDP.Engine.repaintState) { try { SDP.Engine.repaintState(); } catch (e) {} }
@@ -730,10 +756,6 @@
     return withTouch;
   }
   function toggleTheme() {
-    /* v0.0.6.c (F3): the header button is a clean two-mode switch — Light is
-       the default, Dark is the single alternative. 'board' stays a real
-       programmatic theme (Smart Board preset / #setTheme) for gates, but the
-       human toggle never lands there. */
     var next = theme === 'light' ? 'dark' : 'light';
     return applyTheme(next);
   }
@@ -750,11 +772,6 @@
     try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
     return true;
   }
-  /* ══ S4 (v0.0.6.b): the Lecturer Session Guard ══
-     Leaving the studio while it is unlocked can never hand an open studio to
-     a student: clean state auto-locks on tab exit; unpublished edits raise
-     the guard modal instead of switching. Programmatic showTab flows in the
-     gates never carry dirty edits, so they keep auto-locking transparently. */
   var guardPendingTab = null;
   function closeGuardModal() {
     var host = byId('studioGuardModal');
@@ -817,6 +834,8 @@
         try { SDP.Studio.lock(); } catch (e) {}
       }
     }
+    /* v0.0.6.f (R5): the Lecturer tab can never open its PIN pad offline. */
+    if (target === 'studio') { try { paintStudioOffline(isOfflineNow()); } catch (e) {} }
     if (target !== 'player' && target !== 'dict' && target !== 'dictation') pauseForNavigation(target);
     for (i = 0; i < TABS.length; i++) {
       var screen = byId('screen-' + TABS[i]);
@@ -1079,11 +1098,6 @@
     }
   }
 
-  /* ══ Guide 4.0 — the compact four-step spotlight (R2 / F2 / F3) ══════
-   * One viewport, one sentence, four dots, two buttons. The spoken text is
-   * NEVER the card chrome: the class used to hear "Auto pause. Listen twice.
-   * Write in five seconds..." because the title carried badge words. The four
-   * sentences below are the only thing narration may say. */
   var GUIDE_SPOTLIGHT_STEPS = [
     'Press Start Dictation to begin.',
     'Listen twice, then write in five seconds.',
@@ -2014,10 +2028,6 @@
         if (!SDP.Studio || !SDP.Studio.saveClassSettings) return;
         /* D2: no double-click can ever start two publishes. */
         if (syncBtn.getAttribute('data-busy') === '1') return;
-        /* v0.0.6.c (F1): word edits ride the SAME button — the studio's
-           saveClassSettings routes dirty words through the unified
-           auto-enrich + delta-voice + atomic publish pipeline and keeps the
-           pacing-only sequence byte-identical otherwise. */
         var work = function (finish) {
           var result = SDP.Studio.saveClassSettings(function (err) {
             if (err) {
@@ -2164,10 +2174,6 @@
     return n;
   }
   function boardBarShouldShow() {
-    /* v0.0.6.a Track 3: the Word Reveal bar is a first-class cockpit control,
-       not a Smart-Board extra. Any phone, tablet, projector or desktop gets it
-       whenever a session exists — the hidden-before-reveal contract (R10) is
-       enforced inside paintBoardWord(), not by hiding the whole bar. */
     return boardWordCount() > 0;
   }
   function renderBoardBar() {
@@ -2247,6 +2253,7 @@
   }
   function toggleBoardWord() {
     boardState.wordShown = !boardState.wordShown;
+    if (boardState.wordShown) autoPauseForReveal();
     paintBoardWord();
     return boardState.wordShown;
   }
@@ -2326,9 +2333,6 @@
        spend plus the honest offline-cache state, in one line. */
     return t(offline ? 'toastOfflineCapsule' : 'toastLoadedCapsule') + ' · ' + kb + ' KB';
   }
-  /* v0.0.6.d (D7): showToast keeps its G5.7a-e contract (KB reading, fixed,
-     26px, pointer-events none, ~2.4s fade) — the CSS moved the capsule to the
-     top of the screen so it can never cover the bottom tab bar buttons. */
   function showToast() {
     var node = byId('sdpDataToast');
     if (!node) return;
@@ -2341,9 +2345,6 @@
       toastTimer = global.setTimeout(function () { node.hidden = true; }, 420);
     }, 2400);
   }
-  /* v0.0.6.d (D1/D8): the top capsule for app-level notices (word list
-     refreshed, credits exhausted…). Same 26px / pointer-events:none / ~2.4s
-     fade contract as the data capsule. */
   function showCapsule(text) {
     var node = byId('sdpDataToast');
     if (!node) return false;
@@ -2402,6 +2403,14 @@
       }
     });
     on('btnLang', 'click', toggleLang);
+    on('btnRevealWord', 'click', toggleRevealCard);
+    on('sdpBetaPill', 'click', function () {
+      try { global.localStorage.setItem('sdp_beta_preview', betaActive() ? '0' : '1'); } catch (e) {}
+      try { global.location.reload(); } catch (e2) {}
+    });
+    on('sdpStalePill', 'click', applyUpdateNow);
+    on('sdpUpdateNowBtn', 'click', applyUpdateNow);
+    on('sdpUpdateLaterBtn', 'click', dismissUpdateLater);
     on('guideLangPill', 'click', toggleLang);
     on('btnTheme', 'click', toggleTheme);
     on('btnStart', 'click', function () { markCueSeen('home'); startDictation(); });
@@ -2468,6 +2477,172 @@
     paintCues();
   }
 
+
+  /* ══ v0.0.6.e (C/D/E) — reveal card, beta channel, update capsule, offline studio ══ */
+  function isOfflineNow() {
+    return typeof navigator !== 'undefined' && navigator.onLine === false;
+  }
+  function engineRunningNow() {
+    try { return !!(SDP.Engine && SDP.Engine.isActive && SDP.Engine.isActive() && !(SDP.Engine.isPaused && SDP.Engine.isPaused())); } catch (e) { return false; }
+  }
+  function autoPauseForReveal() {
+    if (!engineRunningNow()) return false;
+    try { if (SDP.Engine && SDP.Engine.pause) SDP.Engine.pause('reveal'); } catch (e) {}
+    return true;
+  }
+  var revealState = { shown: false, pausedFor: false };
+  /* v0.0.6.f (R2): the reveal card carries the full meaning — IPA, part of
+     speech, Sinhala and the English gloss — so the student never scrolls. */
+  function paintRevealMeaning(w) {
+    var host = byId('revealMeaning');
+    if (!host) return false;
+    var ipa = byId('revealIpa'), pos = byId('revealPos'), si = byId('revealSi'), en = byId('revealEn');
+    if (!revealState.shown || !w) {
+      host.hidden = true;
+      if (ipa) setText(ipa, '/—/');
+      if (pos) setText(pos, '—');
+      if (si) setText(si, '—');
+      if (en) setText(en, '');
+      return true;
+    }
+    var rawP = str(w.p).replace(/^\/+|\/+$/g, '');
+    if (rawP && rawP.toLowerCase() === str(w.w).toLowerCase()) rawP = '';
+    if (ipa) setText(ipa, rawP ? '/' + rawP + '/' : '/—/');
+    if (pos) setText(pos, str(w.pos) || '—');
+    if (si) setText(si, str(w.si) || '—');
+    if (en) setText(en, str(w.m) || '');
+    host.hidden = false;
+    return true;
+  }
+  function paintRevealCard() {
+    var card = byId('revealWordCard'), text = byId('revealWordText'), btn = byId('btnRevealWord'), badge = byId('revealPausedBadge');
+    if (!card) return false;
+    card.hidden = false;
+    var word = currentWordText();
+    if (text) { text.textContent = revealState.shown ? (word || '—') : '••••••'; text.setAttribute('data-revealed', revealState.shown ? 'true' : 'false'); }
+    if (btn) {
+      var rLabel = revealState.shown ? t('revealHide', 'Hide Word') : t('revealShow', 'Show Current Word');
+      var rIcon = '';
+      try { if (SDP.Icons && SDP.Icons.icon) rIcon = SDP.Icons.icon(revealState.shown ? 'eyeOff' : 'eye', 18); } catch (e) {}
+      btn.innerHTML = rIcon + '<span class="i18n-label"></span>';
+      var rSpan = btn.querySelector('.i18n-label');
+      if (rSpan) rSpan.textContent = rLabel;
+      btn.setAttribute('aria-label', rLabel);
+    }
+    if (badge) badge.hidden = !(revealState.shown && revealState.pausedFor);
+    var cockpitCard = byId('cockpitBar');
+    if (cockpitCard && cockpitCard.classList) { if (revealState.shown) cockpitCard.classList.add('reveal-open'); else cockpitCard.classList.remove('reveal-open'); }
+    paintRevealMeaning(revealState.shown ? currentBoardWord() : null);
+    return true;
+  }
+  function toggleRevealCard() {
+    revealState.shown = !revealState.shown;
+    if (revealState.shown) revealState.pausedFor = autoPauseForReveal();
+    else revealState.pausedFor = false;
+    paintRevealCard();
+    return revealState.shown;
+  }
+  var lastRevealIdx = -1;
+  function onEngineWordChanged(idx) {
+    if (idx === lastRevealIdx) {
+      /* same word, engine re-rendered: a resumed beat re-hides the reveal */
+      if (engineRunningNow() && revealState.shown) {
+        revealState.shown = false;
+        revealState.pausedFor = false;
+        paintRevealCard();
+      }
+      return true;
+    }
+    lastRevealIdx = idx;
+    revealState.shown = false;
+    revealState.pausedFor = false;
+    revealState.wordIdx = idx;
+    paintRevealCard();
+    try { resetBoardReveal(); } catch (e) {}
+    paintBoardWord();
+    return true;
+  }
+  function betaActive() {
+    var ls = '';
+    try { ls = str(global.localStorage && global.localStorage.getItem('sdp_beta_preview')); } catch (e) { ls = ''; }
+    var url = '';
+    try { url = str(global.location && global.location.search) + ' ' + str(global.location && global.location.hash); } catch (e2) { url = ''; }
+    if (ls === '1') return true;
+    if (ls === '0') return false;
+    /* v0.0.6.f (R6): ?beta, #beta or a plain ?b=1 all switch the preview on. */
+    return url.indexOf('beta') !== -1 || /[?&]b=1/.test(url);
+  }
+  function applyBetaChannel() {
+    var pill = byId('sdpBetaPill');
+    var on = betaActive();
+    try { doc.documentElement.setAttribute('data-sdp-channel', on ? 'beta' : 'stable'); } catch (e) {}
+    if (!pill) return false;
+    /* v0.0.6.f (R6): the switcher is ALWAYS in the header — one tap flips the
+       channel; the amber state names the running sub-version. */
+    pill.hidden = false;
+    pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+    setText(pill, on ? (t('betaOn', 'BETA') + ' v' + APP_VERSION) : t('betaPreview', 'Preview'));
+    return true;
+  }
+  function paintUpdateCard(mode) {
+    var card = byId('sdpUpdateCard'), text = byId('sdpUpdateText'), bar = byId('sdpUpdateBar');
+    var nowBtn = byId('sdpUpdateNowBtn'), laterBtn = byId('sdpUpdateLaterBtn');
+    if (!card) return false;
+    card.hidden = false;
+    if (text) setText(text, mode === 'ask' ? t('updateAsk', 'New classroom words are ready. Refresh now?') : t('updateSyncing', '🔄 New classroom update detected — refreshing in a moment…'));
+    if (bar) bar.hidden = (mode !== 'sync');
+    if (nowBtn) nowBtn.hidden = (mode !== 'ask');
+    if (laterBtn) laterBtn.hidden = (mode !== 'ask');
+    if (mode === 'sync' && global.setTimeout) {
+      global.setTimeout(function () { applyUpdateNow(); }, 1500);
+    }
+    return true;
+  }
+  function applyUpdateNow() {
+    var card = byId('sdpUpdateCard'), stale = byId('sdpStalePill');
+    if (card) card.hidden = true;
+    if (stale) stale.hidden = true;
+    try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
+    try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
+    renderAll();
+    if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
+    return true;
+  }
+  function dismissUpdateLater() {
+    var card = byId('sdpUpdateCard'), stale = byId('sdpStalePill');
+    if (card) card.hidden = true;
+    if (stale) stale.hidden = false;
+    return true;
+  }
+  function paintStudioOffline(show) {
+    var card = byId('sdpStudioOfflineCard');
+    var tab = byId('tab-studio'), rail = byId('rail-studio');
+    var screenNode = byId('screen-studio');
+    if (card) card.hidden = !show;
+    /* v0.0.6.f (R5): offline the whole studio surface is blinded — the PIN
+       pad can never unlock without GitHub Cloud behind it. */
+    if (screenNode) { if (show) screenNode.classList.add('studio-is-offline'); else screenNode.classList.remove('studio-is-offline'); }
+    if (tab) { if (show) tab.classList.add('is-offline'); else tab.classList.remove('is-offline'); }
+    if (rail) { if (show) rail.classList.add('is-offline'); else rail.classList.remove('is-offline'); }
+    if (show) {
+      try { if (SDP.Studio && SDP.Studio.lock) SDP.Studio.lock(); } catch (e) {}
+      try { if (SDP.Studio && SDP.Studio.isUnlocked && !SDP.Studio.isUnlocked() && SDP.Studio.state) {} } catch (e2) {}
+    }
+    return true;
+  }
+  function onNetChange() {
+    var off = isOfflineNow();
+    paintStudioOffline(off);
+    if (!off) return true;
+    var studioOpen = false;
+    try { studioOpen = !!(doc.querySelector && doc.querySelector('#screen-studio.active')); } catch (e) { studioOpen = false; }
+    if (studioOpen) {
+      var body = byId('studioBody');
+      if (body && body.setAttribute) body.setAttribute('aria-live', 'polite');
+    }
+    return true;
+  }
   /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys… */
   function bindTeacherUpdates() {
     if (bindTeacherUpdates._bound || !doc || !doc.addEventListener) return false;
@@ -2498,11 +2673,19 @@
       var d = (ev && ev.detail) || {};
       handleSyncCheckResult(d.err, d.result);
     }, false);
+    /* v0.0.6.e (E): online-only Lecturer Studio — the lock reacts to the real
+       network state and never blocks a programmatic mount() while online. */
+    if (global.addEventListener && !bindTeacherUpdates._netBound) {
+      bindTeacherUpdates._netBound = true;
+      global.addEventListener('offline', function () { onNetChange(); }, false);
+      global.addEventListener('online', function () { onNetChange(); }, false);
+    }
     return true;
   }
 
   /* D6: Studio is a top-level screen; focus the PIN (locked) or the key row. */
   function openStudio() {
+    if (isOfflineNow()) paintStudioOffline(true);
     try { showTab('studio'); } catch (e) {}
     try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
     var unlocked = false;
@@ -2519,16 +2702,24 @@
     return true;
   }
 
-  /* v0.0.6.d (D1): the active word list changed (local publish, one-click
-     master setup, settings broadcast or a remote adoption). Reset the
-     dictation engine to a clean Word #1 cockpit with the new words, hide
-     every stale banner and tell the human what happened in the capsule. */
   function onWordsRefresh() {
-    try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
-    try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
-    showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
-    renderAll();
-    if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    /* v0.0.6.e (D): a running dictation is never interrupted mid-word — the
+       ask-mode capsule takes over; an idle player auto-syncs in 1.5s. */
+    var wasRunning = engineRunningNow();
+    if (!wasRunning) {
+      try { if (SDP.Engine && SDP.Engine.hardReset) SDP.Engine.hardReset(); } catch (e) {}
+      try { if (SDP.Data && SDP.Data.clearSession) SDP.Data.clearSession(); } catch (e) {}
+      renderAll();
+      if (SDP.Engine && SDP.Engine.refreshEls) { try { SDP.Engine.refreshEls(); } catch (e) {} }
+    }
+    var lecturerHere = false;
+    try { lecturerHere = !!(doc.querySelector && doc.querySelector('#screen-studio.active')); } catch (e) { lecturerHere = false; }
+    if (lecturerHere) {
+      showCapsule(t('wordsRefreshedToast', '🔄 Word list updated — Dictation refreshed & ready from Word #1'));
+      return true;
+    }
+    if (wasRunning) paintUpdateCard('ask');
+    else paintUpdateCard('sync');
     return true;
   }
 
@@ -2560,6 +2751,7 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
+    applyBetaChannel();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
     setText(byId('aboutVersion'), APP_VERSION);
@@ -2579,15 +2771,7 @@
     return true;
   }
 
-  /* v0.0.5.c (GAP 2) — the 56-icon dual-tone bank. Every glyph ships TWO
-     paths: .ic-fill (soft solid silhouette, 22% ink) and .ic-stroke (the 1.9px
-     line detail). Zero emoji pictographs remain in the DOM; every view, the
-     dictation transport and the studio ask this one function for an icon. */
   var ICON_PATHS = {
-    /* v0.0.6.d (D5): refined dual-tone glyphs — a soft solid silhouette plus
-       a crisp 2px line detail. The old flat triangles became rounded-corner
-       transports, the volume cone gained its double soundwave, the bulb a
-       filament, and check a lifted confirmation tick. */
     play: { f: 'M8.6 5.2a1.4 1.4 0 011.5 0l9.6 5.9a1.4 1.4 0 010 2.4l-9.6 5.9a1.4 1.4 0 01-1.5 0z', s: 'M8.6 5.2a1.4 1.4 0 011.5 0l9.6 5.9a1.4 1.4 0 010 2.4l-9.6 5.9a1.4 1.4 0 01-1.5 0z' },
     pause: { f: 'M7 5.5a1.5 1.5 0 011.5-1.5h1A1.5 1.5 0 0111 5.5v13A1.5 1.5 0 019.5 20h-1A1.5 1.5 0 017 18.5zM14.5 5.5A1.5 1.5 0 0116 4h1a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0117 20h-1a1.5 1.5 0 01-1.5-1.5z', s: 'M7 5.5a1.5 1.5 0 011.5-1.5h1A1.5 1.5 0 0111 5.5v13A1.5 1.5 0 019.5 20h-1A1.5 1.5 0 017 18.5zM14.5 5.5A1.5 1.5 0 0116 4h1a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0117 20h-1a1.5 1.5 0 01-1.5-1.5z' },
     stop: { f: 'M6.5 6.5h11v11h-11z', s: 'M6.5 6.5h11v11h-11z' },
@@ -2735,6 +2919,12 @@
     showToast: showToast,
     showCapsule: showCapsule,
     onWordsRefresh: onWordsRefresh,
+    onEngineWordChanged: onEngineWordChanged,
+    toggleRevealCard: toggleRevealCard,
+    applyBetaChannel: applyBetaChannel,
+    betaActive: betaActive,
+    paintUpdateCard: paintUpdateCard,
+    isOfflineNow: isOfflineNow,
     toastText: toastText,
     checkForUpdate: checkForUpdate,
     setUpdateStatus: setUpdateStatus,

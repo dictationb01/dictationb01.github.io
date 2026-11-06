@@ -1,3 +1,31 @@
+## v0.0.6.f — 2026-11-06 — Complete Human-UI Orbital Cockpit Release
+
+**Release type:** human-UI release over the live v0.0.6.e main. No classroom-data migration: `data/session.json` (44,885 B, `b1d178d3…`), `data/gas-source.txt`, both Sinhala fonts and every committed Alice clip stay byte-identical. **0 ElevenLabs credits spent.**
+
+**Stamp:** `appVersion/version '0.0.6.f'` · `ver 20` · `schema 20` · `settingsRev 36` · `syncRev 1793880000000` · `SW_VERSION 'sdp-v0.0.6.f-s21'` / `SHELL_CACHE 'sdp-v0.0.6.f-s21-shell'` · `TARGET='0.0.6.f'` · `buildDate 2026-11-05`.
+
+* **A — orbital TV-remote cockpit (index.html/css/engine)**: `#cockpitBar` hosts a 360° `.orbital` deck — Prev west, Next east, Play/Pause + Replay south around the clock ring, each key a squircle with a caption; `#beatPhasePill`, `#beatStateText`, `#playerPausedBanner` and the quiet `#cockpitHelpers` strip (Repeat · Hint · Mode · Check) sit under it. The amber paused halo (`.is-paused`) and the blue/amber `#ringTapOverlay` burst fire on every phase transition.
+* **B — reveal meaning card (views/index)**: `#revealWordCard` reveals the current word with IPA, POS, Sinhala and English meaning; revealing auto-pauses dictation (`⏸ Paused while viewing word`) and every new word re-hides the card.
+* **C — zero robotic voice (sdp-audio-speech.js)**: `playUrl` honours `opts.epoch`, resolves stale epochs and `AbortError` as `{aborted:true}`, and a missing/failed cue clip now resolves **silently on the next tick** — the browser's `speechSynthesis` never says "Session paused." on a rapid tap; `playWord` logs `lastUtterances` synchronously.
+* **D — always-visible Preview pill + Samsung update capsule (views/index)**: `#sdpBetaPill` is never hidden (mobile included) and toggles the `?beta` channel; `#sdpStalePill` and `#sdpUpdateCard` give idle players a 1-tap refresh while a running session gets Update Now / Later.
+* **E — offline Studio blind & squircle system (views/studio/css)**: `#sdpStudioOfflineCard` plus `#screen-studio.studio-is-offline` lock only the Lecturer Studio when the device is offline; the five Settings headings and the Studio title carry colour-coded `.set-squircle` badges; the side rail and bottom tab bar use squircle icons.
+* **F — Studio STEP tags and chip fixes (studio.js)**: STEP 1/2/3 tags on the three cards (duplicate gate heading removed), comma/newline-only parser, live chip grid with `\u21c4` merge and `\u2715` remove glyphs (never broken HTML entities), chips painted on unlock, and publish now carries the edited session number/topic.
+* Gates: 12/12 green, 0 FAIL; every gate pin re-stamped in lockstep (check, upgrade.test, phase1, server, browser, upgrade-browser, e2e, live-lab, audit-v42, voice-guide, vault-sync, studio-safety); `data.html`/`data/index.html` byte-identical (27,993 B); ES5 + line/budget ceilings hold.
+
+## v0.0.6.e — 2026-11-05 — Autonomous Human-UX Release (Architectures A–F)
+
+**Release type:** human-UX + hardening release over the live v0.0.6.d main. No classroom-data migration: `data/session.json` (44,885 B, `b1d178d3…`), `data/gas-source.txt`, both Sinhala fonts and all 101 committed Alice clips stay byte-identical. **0 ElevenLabs credits spent.**
+
+**Stamp:** `appVersion/version '0.0.6.e'` · `ver 20` · `schema 20` · `settingsRev 36` · `syncRev 1793880000000` · `SW_VERSION 'sdp-v0.0.6.e-s20'` / `SHELL_CACHE 'sdp-v0.0.6.e-s20-shell'` · `TARGET='0.0.6.e'` · `buildDate 2026-11-05`.
+
+* **A — comma/newline-only parser + non-destructive chip grid (studio.js)**: `parseBulkWords` strips pasted numbering, collapses inner spaces, keeps hyphens/spaces inside words (`old-fashioned`, `bus station` = exactly one word) and never truncates at 30; `ST.rawParsedWords` carries the full list, `#studioLiveChips` renders a live chip grid (✕ remove, ⇄ merge writes back to the bulk field), `#studioWordsCountHelper` shows ✓ 30/30 (green), N>30 (amber, zero auto-deletion) or N<30 (calm info), plus session No/Topic inputs and Paste/Clear/Confirm utility pills.
+* **B — zero robotic fallback on rapid taps (sdp-audio-speech.js)**: `playUrl` takes `opts.epoch`; stale epochs and `AbortError` resolve `{aborted:true}` and stop the tier ladder cleanly — a rapid Pause/Play/Next never drops to Youdao or browser speechSynthesis; a genuine error of the committed Alice clip retries the local MP3 once while online; `playWord` logs the word into `lastUtterances` synchronously.
+* **C — clean clock ring (engine/index/css)**: no literal text inside the dial (`#ringAffordance` keeps `data-state`, gains `aria-label`, empty textContent); a YouTube-style SVG burst (`#ringTapOverlay`, 0.6→1.18, 420 ms) fires on every play/pause transition; the glass `#revealWordCard` sits directly above the ring — revealing auto-pauses dictation (`⏸ Paused while viewing word`) and resets on word change; the board jumper drawer is hidden (`display:none !important`, node kept) so exactly one "Jump to Word 1–30" control remains.
+* **D — beta channel + Samsung One-UI capsule (views/index)**: `?beta`/`#beta`/`sdp_beta_preview` switches `data-sdp-channel` and shows `#sdpBetaPill` (1-tap toggle); `sdp:words-refresh` refreshes the in-memory list at once, then idle players auto-sync through `#sdpUpdateCard` (1.5 s progress bar, < 1.8 s) while a running session gets [Update Now (OK)] / [Later] and `#sdpStalePill`.
+* **E — offline-first split (sw.js/views/studio)**: the service worker pins `sdp-v0.0.6.e-s20` caches and cache-firsts `/audio/elevenlabs/` MP3s; Lecturer Studio locks behind `#sdpStudioOfflineCard` only when `navigator.onLine === false` (never blocking programmatic mounts while online); Student Dictation keeps working offline.
+* **F — squircle headers + credits**: color-coded `.set-squircle` badges on Settings/Studio headers; EN/SI credits preserved verbatim everywhere (Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu) / නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini).
+* Gates: 12/12 green, 0 FAIL; every gate pin re-stamped in lockstep (check, upgrade.test, phase1, server, browser, upgrade-browser, e2e, live-lab, audit-v42, voice-guide, vault-sync, studio-safety); `data.html`/`data/index.html` byte-identical; ES5 + line/budget ceilings hold.
+
 ## v0.0.6.c — 2026-11-05 — Holistic Human-UX Debug & Re-Architecture (F1–F5)
 
 **Release type:** UI + studio-pipeline release over the live v0.0.6.b main (settingsRev 33 broadcast adopted). No classroom-data migration: `data/session.json` (44,885 B, `b1d178d3…`), `data/gas-source.txt`, both Sinhala fonts and all 100 Alice clips stay byte-identical. **0 ElevenLabs credits spent.**
@@ -776,3 +804,44 @@ Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, I
 * Light contrast hardening: glass pills use `--accent-fg #1D4ED8` etc. instead of `--accent-ink`; inputs 1.5px `#CBD5E1` on `#F1F5F9`; cards 1px `#E2E8F0`; badges/chips/step states readable in all three themes (WCAG ≥ 4.5:1).
 * Zero ElevenLabs credits; all 100 Alice clips byte-preserved; `gas-source.txt` + Sinhala fonts untouched; `data.html`/`data/index.html` byte-identical; five-key law intact; every .js parses ES5 (max ≤ 400, avg ≤ 200); 12 gates green (0 FAIL).
 
+
+
+## v0.0.6.f — Complete Human UI Release (Orbital Remote Cockpit)
+
+Released 2026-11-05 · ver 20 / schema 20 / settingsRev 36 / syncRev 1793880000000 ·
+SW caches `sdp-v0.0.6.f-s21` (+ preserved `sdp-audio-clips`, `sdp-youdao-v1`).
+
+* **R1 Orbital TV-remote cockpit** — Prev West / Next East / Play-Pause + Replay
+  on the south arc of the 172px clock dial; the duplicate Smart-Board transport
+  row (#boardClassBar) and its second jump drawer stay in the DOM but are never
+  painted (`display:none !important`); secondary tools (Repeat/Hint/Mode/Check)
+  moved into one quiet pill strip (#cockpitHelpers).
+* **R1 YouTube tap burst** — the ring tap overlay now scales 0.55 → 1.22 and
+  fades 0 → 1 → 0 over 450 ms with a solid high-contrast Play/Pause badge; a
+  paused dial wears a soft amber halo (#ringWrap.is-paused).
+* **R2 Reveal card meanings** — #revealWordCard (North of the dial, inside the
+  first 360×640 viewport) shows the spelling, IPA, part of speech, Sinhala and
+  English meaning; revealing auto-pauses the beat and the card resets on every
+  Prev/Next/Jump.
+* **R3 Zero robotic voice** — sayCue() never falls back to browser
+  speechSynthesis: a cue is either the committed Alice MP3 or silence; the
+  silent path resolves on the NEXT tick so startTicker() cannot clear the cue
+  timer. enterWord()/repeatWord()/resume() call SDP.Speech.stop() first, so
+  rapid transport taps can never stack two voices.
+* **R4 Studio daily-job cards** — comma/semicolon/newline-only word parser
+  (hyphens and spaces never split), the live 30-word chip grid with ⇄ merge and
+  ✕ remove, the non-destructive 31-word amber helper, the ✓ Confirm Edited
+  Words tick, Session No + Topic fields, and STEP 1/2/3 tags on the three cards.
+* **R5 Offline** — the service worker preserves sdp-audio-clips and
+  sdp-youdao-v1 across upgrades (0 KB on repeated sessions); Lecturer Studio is
+  strictly online-only: offline, the whole studio surface is blinded and only
+  #sdpStudioOfflineCard remains.
+* **R6 Beta preview + One-UI capsule** — #sdpBetaPill is always visible as a
+  Preview switcher (?beta / #beta / ?b=1); the update capsule asks mid-session
+  ("New classroom words are ready. Refresh now?") and auto-refreshes when idle
+  with a 1.5 s progress bar; later → the amber stale pill.
+* **R7 Squircle icon system** — color-coded iOS/One-UI squircles on the six
+  tabs and the settings cards; Light default + Dark themes; credits verbatim.
+
+Gates: G1 110, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52, G8 39, G9 47, G10 38,
+G11 74, G12 94 — 12/12 green.

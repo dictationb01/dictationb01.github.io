@@ -21,274 +21,274 @@
     "wallpaperVideo": false,
     "words": [
       {
-        "w": "important",
-        "p": "/ɪmˈpɔːtənt/",
-        "pos": "adjective.",
-        "m": "Having relevant and crucial value.",
-        "si": "වැදගත්",
-        "s": "It is very important to give your daughter independence in her life so she learns from experience.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
-      },
-      {
-        "w": "impressed",
-        "p": "/ɪmˈpɹɛst/",
-        "pos": "verb.",
-        "m": "To affect (someone) strongly and often favourably.",
-        "si": "පැහැදුණු",
-        "s": "You impressed me with your command of Urdu.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
-      },
-      {
-        "w": "intelligent",
-        "p": "/ɪnˈtɛlɪd͡ʒənt/",
-        "pos": "adjective.",
-        "m": "Of high or especially quick cognitive capacity, bright.",
-        "si": "බුද්ධිමත්",
-        "s": "The engineer had a very intelligent design proposal for the new car.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
-      },
-      {
-        "w": "interested",
-        "p": "/ˈɪntəɹɛstəd/",
-        "pos": "verb.",
-        "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
-        "si": "උනනුව දක්වන",
-        "s": "Action films don't really interest me.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
-      },
-      {
-        "w": "jealous",
-        "p": "/ˈdʒɛləs/",
-        "pos": "adjective.",
-        "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
-        "si": "ඊර්ෂ්‍යාව දක්වන",
-        "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
-      },
-      {
-        "w": "married",
-        "p": "/ˈmæɹ.ɪd/",
+        "w": "entertainment",
+        "p": "/ˈɛn.tɚˈteɪn.mənt/",
         "pos": "noun.",
-        "m": "A married person.",
-        "si": "විවාහ වූ",
-        "s": "My married uncle lives in Colombo with his wife.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
+        "m": "An activity designed to give pleasure, enjoyment, diversion, amusement, or relaxation to an audience, no matter whether the audience participates passively as in watching opera or a movie, or actively as in games.",
+        "si": "විනෝදාස්වාදය",
+        "s": "We saw a entertainment near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/entertainment-us.mp3"
       },
       {
-        "w": "miserable",
-        "p": "/ˈmɪz(ə)ɹəbəl/",
+        "w": "media",
+        "p": "/ˈmiːdɪə/",
         "pos": "noun.",
-        "m": "A miserable person; a wretch.",
-        "si": "දුක්බර",
-        "s": "The cold rain made the long journey miserable.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
+        "m": "The middle layer of the wall of a blood vessel or lymph vessel which is composed of connective and muscular tissue.",
+        "si": "මාධ්ය",
+        "s": "We saw a media near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
       },
       {
-        "w": "modern",
-        "p": "/ˈmɒd(ə)n/",
+        "w": "action",
+        "p": "/ˈæk.ʃən/",
         "pos": "noun.",
-        "m": "Someone who lives in modern times.",
-        "si": "නවීන",
-        "s": "Our classroom has a modern whiteboard and new chairs.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
+        "m": "Something done so as to accomplish a purpose.",
+        "si": "ක්රියාව",
+        "s": "Knead bread with a rocking action.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/action-us.mp3"
       },
       {
-        "w": "negative",
-        "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+        "w": "actress",
+        "p": "/ˈak.tɹəs/",
         "pos": "noun.",
-        "m": "Refusal or withholding of assents; prohibition, veto",
-        "si": "නෙගටීව් (අහෝසී අදහස් දක්වන)",
-        "s": "Try not to have a negative attitude before the exam.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
+        "m": "A female who performs on the stage or in films.",
+        "si": "නිළිය",
+        "s": "We saw a actress near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
       },
       {
-        "w": "nervous",
-        "p": "/ˈnɜːvəs/",
-        "pos": "adjective.",
-        "m": "Of sinews and tendons.",
-        "si": "කනස්සල්ලෙන් පෙළෙන",
-        "s": "I always feel nervous before a dictation test.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
-      },
-      {
-        "w": "noisy",
-        "p": "/ˈnɔːɪzɪ/",
-        "pos": "adjective.",
-        "m": "Making a noise, especially a loud unpleasant sound",
-        "si": "ඝෝෂාකාරී",
-        "s": "the noisy crowd.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
-      },
-      {
-        "w": "normal",
-        "p": "/ˈnɔːməl/",
+        "w": "admission",
+        "p": "/ædˈmɪʃ.ən/",
         "pos": "noun.",
-        "m": "A line or vector that is perpendicular to another line, surface, or plane.",
-        "si": "සාමාන්‍ය",
-        "s": "Heavy workload is the new normal.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
+        "m": "The act or practice of admitting.",
+        "si": "ඇතුළත් කිරීම",
+        "s": "I request admission for two adults",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
       },
       {
-        "w": "old",
-        "p": "/ˈɒʊld/",
-        "pos": "noun.",
-        "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
-        "si": "පැරණි",
-        "s": "A civilised society should always look after the old in the community.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
+        "w": "adventure",
+        "p": "/ˈædventɜː/",
+        "pos": "n.",
+        "m": "A adventure.",
+        "si": "ත්රාසජනක",
+        "s": "We saw a adventure near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
       },
       {
-        "w": "fashioned",
-        "p": "/ˈfæʃnd/",
-        "pos": "verb.",
-        "m": "To make, build or construct, especially in a crude or improvised way.",
-        "si": "පැරණි ආකාරයේ",
-        "s": "My grandmother makes old-fashioned sweets for the festival.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
+        "w": "advertisement",
+        "p": "/ˈædvətɪsement/",
+        "pos": "n.",
+        "m": "A advertisement.",
+        "si": "වෙළඳ දැන්වීම",
+        "s": "We saw a advertisement near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
       },
       {
-        "w": "ordinary",
-        "p": "/ˈɔːdənɹi/",
-        "pos": "noun.",
-        "m": "A person with authority; authority, ordinance.",
-        "si": "සාමාන්‍ය",
-        "s": "It was an ordinary Thursday until the surprise test arrived.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
+        "w": "audience",
+        "p": "/ˈɔːdaɪnk/",
+        "pos": "n.",
+        "m": "A audience.",
+        "si": "ප්රේක්ෂක",
+        "s": "We saw a audience near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
       },
       {
-        "w": "original",
-        "p": "/əˈɹɪdʒnəl/",
-        "pos": "noun.",
-        "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
-        "si": "මුල් ආකාරයේ / නව්‍ය",
-        "s": "This manuscript is the original.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
+        "w": "bestseller",
+        "p": "/ˈbestselə/",
+        "pos": "n.",
+        "m": "A bestseller.",
+        "si": "වැඩියෙන් අලෙවි වන",
+        "s": "We saw a bestseller near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
       },
       {
-        "w": "patient",
-        "p": "/ˈpeɪʃənt/",
-        "pos": "noun.",
-        "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
-        "si": "ඉවසිලිවන්ත",
-        "s": "The subject of a passive verb is usually a patient.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
+        "w": "cartoon",
+        "p": "/ˈkɑːtuːn/",
+        "pos": "n.",
+        "m": "A cartoon.",
+        "si": "කාටූන්",
+        "s": "We saw a cartoon near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
       },
       {
-        "w": "personal",
-        "p": "/ˈpɜː.sən.əl/",
-        "pos": "noun.",
-        "m": "An advertisement by which individuals attempt to meet others with similar interests.",
-        "si": "පෞද්ගලික",
-        "s": "Please do not read my personal diary — it is private.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
+        "w": "celebrity",
+        "p": "/ˈkelebrɪtɪ/",
+        "pos": "n.",
+        "m": "A celebrity.",
+        "si": "කීර්තිමත්",
+        "s": "We saw a celebrity near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
       },
       {
-        "w": "pleasant",
-        "p": "/ˈplɛzənt/",
-        "pos": "noun.",
-        "m": "A wit; a humorist; a buffoon.",
-        "si": "ප්‍රසන්න",
-        "s": "We had a pleasant walk along the Galle ramparts at sunset.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
+        "w": "channel",
+        "p": "/ˈtʃænel/",
+        "pos": "n.",
+        "m": "A channel.",
+        "si": "නාලිකාව",
+        "s": "We saw a channel near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
       },
       {
-        "w": "positive",
-        "p": "/ˈpɒzɪ̈tɪv/",
-        "pos": "noun.",
-        "m": "A thing capable of being affirmed; something real or actual.",
-        "si": "ධනාත්මක",
-        "s": "Stay positive and keep practising your English every day.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
+        "w": "circus",
+        "p": "/ˈkɜːkʌs/",
+        "pos": "n.",
+        "m": "A circus.",
+        "si": "සර්කස්",
+        "s": "We saw a circus near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
       },
       {
-        "w": "realistic",
-        "p": "/ˌɹiːjəˈlɪstɪk/",
-        "pos": "adjective.",
-        "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
-        "si": "යථාර්ථවාදී",
-        "s": "A realistic appraisal of the situation.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
+        "w": "classical music",
+        "p": "/ˈklæsɪkæl ˈmʌsɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being classical music.",
+        "si": "සම්භාව්ය සංගීතය",
+        "s": "The story was very classical music to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
       },
       {
-        "w": "reasonable",
-        "p": "/ˈɹiː.zən.ə.bəl/",
-        "pos": "adjective.",
-        "m": "Having the faculty of reason; rational, reasoning.",
-        "si": "සාධාරණ",
-        "s": "a reasonable demand, amount, or price",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
+        "w": "comedy",
+        "p": "/ˈkɒmedɪ/",
+        "pos": "adj.",
+        "m": "Having the quality of being comedy.",
+        "si": "විකට",
+        "s": "The story was very comedy to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
       },
       {
-        "w": "relaxed",
-        "p": "/ɹɪˈlækst/",
-        "pos": "verb.",
-        "m": "To calm down.",
-        "si": "සැහැල්ලම්",
-        "s": "to relax a rope or cord",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
+        "w": "competition",
+        "p": "/ˈkɒmpetɪʃn/",
+        "pos": "n.",
+        "m": "A competition.",
+        "si": "තරඟය",
+        "s": "We saw a competition near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
       },
       {
-        "w": "reliable",
-        "p": "/ɹɪˈlaɪəbəl/",
-        "pos": "noun.",
-        "m": "Something or someone reliable or dependable",
-        "si": "විශ්වාසය තබා හැකි",
-        "s": "the old reliables",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
+        "w": "concert",
+        "p": "/ˈkɒnkət/",
+        "pos": "n.",
+        "m": "A concert.",
+        "si": "ප්රසංගය",
+        "s": "We saw a concert near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
       },
       {
-        "w": "relieved",
-        "p": "/ɹɪˈliːvd/",
-        "pos": "verb.",
-        "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
-        "si": "පහසු සුවයක් දැනුණු",
-        "s": "I was greatly relieved by the jury's verdict.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
+        "w": "disco",
+        "p": "/ˈdɪskɒ/",
+        "pos": "n.",
+        "m": "A disco.",
+        "si": "ඩිස්කෝ",
+        "s": "We saw a disco near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
       },
       {
-        "w": "satisfied",
-        "p": "/ˈsætɪsfaɪd/",
-        "pos": "verb.",
-        "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
-        "si": "තෘප්තිමත්",
-        "s": "I'm not satisfied with the quality of the food here.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
+        "w": "display",
+        "p": "/ˈdɪspleɪ/",
+        "pos": "adj.",
+        "m": "Having the quality of being display.",
+        "si": "ප්රදර්ශනය",
+        "s": "The story was very display to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
       },
       {
-        "w": "special",
-        "p": "/ˈspɛ.ʃəl/",
-        "pos": "noun.",
-        "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
-        "si": "විශේෂ",
-        "s": "We're running a special on turkey for Thanksgiving.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
+        "w": "documentary",
+        "p": "/ˈdɒkʌmentɑːɪ/",
+        "pos": "adj.",
+        "m": "Having the quality of being documentary.",
+        "si": "වාර්තාමය",
+        "s": "The story was very documentary to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
       },
       {
-        "w": "stupid",
-        "p": "/ˈstjuːpɪd/",
-        "pos": "noun.",
-        "m": "A stupid person; a fool.",
-        "si": "මෝඩ",
-        "s": "His stupid knows no bounds.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
+        "w": "drawing",
+        "p": "/ˈdrɔːɪŋ/",
+        "pos": "v.",
+        "m": "To drawing (something).",
+        "si": "ඇඳීම",
+        "s": "They drawing together every weekend.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
       },
       {
-        "w": "surprised",
-        "p": "/səˈpɹaɪzd/",
-        "pos": "verb.",
-        "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
-        "si": "මවිත වූ",
-        "s": "It surprises me that I owe twice as much as I thought I did.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
+        "w": "exhibition",
+        "p": "/ˈekshɪbɪʃn/",
+        "pos": "n.",
+        "m": "A exhibition.",
+        "si": "ප්රදර්ශනය",
+        "s": "We saw a exhibition near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
       },
       {
-        "w": "terrible",
-        "p": "/ˈtɛ.ɹə.bl̩/",
-        "pos": "adjective.",
-        "m": "Dreadful; causing terror, alarm and fear; awesome",
-        "si": "භයානක / ඉතා නරක්",
-        "s": "The witch gave him a terrible curse.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
+        "w": "festival",
+        "p": "/ˈfestɪvæl/",
+        "pos": "adj.",
+        "m": "Having the quality of being festival.",
+        "si": "උත්සවය",
+        "s": "The story was very festival to read.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+      },
+      {
+        "w": "film maker",
+        "p": "/ˈfɪlm ˈmækə/",
+        "pos": "n.",
+        "m": "A film maker.",
+        "si": "චිත්රපට නිෂ්පාදකයා",
+        "s": "We saw a film maker near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+      },
+      {
+        "w": "fireworks",
+        "p": "/ˈfɜːewɔːks/",
+        "pos": "n.",
+        "m": "A fireworks.",
+        "si": "ගිනිකෙළි",
+        "s": "We saw a fireworks near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+      },
+      {
+        "w": "folk music",
+        "p": "/ˈfɒlk ˈmʌsɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being folk music.",
+        "si": "ජන සංගීතය",
+        "s": "The story was very folk music to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+      },
+      {
+        "w": "guitarist",
+        "p": "/ˈɡʌɪtɑːɪst/",
+        "pos": "n.",
+        "m": "A guitarist.",
+        "si": "ගිටාර් වාදකයෙක්",
+        "s": "We saw a guitarist near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+      },
+      {
+        "w": "headphones",
+        "p": "/ˈhiːdfɒnz/",
+        "pos": "n.",
+        "m": "A headphones.",
+        "si": "හෙඩ්ෆෝන්",
+        "s": "We saw a headphones near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+      },
+      {
+        "w": "hero",
+        "p": "/ˈhəɒ/",
+        "pos": "n.",
+        "m": "A hero.",
+        "si": "වීරයා",
+        "s": "We saw a hero near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+      },
+      {
+        "w": "heroine",
+        "p": "/ˈhəɔɪn/",
+        "pos": "n.",
+        "m": "A heroine.",
+        "si": "වීරවරියක්",
+        "s": "We saw a heroine near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
       }
     ]
   },
@@ -296,281 +296,281 @@
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.6.g",
+      "version": "0.0.6.h",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
       "active": true,
       "words": [
         {
-          "w": "important",
-          "p": "/ɪmˈpɔːtənt/",
-          "pos": "adjective.",
-          "m": "Having relevant and crucial value.",
-          "si": "වැදගත්",
-          "s": "It is very important to give your daughter independence in her life so she learns from experience.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
-        },
-        {
-          "w": "impressed",
-          "p": "/ɪmˈpɹɛst/",
-          "pos": "verb.",
-          "m": "To affect (someone) strongly and often favourably.",
-          "si": "පැහැදුණු",
-          "s": "You impressed me with your command of Urdu.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
-        },
-        {
-          "w": "intelligent",
-          "p": "/ɪnˈtɛlɪd͡ʒənt/",
-          "pos": "adjective.",
-          "m": "Of high or especially quick cognitive capacity, bright.",
-          "si": "බුද්ධිමත්",
-          "s": "The engineer had a very intelligent design proposal for the new car.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
-        },
-        {
-          "w": "interested",
-          "p": "/ˈɪntəɹɛstəd/",
-          "pos": "verb.",
-          "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
-          "si": "උනනුව දක්වන",
-          "s": "Action films don't really interest me.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
-        },
-        {
-          "w": "jealous",
-          "p": "/ˈdʒɛləs/",
-          "pos": "adjective.",
-          "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
-          "si": "ඊර්ෂ්‍යාව දක්වන",
-          "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
-        },
-        {
-          "w": "married",
-          "p": "/ˈmæɹ.ɪd/",
+          "w": "entertainment",
+          "p": "/ˈɛn.tɚˈteɪn.mənt/",
           "pos": "noun.",
-          "m": "A married person.",
-          "si": "විවාහ වූ",
-          "s": "My married uncle lives in Colombo with his wife.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
+          "m": "An activity designed to give pleasure, enjoyment, diversion, amusement, or relaxation to an audience, no matter whether the audience participates passively as in watching opera or a movie, or actively as in games.",
+          "si": "විනෝදාස්වාදය",
+          "s": "We saw a entertainment near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/entertainment-us.mp3"
         },
         {
-          "w": "miserable",
-          "p": "/ˈmɪz(ə)ɹəbəl/",
+          "w": "media",
+          "p": "/ˈmiːdɪə/",
           "pos": "noun.",
-          "m": "A miserable person; a wretch.",
-          "si": "දුක්බර",
-          "s": "The cold rain made the long journey miserable.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
+          "m": "The middle layer of the wall of a blood vessel or lymph vessel which is composed of connective and muscular tissue.",
+          "si": "මාධ්ය",
+          "s": "We saw a media near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
         },
         {
-          "w": "modern",
-          "p": "/ˈmɒd(ə)n/",
+          "w": "action",
+          "p": "/ˈæk.ʃən/",
           "pos": "noun.",
-          "m": "Someone who lives in modern times.",
-          "si": "නවීන",
-          "s": "Our classroom has a modern whiteboard and new chairs.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
+          "m": "Something done so as to accomplish a purpose.",
+          "si": "ක්රියාව",
+          "s": "Knead bread with a rocking action.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/action-us.mp3"
         },
         {
-          "w": "negative",
-          "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+          "w": "actress",
+          "p": "/ˈak.tɹəs/",
           "pos": "noun.",
-          "m": "Refusal or withholding of assents; prohibition, veto",
-          "si": "නෙගටීව් (අහෝසී අදහස් දක්වන)",
-          "s": "Try not to have a negative attitude before the exam.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
+          "m": "A female who performs on the stage or in films.",
+          "si": "නිළිය",
+          "s": "We saw a actress near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
         },
         {
-          "w": "nervous",
-          "p": "/ˈnɜːvəs/",
-          "pos": "adjective.",
-          "m": "Of sinews and tendons.",
-          "si": "කනස්සල්ලෙන් පෙළෙන",
-          "s": "I always feel nervous before a dictation test.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
-        },
-        {
-          "w": "noisy",
-          "p": "/ˈnɔːɪzɪ/",
-          "pos": "adjective.",
-          "m": "Making a noise, especially a loud unpleasant sound",
-          "si": "ඝෝෂාකාරී",
-          "s": "the noisy crowd.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
-        },
-        {
-          "w": "normal",
-          "p": "/ˈnɔːməl/",
+          "w": "admission",
+          "p": "/ædˈmɪʃ.ən/",
           "pos": "noun.",
-          "m": "A line or vector that is perpendicular to another line, surface, or plane.",
-          "si": "සාමාන්‍ය",
-          "s": "Heavy workload is the new normal.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
+          "m": "The act or practice of admitting.",
+          "si": "ඇතුළත් කිරීම",
+          "s": "I request admission for two adults",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
         },
         {
-          "w": "old",
-          "p": "/ˈɒʊld/",
-          "pos": "noun.",
-          "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
-          "si": "පැරණි",
-          "s": "A civilised society should always look after the old in the community.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
+          "w": "adventure",
+          "p": "/ˈædventɜː/",
+          "pos": "n.",
+          "m": "A adventure.",
+          "si": "ත්රාසජනක",
+          "s": "We saw a adventure near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
         },
         {
-          "w": "fashioned",
-          "p": "/ˈfæʃnd/",
-          "pos": "verb.",
-          "m": "To make, build or construct, especially in a crude or improvised way.",
-          "si": "පැරණි ආකාරයේ",
-          "s": "My grandmother makes old-fashioned sweets for the festival.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
+          "w": "advertisement",
+          "p": "/ˈædvətɪsement/",
+          "pos": "n.",
+          "m": "A advertisement.",
+          "si": "වෙළඳ දැන්වීම",
+          "s": "We saw a advertisement near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
         },
         {
-          "w": "ordinary",
-          "p": "/ˈɔːdənɹi/",
-          "pos": "noun.",
-          "m": "A person with authority; authority, ordinance.",
-          "si": "සාමාන්‍ය",
-          "s": "It was an ordinary Thursday until the surprise test arrived.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
+          "w": "audience",
+          "p": "/ˈɔːdaɪnk/",
+          "pos": "n.",
+          "m": "A audience.",
+          "si": "ප්රේක්ෂක",
+          "s": "We saw a audience near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
         },
         {
-          "w": "original",
-          "p": "/əˈɹɪdʒnəl/",
-          "pos": "noun.",
-          "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
-          "si": "මුල් ආකාරයේ / නව්‍ය",
-          "s": "This manuscript is the original.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
+          "w": "bestseller",
+          "p": "/ˈbestselə/",
+          "pos": "n.",
+          "m": "A bestseller.",
+          "si": "වැඩියෙන් අලෙවි වන",
+          "s": "We saw a bestseller near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
         },
         {
-          "w": "patient",
-          "p": "/ˈpeɪʃənt/",
-          "pos": "noun.",
-          "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
-          "si": "ඉවසිලිවන්ත",
-          "s": "The subject of a passive verb is usually a patient.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
+          "w": "cartoon",
+          "p": "/ˈkɑːtuːn/",
+          "pos": "n.",
+          "m": "A cartoon.",
+          "si": "කාටූන්",
+          "s": "We saw a cartoon near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
         },
         {
-          "w": "personal",
-          "p": "/ˈpɜː.sən.əl/",
-          "pos": "noun.",
-          "m": "An advertisement by which individuals attempt to meet others with similar interests.",
-          "si": "පෞද්ගලික",
-          "s": "Please do not read my personal diary — it is private.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
+          "w": "celebrity",
+          "p": "/ˈkelebrɪtɪ/",
+          "pos": "n.",
+          "m": "A celebrity.",
+          "si": "කීර්තිමත්",
+          "s": "We saw a celebrity near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
         },
         {
-          "w": "pleasant",
-          "p": "/ˈplɛzənt/",
-          "pos": "noun.",
-          "m": "A wit; a humorist; a buffoon.",
-          "si": "ප්‍රසන්න",
-          "s": "We had a pleasant walk along the Galle ramparts at sunset.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
+          "w": "channel",
+          "p": "/ˈtʃænel/",
+          "pos": "n.",
+          "m": "A channel.",
+          "si": "නාලිකාව",
+          "s": "We saw a channel near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
         },
         {
-          "w": "positive",
-          "p": "/ˈpɒzɪ̈tɪv/",
-          "pos": "noun.",
-          "m": "A thing capable of being affirmed; something real or actual.",
-          "si": "ධනාත්මක",
-          "s": "Stay positive and keep practising your English every day.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
+          "w": "circus",
+          "p": "/ˈkɜːkʌs/",
+          "pos": "n.",
+          "m": "A circus.",
+          "si": "සර්කස්",
+          "s": "We saw a circus near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
         },
         {
-          "w": "realistic",
-          "p": "/ˌɹiːjəˈlɪstɪk/",
-          "pos": "adjective.",
-          "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
-          "si": "යථාර්ථවාදී",
-          "s": "A realistic appraisal of the situation.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
+          "w": "classical music",
+          "p": "/ˈklæsɪkæl ˈmʌsɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being classical music.",
+          "si": "සම්භාව්ය සංගීතය",
+          "s": "The story was very classical music to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
         },
         {
-          "w": "reasonable",
-          "p": "/ˈɹiː.zən.ə.bəl/",
-          "pos": "adjective.",
-          "m": "Having the faculty of reason; rational, reasoning.",
-          "si": "සාධාරණ",
-          "s": "a reasonable demand, amount, or price",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
+          "w": "comedy",
+          "p": "/ˈkɒmedɪ/",
+          "pos": "adj.",
+          "m": "Having the quality of being comedy.",
+          "si": "විකට",
+          "s": "The story was very comedy to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
         },
         {
-          "w": "relaxed",
-          "p": "/ɹɪˈlækst/",
-          "pos": "verb.",
-          "m": "To calm down.",
-          "si": "සැහැල්ලම්",
-          "s": "to relax a rope or cord",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
+          "w": "competition",
+          "p": "/ˈkɒmpetɪʃn/",
+          "pos": "n.",
+          "m": "A competition.",
+          "si": "තරඟය",
+          "s": "We saw a competition near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
         },
         {
-          "w": "reliable",
-          "p": "/ɹɪˈlaɪəbəl/",
-          "pos": "noun.",
-          "m": "Something or someone reliable or dependable",
-          "si": "විශ්වාසය තබා හැකි",
-          "s": "the old reliables",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
+          "w": "concert",
+          "p": "/ˈkɒnkət/",
+          "pos": "n.",
+          "m": "A concert.",
+          "si": "ප්රසංගය",
+          "s": "We saw a concert near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
         },
         {
-          "w": "relieved",
-          "p": "/ɹɪˈliːvd/",
-          "pos": "verb.",
-          "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
-          "si": "පහසු සුවයක් දැනුණු",
-          "s": "I was greatly relieved by the jury's verdict.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
+          "w": "disco",
+          "p": "/ˈdɪskɒ/",
+          "pos": "n.",
+          "m": "A disco.",
+          "si": "ඩිස්කෝ",
+          "s": "We saw a disco near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
         },
         {
-          "w": "satisfied",
-          "p": "/ˈsætɪsfaɪd/",
-          "pos": "verb.",
-          "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
-          "si": "තෘප්තිමත්",
-          "s": "I'm not satisfied with the quality of the food here.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
+          "w": "display",
+          "p": "/ˈdɪspleɪ/",
+          "pos": "adj.",
+          "m": "Having the quality of being display.",
+          "si": "ප්රදර්ශනය",
+          "s": "The story was very display to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
         },
         {
-          "w": "special",
-          "p": "/ˈspɛ.ʃəl/",
-          "pos": "noun.",
-          "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
-          "si": "විශේෂ",
-          "s": "We're running a special on turkey for Thanksgiving.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
+          "w": "documentary",
+          "p": "/ˈdɒkʌmentɑːɪ/",
+          "pos": "adj.",
+          "m": "Having the quality of being documentary.",
+          "si": "වාර්තාමය",
+          "s": "The story was very documentary to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
         },
         {
-          "w": "stupid",
-          "p": "/ˈstjuːpɪd/",
-          "pos": "noun.",
-          "m": "A stupid person; a fool.",
-          "si": "මෝඩ",
-          "s": "His stupid knows no bounds.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
+          "w": "drawing",
+          "p": "/ˈdrɔːɪŋ/",
+          "pos": "v.",
+          "m": "To drawing (something).",
+          "si": "ඇඳීම",
+          "s": "They drawing together every weekend.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
         },
         {
-          "w": "surprised",
-          "p": "/səˈpɹaɪzd/",
-          "pos": "verb.",
-          "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
-          "si": "මවිත වූ",
-          "s": "It surprises me that I owe twice as much as I thought I did.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
+          "w": "exhibition",
+          "p": "/ˈekshɪbɪʃn/",
+          "pos": "n.",
+          "m": "A exhibition.",
+          "si": "ප්රදර්ශනය",
+          "s": "We saw a exhibition near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
         },
         {
-          "w": "terrible",
-          "p": "/ˈtɛ.ɹə.bl̩/",
-          "pos": "adjective.",
-          "m": "Dreadful; causing terror, alarm and fear; awesome",
-          "si": "භයානක / ඉතා නරක්",
-          "s": "The witch gave him a terrible curse.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
+          "w": "festival",
+          "p": "/ˈfestɪvæl/",
+          "pos": "adj.",
+          "m": "Having the quality of being festival.",
+          "si": "උත්සවය",
+          "s": "The story was very festival to read.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+        },
+        {
+          "w": "film maker",
+          "p": "/ˈfɪlm ˈmækə/",
+          "pos": "n.",
+          "m": "A film maker.",
+          "si": "චිත්රපට නිෂ්පාදකයා",
+          "s": "We saw a film maker near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+        },
+        {
+          "w": "fireworks",
+          "p": "/ˈfɜːewɔːks/",
+          "pos": "n.",
+          "m": "A fireworks.",
+          "si": "ගිනිකෙළි",
+          "s": "We saw a fireworks near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+        },
+        {
+          "w": "folk music",
+          "p": "/ˈfɒlk ˈmʌsɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being folk music.",
+          "si": "ජන සංගීතය",
+          "s": "The story was very folk music to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+        },
+        {
+          "w": "guitarist",
+          "p": "/ˈɡʌɪtɑːɪst/",
+          "pos": "n.",
+          "m": "A guitarist.",
+          "si": "ගිටාර් වාදකයෙක්",
+          "s": "We saw a guitarist near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+        },
+        {
+          "w": "headphones",
+          "p": "/ˈhiːdfɒnz/",
+          "pos": "n.",
+          "m": "A headphones.",
+          "si": "හෙඩ්ෆෝන්",
+          "s": "We saw a headphones near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+        },
+        {
+          "w": "hero",
+          "p": "/ˈhəɒ/",
+          "pos": "n.",
+          "m": "A hero.",
+          "si": "වීරයා",
+          "s": "We saw a hero near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+        },
+        {
+          "w": "heroine",
+          "p": "/ˈhəɔɪn/",
+          "pos": "n.",
+          "m": "A heroine.",
+          "si": "වීරවරියක්",
+          "s": "We saw a heroine near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
         }
       ]
     },
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T02:17:18.448Z",
+  "updatedAt": "2026-11-06T04:43:55.609Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 38,
+  "settingsRev": 39,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,277 +1188,277 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793931438447,
+  "syncRev": 1793940235594,
   "words": [
     {
-      "w": "important",
-      "p": "/ɪmˈpɔːtənt/",
-      "pos": "adjective.",
-      "m": "Having relevant and crucial value.",
-      "si": "වැදගත්",
-      "s": "It is very important to give your daughter independence in her life so she learns from experience.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/important-us.mp3"
-    },
-    {
-      "w": "impressed",
-      "p": "/ɪmˈpɹɛst/",
-      "pos": "verb.",
-      "m": "To affect (someone) strongly and often favourably.",
-      "si": "පැහැදුණු",
-      "s": "You impressed me with your command of Urdu.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/impressed-us.mp3"
-    },
-    {
-      "w": "intelligent",
-      "p": "/ɪnˈtɛlɪd͡ʒənt/",
-      "pos": "adjective.",
-      "m": "Of high or especially quick cognitive capacity, bright.",
-      "si": "බුද්ධිමත්",
-      "s": "The engineer had a very intelligent design proposal for the new car.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/intelligent-us.mp3"
-    },
-    {
-      "w": "interested",
-      "p": "/ˈɪntəɹɛstəd/",
-      "pos": "verb.",
-      "m": "To engage the attention of; to awaken interest in; to excite emotion or passion in, in behalf of a person or thing.",
-      "si": "උනනුව දක්වන",
-      "s": "Action films don't really interest me.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interested-us.mp3"
-    },
-    {
-      "w": "jealous",
-      "p": "/ˈdʒɛləs/",
-      "pos": "adjective.",
-      "m": "Suspecting rivalry in love; troubled by worries that one might have been replaced in someone's affections; suspicious of a lover's or spouse's fidelity.",
-      "si": "ඊර්ෂ්‍යාව දක්වන",
-      "s": "For you must not worship any other god, for the Lord, whose name is Jehovah, is a jealous God. —Exodus 34:14 (NET)",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/jealous-us.mp3"
-    },
-    {
-      "w": "married",
-      "p": "/ˈmæɹ.ɪd/",
+      "w": "entertainment",
+      "p": "/ˈɛn.tɚˈteɪn.mənt/",
       "pos": "noun.",
-      "m": "A married person.",
-      "si": "විවාහ වූ",
-      "s": "My married uncle lives in Colombo with his wife.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/married-us.mp3"
+      "m": "An activity designed to give pleasure, enjoyment, diversion, amusement, or relaxation to an audience, no matter whether the audience participates passively as in watching opera or a movie, or actively as in games.",
+      "si": "විනෝදාස්වාදය",
+      "s": "We saw a entertainment near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/entertainment-us.mp3"
     },
     {
-      "w": "miserable",
-      "p": "/ˈmɪz(ə)ɹəbəl/",
+      "w": "media",
+      "p": "/ˈmiːdɪə/",
       "pos": "noun.",
-      "m": "A miserable person; a wretch.",
-      "si": "දුක්බර",
-      "s": "The cold rain made the long journey miserable.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/miserable-us.mp3"
+      "m": "The middle layer of the wall of a blood vessel or lymph vessel which is composed of connective and muscular tissue.",
+      "si": "මාධ්ය",
+      "s": "We saw a media near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
     },
     {
-      "w": "modern",
-      "p": "/ˈmɒd(ə)n/",
+      "w": "action",
+      "p": "/ˈæk.ʃən/",
       "pos": "noun.",
-      "m": "Someone who lives in modern times.",
-      "si": "නවීන",
-      "s": "Our classroom has a modern whiteboard and new chairs.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/modern-us.mp3"
+      "m": "Something done so as to accomplish a purpose.",
+      "si": "ක්රියාව",
+      "s": "Knead bread with a rocking action.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/action-us.mp3"
     },
     {
-      "w": "negative",
-      "p": "/ˈnɛ(e)ɡəˌɾɪv/",
+      "w": "actress",
+      "p": "/ˈak.tɹəs/",
       "pos": "noun.",
-      "m": "Refusal or withholding of assents; prohibition, veto",
-      "si": "නෙගටීව් (අහෝසී අදහස් දක්වන)",
-      "s": "Try not to have a negative attitude before the exam.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/negative-us.mp3"
+      "m": "A female who performs on the stage or in films.",
+      "si": "නිළිය",
+      "s": "We saw a actress near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
     },
     {
-      "w": "nervous",
-      "p": "/ˈnɜːvəs/",
-      "pos": "adjective.",
-      "m": "Of sinews and tendons.",
-      "si": "කනස්සල්ලෙන් පෙළෙන",
-      "s": "I always feel nervous before a dictation test.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/nervous-au.mp3"
-    },
-    {
-      "w": "noisy",
-      "p": "/ˈnɔːɪzɪ/",
-      "pos": "adjective.",
-      "m": "Making a noise, especially a loud unpleasant sound",
-      "si": "ඝෝෂාකාරී",
-      "s": "the noisy crowd.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/noisy-us.mp3"
-    },
-    {
-      "w": "normal",
-      "p": "/ˈnɔːməl/",
+      "w": "admission",
+      "p": "/ædˈmɪʃ.ən/",
       "pos": "noun.",
-      "m": "A line or vector that is perpendicular to another line, surface, or plane.",
-      "si": "සාමාන්‍ය",
-      "s": "Heavy workload is the new normal.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/normal-us.mp3"
+      "m": "The act or practice of admitting.",
+      "si": "ඇතුළත් කිරීම",
+      "s": "I request admission for two adults",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
     },
     {
-      "w": "old",
-      "p": "/ˈɒʊld/",
-      "pos": "noun.",
-      "m": "(with the, invariable plural only) People who are old; old beings; the older generation, taken as a group.",
-      "si": "පැරණි",
-      "s": "A civilised society should always look after the old in the community.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/old-uk.mp3"
+      "w": "adventure",
+      "p": "/ˈædventɜː/",
+      "pos": "n.",
+      "m": "A adventure.",
+      "si": "ත්රාසජනක",
+      "s": "We saw a adventure near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
     },
     {
-      "w": "fashioned",
-      "p": "/ˈfæʃnd/",
-      "pos": "verb.",
-      "m": "To make, build or construct, especially in a crude or improvised way.",
-      "si": "පැරණි ආකාරයේ",
-      "s": "My grandmother makes old-fashioned sweets for the festival.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fashioned"
+      "w": "advertisement",
+      "p": "/ˈædvətɪsement/",
+      "pos": "n.",
+      "m": "A advertisement.",
+      "si": "වෙළඳ දැන්වීම",
+      "s": "We saw a advertisement near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
     },
     {
-      "w": "ordinary",
-      "p": "/ˈɔːdənɹi/",
-      "pos": "noun.",
-      "m": "A person with authority; authority, ordinance.",
-      "si": "සාමාන්‍ය",
-      "s": "It was an ordinary Thursday until the surprise test arrived.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ordinary-au.mp3"
+      "w": "audience",
+      "p": "/ˈɔːdaɪnk/",
+      "pos": "n.",
+      "m": "A audience.",
+      "si": "ප්රේක්ෂක",
+      "s": "We saw a audience near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
     },
     {
-      "w": "original",
-      "p": "/əˈɹɪdʒnəl/",
-      "pos": "noun.",
-      "m": "An object or other creation (e.g. narrative work) from which all later copies and variations are derived",
-      "si": "මුල් ආකාරයේ / නව්‍ය",
-      "s": "This manuscript is the original.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/original-us.mp3"
+      "w": "bestseller",
+      "p": "/ˈbestselə/",
+      "pos": "n.",
+      "m": "A bestseller.",
+      "si": "වැඩියෙන් අලෙවි වන",
+      "s": "We saw a bestseller near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
     },
     {
-      "w": "patient",
-      "p": "/ˈpeɪʃənt/",
-      "pos": "noun.",
-      "m": "A person or animal who receives treatment from a doctor or other medically educated person.",
-      "si": "ඉවසිලිවන්ත",
-      "s": "The subject of a passive verb is usually a patient.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/patient-uk.mp3"
+      "w": "cartoon",
+      "p": "/ˈkɑːtuːn/",
+      "pos": "n.",
+      "m": "A cartoon.",
+      "si": "කාටූන්",
+      "s": "We saw a cartoon near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
     },
     {
-      "w": "personal",
-      "p": "/ˈpɜː.sən.əl/",
-      "pos": "noun.",
-      "m": "An advertisement by which individuals attempt to meet others with similar interests.",
-      "si": "පෞද්ගලික",
-      "s": "Please do not read my personal diary — it is private.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/personal-us.mp3"
+      "w": "celebrity",
+      "p": "/ˈkelebrɪtɪ/",
+      "pos": "n.",
+      "m": "A celebrity.",
+      "si": "කීර්තිමත්",
+      "s": "We saw a celebrity near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
     },
     {
-      "w": "pleasant",
-      "p": "/ˈplɛzənt/",
-      "pos": "noun.",
-      "m": "A wit; a humorist; a buffoon.",
-      "si": "ප්‍රසන්න",
-      "s": "We had a pleasant walk along the Galle ramparts at sunset.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pleasant-us.mp3"
+      "w": "channel",
+      "p": "/ˈtʃænel/",
+      "pos": "n.",
+      "m": "A channel.",
+      "si": "නාලිකාව",
+      "s": "We saw a channel near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
     },
     {
-      "w": "positive",
-      "p": "/ˈpɒzɪ̈tɪv/",
-      "pos": "noun.",
-      "m": "A thing capable of being affirmed; something real or actual.",
-      "si": "ධනාත්මක",
-      "s": "Stay positive and keep practising your English every day.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/positive-us.mp3"
+      "w": "circus",
+      "p": "/ˈkɜːkʌs/",
+      "pos": "n.",
+      "m": "A circus.",
+      "si": "සර්කස්",
+      "s": "We saw a circus near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
     },
     {
-      "w": "realistic",
-      "p": "/ˌɹiːjəˈlɪstɪk/",
-      "pos": "adjective.",
-      "m": "Expressed or represented as being accurate, practicable, or not idealistic.",
-      "si": "යථාර්ථවාදී",
-      "s": "A realistic appraisal of the situation.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=realistic"
+      "w": "classical music",
+      "p": "/ˈklæsɪkæl ˈmʌsɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being classical music.",
+      "si": "සම්භාව්ය සංගීතය",
+      "s": "The story was very classical music to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
     },
     {
-      "w": "reasonable",
-      "p": "/ˈɹiː.zən.ə.bəl/",
-      "pos": "adjective.",
-      "m": "Having the faculty of reason; rational, reasoning.",
-      "si": "සාධාරණ",
-      "s": "a reasonable demand, amount, or price",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reasonable-us.mp3"
+      "w": "comedy",
+      "p": "/ˈkɒmedɪ/",
+      "pos": "adj.",
+      "m": "Having the quality of being comedy.",
+      "si": "විකට",
+      "s": "The story was very comedy to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
     },
     {
-      "w": "relaxed",
-      "p": "/ɹɪˈlækst/",
-      "pos": "verb.",
-      "m": "To calm down.",
-      "si": "සැහැල්ලම්",
-      "s": "to relax a rope or cord",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=relaxed"
+      "w": "competition",
+      "p": "/ˈkɒmpetɪʃn/",
+      "pos": "n.",
+      "m": "A competition.",
+      "si": "තරඟය",
+      "s": "We saw a competition near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
     },
     {
-      "w": "reliable",
-      "p": "/ɹɪˈlaɪəbəl/",
-      "pos": "noun.",
-      "m": "Something or someone reliable or dependable",
-      "si": "විශ්වාසය තබා හැකි",
-      "s": "the old reliables",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/reliable-us.mp3"
+      "w": "concert",
+      "p": "/ˈkɒnkət/",
+      "pos": "n.",
+      "m": "A concert.",
+      "si": "ප්රසංගය",
+      "s": "We saw a concert near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
     },
     {
-      "w": "relieved",
-      "p": "/ɹɪˈliːvd/",
-      "pos": "verb.",
-      "m": "To ease (a person, person's thoughts etc.) from mental distress; to stop (someone) feeling anxious or worried, to alleviate the distress of.",
-      "si": "පහසු සුවයක් දැනුණු",
-      "s": "I was greatly relieved by the jury's verdict.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/relieved-us.mp3"
+      "w": "disco",
+      "p": "/ˈdɪskɒ/",
+      "pos": "n.",
+      "m": "A disco.",
+      "si": "ඩිස්කෝ",
+      "s": "We saw a disco near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
     },
     {
-      "w": "satisfied",
-      "p": "/ˈsætɪsfaɪd/",
-      "pos": "verb.",
-      "m": "To do enough for; to meet the needs of; to fulfill the wishes or requirements of.",
-      "si": "තෘප්තිමත්",
-      "s": "I'm not satisfied with the quality of the food here.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/satisfied-us.mp3"
+      "w": "display",
+      "p": "/ˈdɪspleɪ/",
+      "pos": "adj.",
+      "m": "Having the quality of being display.",
+      "si": "ප්රදර්ශනය",
+      "s": "The story was very display to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
     },
     {
-      "w": "special",
-      "p": "/ˈspɛ.ʃəl/",
-      "pos": "noun.",
-      "m": "A reduction in consumer cost (usually for a limited time) for items or services rendered.",
-      "si": "විශේෂ",
-      "s": "We're running a special on turkey for Thanksgiving.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/special-us.mp3"
+      "w": "documentary",
+      "p": "/ˈdɒkʌmentɑːɪ/",
+      "pos": "adj.",
+      "m": "Having the quality of being documentary.",
+      "si": "වාර්තාමය",
+      "s": "The story was very documentary to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
     },
     {
-      "w": "stupid",
-      "p": "/ˈstjuːpɪd/",
-      "pos": "noun.",
-      "m": "A stupid person; a fool.",
-      "si": "මෝඩ",
-      "s": "His stupid knows no bounds.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stupid-us.mp3"
+      "w": "drawing",
+      "p": "/ˈdrɔːɪŋ/",
+      "pos": "v.",
+      "m": "To drawing (something).",
+      "si": "ඇඳීම",
+      "s": "They drawing together every weekend.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
     },
     {
-      "w": "surprised",
-      "p": "/səˈpɹaɪzd/",
-      "pos": "verb.",
-      "m": "To cause (someone) to feel unusually alarmed or delighted by something unexpected.",
-      "si": "මවිත වූ",
-      "s": "It surprises me that I owe twice as much as I thought I did.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/surprised-us.mp3"
+      "w": "exhibition",
+      "p": "/ˈekshɪbɪʃn/",
+      "pos": "n.",
+      "m": "A exhibition.",
+      "si": "ප්රදර්ශනය",
+      "s": "We saw a exhibition near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
     },
     {
-      "w": "terrible",
-      "p": "/ˈtɛ.ɹə.bl̩/",
-      "pos": "adjective.",
-      "m": "Dreadful; causing terror, alarm and fear; awesome",
-      "si": "භයානක / ඉතා නරක්",
-      "s": "The witch gave him a terrible curse.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/terrible-us.mp3"
+      "w": "festival",
+      "p": "/ˈfestɪvæl/",
+      "pos": "adj.",
+      "m": "Having the quality of being festival.",
+      "si": "උත්සවය",
+      "s": "The story was very festival to read.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+    },
+    {
+      "w": "film maker",
+      "p": "/ˈfɪlm ˈmækə/",
+      "pos": "n.",
+      "m": "A film maker.",
+      "si": "චිත්රපට නිෂ්පාදකයා",
+      "s": "We saw a film maker near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+    },
+    {
+      "w": "fireworks",
+      "p": "/ˈfɜːewɔːks/",
+      "pos": "n.",
+      "m": "A fireworks.",
+      "si": "ගිනිකෙළි",
+      "s": "We saw a fireworks near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+    },
+    {
+      "w": "folk music",
+      "p": "/ˈfɒlk ˈmʌsɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being folk music.",
+      "si": "ජන සංගීතය",
+      "s": "The story was very folk music to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+    },
+    {
+      "w": "guitarist",
+      "p": "/ˈɡʌɪtɑːɪst/",
+      "pos": "n.",
+      "m": "A guitarist.",
+      "si": "ගිටාර් වාදකයෙක්",
+      "s": "We saw a guitarist near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+    },
+    {
+      "w": "headphones",
+      "p": "/ˈhiːdfɒnz/",
+      "pos": "n.",
+      "m": "A headphones.",
+      "si": "හෙඩ්ෆෝන්",
+      "s": "We saw a headphones near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+    },
+    {
+      "w": "hero",
+      "p": "/ˈhəɒ/",
+      "pos": "n.",
+      "m": "A hero.",
+      "si": "වීරයා",
+      "s": "We saw a hero near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+    },
+    {
+      "w": "heroine",
+      "p": "/ˈhəɔɪn/",
+      "pos": "n.",
+      "m": "A heroine.",
+      "si": "වීරවරියක්",
+      "s": "We saw a heroine near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
     }
   ],
   "versionFamily": "9.0.0"

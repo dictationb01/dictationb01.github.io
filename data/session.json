@@ -296,7 +296,7 @@
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.6.j",
+      "version": "0.0.6.k",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T11:11:37.594Z",
+  "updatedAt": "2026-11-06T12:35:52.891Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 42,
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1794100000002,
+  "syncRev": 1794200000001,
   "words": [
     {
       "w": "entertainment",

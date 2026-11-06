@@ -85,12 +85,12 @@
       },
       {
         "w": "audience",
-        "p": "/ˈɔːdaɪnk/",
-        "pos": "n.",
-        "m": "A audience.",
+        "p": "/ˈɔːdi.əns/",
+        "pos": "noun.",
+        "m": "A group of people within hearing; specifically, a large gathering of people listening to or watching a performance, speech, etc.",
         "si": "ප්රේක්ෂක",
-        "s": "We saw a audience near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
+        "s": "We joined the audience just as the lights went down.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
       },
       {
         "w": "bestseller",
@@ -103,12 +103,12 @@
       },
       {
         "w": "cartoon",
-        "p": "/ˈkɑːtuːn/",
-        "pos": "n.",
-        "m": "A cartoon.",
+        "p": "/kɑːˈtuːn/",
+        "pos": "noun.",
+        "m": "A humorous drawing, often with a caption, or a strip of such drawings.",
         "si": "කාටූන්",
         "s": "We saw a cartoon near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cartoon-us.mp3"
       },
       {
         "w": "celebrity",
@@ -175,9 +175,9 @@
       },
       {
         "w": "disco",
-        "p": "/ˈdɪskɒ/",
-        "pos": "n.",
-        "m": "A disco.",
+        "p": "/ˈdɪskəʊ/",
+        "pos": "noun.",
+        "m": "A genre of dance music that was popular in the 1970s, characterized by elements of soul music with a strong Latin-American beat and often accompanied by pulsating lights.",
         "si": "ඩිස්කෝ",
         "s": "We saw a disco near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
@@ -220,12 +220,12 @@
       },
       {
         "w": "festival",
-        "p": "/ˈfestɪvæl/",
-        "pos": "adj.",
-        "m": "Having the quality of being festival.",
+        "p": "/ˈfɛstəvəl/",
+        "pos": "noun.",
+        "m": "An event or community gathering, usually staged by a local community, which centers on some theme, sometimes on some unique aspect of the community.",
         "si": "උත්සවය",
         "s": "The story was very festival to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
       },
       {
         "w": "film maker",
@@ -367,12 +367,12 @@
         },
         {
           "w": "audience",
-          "p": "/ˈɔːdaɪnk/",
-          "pos": "n.",
-          "m": "A audience.",
+          "p": "/ˈɔːdi.əns/",
+          "pos": "noun.",
+          "m": "A group of people within hearing; specifically, a large gathering of people listening to or watching a performance, speech, etc.",
           "si": "ප්රේක්ෂක",
-          "s": "We saw a audience near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
+          "s": "We joined the audience just as the lights went down.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
         },
         {
           "w": "bestseller",
@@ -385,12 +385,12 @@
         },
         {
           "w": "cartoon",
-          "p": "/ˈkɑːtuːn/",
-          "pos": "n.",
-          "m": "A cartoon.",
+          "p": "/kɑːˈtuːn/",
+          "pos": "noun.",
+          "m": "A humorous drawing, often with a caption, or a strip of such drawings.",
           "si": "කාටූන්",
           "s": "We saw a cartoon near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cartoon-us.mp3"
         },
         {
           "w": "celebrity",
@@ -457,9 +457,9 @@
         },
         {
           "w": "disco",
-          "p": "/ˈdɪskɒ/",
-          "pos": "n.",
-          "m": "A disco.",
+          "p": "/ˈdɪskəʊ/",
+          "pos": "noun.",
+          "m": "A genre of dance music that was popular in the 1970s, characterized by elements of soul music with a strong Latin-American beat and often accompanied by pulsating lights.",
           "si": "ඩිස්කෝ",
           "s": "We saw a disco near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
@@ -502,12 +502,12 @@
         },
         {
           "w": "festival",
-          "p": "/ˈfestɪvæl/",
-          "pos": "adj.",
-          "m": "Having the quality of being festival.",
+          "p": "/ˈfɛstəvəl/",
+          "pos": "noun.",
+          "m": "An event or community gathering, usually staged by a local community, which centers on some theme, sometimes on some unique aspect of the community.",
           "si": "උත්සවය",
           "s": "The story was very festival to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
         },
         {
           "w": "film maker",
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T11:10:31.612Z",
+  "updatedAt": "2026-11-06T11:10:59.493Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 41,
+  "settingsRev": 42,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1794100000001,
+  "syncRev": 1794100000002,
   "words": [
     {
       "w": "entertainment",
@@ -1255,12 +1255,12 @@
     },
     {
       "w": "audience",
-      "p": "/ˈɔːdaɪnk/",
-      "pos": "n.",
-      "m": "A audience.",
+      "p": "/ˈɔːdi.əns/",
+      "pos": "noun.",
+      "m": "A group of people within hearing; specifically, a large gathering of people listening to or watching a performance, speech, etc.",
       "si": "ප්රේක්ෂක",
-      "s": "We saw a audience near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=audience"
+      "s": "We joined the audience just as the lights went down.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
     },
     {
       "w": "bestseller",
@@ -1273,12 +1273,12 @@
     },
     {
       "w": "cartoon",
-      "p": "/ˈkɑːtuːn/",
-      "pos": "n.",
-      "m": "A cartoon.",
+      "p": "/kɑːˈtuːn/",
+      "pos": "noun.",
+      "m": "A humorous drawing, often with a caption, or a strip of such drawings.",
       "si": "කාටූන්",
       "s": "We saw a cartoon near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cartoon-us.mp3"
     },
     {
       "w": "celebrity",
@@ -1345,9 +1345,9 @@
     },
     {
       "w": "disco",
-      "p": "/ˈdɪskɒ/",
-      "pos": "n.",
-      "m": "A disco.",
+      "p": "/ˈdɪskəʊ/",
+      "pos": "noun.",
+      "m": "A genre of dance music that was popular in the 1970s, characterized by elements of soul music with a strong Latin-American beat and often accompanied by pulsating lights.",
       "si": "ඩිස්කෝ",
       "s": "We saw a disco near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
@@ -1390,12 +1390,12 @@
     },
     {
       "w": "festival",
-      "p": "/ˈfestɪvæl/",
-      "pos": "adj.",
-      "m": "Having the quality of being festival.",
+      "p": "/ˈfɛstəvəl/",
+      "pos": "noun.",
+      "m": "An event or community gathering, usually staged by a local community, which centers on some theme, sometimes on some unique aspect of the community.",
       "si": "උත්සවය",
       "s": "The story was very festival to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
     },
     {
       "w": "film maker",

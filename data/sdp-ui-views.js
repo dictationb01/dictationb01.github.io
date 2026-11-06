@@ -9,9 +9,10 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
-  /* v0.0.6.i (CF-UNIFIED-MAIN): the retired beta-preview sub-version. There
-     is exactly ONE permanent Main Production UI now; no ?beta / #beta / ?b=1
-     channel, no Preview/Beta switcher, no floating stamp. */
+  /* v0.0.6.j (P1/P3): the governed Beta channel is BACK for the Creator
+     Briefing suite. The v0.0.6.j features are permanent on Main; ?beta or
+     the header pill stamps BETA_SUBVERSION 0.0.6.j.beta and replays the
+     briefing so the whole suite is verifiable on a phone in one tap. */
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -320,7 +321,34 @@
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
     pinComplete: '✓ PIN Complete',
-    pinDigitsNeeded: 'digits'
+    pinDigitsNeeded: 'digits',
+    /* ══ v0.0.6.j — Creator Briefing, Beta channel, Post-Session Review ══ */
+    creatorNoteBtn: '♪ Creator Note',
+    briefingTitle: "The Creator's Note · Who built this?",
+    briefingPersona: 'British voice narration · Live synced transcript',
+    briefingLinkCode: 'Inspect the code on GitHub ↗',
+    briefingLinkProfile: "Explore Hansana's GitHub ↗",
+    briefingContinue: 'Continue to Smart Dictation →',
+    briefingSkip: 'Skip & Enter App',
+    briefingCountdown: 'Please listen / read ({n}s)…',
+    briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
+    betaPillLabel: 'Beta',
+    betaStampLabel: 'BETA · 0.0.6.j.beta — Creator Briefing · Multi-API · Reviews · Diagnostics',
+    betaOnToast: 'Beta channel ON — the v0.0.6.j suite is highlighted and the Creator Briefing will replay',
+    betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
+    reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
+    reviewSub: '100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.',
+    reviewVoiceBtn: '🎤 Record / Speak Review (English or Sinhala)',
+    reviewTextPh: 'Or type a quick note (optional)…',
+    reviewSendBtn: 'Send Review',
+    reviewSkipBtn: 'Skip — no thanks',
+    reviewSentToast: 'Thank you! Your encrypted review was saved for the creator.',
+    reviewSkipToast: 'No problem — enjoy the rest of your class!',
+    reviewVoiceListening: 'Listening… speak now, then press the button again to stop.',
+    reviewVoiceHeard: 'Heard: “{t}” — send it or edit the text box.',
+    reviewVoiceOff: 'Voice review is not supported on this browser — typing works everywhere.',
+    reviewVoiceError: 'Could not hear you — try again or type your note instead.',
+    reviewFast: '⚡ Fast & Smooth', reviewClear: '🔊 Voice Clear', reviewIssue: '🐞 Found an Issue'
   };
 
   
@@ -609,7 +637,34 @@
     apiCreditsExhaustedSi: '⚠️ API ක්‍රෙඩිට් අවසන් වී ඇත — කරුණාකර නව API යතුරක් ඇතුළත් කරන්න',
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
     pinComplete: '✓ PIN සම්පූර්ණයි',
-    pinDigitsNeeded: 'ඉලක්කම්'
+    pinDigitsNeeded: 'ඉලක්කම්',
+    /* ══ v0.0.6.j — නිර්මාණකරුගේ හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
+    creatorNoteBtn: '♪ නිර්මාණකරුගේ සටහන',
+    briefingTitle: 'නිර්මාණකරුගේ සටහන · මේක හදපු කවුද?',
+    briefingPersona: 'බ්‍රිතාන්‍ය හඬ පැහැදිලි කිරීම · සජීවී ට්‍රාන්ස්ක්‍රිප්ට්',
+    briefingLinkCode: 'GitHub හි කේතය බලන්න ↗',
+    briefingLinkProfile: "Hansana ගේ GitHub එක බලන්න ↗",
+    briefingContinue: 'Smart Dictation වෙත පිවිසෙන්න →',
+    briefingSkip: 'මඟහරින්න සහ යෙදුමට පිවිසෙන්න',
+    briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
+    briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
+    betaPillLabel: 'බීටා',
+    betaStampLabel: 'බීටා · 0.0.6.j.beta — නිර්මාණකරුගේ සටහන · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
+    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.j පොදිය ඉස්මතියේ තිබේ',
+    betaOffToast: 'බීටා නාලිකාව වසා ඇත — සාමාන්‍ය ප්‍රධාන කොක්පිට් එකට ආපසු',
+    reviewTitle: 'Smart Dictation වඩාත් හොඳ කරන්න — ඔබේ ඉක්මන් සමාලෝචනය බෙදාගන්න',
+    reviewSub: '100% අවශ්‍ය නැත — තට්ටු දෙකක් හෝ කෙටි කටහඬක්. එය කේතනය කර නිර්මාණකරුට යයි.',
+    reviewVoiceBtn: '🎤 සමාලෝචනය කථනයෙන් පටිගත කරන්න (ඉංග්‍රීසි හෝ සිංහල)',
+    reviewTextPh: 'හෝ කෙටි සටහනක් ලියන්න (අවශ්‍ය නම්)…',
+    reviewSendBtn: 'සමාලෝචනය යවන්න',
+    reviewSkipBtn: 'මඟහරින්න — අවශ්‍ය නැත',
+    reviewSentToast: 'ස්තූතියි! ඔබේ කේතනය කළ සමාලෝචනය සුරැකුණා.',
+    reviewSkipToast: 'කමක් නැත — ඉතිරි පන්තිය නිදහසේ භුක්ති විඳින්න!',
+    reviewVoiceListening: 'අහමින්… දැන් කථනය කරන්න, නවත්වන්න නම් නැවත තට්ටු කරන්න.',
+    reviewVoiceHeard: 'ඇහුණා: “{t}” — යවන්න නැතහොත් පෙළ සංස්කරණය කරන්න.',
+    reviewVoiceOff: 'මෙම බ්‍රව්සරයේ කටහඬ සමාලෝචනය ලැබෙන්නේ නැත — ලිවීම හැම තැනම වැඩ.',
+    reviewVoiceError: 'කටහඬ ඇහුණේ නැත — නැවත උත්සාහ කරන්න හෝ ලියන්න.',
+    reviewFast: '⚡ ඉක්මන් සහ නිරවද්‍යයි', reviewClear: '🔊 කටහඬ පැහැදිලියි', reviewIssue: '🐞 ගැටලුවක් හමුවුණා'
   };
 
   var lang = 'en';
@@ -2390,6 +2445,25 @@
     on('btnGuideTop', 'click', openGuide);
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
+    /* v0.0.6.j: the Creator Note pill replays the synced-lyrics briefing. */
+    on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
+    on('sdpBetaPill', 'click', function () { applyBetaChannel(!betaActive()); });
+    on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
+    on('btnBriefingSkip', 'click', function () { closeBriefing('skip'); });
+    var bModal = byId('briefingModal');
+    if (bModal && !bModal._sdpBound) {
+      bModal._sdpBound = true;
+      bModal.addEventListener('click', function (ev) {
+        if (ev && ev.target === bModal) closeBriefing('backdrop');
+      });
+      bModal.addEventListener('click', function (ev) {
+        var node = ev && ev.target;
+        if (!node || !node.getAttribute) return;
+        var line = node.getAttribute('data-bline');
+        if (line !== null && line !== undefined && line !== '') briefingSeek(Number(line));
+      });
+    }
+    bindReviewCard();
     on('btnGuideSkipStart', 'click', function () {
       /* R2: ▶ Start Dictation Now — close, stamp, speak the lesson. */
       var mode = guideState.pendingMode || settings().mode;
@@ -2763,6 +2837,342 @@
     return true;
   }
 
+  /* ══ v0.0.6.j Pillar 1 — Creator Briefing: live synced transcript ════════
+   * Eight short beats in simple, warm English narrated by a charismatic
+   * British male voice (ElevenLabs intro clips when published, otherwise a
+   * pinned en-GB male Web Speech voice). The active sentence highlights in
+   * large type while past/next sentences stay readable at softer opacity, so
+   * the student can always read ahead or scroll back. The primary CTA stays
+   * locked behind a 10-second live countdown — never an unclosable wall. */
+  var BETA_SUBVERSION = '0.0.6.j.beta';
+  var BRIEFING_GATE_MS = 10000;
+  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false };
+  var BRIEFING_SENTENCES = [
+    "Hi — I'm Hansana. Just two months ago I finished my A/L exams: Combined Mathematics, Physics and Chemistry.",
+    "I have very little formal ICT education. This whole system was architected and developed by me — powered by multiple autonomous AI agents hosted and orchestrated on my own system, guided purely by my critical thinking and problem-solving.",
+    "I didn't build this to seek attention. It is a personal testbed to sharpen my thinking — and honestly, seeing you use it makes me happy.",
+    "Everything here was built with zero money invested — one hundred percent free and open-source resources. You can inspect every line of the code on GitHub.",
+    "Smart Dictation is only a side testbed. I'm also building bigger open-source engineering projects — including my RDB project and a massive flagship project aimed at changing the future of the IT field.",
+    "The app is engineered to run lag-free on any phone or computer. Lecturers can unlock Lecturer Mode and update classroom words step-by-step — the automated pipeline handles everything else.",
+    "If anything feels off, you can share a quick voice or text review after each session. Every review is one hundred percent end-to-end encrypted, so your privacy is completely safe.",
+    "That's the whole story. Now — let's train some English together. Enjoy your session!"
+  ];
+  function briefingSentences() { return BRIEFING_SENTENCES.slice(); }
+  function briefingSeen() {
+    var s = settings();
+    return !!(s && (s.briefingSeen === 1 || s.briefingSeen === '1' || s.briefingSeen === true));
+  }
+  function markBriefingSeen() {
+    try { SDP.Data.saveSettings({ briefingSeen: 1 }); } catch (e) {}
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_seen', { ver: APP_VERSION }); } catch (e) {}
+  }
+  function renderBriefingLyrics() {
+    var host = byId('briefingLyrics');
+    if (!host) return false;
+    var html = '', i;
+    for (i = 0; i < BRIEFING_SENTENCES.length; i++) {
+      html += '<p class="b-line" data-bline="' + i + '">' + esc(BRIEFING_SENTENCES[i]) + '</p>';
+    }
+    host.innerHTML = html;
+    return true;
+  }
+  function paintBriefingLine(idx) {
+    var host = byId('briefingLyrics');
+    if (!host) return false;
+    var lines = host.querySelectorAll('.b-line'), i, node;
+    for (i = 0; i < lines.length; i++) {
+      node = lines[i];
+      if (node.classList) {
+        node.classList.remove('on');
+        if (i < idx) { node.setAttribute('data-state', 'past'); node.style.opacity = '0.45'; }
+        else if (i === idx) { node.setAttribute('data-state', 'on'); node.classList.add('on'); node.style.opacity = ''; }
+        else { node.setAttribute('data-state', 'next'); node.style.opacity = '0.62'; }
+      }
+    }
+    var bar = byId('briefingBar');
+    if (bar) bar.style.width = (Math.round(((idx + 1) / BRIEFING_SENTENCES.length) * 100)) + '%';
+    var active = host.querySelector('.b-line.on');
+    if (active && host.scrollTo) {
+      try { host.scrollTo({ top: Math.max(0, active.offsetTop - host.clientHeight * 0.38), behavior: 'smooth' }); } catch (e) {}
+    }
+    return true;
+  }
+  function briefingNarrate(idx, epoch) {
+    if (!briefingState.open || epoch !== briefingState.epoch) return;
+    if (idx >= BRIEFING_SENTENCES.length) { briefingFinishNarration(epoch); return; }
+    briefingState.idx = idx;
+    paintBriefingLine(idx);
+    var text = BRIEFING_SENTENCES[idx];
+    var advanced = false;
+    var next = function () {
+      if (advanced || epoch !== briefingState.epoch) return;
+      advanced = true;
+      global.setTimeout(function () { briefingNarrate(idx + 1, epoch); }, 240);
+    };
+    /* The speech layer always calls back (clip, device voice or watchdog);
+       the parallel estimate timer is only a last-resort stall guard. */
+    var guardMs = 2200 + (text.length * 95);
+    var guard = global.setTimeout(next, guardMs);
+    var realNext = function () { global.clearTimeout(guard); next(); };
+    try {
+      if (SDP.Speech && SDP.Speech.playBriefingStep) SDP.Speech.playBriefingStep(idx, text, realNext);
+      else realNext();
+    } catch (e) { realNext(); }
+  }
+  function briefingFinishNarration(epoch) {
+    if (epoch !== briefingState.epoch) return;
+    paintBriefingLine(BRIEFING_SENTENCES.length - 1);
+    var bar = byId('briefingBar');
+    if (bar) bar.style.width = '100%';
+  }
+  function briefingTickGate() {
+    if (!briefingState.open) return;
+    if (briefingState.gateLeft > 0) {
+      briefingState.gateLeft -= 1;
+      var count = byId('briefingCount');
+      if (count && briefingState.gateLeft > 0) {
+        count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+      }
+      if (briefingState.gateLeft > 0) return;
+    }
+    briefingUnlockCta();
+  }
+  function briefingUnlockCta() {
+    var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
+    if (cont) { cont.disabled = false; cont.removeAttribute('aria-disabled'); }
+    if (skip) { skip.disabled = false; skip.removeAttribute('aria-disabled'); }
+    if (count) count.textContent = t('briefingUnlocked', 'Thank you for listening — continue whenever you are ready.');
+    var card = byId('briefingModal');
+    if (card && card.classList) card.classList.add('b-gate-open');
+    briefingState.gateLeft = 0;
+  }
+  function openBriefing(opts) {
+    opts = opts || {};
+    var modal = byId('briefingModal');
+    if (!modal) return false;
+    if (briefingState.open) return true;
+    briefingState.open = true;
+    briefingState.epoch += 1;
+    briefingState.idx = -1;
+    briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
+    renderBriefingLyrics();
+    paintBriefingLine(-1);
+    var bar = byId('briefingBar');
+    if (bar) bar.style.width = '0%';
+    var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
+    if (cont) { cont.disabled = true; cont.setAttribute('aria-disabled', 'true'); }
+    if (skip) { skip.disabled = true; skip.setAttribute('aria-disabled', 'true'); }
+    if (count) count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    if (modal.classList) { modal.classList.remove('hidden'); modal.classList.add('is-open'); }
+    if (modal.classList) modal.classList.remove('b-gate-open');
+    if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
+    briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive() }); } catch (e) {}
+    var epoch = briefingState.epoch;
+    global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
+    return true;
+  }
+  function closeBriefing(viaButton) {
+    var modal = byId('briefingModal');
+    if (!modal || !briefingState.open) return false;
+    /* The 10-second law: the briefing cannot be dismissed while gated. */
+    if (briefingState.gateLeft > 0) return false;
+    briefingState.open = false;
+    briefingState.epoch += 1;
+    if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    if (modal.classList) modal.classList.remove('is-open');
+    try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
+    markBriefingSeen();
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_close', { via: viaButton || 'other' }); } catch (e) {}
+    /* First visit: the student guide takes over exactly as before (R2/F3). */
+    if (viaButton === 'continue' && !SDP.Data.guideSeen()) {
+      global.setTimeout(function () { openGuide(null, { fromBoot: true }); }, 260);
+    }
+    return true;
+  }
+  function briefingGateLeft() { return briefingState.gateLeft; }
+  function briefingSeek(idx) {
+    if (!briefingState.open) return false;
+    var i = Number(idx);
+    if (!(i >= 0) || i >= BRIEFING_SENTENCES.length) return false;
+    briefingState.epoch += 1;
+    briefingNarrate(i, briefingState.epoch);
+    return true;
+  }
+
+  /* ══ v0.0.6.j — the governed Beta channel (?beta / header pill) ════════
+   * The v0.0.6.j suite (Creator Briefing, 5-key Multi-API pool, post-session
+   * reviews, diagnostics .zip) is live on the MAIN cockpit by default; the
+   * Beta channel is a visible testing state that stamps the sub-version and
+   * replays the briefing so it can be verified on a phone in one tap. */
+  function betaFlag() { return 'sdp.beta.channel'; }
+  function betaActive() {
+    try { if (global.sessionStorage && global.sessionStorage.getItem(betaFlag()) === '1') return true; } catch (e) {}
+    return false;
+  }
+  function paintBeta() {
+    var pill = byId('sdpBetaPill'), stamp = byId('sdpBetaStamp'), on = betaActive();
+    if (pill) {
+      pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+      pill.textContent = t('betaPillLabel', 'Beta');
+      if (pill.classList) { if (on) pill.classList.add('on'); else pill.classList.remove('on'); }
+    }
+    if (stamp) {
+      stamp.textContent = t('betaStampLabel', 'BETA · 0.0.6.j.beta');
+      stamp.hidden = !on;
+    }
+  }
+  function applyBetaChannel(on, quiet) {
+    try {
+      if (global.sessionStorage) global.sessionStorage.setItem(betaFlag(), on ? '1' : '0');
+    } catch (e) {}
+    paintBeta();
+    if (!quiet) showCapsule(on ? t('betaOnToast') : t('betaOffToast'));
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('beta_channel', { on: !!on }); } catch (e) {}
+    if (on) openBriefing({ replay: true });
+    return true;
+  }
+  function initBetaFromUrl() {
+    var hit = false;
+    try {
+      var q = String(global.location && global.location.search || '');
+      var h = String(global.location && global.location.hash || '');
+      hit = /[?&]beta(=1|=true)?($|&)/i.test(q) || /[#&]beta(=1|=true)?($|&)/i.test(h);
+    } catch (e) {}
+    if (hit && !betaActive()) applyBetaChannel(true, true);
+    paintBeta();
+    return betaActive();
+  }
+
+  /* ══ v0.0.6.j Pillar 3 — frictionless post-session review card ════════ */
+  var reviewState = { pills: {}, listening: false, recog: null, voiceText: '', done: false };
+  function reviewRecogCtor() {
+    return global.SpeechRecognition || global.webkitSpeechRecognition || null;
+  }
+  function paintReviewCard(model) {
+    var card = byId('reviewCard');
+    if (!card) return false;
+    reviewState.pills = {}; reviewState.voiceText = ''; reviewState.done = false;
+    var pills = doc.querySelectorAll('#reviewPills .rpill'), i;
+    for (i = 0; i < pills.length; i++) {
+      pills[i].setAttribute('aria-pressed', 'false');
+      if (pills[i].classList) pills[i].classList.remove('pressed');
+    }
+    var input = byId('reviewTextInput');
+    if (input) input.value = '';
+    var status = byId('reviewVoiceStatus');
+    if (status) { status.hidden = true; status.textContent = ''; }
+    card.hidden = false;
+    try { card.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    var total = isObj(model) ? Number(model.total) || 0 : 0;
+    var correct = isObj(model) ? Number(model.correct) || 0 : 0;
+    try {
+      if (SDP.Diagnostics) SDP.Diagnostics.log('session_complete', {
+        total: total, correct: correct, mode: isObj(model) ? str(model.mode) : '', ver: APP_VERSION
+      });
+    } catch (e) {}
+    return true;
+  }
+  function hideReviewCard() {
+    var card = byId('reviewCard');
+    if (card) card.hidden = true;
+    stopReviewVoice();
+  }
+  function stopReviewVoice() {
+    reviewState.listening = false;
+    if (reviewState.recog) {
+      try { reviewState.recog.stop(); } catch (e) {}
+      reviewState.recog = null;
+    }
+    var btn = byId('btnVoiceReview');
+    if (btn && btn.classList) btn.classList.remove('listening');
+  }
+  function toggleReviewVoice() {
+    var SR = reviewRecogCtor();
+    var status = byId('reviewVoiceStatus');
+    if (!SR) {
+      if (status) { status.hidden = false; status.textContent = t('reviewVoiceOff'); }
+      return false;
+    }
+    if (reviewState.listening) { stopReviewVoice(); return true; }
+    var recog = new SR();
+    reviewState.recog = recog;
+    reviewState.listening = true;
+    var btn = byId('btnVoiceReview');
+    if (btn && btn.classList) btn.classList.add('listening');
+    if (status) { status.hidden = false; status.textContent = t('reviewVoiceListening'); }
+    try { recog.lang = (lang === 'si') ? 'si-LK' : 'en-GB'; } catch (e) {}
+    try { recog.interimResults = false; recog.continuous = false; } catch (e) {}
+    recog.onresult = function (ev) {
+      var said = '';
+      try {
+        var r = ev && ev.results ? ev.results[0] : null;
+        if (r && r[0] && r[0].transcript) said = str(r[0].transcript);
+      } catch (e) {}
+      reviewState.voiceText = said;
+      var input = byId('reviewTextInput');
+      if (input && said) input.value = said;
+      if (status && said) status.textContent = t('reviewVoiceHeard').replace('{t}', said.slice(0, 90));
+      stopReviewVoice();
+    };
+    recog.onerror = function () {
+      if (status) { status.hidden = false; status.textContent = t('reviewVoiceError'); }
+      stopReviewVoice();
+    };
+    recog.onend = function () { stopReviewVoice(); };
+    try { recog.start(); } catch (e) { stopReviewVoice(); }
+    return true;
+  }
+  function sendReview(skipped) {
+    var input = byId('reviewTextInput');
+    var text = reviewState.voiceText || str(input && input.value);
+    var pills = reviewState.pills || {};
+    var picked = [];
+    for (var k in pills) { if (pills.hasOwnProperty(k) && pills[k]) picked.push(k); }
+    var payload = {
+      kind: 'student_review',
+      skipped: !!skipped,
+      pills: picked,
+      text: text.slice(0, 300),
+      lang: lang,
+      at: new Date().toISOString()
+    };
+    try {
+      if (SDP.Diagnostics) SDP.Diagnostics.captureReview(payload);
+    } catch (e) {}
+    reviewState.done = true;
+    hideReviewCard();
+    showCapsule(skipped ? t('reviewSkipToast') : t('reviewSentToast'));
+    return true;
+  }
+  function bindReviewCard() {
+    var pills = doc.querySelectorAll ? doc.querySelectorAll('#reviewPills .rpill') : [];
+    for (var i = 0; i < pills.length; i++) {
+      (function (node) {
+        if (node._sdpBound) return;
+        node._sdpBound = true;
+        node.addEventListener('click', function () {
+          var key = str(node.getAttribute('data-rpill'));
+          reviewState.pills[key] = !reviewState.pills[key];
+          node.setAttribute('aria-pressed', reviewState.pills[key] ? 'true' : 'false');
+          if (node.classList) { if (reviewState.pills[key]) node.classList.add('pressed'); else node.classList.remove('pressed'); }
+        });
+      })(pills[i]);
+    }
+    on('btnVoiceReview', 'click', toggleReviewVoice);
+    on('btnSendReview', 'click', function () { sendReview(false); });
+    on('btnSkipReview', 'click', function () { sendReview(true); });
+    return true;
+  }
+  function onFinished(model) {
+    paintReviewCard(model);
+    return true;
+  }
+
   function init() {
     if (initialized) return false;
     initialized = true;
@@ -2777,13 +3187,25 @@
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
     setText(byId('aboutVersion'), APP_VERSION);
     setText(byId('brandName'), 'Smart Dictation');
+    initBetaFromUrl();
+    try {
+      if (SDP.Diagnostics) SDP.Diagnostics.log('boot', {
+        ver: APP_VERSION, beta: betaActive(),
+        vw: global.innerWidth || 0, vh: global.innerHeight || 0,
+        touch: !!(global.matchMedia && global.matchMedia('(hover: none)').matches)
+      });
+    } catch (e) {}
     renderHome();
     renderWords();
     renderPractice();
     renderGuideSteps();
     renderSettings();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
-    if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
+    /* v0.0.6.j Pillar 1: a brand-new visitor gets the Creator Briefing first;
+       the student guide follows the moment the briefing closes. Returning
+       students (any guide_seen stamp) are never interrupted again. */
+    if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true });
+    else if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
     showToast();
     try { SDP.Sync.registerSW(); } catch (e) {}
     try {
@@ -2917,6 +3339,21 @@
     sessionIntroShown: function () { return !!sessionState.introShown; },
     openStudio: openStudio,
     startOver: startOver,
+    /* ══ v0.0.6.j public surface: briefing, beta channel, review card ══ */
+    openBriefing: openBriefing,
+    closeBriefing: closeBriefing,
+    briefingSentences: briefingSentences,
+    briefingSeen: briefingSeen,
+    briefingGateLeft: briefingGateLeft,
+    briefingSeek: briefingSeek,
+    briefingIsOpen: function () { return !!briefingState.open; },
+    betaSubversion: function () { return BETA_SUBVERSION; },
+    betaActive: betaActive,
+    applyBetaChannel: applyBetaChannel,
+    onFinished: onFinished,
+    paintReviewCard: paintReviewCard,
+    hideReviewCard: hideReviewCard,
+    sendReview: sendReview,
     paintCues: paintCues,
     cuesSeen: cuesSeen,
     markCueSeen: markCueSeen,

@@ -40,20 +40,20 @@ const BUDGET = {
   /* contract: docs/ARCHITECTURE_MAP.md §H1 — v0.0.2.b ceilings (W4). The three
      module ceilings moved again for the D1–D20 work: studio 126000, sync 86000,
      views 136000, engine 62000; session.json is the exact 57,379 B payload. */
-  'index.html': 52000,
+  'index.html': 56000,
   /* v0.0.5.b: the appended Morphe material layer (glass header, layered
      shadows, spring motion, screen/modal/accordion transitions, mobile
      collision fixes) moved the ceiling in lockstep with the release. */
-  'assets/css/sdp-ui.css': 111180,
+  'assets/css/sdp-ui.css': 120000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data/sdp-data-sync.js': 95000,
-  'data/sdp-audio-speech.js': 60000,
+  'data/sdp-data-sync.js': 106000,
+  'data/sdp-audio-speech.js': 63000,
   'data/sdp-dictation-engine.js': 76000,
-  'data/sdp-ui-views.js': 171500,
+  'data/sdp-ui-views.js': 196000,
   /* v0.0.5.c: the studio gained sha1Hex, the 70-clip catalogue and the live key
      verifier; the ceiling moved with it, in lockstep with audit-v42.cjs. */
-  'data/studio.js': 196000,
+  'data/studio.js': 212000, /* v0.0.6.j: key pool + verifier + diag moved in lockstep (G9.3a 210000) */
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
@@ -102,7 +102,7 @@ const TEST_FILES = [
   /* v0.0.1.e registers three more gates: voice/guide, vault/sync, studio safety */
   'tests/voice-guide.cjs', 'tests/vault-sync.cjs', 'tests/studio-safety.cjs'
 ];
-/* v0.0.6.i: +G5.14/G3.12 critical-fix assertions */
+/* v0.0.6.j: +G5.14/G3.12 critical-fix assertions */
 const TEST_BUDGET = 330000;
 
 /* contract: docs/ARCHITECTURE_MAP.md §H2 — retired v42–v60 ids/strings must be
@@ -253,10 +253,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.5.c ships ver 12 / schema 12 / settingsRev 25
-    const ok = v.ver === 23 && v.appVersion === '0.0.6.i' && v.version === '0.0.6.i' &&
-      v.schema === 23 && v.settingsRev === 39 && String(v.session) === '8';
-    record('version.json carries the v0.0.6.i schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1794000000000', Number(v.syncRev) === 1794000000000, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 24 && v.appVersion === '0.0.6.j' && v.version === '0.0.6.j' &&
+      v.schema === 24 && v.settingsRev === 40 && String(v.session) === '8';
+    record('version.json carries the v0.0.6.j schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1794100000000', Number(v.syncRev) === 1794100000000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -276,8 +276,8 @@ function pending(p) {
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
-    record('config.json carries v0.0.6.i version fields',
-      c.ver === 23 && c.appVersion === '0.0.6.i' && c.version === '0.0.6.i' && c.schema === 23 && c.settingsRev === 39,
+    record('config.json carries v0.0.6.j version fields',
+      c.ver === 24 && c.appVersion === '0.0.6.j' && c.version === '0.0.6.j' && c.schema === 24 && c.settingsRev === 40,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -421,7 +421,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.e boot target', html.indexOf("'0.0.6.i'") > 0 || html.indexOf('"0.0.6.i"') > 0);
+  record('index.html declares the v0.0.6.e boot target', html.indexOf("'0.0.6.j'") > 0 || html.indexOf('"0.0.6.j"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -466,7 +466,7 @@ function pending(p) {
   record('D4 the failed clip is recorded and #btnRetryFailedClip exists',
     /lastFailedClip/.test(studio) && studio.indexOf('btnRetryFailedClip') > 0);
   record('D18 the 70-clip arithmetic is stated in the cost line',
-    /clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(studio));
+    /clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps \+ 8 intro steps\)/.test(studio));
   var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
   /* contract: docs/UI_COMPONENT_GUIDE.md §3 — v0.0.5.c replaces the four mock
      cards with ONE compact spotlight (R2/F3). No mock markup may survive. */
@@ -506,9 +506,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.i target', /var TARGET = '0.0.6.i'/.test(html));
+    record('index.html boots at the v0.0.6.j target', /var TARGET = '0.0.6.j'/.test(html));
     record('service worker pins the v0.0.6.e shell caches',
-      /SW_VERSION = 'sdp-v0.0.6.i-s24'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.i-s24-shell'/.test(sw));
+      /SW_VERSION = 'sdp-v0.0.6.j-s25'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.j-s25-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -528,32 +528,32 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.i',
-      /"start_url":"\.\/\?v=0.0.6.i/.test(man) &&
-      (man.match(/v=0.0.6.i/g) || []).length >= 3, (man.match(/v=0.0.6.i/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.6.j',
+      /"start_url":"\.\/\?v=0.0.6.j/.test(man) &&
+      (man.match(/v=0.0.6.j/g) || []).length >= 3, (man.match(/v=0.0.6.j/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.i';
+    var app = '0.0.6.j';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 23;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 24;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 23,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 23
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 24,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 24
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.i / ver 22',
+    record('D15 all seven versioned surfaces agree on 0.0.6.j / ver 24',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.i header',
-      pack.version === '0.0.6.i' && pack.appVersion === '0.0.6.i' && pack.ver === 23 && pack.schema === 23 &&
+    record('voice pack carries the v0.0.6.j header',
+      pack.version === '0.0.6.j' && pack.appVersion === '0.0.6.j' && pack.ver === 24 && pack.schema === 24 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.voiceId]));
   })();
 
-  /* 12 ── v0.0.6.i mobile human-UI + extension-lock surface ──────────── */
+  /* 12 ── v0.0.6.j mobile human-UI + extension-lock surface ──────────── */
   (function mobileHumanUi() {
     var html = exists('index.html') ? readText('index.html') : '';
     var dataHtml = exists('data.html') ? readText('data.html') : '';
@@ -564,7 +564,7 @@ function pending(p) {
     /* A1: every entry point locks Dark Reader and pins only-light */
     ['index.html', 'data.html', 'data/index.html'].forEach(function (f) {
       var t = exists(f) ? readText(f) : '';
-      record('v0.0.6.i ' + f + ' ships the darkreader-lock + color-scheme metas',
+      record('v0.0.6.j ' + f + ' ships the darkreader-lock + color-scheme metas',
         /<meta name="darkreader-lock">/.test(t) && /<meta name="color-scheme" content="only light">/.test(t));
     });
     record('A1 the stylesheet enforces the strict light lock',
@@ -603,11 +603,94 @@ function pending(p) {
       studio.indexOf('chip-w') > 0);
     record('A3 the chip glyphs are real unicode escapes (never HTML entities)',
       studio.indexOf('\\u21c4') > 0 && studio.indexOf('\\u2715') > 0 && studio.indexOf('&#') < 0);
-    /* A6 (v0.0.6.i CF-UNIFIED-MAIN): the beta channel is retired for good */
-    record('A6 zero Preview/Beta switcher in the shipped bytes (unified permanent main UI)',
-      !/id="sdpBetaPill"/.test(html) && !/id="sdpBetaStamp"/.test(html) &&
-      !/betaActive|applyBetaChannel|sdp_beta_preview|BETA_SUBVERSION|data-sdp-channel/.test(views) &&
-      !/beta-pill|beta-stamp/.test(css));
+    /* A6 (v0.0.6.j BETA-CHANNEL): the governed Beta channel is BACK by
+       design for the Creator Briefing suite — the features are permanent on
+       Main; ?beta / the header pill stamps BETA_SUBVERSION 0.0.6.j.beta. */
+    record('A6 the governed v0.0.6.j Beta channel ships (?beta + header pill + stamp)',
+      /id="sdpBetaPill"/.test(html) && /id="sdpBetaStamp"/.test(html) &&
+      /BETA_SUBVERSION = '0\.0\.6\.j\.beta'/.test(views) &&
+      /function betaActive/.test(views) && /function applyBetaChannel/.test(views) &&
+      /\.beta-pill/.test(css) && /\.beta-stamp/.test(css) &&
+      html.indexOf('BETA · 0.0.6.j.beta') > 0);
+  })();
+
+  /* 13 ── v0.0.6.j feature surface: briefing · key pool · review · diag zip ── */
+  (function v006jFeatureSurface() {
+    var html = readText('index.html');
+    var views = readText('data/sdp-ui-views.js');
+    var sync = readText('data/sdp-data-sync.js');
+    var speech = readText('data/sdp-audio-speech.js');
+    var studio = readText('data/studio.js');
+    var css = readText('assets/css/sdp-ui.css');
+    /* P1 — Creator Briefing: synced lyrics + 10-second timed gate. */
+    record('CB1 the briefing modal, synced lyrics and both gated CTAs ship',
+      html.indexOf('id="briefingModal"') > 0 && html.indexOf('id="briefingLyrics"') > 0 &&
+      html.indexOf('id="btnBriefingContinue"') > 0 && html.indexOf('id="btnBriefingSkip"') > 0 &&
+      html.indexOf('id="briefingCount"') > 0 && html.indexOf('id="briefingBar"') > 0);
+    record('CB2 the 10-second timed gate is a constant with a live countdown',
+      /BRIEFING_GATE_MS = 10000/.test(views) && /briefingCountdown/.test(views) &&
+      /Please listen \/ read/.test(views));
+    record('CB3 the briefing narrates 8 beats with sentence sync + free read-ahead',
+      /BRIEFING_SENTENCES/.test(views) && (views.match(/data-bline/g) || []).length >= 1 &&
+      /\.b-line\.on/.test(css) && /opacity: 0\.45/.test(css) && /opacity: 0\.62/.test(css));
+    record('CB4 the briefing speaks with the British male persona (clip or device)',
+      /playBriefingStep/.test(speech) && /_intro_male_/.test(speech) &&
+      /persona === 'male'/.test(speech) && /pickMaleVoice/.test(speech));
+    record('CB5 completion is stamped once — returning students are never blocked',
+      /briefingSeen/.test(views) && /markBriefingSeen/.test(views) &&
+      /!briefingSeen\(\) && !SDP\.Data\.guideSeen\(\)/.test(views));
+    record('CB6 the Creator Note pill replays the briefing anytime',
+      html.indexOf('id="btnCreatorNote"') > 0 && /openBriefing\(\{ replay: true \}\)/.test(views));
+    record('CB7 the briefing never names external AI tools (creator story purity)',
+      (function () {
+        var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
+        var body = m ? m[1] : '';
+        return !/Z\.ai|Arena|Gemini|ChatGPT|Claude|prompt engineering/i.test(body) &&
+          /Hansana/.test(body) && /zero money/.test(body) && /RDB/.test(body) &&
+          /end-to-end encrypted/.test(body) && !/21-year-old|21yo|වයස 21/i.test(html + views);
+      })());
+    record('CB8 the briefing links the repository and the creator profile',
+      html.indexOf('https://github.com/dictationb1/dictationb1.github.io') > 0 &&
+      html.indexOf('https://github.com/dictationb1') > 0);
+    /* P2 — Multi-API key pool + pronunciation verifier + static vault. */
+    record('KP1 the 5-slot Multi-API key pool ships (slots + provider selects)',
+      /KEY_POOL_SLOTS = 5/.test(studio) && /'kpSlot' \+ \(i \+ 1\)/.test(studio) && /'kpProv' \+ \(i \+ 1\)/.test(studio) &&
+      /function keyPoolMarkup/.test(studio) && /POOL_PROVIDERS/.test(studio));
+    record('KP2 the pool covers ElevenLabs + free/open-source LLM providers',
+      /cloudflare/.test(studio) && /gemini/.test(studio) && /openrouter/.test(studio) && /groq/.test(studio));
+    record('KP3 automatic key rotation + quota failover before/during a batch',
+      /function rotateElevenKey/.test(studio) && /function resolveElevenKey/.test(studio) &&
+      /probePoolKeys/.test(studio) && /Key rotated/.test(studio));
+    record('KP4 the AI British pronunciation pre-verifier (Cambridge B1 / RP)',
+      /function verifyPronunciationWord/.test(studio) && /britishizeIpa/.test(studio) &&
+      /ttsHint/.test(studio) && /Cambridge English B1/.test(studio));
+    record('KP5 per-word Verify & Preview badge + Re-synthesize Single Word',
+      /data-action="verifyWmRow"/.test(studio) && /data-action="resynthWmRow"/.test(studio) &&
+      /function verifyWmRow/.test(studio) && /function resynthWmRow/.test(studio));
+    record('KP6 the permanent static clip vault is locked by SHA-1 content hash',
+      /STATIC_CLIP_KEYS/.test(studio) && /isStaticClipKey/.test(studio) &&
+      /_intro_male_/.test(studio) && /Static vault/.test(studio));
+    /* P3 — review card + diagnostics + .zip export. */
+    record('RV1 the optional post-session review card ships on the results screen',
+      html.indexOf('id="reviewCard"') > 0 && html.indexOf('id="btnVoiceReview"') > 0 &&
+      html.indexOf('id="reviewTextInput"') > 0 && html.indexOf('id="btnSkipReview"') > 0);
+    record('RV2 voice review uses the Web Speech API (English or Sinhala)',
+      /webkitSpeechRecognition|SpeechRecognition/.test(views) && /si-LK/.test(views));
+    record('RV3 the E2EE privacy badge is verbatim on the card',
+      html.indexOf('100% End-to-End Encrypted — Your privacy is completely protected.') > 0);
+    record('RV4 reviews are sealed AES-GCM before storage (SDP.Diagnostics)',
+      /captureReview/.test(sync) && /encryptV2/.test(sync) && /decryptReviews/.test(sync));
+    record('DZ1 the diagnostics ring buffer is bounded and privacy-safe',
+      /DIAG_MAX_RING = 160/.test(sync) && /audio_tier_fallback/.test(speech) &&
+      /session_complete/.test(views));
+    record('DZ2 the Studio exports a real in-browser .zip (pure ES5 CRC32/STORE)',
+      studio.indexOf('btnDownloadDiagZip') > 0 && /function crc32Bytes/.test(sync) &&
+      /function zipStore/.test(sync) && /\[0x50, 0x4B, 0x03, 0x04\]/.test(sync) &&
+      /0xEDB88320/.test(sync) && /function buildDiagZip/.test(studio));
+    record('DZ3 the .zip carries the five documented artifacts',
+      sync.indexOf('diagnostics-log.json') > 0 && sync.indexOf('student-reviews.json') > 0 &&
+      sync.indexOf('session-snapshot.json') > 0 && sync.indexOf('config-snapshot.json') > 0 &&
+      sync.indexOf('README-DIAGNOSTICS.txt') > 0);
   })();
 
 const failed = results.filter(function (r) { return r.status === 'FAIL'; });

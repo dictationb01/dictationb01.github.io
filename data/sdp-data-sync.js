@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.i';
+  SDP.version = '0.0.6.j';
   SDP.build = '2026-11-06';
-  SDP.ver = 23;
+  SDP.ver = 24;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.i';
-  var SCHEMA = 23;
-  var SETTINGS_REV = 39;
+  var APP_VERSION = '0.0.6.j';
+  var SCHEMA = 24;
+  var SETTINGS_REV = 40;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -714,6 +714,257 @@
     },
     clear: function () {
       try { global.sessionStorage.removeItem('sdp.studio.unlocked'); } catch (e) {}
+    }
+  };
+
+  /* ══ SDP.Diagnostics — v0.0.6.j Pillar 3: privacy-safe ring buffer ══════
+   * Non-personal troubleshooting events (audio tier fallbacks, clip load
+   * errors, pronunciation flags, session completion stats, viewport/device
+   * responsiveness) and student reviews live in ONE bounded ring inside
+   * sdp.settings — the five-key R8 law holds. Reviews are sealed with the
+   * same SDP_ENC_V2 AES-GCM envelope as the vault, under a device-local
+   * key, BEFORE they are ever stored: nothing readable ever hits disk. */
+  var DIAG_MAX_RING = 160;
+  var DIAG_MAX_REVIEWS = 40;
+  var DIAG_SLOT = 'sdpDiag';
+  var diagState = { loaded: false, ring: [], reviews: [], key: '', timer: 0, lastPersist: 0 };
+
+  /* ══ v0.0.6.j Pillar 3: pure-ES5 CRC32/STORE .zip writer (no library) ══
+   * The Studio diagnostics export builds a real standard .zip entirely
+   * in-browser: table-driven CRC-32, STORE method (no compression), UTF-8
+   * names and bodies — zero external bytes, no build step. */
+  var CRC_TABLE = (function () {
+    var t = [], c, n, k;
+    for (n = 0; n < 256; n++) {
+      c = n;
+      for (k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32Bytes(bytes) {
+    var c = 0xFFFFFFFF, i;
+    for (i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function zipUtf8(text) {
+    var out = [], s = str(text), i, c, c2, cp;
+    for (i = 0; i < s.length; i++) {
+      c = s.charCodeAt(i);
+      if (c < 0x80) { out.push(c); continue; }
+      if (c < 0x800) { out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); continue; }
+      if (c >= 0xD800 && c <= 0xDBFF && i + 1 < s.length) {
+        c2 = s.charCodeAt(i + 1);
+        if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
+          i += 1;
+          cp = 0x10000 + ((c - 0xD800) << 10) + (c2 - 0xDC00);
+          out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
+          continue;
+        }
+      }
+      out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));
+    }
+    return out;
+  }
+  function zipU16(n) { return [n & 0xFF, (n >>> 8) & 0xFF]; }
+  function zipU32(n) { return [n & 0xFF, (n >>> 8) & 0xFF, (n >>> 16) & 0xFF, (n >>> 24) & 0xFF]; }
+  function zipStore(files) {
+    /* files: [{name, text}] -> Uint8Array of a valid STORE-method .zip. */
+    var locals = [], centrals = [], offset = 0, i, f, data, crc, nameB, local, central, out, at;
+    for (i = 0; i < files.length; i++) {
+      f = files[i];
+      data = zipUtf8(f.text);
+      crc = crc32Bytes(data);
+      nameB = zipUtf8(str(f.name));
+      local = [].concat(
+        [0x50, 0x4B, 0x03, 0x04], zipU16(20), zipU16(0), zipU16(0), zipU16(0), zipU16(0),
+        zipU32(crc), zipU32(data.length), zipU32(data.length), zipU16(nameB.length), zipU16(0), nameB, data);
+      central = [].concat(
+        [0x50, 0x4B, 0x01, 0x02], zipU16(20), zipU16(20), zipU16(0), zipU16(0), zipU16(0), zipU16(0),
+        zipU32(crc), zipU32(data.length), zipU32(data.length), zipU16(nameB.length),
+        zipU16(0), zipU16(0), zipU16(0), zipU16(0), zipU32(0), zipU32(offset), nameB);
+      locals = locals.concat(local);
+      centrals = centrals.concat(central);
+      offset += local.length;
+    }
+    out = [].concat(locals, centrals,
+      [0x50, 0x4B, 0x05, 0x06], zipU16(0), zipU16(0), zipU16(files.length), zipU16(files.length),
+      zipU32(centrals.length), zipU32(offset), zipU16(0));
+    var arr = new global.Array(out.length), j;
+    for (j = 0; j < out.length; j++) arr[j] = out[j] & 0xFF;
+    return new global.Uint8Array(arr);
+  }
+
+  function diagLoad() {
+    if (diagState.loaded) return diagState;
+    diagState.loaded = true;
+    var s = Data.settings();
+    var raw = isObj(s) ? s[DIAG_SLOT] : null;
+    if (isObj(raw)) {
+      diagState.ring = Array.isArray(raw.ring) ? raw.ring.slice(0, DIAG_MAX_RING) : [];
+      diagState.reviews = Array.isArray(raw.reviews) ? raw.reviews.slice(0, DIAG_MAX_REVIEWS) : [];
+      diagState.key = str(raw.k);
+    }
+    return diagState;
+  }
+  function diagPersistNow() {
+    diagState.lastPersist = nowMs();
+    if (diagState.timer) { global.clearTimeout(diagState.timer); diagState.timer = 0; }
+    try {
+      var patch = {};
+      patch[DIAG_SLOT] = { ring: diagState.ring, reviews: diagState.reviews, k: diagState.key };
+      Data.saveSettings(patch);
+    } catch (e) {}
+  }
+  function diagPersistThrottled() {
+    if (diagState.timer) return;
+    diagState.timer = global.setTimeout(function () { diagState.timer = 0; diagPersistNow(); }, 3500);
+  }
+  function diagKey() {
+    diagLoad();
+    if (!diagState.key) {
+      diagState.key = b64encode(randomBytes(24));
+      diagPersistNow();
+    }
+    return diagState.key;
+  }
+
+  var Diagnostics = {
+    MAX_RING: DIAG_MAX_RING,
+    MAX_REVIEWS: DIAG_MAX_REVIEWS,
+    log: function (kind, data) {
+      try {
+        diagLoad();
+        diagState.ring.push({ k: str(kind), d: (data === undefined ? null : data), at: new Date().toISOString(), t: nowMs() });
+        if (diagState.ring.length > DIAG_MAX_RING) diagState.ring = diagState.ring.slice(diagState.ring.length - DIAG_MAX_RING);
+        diagPersistThrottled();
+      } catch (e) {}
+      return true;
+    },
+    captureReview: function (payload) {
+      diagLoad();
+      var envelopePromise;
+      try {
+        envelopePromise = Vault.encryptV2(payload === undefined ? {} : payload, diagKey());
+      } catch (e) { envelopePromise = null; }
+      if (!envelopePromise) return false;
+      envelopePromise.then(function (envelope) {
+        diagState.reviews.push(str(envelope));
+        if (diagState.reviews.length > DIAG_MAX_REVIEWS) diagState.reviews = diagState.reviews.slice(diagState.reviews.length - DIAG_MAX_REVIEWS);
+        diagState.ring.push({ k: 'review_captured', d: { encrypted: true }, at: new Date().toISOString(), t: nowMs() });
+        diagPersistNow();
+      }, function () {});
+      return true;
+    },
+    reviewCount: function () { diagLoad(); return diagState.reviews.length; },
+    reviewEnvelopes: function () { diagLoad(); return diagState.reviews.slice(); },
+    decryptReviews: function () {
+      diagLoad();
+      var list = diagState.reviews, out = [];
+      var chain = Promise.resolve();
+      list.forEach(function (envelope) {
+        chain = chain.then(function () {
+          return Vault.decryptV2(envelope, diagState.key).then(function (obj) {
+            out.push({ ok: true, review: obj });
+          }, function (err) {
+            out.push({ ok: false, error: str(err && err.message) });
+          });
+        });
+      });
+      return chain.then(function () { return out; });
+    },
+    ring: function () { diagLoad(); return diagState.ring.slice(); },
+    summary: function () {
+      diagLoad();
+      var kinds = {}, i, first = '', last = '';
+      for (i = 0; i < diagState.ring.length; i++) {
+        var k = str(diagState.ring[i].k);
+        kinds[k] = (kinds[k] || 0) + 1;
+        if (!first) first = str(diagState.ring[i].at);
+        last = str(diagState.ring[i].at);
+      }
+      var s = Data.settings();
+      return {
+        events: diagState.ring.length, reviews: diagState.reviews.length,
+        kinds: kinds, firstAt: first, lastAt: last,
+        viewport: { w: global.innerWidth || 0, h: global.innerHeight || 0 },
+        appVersion: APP_VERSION, schema: SCHEMA, settingsRev: SETTINGS_REV,
+        lang: isObj(s) ? str(s.lang) : 'en'
+      };
+    },
+    sessionSnapshot: function () {
+      var words = [];
+      try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words(); } catch (e) {}
+      var s = Data.settings();
+      return {
+        appVersion: APP_VERSION, takenAt: new Date().toISOString(),
+        sessionNo: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : ''),
+        sessionTitle: str(SDP.Sync && SDP.Sync.sessionTitle ? SDP.Sync.sessionTitle() : ''),
+        wordCount: words.length,
+        words: words.map(function (w) { return { w: str(w.w), p: str(w.p), pos: str(w.pos), si: str(w.si) }; }),
+        pacing: {
+          mode: isObj(s) ? str(s.mode) : '', writeSecs: isObj(s) ? s.writeSecs : 0,
+          repeats: isObj(s) ? s.repeats : 0, pauseSecs: isObj(s) ? s.pauseSecs : 0,
+          rate: isObj(s) ? s.rate : 0, voiceLock: isObj(s) ? str(s.voiceLock) : ''
+        }
+      };
+    },
+    configSnapshot: function () {
+      var clips = 0;
+      try { if (SDP.Speech && SDP.Speech.clipCount) clips = SDP.Speech.clipCount(); } catch (e) {}
+      return {
+        appVersion: APP_VERSION, ver: SDP.ver, build: SDP.build,
+        schema: SCHEMA, settingsRev: SETTINGS_REV, takenAt: new Date().toISOString(),
+        voicePackClips: clips,
+        online: !(typeof navigator !== 'undefined' && navigator.onLine === false),
+        userAgent: str(global.navigator && global.navigator.userAgent).slice(0, 160)
+      };
+    },
+    clearAll: function () {
+      diagState.ring = []; diagState.reviews = [];
+      diagPersistNow();
+      return true;
+    },
+    /* The pure ES5 zip writer used by the Studio diagnostics export. */
+    zipStore: zipStore,
+    crc32Bytes: crc32Bytes,
+    /* Assemble the five documented artifacts for the Studio .zip export. */
+    buildDiagFiles: function () {
+      var summary = Diagnostics.summary();
+      var files = [
+        { name: 'diagnostics-log.json', text: JSON.stringify({ appVersion: APP_VERSION, exportedAt: new Date().toISOString(), summary: summary, events: Diagnostics.ring() }, null, 2) },
+        { name: 'session-snapshot.json', text: JSON.stringify(Diagnostics.sessionSnapshot(), null, 2) },
+        { name: 'config-snapshot.json', text: JSON.stringify(Diagnostics.configSnapshot(), null, 2) }
+      ];
+      return Diagnostics.decryptReviews().then(function (list) {
+        files.push({ name: 'student-reviews.json', text: JSON.stringify({
+          note: 'Decrypted inside the unlocked Lecturer Studio — AES-GCM (SDP_ENC_V2) at capture.',
+          count: list.length, reviews: list
+        }, null, 2) });
+        files.push({ name: 'README-DIAGNOSTICS.txt', text: Diagnostics.readmeText(summary) });
+        return { files: files, summary: summary };
+      });
+    },
+    readmeText: function (summary) {
+      return 'SMART DICTATION PLAYER — DIAGNOSTICS & PROJECT ANALYSIS\r\n' +
+        'Version: ' + APP_VERSION + ' · Exported: ' + new Date().toISOString() + '\r\n\r\n' +
+        'WHAT IS IN THIS ARCHIVE\r\n' +
+        '  diagnostics-log.json — every captured troubleshooting event (audio tier fallbacks,\r\n' +
+        '      clip load errors, pronunciation flags, session completion stats, viewport and\r\n' +
+        '      device responsiveness). Non-personal, privacy-safe, bounded ring buffer.\r\n' +
+        '  student-reviews.json — post-session voice/text reviews, decrypted here inside the\r\n' +
+        '      unlocked Lecturer Studio (AES-GCM end-to-end encrypted at capture).\r\n' +
+        '  session-snapshot.json — the current 30 classroom words and pacing.\r\n' +
+        '  config-snapshot.json — version, schema, voice pack and device state (no secrets).\r\n\r\n' +
+        'SUMMARY\r\n' +
+        '  Diagnostic events: ' + summary.events + '\r\n' +
+        '  Encrypted student reviews: ' + summary.reviews + '\r\n' +
+        '  First event: ' + (summary.firstAt || '—') + '\r\n' +
+        '  Last event: ' + (summary.lastAt || '—') + '\r\n\r\n' +
+        'PRIVACY\r\n' +
+        '  Reviews were encrypted on the student device before storage; keys, PINs and\r\n' +
+        '  personal identifiers are never written to this archive.\r\n' +
+        '  — Hansana, creator of Smart Dictation Player (github.com/dictationb1)\r\n';
     }
   };
 
@@ -1872,6 +2123,9 @@
   SDP.Data = Data;
   SDP.Sync = Sync;
   SDP.Sync.Vault = Vault;
+  /* v0.0.6.j Pillar 3: the privacy-safe diagnostics ring buffer + the
+     encrypted student-review capture the Studio .zip exports. */
+  SDP.Diagnostics = Diagnostics;
   SDP.utils = { utf8Encode: utf8Encode, utf8Decode: utf8Decode, b64encode: b64encode, b64decode: b64decode };
   /* Kept for tooling that expects a promise-capable base64 helper name. */
   SDP.Sync.b64ToBinString = b64ToBinString;

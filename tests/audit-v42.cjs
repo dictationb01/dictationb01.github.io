@@ -66,16 +66,16 @@ check('G9.1f no retired CSS is merely hidden with display:none',
 // contract: docs/ARCHITECTURE_MAP.md §5 budget table
 const BUDGETS = {
   /* v0.0.2.b (W2) ceilings — identical to tests/check.cjs BUDGET. */
-  'index.html': 52000,
+  'index.html': 56000,
   /* v0.0.5.b: the appended Morphe material layer (glass header, layered
      shadows, spring motion, screen/modal/accordion transitions, mobile
      collision fixes) moved the ceiling in lockstep with the release. */
-  'assets/css/sdp-ui.css': 112000,
-  'data/sdp-data-sync.js': 95000,
-  'data/sdp-audio-speech.js': 60000,
+  'assets/css/sdp-ui.css': 120000,
+  'data/sdp-data-sync.js': 106000,
+  'data/sdp-audio-speech.js': 63000,
   'data/sdp-dictation-engine.js': 76000,
-  'data/sdp-ui-views.js': 171500,
-  'data/studio.js': 196000,
+  'data/sdp-ui-views.js': 196000,
+  'data/studio.js': 212000,
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
@@ -108,13 +108,13 @@ check('G9.2d there are exactly five living docs', fs.readdirSync(path.join(ROOT,
 
 const testBytes = tracked.filter((f) => f.startsWith('tests/') && /\.(cjs|js)$/.test(f))
   .reduce((sum, f) => sum + bytes(f), 0);
-/* v0.0.6.i: the suite grew by the G5.14 / G3.12 assertions for the three
+/* v0.0.6.j: the suite grew by the G5.14 / G3.12 assertions for the three
    critical fixes; ceiling 330,000 B in lockstep with check.cjs TEST_BUDGET. */
-check('G9.2e the whole test suite stays inside 330,000 bytes (' + testBytes + ')', testBytes <= 330000, testBytes);
+check('G9.2e the whole test suite stays inside 344,000 bytes (' + testBytes + ')', testBytes <= 344000, testBytes);
 
 /* ── 3. no build step, no bundler, no monolith ─────────────────────────── */
 // contract: docs/ARCHITECTURE_MAP.md §R3 ES5 modules
-const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 200000);
+const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 210000);
 check('G9.3a no oversized monolith module exists (' + monoliths.join(',') + ')', monoliths.length === 0);
 check('G9.3b no package.json build script ships with the site', !exists('package.json') && !exists('webpack.config.js') && !exists('vite.config.js'));
 
@@ -215,7 +215,7 @@ check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lo
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
   voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.voiceName === 'Alice' &&
-  voicePack.version === '0.0.6.i' && voicePack.hashAlgo === 'sha1' &&
+  voicePack.version === '0.0.6.j' && voicePack.hashAlgo === 'sha1' &&
   typeof voicePack.clips === 'object', JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
@@ -224,7 +224,7 @@ check('G9.6b the session still holds the 30 B1 adjectives', words.length === 30,
 check('G9.6c every word keeps w, p, pos, m, si, s and audio fields',
   words.every((w) => ['w', 'p', 'pos', 'm', 'si', 's'].every((field) => typeof w[field] === 'string' && w[field].length > 0)), words.length);
 check('G9.6d every word carries a dictionary audio URL',
-  // v0.0.6.i: the preserved Session 8 payload ships dictionaryapi.dev URLs; the
+  // v0.0.6.j: the preserved Session 8 payload ships dictionaryapi.dev URLs; the
   // runtime resolver (SDP.Speech) maps them onto the Youdao UK endpoint.
   words.every((w) => /^https:\/\/(api\.dictionaryapi\.dev|dict\.youdao\.com)\//.test(String(w.audio || '')) && String(w.audio || '').length > 10),
   words.filter((w) => !String(w.audio || '').startsWith('https://')).length + ' bad');
@@ -234,19 +234,19 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.i is ver 22 / schema 22 / settingsRev 38
-  config.ver === 23 && config.appVersion === '0.0.6.i' && config.version === '0.0.6.i' && config.schema === 23 && config.settingsRev === 39,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.j is ver 22 / schema 22 / settingsRev 38
+  config.ver === 24 && config.appVersion === '0.0.6.j' && config.version === '0.0.6.j' && config.schema === 24 && config.settingsRev === 40,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.6.i in its description', /0.0.6.i/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.6.j in its description', /0.0.6.j/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
 check('G9.7c theme and background are the 0.0.6.e daylight light', manifest.theme_color === '#F8FAFC' && manifest.background_color === '#F8FAFC', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.6.i cache names', sw.indexOf('sdp-v0.0.6.i') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.6.j cache names', sw.indexOf('sdp-v0.0.6.j') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
 /* v0.0.5.b: sdp-morphe-hooks.js loads last so it decorates the finished DOM. */

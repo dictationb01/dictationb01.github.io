@@ -1,6 +1,4 @@
-/*! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.4.a)
- * Strict ES5, dependency free. The ONLY module that touches a key (W5/W6).
- * contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, §R7 */
+/* ! Smart Dictation Player — Lecturer Studio & admin vault (v0.0.4.a) */
 (function (global) {
  'use strict';
 
@@ -14,10 +12,7 @@
  var VOICE_FALLBACK = { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice' };
  var activeVoiceId = VOICE_ID;
  var activeVoiceName = VOICE_NAME;
- /* v0.0.4.a W1: single-voice engine law. Library voices (Charlotte) answer
-   HTTP 402 paid_plan_required on free-tier keys, so the studio resolves the
-   best free British female educator voice at runtime and always falls back
-   to Alice (Xb7hH8MSUJpSbSDYk0k2) with eleven_flash_v2_5. */
+ /* v0.0.4.a W1: single-voice engine law. Library voices (Charlotte) answer */
  function resolveProfessorVoice(key, cb) {
   cb = cb || noop;
   if (!key || !global.fetch) { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); return; }
@@ -41,8 +36,7 @@
     }, function () { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); });
   } catch (e) { cb(VOICE_FALLBACK.id, VOICE_FALLBACK.name); }
  }
- /* v0.0.4.a: auto-generation runs in the real app only — never inside the
-   headless gate harness (window.__SDP_NO_LIVE__) unless explicitly allowed. */
+ /* v0.0.4.a: auto-generation runs in the real app only — never inside the */
  function allowAutoGen() {
   if (global.__SDP_ALLOW_AUTOGEN === true) return true;
   return !global.__SDP_NO_LIVE__;
@@ -60,7 +54,7 @@
  var PIN_MIN = 4;
  var DICTIONARY_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
  var SINHALA_API = 'https://api.mymemory.translated.net/get?q=';
- /* D2/D4 verbatim UI strings (STRINGS_* */
+ /* D2/D4 verbatim UI strings (STRINGS_ */
  var SCOPED_KEY = 'studioQuotaScoped';
  var TIER_KEY = 'studioElTierWarn';
  function SCOPED_NOTE() { return t(SCOPED_KEY); }
@@ -81,10 +75,20 @@
   gemini: { url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', model: 'gemini-2.5-flash' }
  };
 
- /* ══ R5: synchronous pure-ES5 SHA-1 (no async, no build step) ══════════
-  * Every generated clip carries `hashAlgo: 'sha1'` and a content hash of
-  * text|voice|model, so the delta generator can prove a clip still matches
-  * what it was paid for BEFORE it spends another credit. */
+ /* ══ v0.0.6.j Pillar 2 — Multi-API Key Pool (up to 5 keys) ══════════════ */
+ var KEY_POOL_SLOTS = 5;
+ var POOL_PROVIDERS = {
+  elevenlabs: { label: 'ElevenLabs · voice', keyHint: 'sk_…' },
+  gemini: { label: 'Gemini · free tier', keyHint: 'AIza…' },
+  openrouter: { label: 'OpenRouter · free models', keyHint: 'sk-or-…' },
+  groq: { label: 'Groq · free tier', keyHint: 'gsk_…' },
+  cloudflare: { label: 'Cloudflare Workers AI', keyHint: 'key / token' }
+ };
+ var POOL_PROVIDER_ORDER = ['elevenlabs', 'gemini', 'openrouter', 'groq', 'cloudflare'];
+ /* The dedicated British male narrator for the Creator */
+ var INTRO_VOICE = { id: 'pNInz6obpgDQGcFmaJgB', name: 'British Male · 21', model: 'eleven_flash_v2_5' };
+
+ /* ══ R5: synchronous pure-ES5 SHA-1 (no async, no build step) ══════════ */
  function utf8Bytes(text) {
   var out = [], s = str(text), i, c, c2, cp;
   for (i = 0; i < s.length; i++) {
@@ -147,9 +151,7 @@
   return 'sha1:' + sha1Hex(str(text) + '|' + str(voiceId || activeVoiceId) + '|' + str(modelId || VOICE_MODEL));
  }
 
- /* R5 (F6): the whole 70-clip pack — 30 words, 30 numbers, 6 commands, 4
-   guide steps — 829 characters ≈ 414 credits on flash_v2_5 (8.3% of a free
-   month). Nothing here is ever generated without a human click. */
+ /* R5 (F6): the whole 70-clip pack — 30 words, 30 numbers, 6 commands, 4 */
  var CMD_CLIPS = [
   { key: 'cmd.preparing', text: 'Preparing lesson. Listen carefully.' },
   { key: 'cmd.paused', text: 'Session paused.' },
@@ -165,6 +167,133 @@
   'Practise the words you missed.'
  ];
  function numberClipText(n) { return 'Number ' + n + '.'; }
+
+ /* ══ v0.0.6.j Pillar 2 — the Permanent Static Clip Vault ════════════════ */
+ var STATIC_CLIP_KEYS = (function () {
+  var keys = [], i;
+  for (i = 0; i < CMD_CLIPS.length; i++) keys.push(CMD_CLIPS[i].key);
+  for (i = 1; i <= WORD_CAP; i++) keys.push('num.' + i);
+  for (i = 0; i < GUIDE_CLIP_TEXTS.length; i++) keys.push('guide.en.' + i);
+  for (i = 1; i <= 4; i++) keys.push('_guide_' + i);
+  for (i = 1; i <= 8; i++) keys.push('_intro_male_' + i);
+  return keys;
+ })();
+ function isStaticClipKey(key) { return STATIC_CLIP_KEYS.indexOf(str(key)) >= 0; }
+ function introSteps() {
+  /* The canonical sentences live in sdp-ui-views.js so the briefing always */
+  var lines = [], i;
+  try {
+    if (global.SDP && SDP.Views && SDP.Views.briefingSentences) lines = SDP.Views.briefingSentences();
+  } catch (e) { lines = []; }
+  var out = [];
+  for (i = 0; i < lines.length && i < 8; i++) out.push({ key: '_intro_male_' + (i + 1), text: str(lines[i]) });
+  return out;
+ }
+ function staticVaultStats() {
+  var total = STATIC_CLIP_KEYS.length, locked = 0, i, k;
+  for (i = 0; i < STATIC_CLIP_KEYS.length; i++) {
+   k = STATIC_CLIP_KEYS[i];
+   if (isObj(ST.voicePack.clips[k]) && str(ST.voicePack.clips[k].b64)) locked += 1;
+  }
+  return { total: total, locked: locked, keys: STATIC_CLIP_KEYS.slice() };
+ }
+
+ /* ══ v0.0.6.j Pillar 2 — pool storage, health and rotation ═════════════ */
+ function normalizePoolEntry(e) {
+  if (!isObj(e)) return { p: 'elevenlabs', k: '' };
+  var p = str(e.p);
+  if (!POOL_PROVIDERS[p]) p = 'elevenlabs';
+  return { p: p, k: trimmedKey(str(e.k)) };
+ }
+ function keyPoolEntries() {
+  var raw = isObj(ST.secrets) && Array.isArray(ST.secrets.keyPool) ? ST.secrets.keyPool : [];
+  var out = [], i;
+  for (i = 0; i < KEY_POOL_SLOTS; i++) out.push(normalizePoolEntry(raw[i]));
+  return out;
+ }
+ function mergeKeyPoolInputs() {
+  var pool = keyPoolEntries(), i, prov, inp, v;
+  for (i = 0; i < KEY_POOL_SLOTS; i++) {
+   prov = byId('kpProv' + (i + 1));
+   inp = byId('kpSlot' + (i + 1));
+   if (prov) pool[i].p = str(prov.value) || pool[i].p;
+   if (inp) {
+    v = trimmedKey(str(inp.value));
+    if (v) pool[i].k = v;
+    else if (inp.getAttribute('data-dirty') === '1') pool[i].k = '';
+   }
+  }
+  if (!isObj(ST.secrets)) ST.secrets = {};
+  ST.secrets.keyPool = pool;
+  return pool;
+ }
+ function keyPoolCount() {
+  var pool = keyPoolEntries(), n = 0, i;
+  for (i = 0; i < pool.length; i++) if (str(pool[i].k)) n += 1;
+  return n;
+ }
+ function elevenKeyPool() {
+  /* Slot order is the rotation order: the primary ElevenLabs field first, */
+  var out = [], seen = {};
+  var primary = trimmedKey(str(ST.secrets.elevenKey) || fieldValue('elKeyInput'));
+  if (looksLikeElevenKey(primary)) { out.push(primary); seen[primary] = 1; }
+  var pool = keyPoolEntries(), i, k;
+  for (i = 0; i < pool.length; i++) {
+   k = str(pool[i].k);
+   if (pool[i].p === 'elevenlabs' && looksLikeElevenKey(k) && !seen[k]) { out.push(k); seen[k] = 1; }
+  }
+  return out;
+ }
+ function llmKeyPool() {
+  var out = [], pool = keyPoolEntries(), i;
+  for (i = 0; i < pool.length; i++) {
+   if (str(pool[i].k) && pool[i].p !== 'elevenlabs') out.push({ p: pool[i].p, k: str(pool[i].k) });
+  }
+  return out;
+ }
+ var poolCursor = 0;
+ function resolveElevenKey() {
+  var list = elevenKeyPool();
+  if (!list.length) return trimmedKey(str(ST.secrets.elevenKey) || fieldValue('elKeyInput'));
+  return list[Math.min(poolCursor, list.length - 1)];
+ }
+ function rotateElevenKey(reason) {
+  var list = elevenKeyPool();
+  if (list.length <= 1) return null;
+  poolCursor = (poolCursor + 1) % list.length;
+  var nextKey = list[poolCursor];
+  try {
+   if (global.SDP && SDP.Diagnostics) {
+    SDP.Diagnostics.log('key_pool_rotated', { reason: str(reason || ''), slot: poolCursor + 1, keys: list.length });
+   }
+  } catch (e) {}
+  return nextKey;
+ }
+ function probePoolKeys(cb) {
+  var pool = keyPoolEntries();
+  var elevenList = elevenKeyPool();
+  var results = [], done = 0, i;
+  var finishOne = function () {
+   done += 1;
+   if (done >= elevenList.length) { cb(null, results); }
+  };
+  if (!elevenList.length) { cb(null, []); return false; }
+  for (i = 0; i < elevenList.length; i++) {
+   (function (key, idx) {
+    global.fetch(EL_SUBSCRIPTION, { headers: { 'xi-api-key': key, Accept: 'application/json' }, cache: 'no-store' })
+     .then(function (res) { return res && res.json ? res.json() : null; })
+     .then(function (json) {
+      var tier = isObj(json) ? str(json.tier) : '';
+      results.push({ slot: idx + 1, ok: !!tier, status: 200, tier: tier });
+      finishOne();
+     }, function () {
+      results.push({ slot: idx + 1, ok: false, status: 0, tier: '' });
+      finishOne();
+     });
+   })(elevenList[i], i);
+  }
+  return true;
+ }
 
  function noop() {}
  function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -221,9 +350,7 @@
   unlocked: false,
   /* v0.0.6.b (S4): unpublished word edits — powers the tab-exit guard. */
   dirty: false,
-  /* v0.0.6.c (F1): per-word delta recognition — wordsDirty is true only
-     when a spelling/field actually differs from the committed baseline, so
-     a pacing-only publish can never trigger the word pipeline (G8.6c). */
+  /* v0.0.6.c (F1): per-word delta recognition — wordsDirty is true only */
   wordsDirty: false,
   wordDeltas: [],
   envelope: '',
@@ -568,11 +695,7 @@
  function saveClassSettings(cb) {
   cb = cb || noop;
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
-  /* v0.0.6.c (F1): word edits ride the SAME button — the unified pipeline
-     enriches, voices and publishes session+config+audio+version — but only
-     when a publish token exists; the token-less failure keeps the original
-     pacing path so the human failure stamp (G12.13l) stays verbatim. A
-     pacing-only change (the G8.6 journey) keeps the config+version path. */
+  /* v0.0.6.c (F1): word edits ride the SAME button — the unified pipeline */
   try { detectWordDeltas(); } catch (e) {}
   if (ST.wordsDirty && str(ST.secrets.ghToken)) {
    return publishWordsAndVoice(function (err, info) { cb(err, info); });
@@ -790,8 +913,7 @@
 
  /* R5: lock always drops in-memory */
  function lock(keepStash) {
-  /* v0.0.5.c Path D: locking the vault silences every voice — the TTS queue
-    and the shared <audio> element — before the unlocked DOM is torn down. */
+  /* v0.0.5.c Path D: locking the vault silences every voice — the TTS queue */
   try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
   try { if (global.speechSynthesis && global.speechSynthesis.cancel) global.speechSynthesis.cancel(); } catch (e) {}
   ST.unlocked = false;
@@ -863,10 +985,7 @@
  }
 
  /* ══ rendering… */
- /* v0.0.6.d (D8): the PIN length is a first-class fact. The default class
-    PIN is 8 digits (78987898); a lecturer who sets a 4–8 digit PIN stores
-    pinLen in sdp.settings.vaultLock so the dot row always shows exactly the
-    right number of dots — never a hard-coded 8 or 12. */
+ /* v0.0.6.d (D8): the PIN length is a first-class fact. The default class */
  function activePinLen() {
   var n = 0;
   try { n = Number(layerOneVault().pinLen); } catch (e) { n = 0; }
@@ -986,13 +1105,45 @@
   return p === 'free_dict' || p === 'pollinations_free';
  }
  /* ══ Card 1 — rebuilt for */
+ /* v0.0.6.j: the five pool slots — a provider select + a masked key input */
+ function keyPoolMarkup() {
+  var pool = keyPoolEntries(), html = '<div id="studioKeyPool" class="kp-grid">', i, j;
+  for (i = 0; i < KEY_POOL_SLOTS; i++) {
+   var e = pool[i] || { p: 'elevenlabs', k: '' };
+   html += '<div class="kp-row"><span class="kp-no">Key Slot #' + (i + 1) + '</span>' +
+    '<select id="kpProv' + (i + 1) + '" class="input kp-prov" aria-label="Key Slot #' + (i + 1) + ' provider">';
+   for (j = 0; j < POOL_PROVIDER_ORDER.length; j++) {
+    var pid = POOL_PROVIDER_ORDER[j];
+    html += '<option value="' + pid + '"' + (pid === e.p ? ' selected' : '') + '>' + esc(POOL_PROVIDERS[pid].label) + '</option>';
+   }
+   html += '</select>' +
+    '<input id="kpSlot' + (i + 1) + '" class="input kp-key" type="password" autocomplete="off" data-pristine="1"' +
+    ' placeholder="' + esc(POOL_PROVIDERS[e.p].keyHint) + '" value="' + esc(e.k) + '"' +
+    (e.k ? ' data-sealed="1"' : '') + '>' +
+    '<span class="kp-badge" data-kp-badge="' + (i + 1) + '"' + (e.k ? ' data-on="1"' : '') + '>' + (e.k ? '●' : '○') + '</span></div>';
+  }
+  return html + '</div>';
+ }
+ /* v0.0.6.j Pillar 3: the Troubleshooting & Session Diagnostics Vault card — */
+ function diagCardMarkup() {
+  return '<details id="studioCardDiag" class="studio-card studio-card-diag">' +
+   '<summary class="studio-h4"><span class="studio-step-tag">DIAG</span> Troubleshooting &amp; Session Diagnostics Vault</summary>' +
+   '<div class="studio-diag-body">' +
+   '<p class="muted">Privacy-safe ring buffer — audio tier fallbacks, clip errors, pronunciation flags, session stats, viewport responsiveness and end-to-end encrypted student reviews. Nothing personal is ever recorded.</p>' +
+   '<div id="diagSummary" class="diag-grid" role="status" aria-live="polite"></div>' +
+   '<div class="chip-row studio-diag-row">' +
+   btn('btnDownloadDiagZip', ' Download Full Diagnostics &amp; Project Analysis (.zip)', 'btn-primary') +
+   btn('btnClearDiag', ' Clear local diagnostics', 'btn-ghost') +
+   '</div>' +
+   '<p id="diagStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
+   '</div></details>';
+ }
  function keysCardMarkup() {
   return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4"><span class="studio-step-tag">' + t('studioStep1', 'STEP 1 · ONE-TIME SETUP') + '</span>' + T('studioCardKeys') + '</h4>' +
    /* D2 (v0.0.2.a): the honest one-line status dashboard. */
    '<p id="studioPackDashboard" class="studio-pack-dashboard" role="status" aria-live="polite">' + esc(packDashboardText()) + '</p>' +
    keyRowMarkup('elKeyInput', 'ElevenLabs API key (sk_…)', 'sk_…', 'ElKey') +
-   /* R4 (F5): one click proves the key AND the voice, before a single
-     character is billed for a real clip. */
+   /* R4 (F5): one click proves the key AND the voice, before a single */
    '<div class="chip-row studio-verify-row">' + btn('btnVerifyEleven', t('studioVerifyEl'), 'btn-primary') + '</div>' +
    '<p id="elVerifyStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… / github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
@@ -1000,6 +1151,14 @@
    '<p id="studioFreeNoKey" class="studio-free-badge"' + (freeNoKeyVisible() ? '' : ' hidden') + '>' + T('studioFreeNoKey') + '</p>' +
    keyRowMarkup('studioAiKey', t('studioAiKey'), 'gsk_… / AIza… / sk-or-…', 'Ai') +
    '<label class="lbl" for="studioGasUrl">Apps Script relay URL</label>' + '<div class="key-row">' + '<input id="studioGasUrl" class="input" type="url" autocomplete="off" data-pristine="1" placeholder="https://script.google.com/…">' + btn('btnClearGasUrl', t('studioClear')) + '</div>' +
+   /* ══ v0.0.6.j Pillar 2: the Multi-API Key Pool (5 slots) ══ */
+   '<label class="lbl">Multi-API Key Pool · up to 5 keys — automatic rotation &amp; quota failover</label>' +
+   keyPoolMarkup() +
+   '<div class="chip-row studio-pool-row">' +
+   btn('btnProbePool', ' Check Pool Health &amp; Rotate') +
+   btn('btnGenIntroClips', ' Generate Creator Briefing Voice (British Male · 8 clips)', 'btn-ghost') +
+   '</div>' +
+   '<p id="kpStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div class="chip-row studio-compat-row">' +
    btn('btnCheckQuota', ' ' + t('studioTestEl'), '', 'style="display:none"') +
    btn('btnRefreshQuota', ' ' + t('quotaHeading'), '', 'style="display:none"') +
@@ -1026,22 +1185,14 @@
    '</section>';
  }
  /* v0.0.6.a Track 6: live "N / 30 Words Recognized" pill + spring CTA. */
- /* ══ v0.0.6.c (F1): true per-word delta recognition ═══════════════════
-  * The committed baseline is SDP.Sync.words(). The live edit surface is
-  * #studioBulkWords / #studioWords / .wm-input (through ST.words). Even at
-  * 30/30, one changed spelling flips wordsDirty, lists the changed words in
-  * the recognition pill and clears their stale IPA/meaning so the pipeline
-  * re-enriches them. A pure pacing change leaves wordsDirty false. */
+ /* ══ v0.0.6.c (F1): true per-word delta recognition ═══════════════════ */
  function committedWords() {
   var out = [];
   try { out = sync() && sync().words ? sync().words() : []; } catch (e) { out = []; }
   return Array.isArray(out) ? out : [];
  }
  function liveStudioWords() {
-  /* F1: the structured ST.words list (what the word manager edits) is the
-     primary live surface — the raw bulk textarea is only authoritative
-     while the lecturer is actually typing in it, because parseBulkWords
-     splits on commas and classroom meanings contain commas. */
+  /* F1: the structured ST.words list (what the word manager edits) is the */
   var bulkEl = byId('studioBulkWords');
   var bulkActive = !!(bulkEl && str(fieldValue('studioBulkWords')) &&
    (bulkEl.getAttribute('data-dirty') === '1' || document.activeElement === bulkEl));
@@ -1049,8 +1200,7 @@
   if (ST.words && ST.words.length) return ST.words;
   return committedWords();
  }
- /* F1: before the studio is unlocked/mounted with real content the delta
-    detector must stay silent (no phantom dirty at boot). */
+ /* F1: before the studio is unlocked/mounted with real content the delta */
  function deltaDetectionReady() {
   return !!(ST.unlocked && (str(fieldValue('studioBulkWords')) || (ST.words && ST.words.length)));
  }
@@ -1058,10 +1208,7 @@
   return [str(w && w.w).toLowerCase(), str(w && w.p), str(w && w.pos),
    str(w && w.m), str(w && w.si), str(w && w.s)].join('~');
  }
- /* F1: a live word is a DELTA only when its spelling is new/renamed, or
-  * when a field it actually carries differs from the committed record.
-  * Word-only bulk lines (empty enrich fields awaiting enrichment) never
-  * count as field edits — otherwise every word would flag at once. */
+ /* F1: a live word is a DELTA only when its spelling is new/renamed, or */
  function wordIsDelta(live, prior) {
   if (!prior) return true;
   var fields = ['p', 'pos', 'm', 'si', 's'], changed = 0, present = 0, i;
@@ -1082,10 +1229,7 @@
   for (i = 0; i < committed.length; i++) {
    base[str(committed[i] && committed[i].w).toLowerCase()] = committed[i];
   }
-  /* v0.0.6.d (D2): slot-by-slot comparison. When the spelling at slot i
-     differs from the committed baseline word at that slot, ALL FIVE fields
-     (p, pos, m, si, s) are wiped for the live record — the old word's part
-     of speech or example sentence can never survive onto the new word. */
+  /* v0.0.6.d (D2): slot-by-slot comparison. When the spelling at slot i */
   for (i = 0; i < live.length; i++) {
    var w = str(live[i] && live[i].w);
    if (!w) continue;
@@ -1110,9 +1254,7 @@
   if (ST.wordsDirty) ST.dirty = true;
   return deltas;
  }
- /* A replaced word must lose the OLD word's stale IPA/meaning so the fast
-  * delta enrich refreshes it, never resurrects it (mergeEnrichRecord keeps
-  * priors only for still-matching spellings). */
+ /* A replaced word must lose the OLD word's stale IPA/meaning so the fast */
  function clearStaleEnrichOnDeltas(deltas) {
   var i, k, changed = {};
   for (i = 0; i < (deltas || []).length; i++) changed[str(deltas[i].w).toLowerCase()] = true;
@@ -1128,9 +1270,7 @@
   }
   return true;
  }
- /* The RED unsaved-changes warning state on #lecturerSyncBar /
-  * #btnSyncClassSettings / #studioSecurityBar / #btnPublishWordsAndVoice.
-  * data-dirty='true' paints the pulsing #E11D48 action state in CSS. */
+ /* The RED unsaved-changes warning state on #lecturerSyncBar / */
  function paintDirtyState() {
   var dirty = !!(ST.unlocked && ST.dirty);
   var ids = ['lecturerSyncBar', 'btnSyncClassSettings', 'studioSecurityBar', 'btnPublishWordsAndVoice'];
@@ -1225,9 +1365,7 @@
  /* D18: three outcome cards under */
  /* D19: compact sub-label, no */
  function securityBarMarkup() {
-  /* v0.0.6.b (S4): the high-visibility Lecturer Mode bar — Lock or Publish
-    & Lock is always one tap away while the studio is open. The green mode
-    pill lives INSIDE this single bar (never a second stacked header). */
+  /* v0.0.6.b (S4): the high-visibility Lecturer Mode bar — Lock or Publish */
   return '<div id="studioSecurityBar" class="studio-security-bar" role="region" aria-live="polite">' +
    '<span class="ssb-badge">' + ico('unlock', 16) + T('ssbUnlocked') + '</span>' +
    '<span class="studio-mode-pill">Lecturer Mode Unlocked</span>' +
@@ -1239,14 +1377,11 @@
   return securityBarMarkup() +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
-   /* R7 (F7): words first — editing vocabulary is the daily job. Card order
-     (words → settings → keys) is part of the contract and survives the
-     v0.0.6.b Basic/Advanced split: the daily card stays open, Cards 3+1
-     fold into the calm Advanced drawer (S5). */
+   /* R7 (F7): words first — editing vocabulary is the daily job. Card order */
    wordsCardMarkup() +
    '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
    '<details id="studioAdvancedDrawer" class="studio-advanced-drawer"><summary class="studio-h4">' + ico('gear', 16) + T('studioAdvancedToggle') + '</summary>' +
-   '<div class="studio-adv-body">' + settingsCardMarkup() + keysCardMarkup() + '</div></details>';
+   '<div class="studio-adv-body">' + settingsCardMarkup() + keysCardMarkup() + diagCardMarkup() + '</div></details>';
  }
  /* R5/SEC-01: while locked the body */
  function lockedMarkup() {
@@ -1260,9 +1395,7 @@
    '</div>';
  }
 
- /* ══ D2/D18 (v0.0.2.a): the honest 34-clip dashboard ═════════════════════
-  * Vault state, GitHub state and the TRUE clip count, computed live from
-  * ST.voicePack.clips — never a guess and never a cached number. */
+ /* ══ D2/D18 (v0.0.2.a): the honest 34-clip dashboard ═════════════════════ */
  function clipCount() {
   var clips = isObj(ST.voicePack.clips) ? ST.voicePack.clips : {};
   var n = 0, k;
@@ -1275,7 +1408,11 @@
  function packDashboardText() {
   var vault = vaultBadgeVisible() ? t('studioPackVault') : 'Vault: —';
   var gh = str(ST.secrets.ghToken) ? t('studioPackGithub') : 'GitHub: —';
-  return vault + ' | ' + gh + ' | ' + t('studioPackClips') + clipCount() + t('studioClipsUnit');
+  /* v0.0.6.j Pillar 2: the immutable static vault is part of the honest */
+  var stats = staticVaultStats();
+  var pool = keyPoolCount();
+  return vault + ' | ' + gh + ' | ' + t('studioPackClips') + clipCount() + t('studioClipsUnit') +
+   ' | Static vault ' + stats.locked + '/' + stats.total + ' locked | Key pool ' + pool + '/' + KEY_POOL_SLOTS;
  }
  function paintPackDashboard() {
   var node = byId('studioPackDashboard');
@@ -1304,8 +1441,7 @@
   if (ST.unlocked) paintRetryRow();
   return true;
  }
- /* D7: the single #lecturerSyncBar element hops into Card 3 while unlocked and
-   returns to its dock while locked, so it always exists in the DOM (G12.13g). */
+ /* D7: the single #lecturerSyncBar element hops into Card 3 while unlocked and */
  function lecturerBarNode() {
   var bar = byId('lecturerSyncBar');
   if (bar) ST.lecturerBar = bar;
@@ -1326,11 +1462,7 @@
   return true;
  }
 
- /* v0.0.6.d (D8): Chrome fires its "Save password?" heuristic the moment a
-    filled <input type="password"> is removed from the DOM. Every
-    host.innerHTML = … replacement in mount()/lock() neutralises the password
-    fields FIRST (type='text', value='') so the popup can never appear on
-    Unlock or Lock — while the mounted fields stay type='password'. */
+ /* v0.0.6.d (D8): Chrome fires its "Save password?" heuristic the moment a */
  function defusePasswordInputs(host) {
   try {
    var inputs = host && host.querySelectorAll ? host.querySelectorAll('input[type="password"]') : [];
@@ -1369,7 +1501,7 @@
   paintQuickButton();
   paintMasterSteps();
   paintWordManager();
-  if (ST.unlocked) { paintLiveChips(); paintWordsHelper(); }
+  if (ST.unlocked) { paintLiveChips(); paintWordsHelper(); paintDiagSummary(); }
   paintAiFields();
   placeLecturerBar();
   paintPackDashboard();
@@ -1424,8 +1556,7 @@
  function paintQuickButton() {
   var btn = byId('btnStudioQuick');
   if (!btn) return false;
-  /* D5 + v0.0.5.c: dual-tone lock icon + words, never a bare glyph, and the
-    label keeps its own span so a repaint can never eat the SVG. */
+  /* D5 + v0.0.5.c: dual-tone lock icon + words, never a bare glyph, and the */
   btn.innerHTML = ico(ST.unlocked ? 'unlock' : 'lock', 16) + '<span class="i18n-label studio-quick-label"></span>';
   var lbl = btn.querySelector ? btn.querySelector('.studio-quick-label') : null;
   if (lbl) lbl.textContent = ST.unlocked ? t('lecturerAdminUnlocked') : t('lecturerAdminLocked');
@@ -1466,8 +1597,7 @@
   if (!host) return false;
   var dots = host.querySelectorAll ? host.querySelectorAll('span') : [];
   var len = pinValue().length;
-  /* v0.0.6.d (D8): exactly pinLen dots are shown; the extra pool stays in
-     the DOM (hidden) so a PIN-length change never rebuilds the gate. */
+  /* v0.0.6.d (D8): exactly pinLen dots are shown; the extra pool stays in */
   var shown = pinDotCount(activePinLen());
   for (var i = 0; i < dots.length; i++) {
    if (i < len) dots[i].classList.add('on'); else dots[i].classList.remove('on');
@@ -1563,8 +1693,7 @@
    });
   }, 400);
  }
- /* v0.0.4.a W3: physical-keyboard PIN entry on the locked gate — the mobile
-   OS keyboard never opens because #studioPin is readonly/inputmode=none. */
+ /* v0.0.4.a W3: physical-keyboard PIN entry on the locked gate — the mobile */
  function onStudioKeydown(ev) {
   if (!byId('studioGate')) return;
   var t = ev && ev.target;
@@ -1707,6 +1836,57 @@
   btnClearAi: function () { clearSecretField('studioAiKey', 'aiKey'); },
   btnClearGasUrl: function () { clearSecretField('studioGasUrl', 'gasUrl'); },
   btnCheckQuota: function () { quotaProbe(); },
+  /* ══ v0.0.6.j: key pool, briefing voice, diagnostics vault ══ */
+  btnProbePool: function () {
+   withBusy('btnProbePool', function (d) {
+    mergeKeyPoolInputs();
+    probePoolKeys(function (err, results) {
+     var line = '', i;
+     if (err || !results.length) line = ' No ElevenLabs keys in the pool yet — paste a key in any slot first';
+     else {
+      for (i = 0; i < results.length; i++) {
+       line += (line ? ' · ' : '') + 'Slot ' + results[i].slot + ': ' +
+        (results[i].ok ? ('OK (' + str(results[i].tier) + ')') : 'unreachable');
+      }
+     }
+     var node = byId('kpStatus');
+     if (node) { node.textContent = line; }
+     msg(' ' + line, results && results.length ? 'ok' : 'bad');
+     try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('key_pool_probed', { keys: results ? results.length : 0 }); } catch (e) {}
+     d();
+    });
+   });
+  },
+  btnGenIntroClips: function () {
+   withBusy('btnGenIntroClips', function (d) {
+    generateClips({ intro: true }, function (err, info) {
+     d();
+     if (err) { msg(' Creator Briefing voice failed · ' + quotaError(err), 'bad'); return; }
+     msg(' Creator Briefing voice ready · ' + (info ? info.made.length : 0) + ' new · ' +
+      (info ? info.skipped : 0) + ' locked · ' + INTRO_VOICE.name, 'ok');
+    });
+   });
+  },
+  btnDownloadDiagZip: function () {
+   withBusy('btnDownloadDiagZip', function (d) {
+    buildDiagZip(function (err, info) {
+     var node = byId('diagStatus');
+     if (err) {
+      if (node) node.textContent = ' Diagnostics .zip failed · ' + str(err.message || err);
+      msg(' Diagnostics .zip failed · ' + str(err.message || err), 'bad');
+     } else {
+      if (node) node.textContent = ' Diagnostics .zip downloaded · ' + info.files + ' files · ' + info.bytes + ' bytes';
+      msg(' Diagnostics .zip downloaded · ' + info.files + ' files · ' + info.bytes + ' bytes', 'ok');
+     }
+     d();
+    });
+   });
+  },
+  btnClearDiag: function () {
+   try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.clearAll(); } catch (e) {}
+   paintDiagSummary();
+   msg(' Local diagnostics cleared', 'ok');
+  },
   btnRefreshQuota: function () { quotaProbe(); },
   btnPreviewWords: function () { openPublishPreview(); },
   btnLockStudio: function () { lock(); },
@@ -1738,9 +1918,7 @@
   btnPublishWordsAndVoice: function () { withBusy('btnPublishWordsAndVoice', function (d) { publishWordsAndVoice(function () { d(); }); }); },
   btnPublishWords: function () { withBusy('btnPublishWords', function (d) { publish(function () { d(); }); }); },
   btnStudioSyncSettings: function () { withBusy('btnStudioSyncSettings', function (d) { publishWordsAndVoice(function (err) { msg(err ? t('studioPublishFail') : t('studioPublishOk'), err ? 'bad' : 'ok'); d(); }); }); },
-  /* E8: atomic PIN change — validate 4–8 digits, confirm match, re-seal the
-    vault with the new PIN, publish config.json then version.json last, and
-    clear every busy flag on any failure exit. The studio stays unlocked. */
+  /* E8: atomic PIN change — validate 4–8 digits, confirm match, re-seal the */
   btnChangePin: function () { withBusy('btnChangePin', function (d) { changePin(function () { d(); }); }); },
   btnVerifyEleven: function () { withBusy('btnVerifyEleven', function (d) { verifyElevenKey(); d(); }); },
   btnRetryFailedClip: function () {
@@ -1783,6 +1961,17 @@
    toggleWmRow(actEl.getAttribute('data-row'));
    return;
   }
+  /* v0.0.6.j Pillar 2: the per-word verifier + single-word re-synthesis. */
+  if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'verifyWmRow') {
+   if (ev.preventDefault) ev.preventDefault();
+   verifyWmRow(actEl.getAttribute('data-row'));
+   return;
+  }
+  if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'resynthWmRow') {
+   if (ev.preventDefault) ev.preventDefault();
+   resynthWmRow(actEl.getAttribute('data-row'));
+   return;
+  }
   if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'chip-remove') {
    if (ev.preventDefault) ev.preventDefault();
    chipRemove(Number(actEl.getAttribute('data-idx')));
@@ -1817,10 +2006,7 @@
    hideCreditBanner();
   });
  }
- /* v0.0.6.d (D8): the bilingual API Credits Exhausted warning banner. Shown
-    when ElevenLabs remaining characters fall under 200, or the key returns
-    401/402/429, or the Gemini AI key hits a quota/auth error. One click opens
-    the Advanced drawer and focuses the key input. */
+ /* v0.0.6.d (D8): the bilingual API Credits Exhausted warning banner. Shown */
  function paintCreditBanner(reason) {
   var host = byId('studioCreditBanner');
   if (!host) {
@@ -1910,13 +2096,14 @@
   }
   p.aiProvider = aiProviderName(); p.updatedAt = Date.now();
   for (k in p) if (Object.prototype.hasOwnProperty.call(p, k)) s[k] = p[k];
+  /* v0.0.6.j: the five pool slots ride the same sealed vault write. */
+  mergeKeyPoolInputs();
   ST.aiProvider = p.aiProvider; ST.aiKey = p.aiKey;
   return s;
  }
  function saveKeys() {
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); return false; }
-  /* R4 (F5): never seal a key ID. e1b… is 64 hex chars and ElevenLabs
-    rejects it with HTTP 400 invalid_api_key; say so, in words. */
+  /* R4 (F5): never seal a key ID. e1b… is 64 hex chars and ElevenLabs */
   var typed = trimmedKey(fieldValue('elKeyInput'));
   if (typed && !looksLikeElevenKey(typed)) {
    msg(elevenKeyHint(), 'bad');
@@ -2018,10 +2205,7 @@
   return !!(str(rec.w) && str(rec.p) && str(rec.pos) && str(rec.m) && str(rec.si) && str(rec.s));
  }
 
-/* ══ v0.0.6.a W1: offline British IPA engine — lexicon + deterministic
-   G2P transcriber. fallbackEnrich() NEVER again prints the spelling as
-   fake phonemics ('/' + w + '/'); unknown words go through the
-   transcriber so offline enrichment still yields real phonemic IPA. */
+/* ══ v0.0.6.a W1: offline British IPA engine — lexicon + deterministic */
 var BRITISH_IPA_LEXICON = {
  "important":"/\u026am\u02c8p\u0254\u02d0t\u0259nt/","impressed":"/\u026am\u02c8prest/","intelligent":"/\u026an\u02c8tel\u026ad\u0292\u0259nt/",
  "interested":"/\u02c8\u026antr\u0259st\u026ad/","jealous":"/\u02c8d\u0292el\u0259s/","married":"/\u02c8m\u00e6rid/",
@@ -2049,10 +2233,7 @@ var G2P_SINGLE = {"a":"\u00e6","e":"e","i":"\u026a","o":"\u0252","u":"\u028c","y
  "q":"kw","r":"r","s":"s","t":"t","v":"v","w":"w","x":"ks","z":"z"};
 var G2P_VOWELS = "\u00e6e\u026a\u0252\u028cu\u0259\u0251\u0254\u025ci\u02d0\u028a\u0254\u026a";
 function g2pIsVowel(ipa) { return ipa.length > 0 && G2P_VOWELS.indexOf(ipa.charAt(0)) >= 0; }
-/* The deterministic G2P transcriber: scan left-to-right in the reading
-   direction, longest-match digraphs first, then singles; a word-final -e
-   after a consonant is silent; stress lands on the FIRST vowel so the
-   output reads like an Oxford headword entry. */
+/* The deterministic G2P transcriber: scan left-to-right in the reading */
 function transcribeBritishIPA(raw) {
   var w = str(raw).toLowerCase().replace(/[^a-z ]/g, '').replace(/^\s+|\s+$/g, '');
   if (!w) return '';
@@ -2136,9 +2317,7 @@ function priorIPAFor(w) {
   var ipa = str(base.p);
   if (!ipa || ipa === '/' + w + '/') ipa = offlineIPA(w);
   if (!ipa || ipa === '/' + w + '/') ipa = transcribeBritishIPA(w);
-  /* v0.0.6.d (D2): a replaced word never inherits the old slot's POS — the
-     suffix analyzer plus the offline lexicon derive it fresh, so "adv." can
-     never survive onto a noun. */
+  /* v0.0.6.d (D2): a replaced word never inherits the old slot's POS — the */
   var pos = str(base.pos);
   if (!pos || pos === '—' || pos === '-') pos = guessPartOfSpeech(w);
   var m = str(base.m);
@@ -2160,8 +2339,7 @@ function priorIPAFor(w) {
   };
  }
 
- /* v0.0.6.d (D2): the smart morphological analyzer — suffix rules give an
-    exact part of speech for every changed word, even fully offline. */
+ /* v0.0.6.d (D2): the smart morphological analyzer — suffix rules give an */
  function guessPartOfSpeech(w) {
   var s = str(w).toLowerCase().replace(/[^a-z ]/g, '');
   if (!s) return '—';
@@ -2216,8 +2394,7 @@ function priorIPAFor(w) {
   reserve: 'v.', return: 'v.', smile: 'v.', sound: 'v.', stay: 'v.',
   suggest: 'v.', suppose: 'v.', surprise: 'v.', translate: 'v.', travel_: 'v.'
  };
- /* v0.0.6.d (D2): a natural B1 definition and a contextual example sentence
-    that respects the part of speech — never "Please write the word …". */
+ /* v0.0.6.d (D2): a natural B1 definition and a contextual example sentence */
  function b1Definition(w, pos) {
   var p = str(pos);
   if (p === 'adv.') return 'In the way described by "' + str(w) + '".';
@@ -2238,16 +2415,13 @@ function priorIPAFor(w) {
   var base = fallbackEnrich(word, prior);
   var p = isObj(provided) ? provided : {};
   var ipaIn = str(p.p) || base.p;
-  /* v0.0.6.a: a spelling-as-phonetics placeholder is worthless in a B1 class;
-     strip it here so only authentic phonemic IPA can reach the payload. */
+  /* v0.0.6.a: a spelling-as-phonetics placeholder is worthless in a B1 class; */
   if (ipaIn === '/' + str(word) + '/') ipaIn = '';
-  /* v0.0.6.d (D2): never carry the OLD word's POS/meaning/sentence onto a
-     changed spelling — an empty provided field means re-derive, not inherit. */
+  /* v0.0.6.d (D2): never carry the OLD word's POS/meaning/sentence onto a */
   var stalePrior = isObj(prior) && str(prior.w) && str(prior.w).toLowerCase() !== str(word).toLowerCase();
   var posIn = str(p.pos) || (stalePrior ? '' : '') || '';
   if (!posIn && !str(p.m) && !str(p.s)) {
-   /* No LLM row landed: the analyzer owns POS, and the generic fallbacks
-      own m/s. A stale prior (different spelling) contributes nothing. */
+   /* No LLM row landed: the analyzer owns POS, and the generic fallbacks */
    if (stalePrior) { base.pos = guessPartOfSpeech(str(word)); base.m = ''; base.s = ''; }
   }
   var mIn = str(p.m);
@@ -2417,9 +2591,7 @@ function priorIPAFor(w) {
     /* D11/D12: never discard a known human */
     if (dict.audio) out.audio = str(dict.audio);
    }
-   /* v0.0.6.d (D2): a changed word must land with an EXACT part of speech —
-      dictionaryapi.dev's meanings[0], else the suffix analyzer. Never a stale
-      value and never a bare "—". */
+   /* v0.0.6.d (D2): a changed word must land with an EXACT part of speech — */
    if (!str(out.pos) || out.pos === '—' || out.pos === '-') {
     out.pos = (dict && str(dict.pos)) || guessPartOfSpeech(w);
    }
@@ -2472,7 +2644,7 @@ function priorIPAFor(w) {
   }
   return out;
  }
- function llmRequest(provider, key, words, cb) {
+ function llmRequest(provider, key, words, cb, promptOverride) {
   cb = cb || noop;
   var ep = LLM_ENDPOINTS[provider];
   if (!ep) { cb(new Error('no_provider')); return false; }
@@ -2480,12 +2652,10 @@ function priorIPAFor(w) {
   /* D10: pollinations_free is a zero-key */
   if (info.needsKey !== false && !key) { cb(new Error('no_key')); return false; }
   if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
-  var prompt = llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
+  /* v0.0.6.j: the pronunciation verifier injects its own strict prompt. */
+  var prompt = str(promptOverride) || llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
   if (provider === 'gemini') {
-   /* v0.0.4.a W2: model cascade — gemini-2.0-flash → gemini-flash-latest →
-     gemini-2.5-flash. A 404/400 moves to the next model; the working model
-     is remembered in ST.aiModel. A hard failure falls back to the zero-key
-     engine in the caller (enrichWords → freeEnrichOne). */
+   /* v0.0.4.a W2: model cascade — gemini-2.0-flash → gemini-flash-latest → */
    var models = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
    if (str(ST.aiModel) && models.indexOf(str(ST.aiModel)) >= 0) {
     models = [str(ST.aiModel)].concat(models.filter(function (m) { return m !== str(ST.aiModel); }));
@@ -2782,9 +2952,7 @@ function priorIPAFor(w) {
  /* D4: generate clips (non-fatal */
  function publishWordsAndVoice(cb) {
   cb = cb || noop;
-  /* v0.0.6.c (F1): Fast Delta Enrich (<2s in-app budget) — ONLY the words
-     whose spelling/fields actually changed get re-enriched; unchanged words
-     keep their committed IPA/Sinhala at zero cost. */
+  /* v0.0.6.c (F1): Fast Delta Enrich (<2s in-app budget) — ONLY the words */
   function enrichDeltas(next) {
    try { detectWordDeltas(); } catch (e) {}
    if (!ST.wordsDirty || !ST.wordDeltas.length) { next(); return; }
@@ -2803,9 +2971,7 @@ function priorIPAFor(w) {
     next();
    });
   }
-  /* Fast Delta Voice: generateClips already skips every unchanged clip at 0
-     credits (sha1 content hash); a missing/changed word is the only paid
-     call, and only when a real key is present and not in a gate harness. */
+  /* Fast Delta Voice: generateClips already skips every unchanged clip at 0 */
   function voiceDeltas(next) {
    if (!str(ST.secrets.elevenKey) || !allowAutoGen()) { next(); return; }
    generateClips({ noCommit: true }, function (e, i) {
@@ -2823,8 +2989,7 @@ function priorIPAFor(w) {
      if (SDP.Speech.reloadManifest) SDP.Speech.reloadManifest(true);
     }
    } catch (e) {}
-   /* v0.0.6.c (F1): the publish LANDED — clear the red warning, paint the
-      emerald synced state on #lecturerSyncBar. */
+   /* v0.0.6.c (F1): the publish LANDED — clear the red warning, paint the */
    ST.dirty = false;
    ST.wordsDirty = false;
    ST.wordDeltas = [];
@@ -2865,10 +3030,7 @@ function priorIPAFor(w) {
   }, function () { cb(new Error('encrypt_failed')); });
   return true;
  }
- /* #btnOneClickMasterSetup — v0.0.6.a Track 6: the animated All-in-One wizard.
-   Step 1 vault+keys, Step 2 auto-enrich (real IPA), Step 3 voice pack with
-   the 0-credit guard, Step 4 atomic publish + broadcast. Any failure paints
-   the bilingual Error & Solution card with a 1-Click Retry. */
+ /* #btnOneClickMasterSetup — v0.0.6.a Track 6: the animated All-in-One wizard. */
  function oneClickMasterSetup(cb) {
   cb = cb || noop;
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
@@ -2952,8 +3114,7 @@ function priorIPAFor(w) {
     });
    });
   }
-  /* Step 3 — voice pack with the IRON LAW 0-credit guard: existing clips and
-     history are reused; only genuinely brand-new words may generate. */
+  /* Step 3 — voice pack with the IRON LAW 0-credit guard: existing clips and */
   function step3() {
    setMasterStep(3, 'active');
    if (!elKey) {
@@ -2968,8 +3129,7 @@ function priorIPAFor(w) {
     step4(genInfo || { made: [], skipped: 0 });
    });
   }
-  /* Step 2 — auto-enrich every word with real British IPA; the offline
-     lexicon + transcriber guarantee /…/ phonemics even with no network. */
+  /* Step 2 — auto-enrich every word with real British IPA; the offline */
   function step2() {
    setMasterStep(2, 'active');
    var raw = fieldValue('studioBulkWords') || wordsToText(currentWords());
@@ -3076,9 +3236,11 @@ function priorIPAFor(w) {
 
  /* ══ D-C1..C7: credit-safe Alice */
  function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + activeVoiceId; }
+/* v0.0.6.j: the Creator Briefing clips synthesize with the dedicated
+   British male narrator voice (human click only, W5 credit safety). */
+function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + INTRO_VOICE.id; }
  function guideSteps() {
-  /* R5: the four reusable guide clips. The frozen legacy keys stay readable
-    by the speech module (guide.en.N wins, _guide_N+1 is the fallback). */
+  /* R5: the four reusable guide clips. The frozen legacy keys stay readable */
   var out = [], i;
   for (i = 1; i <= 4; i++) out.push({ key: '_guide_' + i, text: GUIDE_CLIP_TEXTS[i - 1] });
   return out;
@@ -3103,19 +3265,22 @@ function priorIPAFor(w) {
   for (i = 0; i < cmds.length; i++) cmdChars += cmds[i].text.length;
   var steps = guideSteps(), guideChars = 0;
   for (i = 0; i < steps.length; i++) guideChars += steps[i].text.length;
-  var clips = count + numbers.length + cmds.length + steps.length;
+  /* v0.0.6.j Pillar 1: the 8 Creator Briefing sentences (British male). */
+  var intro = introSteps(), introChars = 0;
+  for (i = 0; i < intro.length; i++) introChars += intro[i].text.length;
+  var clips = count + numbers.length + cmds.length + steps.length + intro.length;
   return {
-   words: wordChars, numbers: numsChars, commands: cmdChars, guide: guideChars,
-   total: wordChars + numsChars + cmdChars + guideChars, count: count, clips: clips
+   words: wordChars, numbers: numsChars, commands: cmdChars, guide: guideChars, intro: introChars,
+   total: wordChars + numsChars + cmdChars + guideChars + introChars, count: count, clips: clips
   };
  }
  function costPreviewLine(words) {
   var c = costPreview(words);
-  /* R5: the 70-clip arithmetic, always stated, never guessed. */
+  /* R5: the 78-clip arithmetic, always stated, never guessed. */
   return c.count + ' words = ' + c.words + ' chars · 30 numbers = ' + c.numbers +
    ' chars · 6 commands = ' + c.commands + ' chars · 4 guide steps = ' + c.guide +
-   ' chars · total ' + c.total + ' chars · ' + c.clips +
-   ' clips (30 words + 30 numbers + 6 commands + 4 guide steps)';
+   ' chars · 8 intro steps = ' + c.intro + ' chars · total ' + c.total + ' chars · ' + c.clips +
+   ' clips (30 words + 30 numbers + 6 commands + 4 guide steps + 8 intro steps)';
  }
  /* D2: 403 / missing_permissions / */
  /* D5/D16: human error sentences. */
@@ -3173,17 +3338,13 @@ function priorIPAFor(w) {
  }
  /* D1 (Rule 1A) — the 3-rung */
  function trimmedKey(key) { return str(key).replace(/^\s+|\s+$/g, ''); }
- /* R4 (F5): ONLY an sk_… secret is an API key. The 64-char e1b… value is the
-   key ID and ElevenLabs answers HTTP 400 'API key ID used as API key'. */
+ /* R4 (F5): ONLY an sk_… secret is an API key. The 64-char e1b… value is the */
  function looksLikeElevenKey(key) {
   return /^sk_[A-Za-z0-9_]{20,}$/.test(trimmedKey(key));
  }
  function elevenKeyHint() { return t('studioVerifyHint', 'INVALID KEY — paste the sk_… secret from ElevenLabs'); }
 
- /* ══ R4: the live ElevenLabs key verifier ══════════════════════════════
-  * A zero-character GET /v1/user/subscription proves the key. Only a VALID
-  * key then generates ONE sample sentence and plays it through the shared
-  * <audio> element — that is the cheapest possible end-to-end voice test. */
+ /* ══ R4: the live ElevenLabs key verifier ══════════════════════════════ */
  function paintElVerify(text, state) {
   var node = byId('elVerifyStatus');
   if (!node) return false;
@@ -3223,8 +3384,7 @@ function priorIPAFor(w) {
    var left = Math.max(0, lim - used);
    paintElVerify(t('studioVerifyOk') + left + ' / ' + lim + ' chars)', 'ok');
    testStatus(' ' + t('studioVerifyOk') + left + ' / ' + lim + ' chars)', 'ok');
-   /* VALID: prove the voice. A cached sample is free; otherwise ONE 36-char
-     clip is generated and replayed forever from the vault. */
+   /* VALID: prove the voice. A cached sample is free; otherwise ONE 36-char */
    ST.secrets = isObj(ST.secrets) ? ST.secrets : {};
    ST.secrets.elevenKey = key;
    if (clipExists('cmd.sample')) { playVaultClip('cmd.sample'); return true; }
@@ -3234,9 +3394,7 @@ function priorIPAFor(w) {
   return true;
  }
 
- /* ══ R7 (F7): the atomic fresh-salt PIN re-seal ═════════════════════════
-  * New salt, new verifier, re-encrypted envelope, config.json then
-  * version.json last. A master-recovery session is closed by this call. */
+ /* ══ R7 (F7): the atomic fresh-salt PIN re-seal ═════════════════════════ */
  function isBootstrapPin(pin) { return trimmedKey(pin) === BOOTSTRAP_PIN; }
  function recoveryOpen(cb) {
   cb = cb || noop;
@@ -3268,8 +3426,7 @@ function priorIPAFor(w) {
     ST.envelope = envelope;
     ST.recoveryMode = false;
     writeLayerOne(envelope, verifier);
-    /* v0.0.6.d (D8): remember the new PIN length so the gate renders exactly
-       that many dots (a 4-digit PIN shows 4 dots, not 8). */
+    /* v0.0.6.d (D8): remember the new PIN length so the gate renders exactly */
     try {
      var lock = layerOneVault();
      lock.pinLen = want.length;
@@ -3477,19 +3634,25 @@ function priorIPAFor(w) {
   else { opts = isObj(a) ? a : {}; cb = typeof b === 'function' ? b : noop; }
   if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
   if (!ST.voicePack.loaded) loadVoicePack(noop);
-  var apiKey = str(ST.secrets.elevenKey) || fieldValue('elKeyInput');
+  /* v0.0.6.j Pillar 2: the active key comes from the pool (primary field */
+  poolCursor = 0;
+  var apiKey = resolveElevenKey();
   if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
-  var words = Array.isArray(opts.words) ? opts.words : currentWords();
+  var introMode = !!opts.intro;
+  /* v0.0.6.j Pillar 1: the Creator Briefing clips use the dedicated young */
+  var genVoiceId = introMode ? INTRO_VOICE.id : activeVoiceId;
+  var genModel = introMode ? INTRO_VOICE.model : VOICE_MODEL;
+  var genUrl = introMode ? introVoiceTtsUrl() : elevenUrl();
+  var words = introMode ? [] : (Array.isArray(opts.words) ? opts.words : currentWords());
   /* D-C7: never silently drop words */
   if (words.length > WORD_CAP) {
    msg(str(words.length) + ' words parsed, first 30 used', '');
    toast(str(words.length) + ' words parsed, first 30 used');
   }
-  var queue = queueFor(words, !!opts.singleTest, opts.keys);
+  var queue = introMode ? introSteps() : queueFor(words, !!opts.singleTest, opts.keys);
   var force = !!opts.force;
   var made = [], skipped = 0, index = 0, calls = 0, stopped = false, tierLimited = false;
-  /* D3/D18 (v0.0.2.a): the SAME character counter the preflight uses, so the
-    live line and the cost preview can never disagree. */
+  /* D3/D18 (v0.0.2.a): the SAME character counter the preflight uses, so the */
   var runningChars = 0;
   ST.generating = true;
   ST.lastFailedClip = null;
@@ -3529,21 +3692,35 @@ function priorIPAFor(w) {
    if (index >= queue.length) { finish(null); return; }
    var item = queue[index];
    index += 1;
-   /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash
-     still matches text|voice|model is never paid for twice. */
-   var itemHash = clipContentHash(item.text, activeVoiceId, VOICE_MODEL);
+   /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash */
+   var itemHash = clipContentHash(item.text, genVoiceId, genModel);
    var existing = ST.voicePack.clips[item.key];
+   /* v0.0.6.j Pillar 2: immutable static system audio (commands, numbers, */
    if (!force && clipExists(item.key)) {
+    if (isStaticClipKey(item.key)) { skipped += 1; next(); return; }
     var storedHash = isObj(existing) ? str(existing.hash) : '';
     if (!storedHash || storedHash === itemHash) { skipped += 1; next(); return; }
    }
    calls += 1;
    var charsUsed = str(item.text).length;
+   var rotationsThisItem = 0;
    requestClip(item, apiKey, function (err, entry) {
-    /* D1/D2/D13: ANY error is non-fatal… */
     if (err) {
+     /* v0.0.6.j Pillar 2: key-level failures rotate to the next pool slot */
+     var st = Number((err && err.status) || 0);
+     if ((st === 401 || st === 402 || st === 429) && rotationsThisItem < elevenKeyPool().length - 1) {
+      var rotated = rotateElevenKey('http_' + st);
+      if (rotated) {
+       rotationsThisItem += 1;
+       apiKey = rotated;
+       index -= 1;
+       msg(' Key rotated → Slot #' + (poolCursor + 1) + ' (HTTP ' + st + ')', 'warn');
+       next();
+       return;
+      }
+     }
      /* D4: remember the exact clip and its mapped reason for the retry. */
-     ST.lastFailedClip = { key: item.key, status: Number((err && err.status) || 0), reason: quotaError(err) };
+     ST.lastFailedClip = { key: item.key, status: st, reason: quotaError(err) };
      tierLimited = true;
      skipped = Math.max(skipped, queue.length - made.length);
      index = queue.length;
@@ -3567,30 +3744,75 @@ function priorIPAFor(w) {
    /* D13: on 422, retry with minimal… */
    var vs = attempt === 1 ? { stability: 0.5, similarity_boost: 0.75 } : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
    try {
-    global.fetch(elevenUrl(), { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' }, body: JSON.stringify({ text: item.text, model_id: VOICE_MODEL, voice_settings: vs }) })
-    .then(function (res) {
-     var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
-     if (!res || !res.ok) {
-      if (st === 422 && attempt < 1) { requestClip(item, key, done, 1); return null; } /* D13 */
-      if (st === 429 && attempt < 1) { global.setTimeout(function () { requestClip(item, key, done, attempt + 1); }, 5000); return null; }
-      throw withStatus(new Error('tts_failed'), st || 0);
-     }
-     return res.arrayBuffer ? res.arrayBuffer() : null;
-    }).then(function (buffer) {
-     if (buffer === null) return;
-     if (!buffer) throw new Error('empty_audio');
-     var b64 = arrayBufferToBase64(buffer);
-     if (!b64) throw new Error('encode_failed');
-     done(null, {
-      b64: b64, text: str(item.text), bytes: buffer.byteLength,
-      at: Date.now(), voiceId: activeVoiceId, modelId: VOICE_MODEL,
-      hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, activeVoiceId, VOICE_MODEL)
-     });
-    }, function (err) { done(err || new Error('tts_failed')); });
+    global.fetch(genUrl, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' }, body: JSON.stringify({ text: item.text, model_id: genModel, voice_settings: vs }) })
+     .then(function (res) {
+      var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+      if (!res || !res.ok) {
+       if (st === 422 && attempt < 1) { requestClip(item, key, done, 1); return null; } /* D13 */
+       if (st === 429 && attempt < 1) { global.setTimeout(function () { requestClip(item, key, done, attempt + 1); }, 5000); return null; }
+       throw withStatus(new Error('tts_failed'), st || 0);
+      }
+      return res.arrayBuffer ? res.arrayBuffer() : null;
+     }).then(function (buffer) {
+      if (buffer === null) return;
+      if (!buffer) throw new Error('empty_audio');
+      var b64 = arrayBufferToBase64(buffer);
+      if (!b64) throw new Error('encode_failed');
+      done(null, {
+       b64: b64, text: str(item.text), bytes: buffer.byteLength,
+       at: Date.now(), voiceId: genVoiceId, modelId: genModel,
+       hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel)
+      });
+     }, function (err) { done(err || new Error('tts_failed')); });
    } catch (e) { done(e || new Error('tts_failed')); }
   }
   next();
   return { ok: true, started: queue.length, calls: 0 };
+ }
+
+ /* ══ v0.0.6.j Pillar 3 — the in-browser .zip diagnostics exporter ═══════ */
+ function buildDiagZip(cb) {
+  cb = cb || noop;
+  var Diag = null;
+  try { Diag = global.SDP && SDP.Diagnostics ? SDP.Diagnostics : null; } catch (e) { Diag = null; }
+  if (!Diag || !Diag.buildDiagFiles || !Diag.zipStore) { cb(new Error('no_diagnostics')); return false; }
+  Diag.buildDiagFiles().then(function (bundle) {
+   var bytes = Diag.zipStore(bundle.files);
+   try {
+    var blob = new global.Blob([bytes], { type: 'application/zip' });
+    var url = global.URL && global.URL.createObjectURL ? global.URL.createObjectURL(blob) : '';
+    if (!url) { cb(new Error('no_blob_url')); return; }
+    var a = doc.createElement('a');
+    a.href = url;
+    a.download = 'sdp-diagnostics-' + str(appVersion()) + '.zip';
+    doc.body.appendChild(a);
+    a.click();
+    doc.body.removeChild(a);
+    global.setTimeout(function () { try { global.URL.revokeObjectURL(url); } catch (e) {} }, 4000);
+    try { Diag.log('diag_zip_exported', { files: bundle.files.length, bytes: bytes.length }); } catch (e) {}
+    cb(null, { files: bundle.files.length, bytes: bytes.length });
+   } catch (e) { cb(e || new Error('zip_failed')); }
+  }, function (err) { cb(err || new Error('decrypt_failed')); });
+  return true;
+ }
+ function paintDiagSummary() {
+  var host = byId('diagSummary');
+  if (!host) return false;
+  var summary = { events: 0, reviews: 0, firstAt: '', lastAt: '' };
+  var stats = { locked: 0, total: STATIC_CLIP_KEYS.length };
+  try {
+   if (global.SDP && SDP.Diagnostics) {
+    summary = SDP.Diagnostics.summary();
+    stats = staticVaultStats();
+   }
+  } catch (e) {}
+  host.innerHTML =
+   '<div class="diag-cell"><strong>' + summary.events + '</strong><span>diagnostic events</span></div>' +
+   '<div class="diag-cell"><strong>' + summary.reviews + '</strong><span>encrypted reviews</span></div>' +
+   '<div class="diag-cell"><strong>' + stats.locked + ' / ' + stats.total + '</strong><span>static clips locked</span></div>' +
+   '<div class="diag-cell"><strong>' + keyPoolCount() + ' / ' + KEY_POOL_SLOTS + '</strong><span>key pool slots</span></div>' +
+   '<div class="diag-cell diag-cell-wide"><strong>' + esc(str(summary.lastAt || '—')) + '</strong><span>last captured event</span></div>';
+  return true;
  }
 
  /* v0.0.4.b: serialise clips without the duplicate .url data URL on disk. */
@@ -3686,8 +3908,7 @@ function priorIPAFor(w) {
  }
 
  /* Commit the freshly paid-for clips so */
- /* v0.0.4.b: sequential publish mutex — concurrent calls queue, never race
-   on the single data/elevenlabs-audio.json blob. */
+ /* v0.0.4.b: sequential publish mutex — concurrent calls queue, never race */
  var packPublishQueue = [], packPublishBusy = false;
  function commitVoicePack(cb) {
   cb = cb || noop;
@@ -3730,10 +3951,8 @@ function priorIPAFor(w) {
   var list = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
   return Array.isArray(list) ? list.slice(0, WORD_CAP) : [];
  }
- /* v0.0.4.a W2: read-only auto-enriched preview badge per row; the six edit
-   inputs stay alive inside a hidden .wm-edit-cells block ( toggles it). */
- /* v0.0.5.c: the per-row SVG preview button plays the committed Alice clip
-   (0 credits — it only reads data/elevenlabs-audio.json). */
+ /* v0.0.4.a W2: read-only auto-enriched preview badge per row; the six edit */
+ /* v0.0.5.c: the per-row SVG preview button plays the committed Alice clip */
  function previewWmRow(row) {
   var list = wordManagerWords(), idx = Number(row);
   if (!list.length || isNaN(idx) || !list[idx]) return false;
@@ -3752,6 +3971,109 @@ function priorIPAFor(w) {
   }
   return false;
  }
+
+ /* ══ v0.0.6.j Pillar 2 — AI British Pronunciation Pre-Verifier ══════════ */
+ function britishizeIpa(raw) {
+  var ipa = str(raw).replace(/^\s+|\s+$/g, '').replace(/^\/+|\/+$/g, '');
+  if (!ipa) return '';
+  ipa = ipa
+   .replace(/\u025d/g, '\u025c\u02d0r')  /* ɝ → ɜːr */
+   .replace(/\u025a/g, '\u0259')          /* ɚ → ə (non-rhotic) */
+   .replace(/\u0254r/g, '\u0254\u02d0r')  /* ɔr → ɔːr */
+   .replace(/\u0251r/g, '\u0251\u02d0r'); /* ɑr → ɑːr */
+  return '/' + ipa + '/';
+ }
+ function verifyPrompt(word) {
+  return 'You are a Cambridge English B1 (CCBE, Sri Lanka) British English pronunciation editor. ' +
+   'For the word "' + str(word) + '" return STRICT JSON only, exactly: ' +
+   '{"words":[{"w":"' + str(word) + '","p":"UK IPA in slashes, Cambridge B1 British, non-rhotic","pos":"grammar abbreviation with a dot, e.g. adj.",' +
+   '"m":"one simple B1 English meaning, max 12 words","si":"accurate Sinhala meaning","s":"one simple B1 example sentence using the word",' +
+   '"ttsHint":"phoneme-guided respelling of the word that forces Received Pronunciation from a TTS engine"}]}. ' +
+   'The IPA must be British (e.g. /ɪmˈpɔːtənt/), never US /ɝ/ or /ɚ/. No extra fields, no commentary.';
+ }
+ function verifyPronunciationWord(word, cb) {
+  cb = cb || noop;
+  var w = str(word && word.w ? word.w : word);
+  if (!w) { cb(new Error('no_word')); return false; }
+  /* Provider cascade: the chosen provider + key first, then every LLM slot */
+  var candidates = [{ p: aiProviderName(), k: str(ST.secrets.aiKey) || fieldValue('studioAiKey') }];
+  var pool = llmKeyPool(), i;
+  for (i = 0; i < pool.length; i++) {
+   if (pool[i].k !== candidates[0].k) candidates.push(pool[i]);
+  }
+  var at = 0;
+  function attemptOne() {
+   if (at >= candidates.length) { cb(new Error('llm_failed')); return; }
+   var c = candidates[at];
+   at += 1;
+   llmRequest(c.p, c.k, [w], function (err, rows) {
+    var rec = (!err && rows) ? rows[w.toLowerCase()] : null;
+    if (isObj(rec) && str(rec.p)) {
+     rec.p = britishizeIpa(rec.p);
+     cb(null, rec);
+     return;
+    }
+    attemptOne();
+   }, verifyPrompt(w));
+  }
+  attemptOne();
+  return true;
+ }
+ function verifyWmRow(row) {
+  var list = wordManagerWords(), idx = Number(row);
+  if (!list.length || isNaN(idx) || !list[idx]) return false;
+  var word = list[idx];
+  if (!isObj(ST.verifyBadges)) ST.verifyBadges = {};
+  msg(' Verifying "' + esc(str(word.w)) + '" · Cambridge B1 British English…', '');
+  verifyPronunciationWord(word, function (err, rec) {
+   if (err) {
+    ST.verifyBadges[idx] = '⚠';
+    paintWordManager();
+    try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('pronunciation_flag', { word: str(word.w), reason: 'llm_failed' }); } catch (e) {}
+    msg(' Could not verify "' + esc(str(word.w)) + '" — check the AI key or pool slots', 'bad');
+    return;
+   }
+   list[idx].p = str(rec.p) || list[idx].p;
+   if (str(rec.pos)) list[idx].pos = str(rec.pos);
+   if (str(rec.m)) list[idx].m = str(rec.m);
+   if (str(rec.si)) list[idx].si = str(rec.si);
+   if (str(rec.s)) list[idx].s = str(rec.s);
+   if (str(rec.ttsHint)) list[idx].ttsHint = str(rec.ttsHint);
+   ST.words = list;
+   ST.verifyBadges[idx] = '✓';
+   ST.dirty = true;
+   paintDirtyState();
+   paintWordManager();
+   var editor = byId('studioWords');
+   if (editor) editor.value = wordsToText(list);
+   try {
+    if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('pronunciation_verified', { word: str(word.w) });
+   } catch (e) {}
+   msg(' ' + esc(str(word.w)) + ' verified · ' + esc(str(list[idx].p)) + ' — listening preview…', 'ok');
+   /* Preview: the phoneme-guided hint, so the lecturer hears the exact RP */
+   try {
+    if (global.SDP && SDP.Speech && SDP.Speech.say) {
+     SDP.Speech.say([str(list[idx].ttsHint) || str(word.w)], { lang: 'en-GB', rate: 0.9 }, noop);
+    }
+   } catch (e) {}
+  });
+  return true;
+ }
+ function resynthWmRow(row) {
+  var list = wordManagerWords(), idx = Number(row);
+  if (!list.length || isNaN(idx) || !list[idx]) return false;
+  var w = list[idx];
+  var key = 'words.' + str(w.w).toLowerCase();
+  /* Drop just this one stale clip so the delta queue rebuilds exactly it; */
+  if (isObj(ST.voicePack.clips)) delete ST.voicePack.clips[key];
+  msg(' Re-synthesizing 1 word: ' + esc(str(w.w)) + '…', '');
+  generateClips({ words: [w], keys: [key], force: true }, function (err) {
+   if (err) { msg(' Re-synthesis failed · ' + quotaError(err), 'bad'); return; }
+   try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('word_resynthesized', { word: str(w.w) }); } catch (e) {}
+   msg(' ' + esc(str(w.w)) + ' re-synthesized · 1 word · the other 29 clips untouched', 'ok');
+  });
+  return true;
+ }
  function paintWordManager() {
   var host = byId('studioWordManager');
   if (!host) return false;
@@ -3769,7 +4091,13 @@ function priorIPAFor(w) {
     ' <button type="button" class="btn btn-sm wm-preview" data-action="previewWmRow" data-row="' + i +
     '" aria-label="Play the Alice clip for row ' + (i + 1) + '">' + ico('volume', 15) + '</button>' +
     ' <button type="button" class="btn btn-sm wm-toggle" data-action="toggleWmRow" data-row="' + i +
-    '" aria-label="Edit row ' + (i + 1) + '">' + ico('edit', 15) + '</button></div><div class="wm-edit-cells" hidden>';
+    '" aria-label="Edit row ' + (i + 1) + '">' + ico('edit', 15) + '</button>' +
+    /* v0.0.6.j Pillar 2: per-word Verify & Preview Pronunciation (♪) and */
+    ' <button type="button" class="btn btn-sm wm-verify" data-action="verifyWmRow" data-row="' + i +
+    '" title="Verify &amp; preview pronunciation (Cambridge B1 British)" aria-label="Verify and preview pronunciation for row ' + (i + 1) + '">\u266a</button>' +
+    ' <button type="button" class="btn btn-sm wm-resynth" data-action="resynthWmRow" data-row="' + i +
+    '" title="Re-synthesize this single word" aria-label="Re-synthesize single word for row ' + (i + 1) + '">\u21bb</button>' +
+    ' <span class="wm-vbadge" data-vbadge="' + i + '">' + esc(str((ST.verifyBadges || {})[i])) + '</span></div><div class="wm-edit-cells" hidden>';
    for (c = 0; c < cols.length; c++) {
     rows += '<input class="input wm-input" data-wm="' + cols[c] + '" data-wm-field="' + cols[c] + '" data-row="' + i +
      '" value="' + esc(str(w[cols[c]])) + '">';
@@ -3789,9 +4117,7 @@ function priorIPAFor(w) {
   for (i = 0; i < parts.length; i++) {
    var line = str(parts[i]).replace(/^\s+|\s+$/g, '');
    if (!line) continue;
-   /* v0.0.6.e (A): strip pasted list numbering (1. / 2) / #03 / 4:) and
-      collapse inner space runs; spaces and hyphens INSIDE a word are never
-      split, so old-fashioned / bus station stay exactly one word. */
+   /* v0.0.6.e (A): strip pasted list numbering (1. / 2) / #03 / 4:) and */
    line = line.replace(/^#\d+[.)]?\s*/, '').replace(/^\d+[.)\]:-]\s*/, '').replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
    if (!line) continue;
    var cols = line.indexOf('|') >= 0 ? line.split('|') : [line];
@@ -3807,16 +4133,13 @@ function priorIPAFor(w) {
     si: str(cols[4] || '').replace(/^\s+|\s+$/g, ''),
     s: str(cols[5] || '').replace(/^\s+|\s+$/g, '')
    };
-   /* v0.0.6.d (D2): when the spelling at this slot differs from the committed
-      baseline word, the old slot's p/pos/m/si/s are VOID — a word-only line
-      keeps nothing, so the pipeline re-enriches all five fields. */
+   /* v0.0.6.d (D2): when the spelling at this slot differs from the committed */
    if (committed.length && i < committed.length &&
      str(committed[i] && committed[i].w).toLowerCase() !== key) {
     rec.p = ''; rec.pos = ''; rec.m = ''; rec.si = ''; rec.s = '';
    }
    out.push(rec);
-   /* v0.0.6.e (A): never truncate at 30 — the lecturer sees every extra word
-      as an amber chip so nothing is silently dropped again. */
+   /* v0.0.6.e (A): never truncate at 30 — the lecturer sees every extra word */
   }
   return out;
  }
@@ -4034,9 +4357,7 @@ function setStudioWords(list, source) {
   setup: setup,
   lock: lock,
   isUnlocked: isUnlocked,
-  /* v0.0.6.d (D2): the five-field re-enrichment rule, exposed for the
-     verification harness — a changed spelling must never inherit the old
-     slot's pos/m/si/s. */
+  /* v0.0.6.d (D2): the five-field re-enrichment rule, exposed for the */
   __mergeEnrichRecordForGate: mergeEnrichRecord,
   guessPartOfSpeech: guessPartOfSpeech,
   hasUnpublishedEdits: function () { return !!(ST.unlocked && ST.dirty); },

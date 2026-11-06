@@ -2446,3 +2446,108 @@ html[data-theme='dark'] #screen-settings .checkline input[type='checkbox'] { bac
 /* the About card keeps a calm, premium close */
 .about-card .about-line { padding: 10px 2px 0; }
 
+
+/* ═════════ v0.0.6.j — Pillar 1: Creator Briefing (live synced transcript) ═════════
+   Apple-Music-style narration: the active sentence is crisp and large
+   (19px, #0F172A) while past/upcoming sentences stay readable at softer
+   opacity, with a smooth auto-scroll and a live progress bar. The 10-second
+   timed gate keeps both exit buttons locked until the countdown completes. */
+.briefing-modal { z-index: 95; }
+.briefing-card { width: min(680px, 100%); max-height: min(86vh, 780px); display: flex; flex-direction: column; }
+.briefing-head { align-items: flex-start; }
+.briefing-head h2 { font-size: 19px; line-height: 1.25; }
+.briefing-persona { margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted); }
+.briefing-beat { flex: none; margin-left: auto; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px; background: #E0F2FE; color: #0369A1; }
+.briefing-lyrics {
+  flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  max-height: 46vh; margin: 6px 0 10px; padding: 4px 2px 4px 0;
+  scroll-behavior: smooth; mask-image: linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
+}
+.b-line {
+  margin: 0 0 14px; padding: 2px 0 2px 12px; border-left: 3px solid transparent;
+  font-size: 19px; line-height: 1.42; font-weight: 500; color: #0F172A;
+  opacity: 0.62; transition: opacity 260ms ease, border-color 260ms ease, transform 260ms ease;
+  cursor: pointer;
+}
+.b-line[data-state='past'] { opacity: 0.45; }
+.b-line.on {
+  opacity: 1; font-weight: 750; border-left-color: #0EA5E9; transform: translateX(2px);
+}
+html[data-theme='dark'] .b-line { color: #E2E8F0; }
+html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
+.briefing-progress { height: 6px; border-radius: 999px; background: #E2E8F0; overflow: hidden; }
+#briefingBar { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #0EA5E9, #6366F1); transition: width 420ms ease; }
+.briefing-count {
+  margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; text-align: center;
+  font-size: 13.5px; font-weight: 700; background: #FEF9C3; color: #854D0E;
+  border: 1px solid #FDE68A;
+}
+.briefing-modal.b-gate-open .briefing-count { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+.briefing-links { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; font-size: 13px; }
+.briefing-links a { color: #0369A1; font-weight: 650; text-decoration: none; border-bottom: 1px dashed #7DD3FC; }
+.briefing-links a:hover, .briefing-links a:focus-visible { border-bottom-style: solid; }
+.briefing-foot { margin-top: 14px; }
+#btnBriefingContinue[disabled], #btnBriefingSkip[disabled] { opacity: 0.55; cursor: not-allowed; filter: grayscale(0.25); }
+#btnBriefingContinue[disabled]::after { content: ' ⏳'; }
+
+/* ═════════ v0.0.6.j — Pillar 3: post-session review card ═════════ */
+.review-card { margin-top: 14px; border: 1.5px solid #C7D2FE; }
+.review-e2ee {
+  margin: 2px 0 10px; padding: 7px 11px; border-radius: 10px; display: inline-block;
+  font-size: 12.5px; font-weight: 750; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0;
+}
+.rpill.pressed { box-shadow: inset 0 0 0 2px #4F46E5; background: #EEF2FF; }
+.review-send-row { display: flex; gap: 10px; margin: 10px 0; }
+.review-send-row .input { flex: 1; }
+#btnVoiceReview.listening { box-shadow: inset 0 0 0 2px #DC2626; background: #FEF2F2; }
+#btnVoiceReview.listening::before { content: '●'; color: #DC2626; margin-right: 6px; animation: sdpPulse 1s ease infinite; }
+@keyframes sdpPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ═════════ v0.0.6.j — Pillar 2: the 5-slot Multi-API key pool ═════════ */
+.kp-grid { display: grid; gap: 8px; margin: 6px 0 10px; }
+.kp-row { display: grid; grid-template-columns: 86px minmax(120px, 168px) 1fr 22px; gap: 8px; align-items: center; }
+.kp-no { font-size: 11.5px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.2px; }
+.kp-prov { min-height: 40px; font-size: 12.5px; padding: 4px 8px; }
+.kp-key { min-height: 40px; font-size: 12.5px; }
+.kp-badge { font-size: 13px; color: #94A3B8; text-align: center; }
+.kp-badge[data-on='1'] { color: #10B981; }
+.studio-pool-row { margin: 4px 0 8px; }
+@media (max-width: 560px) {
+  .kp-row { grid-template-columns: 1fr 1fr; }
+  .kp-no { grid-column: 1 / -1; }
+  .kp-badge { display: none; }
+}
+
+/* ═════════ v0.0.6.j — Pillar 3: the diagnostics vault card ═════════ */
+.studio-card-diag { border: 1.5px dashed #A5B4FC; }
+.diag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0 10px; }
+.diag-cell {
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px;
+  background: #F8FAFC; border: 1px solid #E2E8F0;
+}
+.diag-cell strong { font-size: 16px; font-weight: 850; color: #0F172A; }
+.diag-cell span { font-size: 11.5px; color: var(--text-muted); }
+.diag-cell-wide { grid-column: 1 / -1; }
+.diag-cell-wide strong { font-size: 12.5px; font-weight: 700; word-break: break-all; }
+@media (min-width: 640px) { .diag-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .diag-cell-wide { grid-column: 1 / -1; } }
+.studio-diag-row { margin: 6px 0; }
+
+/* ═════════ v0.0.6.j — per-word pronunciation verifier + single-word re-synth ═════════ */
+.wm-verify, .wm-resynth { padding: 3px 9px; font-size: 13px; line-height: 1; }
+.wm-verify { color: #0369A1; border-color: #BAE6FD; }
+.wm-resynth { color: #7C3AED; border-color: #DDD6FE; }
+.wm-vbadge { font-size: 12px; font-weight: 850; color: #10B981; margin-left: 4px; }
+
+/* ═════════ v0.0.6.j — the governed Beta channel (?beta / header pill) ═════════ */
+.beta-pill { font-size: 11.5px; font-weight: 800; letter-spacing: 0.3px; padding: 5px 10px; border-radius: 999px; background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+.beta-pill.on { background: #4338CA; color: #FFFFFF; border-color: #4338CA; }
+.beta-stamp {
+  position: fixed; right: 12px; bottom: calc(var(--tabbar-h, 60px) + 12px); z-index: 60;
+  max-width: min(78vw, 420px); padding: 8px 12px; border-radius: 12px;
+  font-size: 11.5px; font-weight: 750; line-height: 1.35; color: #E0E7FF;
+  background: rgba(49, 46, 129, 0.92); border: 1px solid #6366F1;
+  box-shadow: 0 10px 24px rgba(49, 46, 129, 0.35);
+}
+@media (min-width: 1024px) { .beta-stamp { bottom: 16px; } }
+.creator-note-label { transition: max-width 200ms ease, opacity 200ms ease; }
+@media (max-width: 520px) { .creator-note-label { display: none; } }

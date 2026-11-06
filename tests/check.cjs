@@ -58,11 +58,11 @@ const BUDGET = {
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
   'data/sdp-morphe-hooks.js': 8000,
-  'data/session.json': 61575,
+  'data/session.json': 55764,
   'data/config.json': 42000,
   'data/version.json': 2000,
   'data/gas-source.txt': 13764,
-  'data/elevenlabs-audio.json': 2500000,
+  'data/elevenlabs-audio.json': 3000000,
   'data.html': 34000,
   'data/index.html': 34000,
   'sw.js': 13000,
@@ -87,7 +87,7 @@ const EXACT = [
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §Appendix A — hashes of the five
  * irreplaceable classroom files. Update only after an intentional publish. */
 const PRESERVED_SHA = {
-  'data/session.json': '286755728a07b63edf594dc67214762fb0f9c08a95fe5a33b44a58561265b86b',
+  'data/session.json': 'ee7b52944375359ce677a44788d2bd6860e90b305e37e9bcf97e1f6e6f1aa340',
   'data/gas-source.txt': '591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e',
   'assets/fonts/NotoSansSinhala-Regular.woff2': '23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280',
   'assets/fonts/NotoSansSinhala-Bold.woff2': 'bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e'
@@ -102,7 +102,7 @@ const TEST_FILES = [
   /* v0.0.1.e registers three more gates: voice/guide, vault/sync, studio safety */
   'tests/voice-guide.cjs', 'tests/vault-sync.cjs', 'tests/studio-safety.cjs'
 ];
-/* v0.0.6.h: +G5.14/G3.12 critical-fix assertions */
+/* v0.0.6.i: +G5.14/G3.12 critical-fix assertions */
 const TEST_BUDGET = 330000;
 
 /* contract: docs/ARCHITECTURE_MAP.md §H2 — retired v42–v60 ids/strings must be
@@ -253,10 +253,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.5.c ships ver 12 / schema 12 / settingsRev 25
-    const ok = v.ver === 22 && v.appVersion === '0.0.6.h' && v.version === '0.0.6.h' &&
-      v.schema === 22 && v.settingsRev === 38 && String(v.session) === '8';
-    record('version.json carries the v0.0.6.h schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1793900000000', Number(v.syncRev) === 1793900000000, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 23 && v.appVersion === '0.0.6.i' && v.version === '0.0.6.i' &&
+      v.schema === 23 && v.settingsRev === 39 && String(v.session) === '8';
+    record('version.json carries the v0.0.6.i schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1794000000000', Number(v.syncRev) === 1794000000000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -276,8 +276,8 @@ function pending(p) {
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
-    record('config.json carries v0.0.6.h version fields',
-      c.ver === 22 && c.appVersion === '0.0.6.h' && c.version === '0.0.6.h' && c.schema === 22 && c.settingsRev === 38,
+    record('config.json carries v0.0.6.i version fields',
+      c.ver === 23 && c.appVersion === '0.0.6.i' && c.version === '0.0.6.i' && c.schema === 23 && c.settingsRev === 39,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -421,7 +421,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.e boot target', html.indexOf("'0.0.6.h'") > 0 || html.indexOf('"0.0.6.h"') > 0);
+  record('index.html declares the v0.0.6.e boot target', html.indexOf("'0.0.6.i'") > 0 || html.indexOf('"0.0.6.i"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -506,9 +506,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.h target', /var TARGET = '0\.0\.6\.h'/.test(html));
+    record('index.html boots at the v0.0.6.i target', /var TARGET = '0.0.6.i'/.test(html));
     record('service worker pins the v0.0.6.e shell caches',
-      /SW_VERSION = 'sdp-v0\.0\.6\.h-s23'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.6\.h-s23-shell'/.test(sw));
+      /SW_VERSION = 'sdp-v0.0.6.i-s24'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.i-s24-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -528,32 +528,32 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.h',
-      /"start_url":"\.\/\?v=0\.0\.6\.h/.test(man) &&
-      (man.match(/v=0\.0\.6\.h/g) || []).length >= 3, (man.match(/v=0\.0\.6\.h/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.6.i',
+      /"start_url":"\.\/\?v=0.0.6.i/.test(man) &&
+      (man.match(/v=0.0.6.i/g) || []).length >= 3, (man.match(/v=0.0.6.i/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.h';
+    var app = '0.0.6.i';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 22;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 23;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 22,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 22
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 23,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 23
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.h / ver 22',
+    record('D15 all seven versioned surfaces agree on 0.0.6.i / ver 22',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.h header',
-      pack.version === '0.0.6.h' && pack.appVersion === '0.0.6.h' && pack.ver === 22 && pack.schema === 22 &&
+    record('voice pack carries the v0.0.6.i header',
+      pack.version === '0.0.6.i' && pack.appVersion === '0.0.6.i' && pack.ver === 23 && pack.schema === 23 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.voiceId]));
   })();
 
-  /* 12 ── v0.0.6.h mobile human-UI + extension-lock surface ──────────── */
+  /* 12 ── v0.0.6.i mobile human-UI + extension-lock surface ──────────── */
   (function mobileHumanUi() {
     var html = exists('index.html') ? readText('index.html') : '';
     var dataHtml = exists('data.html') ? readText('data.html') : '';
@@ -564,7 +564,7 @@ function pending(p) {
     /* A1: every entry point locks Dark Reader and pins only-light */
     ['index.html', 'data.html', 'data/index.html'].forEach(function (f) {
       var t = exists(f) ? readText(f) : '';
-      record('v0.0.6.h ' + f + ' ships the darkreader-lock + color-scheme metas',
+      record('v0.0.6.i ' + f + ' ships the darkreader-lock + color-scheme metas',
         /<meta name="darkreader-lock">/.test(t) && /<meta name="color-scheme" content="only light">/.test(t));
     });
     record('A1 the stylesheet enforces the strict light lock',
@@ -603,9 +603,11 @@ function pending(p) {
       studio.indexOf('chip-w') > 0);
     record('A3 the chip glyphs are real unicode escapes (never HTML entities)',
       studio.indexOf('\\u21c4') > 0 && studio.indexOf('\\u2715') > 0 && studio.indexOf('&#') < 0);
-    /* A6: the beta-preview stamp */
-    record('A6 the beta channel stamps sub-version 0.0.6.h.a and 0.0.6.h',
-      /id="sdpBetaStamp"/.test(html) && views.indexOf("BETA_SUBVERSION = '0.0.6.h.a'") > 0);
+    /* A6 (v0.0.6.i CF-UNIFIED-MAIN): the beta channel is retired for good */
+    record('A6 zero Preview/Beta switcher in the shipped bytes (unified permanent main UI)',
+      !/id="sdpBetaPill"/.test(html) && !/id="sdpBetaStamp"/.test(html) &&
+      !/betaActive|applyBetaChannel|sdp_beta_preview|BETA_SUBVERSION|data-sdp-channel/.test(views) &&
+      !/beta-pill|beta-stamp/.test(css));
   })();
 
 const failed = results.filter(function (r) { return r.status === 'FAIL'; });

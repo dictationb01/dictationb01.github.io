@@ -147,7 +147,7 @@
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
   else init();
-  /* v0.0.6.h (CF1): the v0.0.5.b document-level click relay that re-synthesised
+  /* v0.0.6.i: the v0.0.5.b document-level click relay that re-synthesised
      a #btnPlayPause click for every .ring-wrap tap is REMOVED. The engine
      already binds its own click + keydown handlers on #ringWrap
      (sdp-dictation-engine.js bind()), so the relay made one physical tap fire

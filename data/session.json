@@ -207,7 +207,7 @@
         "m": "To drawing (something).",
         "si": "ඇඳීම",
         "s": "They drawing together every weekend.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
       },
       {
         "w": "exhibition",
@@ -216,7 +216,7 @@
         "m": "A exhibition.",
         "si": "ප්රදර්ශනය",
         "s": "We saw a exhibition near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
       },
       {
         "w": "festival",
@@ -225,7 +225,7 @@
         "m": "Having the quality of being festival.",
         "si": "උත්සවය",
         "s": "The story was very festival to read.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
       },
       {
         "w": "film maker",
@@ -243,7 +243,7 @@
         "m": "A fireworks.",
         "si": "ගිනිකෙළි",
         "s": "We saw a fireworks near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
       },
       {
         "w": "folk music",
@@ -288,7 +288,7 @@
         "m": "A heroine.",
         "si": "වීරවරියක්",
         "s": "We saw a heroine near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
       }
     ]
   },
@@ -489,7 +489,7 @@
           "m": "To drawing (something).",
           "si": "ඇඳීම",
           "s": "They drawing together every weekend.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
         },
         {
           "w": "exhibition",
@@ -498,7 +498,7 @@
           "m": "A exhibition.",
           "si": "ප්රදර්ශනය",
           "s": "We saw a exhibition near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
         },
         {
           "w": "festival",
@@ -507,7 +507,7 @@
           "m": "Having the quality of being festival.",
           "si": "උත්සවය",
           "s": "The story was very festival to read.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
         },
         {
           "w": "film maker",
@@ -525,7 +525,7 @@
           "m": "A fireworks.",
           "si": "ගිනිකෙළි",
           "s": "We saw a fireworks near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
         },
         {
           "w": "folk music",
@@ -570,7 +570,7 @@
           "m": "A heroine.",
           "si": "වීරවරියක්",
           "s": "We saw a heroine near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
         }
       ]
     },
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T04:43:55.609Z",
+  "updatedAt": "2026-11-06T04:45:28.107Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 39,
+  "settingsRev": 40,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793940235594,
+  "syncRev": 1793940328096,
   "words": [
     {
       "w": "entertainment",
@@ -1377,7 +1377,7 @@
       "m": "To drawing (something).",
       "si": "ඇඳීම",
       "s": "They drawing together every weekend.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
     },
     {
       "w": "exhibition",
@@ -1386,7 +1386,7 @@
       "m": "A exhibition.",
       "si": "ප්රදර්ශනය",
       "s": "We saw a exhibition near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
     },
     {
       "w": "festival",
@@ -1395,7 +1395,7 @@
       "m": "Having the quality of being festival.",
       "si": "උත්සවය",
       "s": "The story was very festival to read.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/festival-us.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
     },
     {
       "w": "film maker",
@@ -1413,7 +1413,7 @@
       "m": "A fireworks.",
       "si": "ගිනිකෙළි",
       "s": "We saw a fireworks near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fireworks-au.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
     },
     {
       "w": "folk music",
@@ -1458,7 +1458,7 @@
       "m": "A heroine.",
       "si": "වීරවරියක්",
       "s": "We saw a heroine near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/heroine-us.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
     }
   ],
   "versionFamily": "9.0.0"

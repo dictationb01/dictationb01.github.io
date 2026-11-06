@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T02:17:10.264Z",
+  "updatedAt": "2026-11-06T02:17:18.448Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 38,
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793931430253,
+  "syncRev": 1793931438447,
   "words": [
     {
       "w": "important",

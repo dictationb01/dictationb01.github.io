@@ -1,4 +1,4 @@
-/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.l)
+/*! Smart Dictation Player — speech & audio pipeline (v0.0.6.m)
  * Strict ES5, dependency free.
  * contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 audio priority chain
  * Dictionary audio always plays through a plain <audio> element; element audio
@@ -281,7 +281,7 @@
     return cachedProfVoice ? str(cachedProfVoice.name) : '';
   }
 
-  /* ══ v0.0.6.l Pillar 1: the British Male narrator — NEVER a female voice ══
+  /* ══ v0.0.6.m Pillar 1: the British Male narrator — NEVER a female voice ══
    * The Project Briefing speaks with a warm, mature male persona. Why the
    * phone played a girl's voice before: on Android/iOS Chrome,
    * speechSynthesis.getVoices() lists female voices first or labels them
@@ -300,7 +300,7 @@
     var uri = str(v.voiceURI || '').toLowerCase();
     var hay = name + ' ' + uri;
     if (FEMALE_BRIT_RE.test(hay)) return -100;
-    /* v0.0.6.l: "Google UK English Female" and friends are caught above; a
+    /* v0.0.6.m: "Google UK English Female" and friends are caught above; a
        GENERIC default ("English (United Kingdom)", no male marker) is also
        rejected so the fallback never lands on a random (often female)
        system voice. Only an explicitly male-named or male-flagged voice
@@ -411,7 +411,7 @@
      *   lang 'en-GB' · rate 0.92 (or the caller's explicit rate) · pitch 1.03.
      * 'custom' keeps the per-tier behaviour. */
     var locked = str(conf.voiceLock || 'unified') === 'unified';
-    /* v0.0.6.l: persona 'male' reserves the utterance for the Project
+    /* v0.0.6.m: persona 'male' reserves the utterance for the Project
        Briefing narrator — a deep, warm British male voice pinned to pitch
        0.82 / rate 0.98 so device synthesis never sounds shrill, juvenile
        or female. */
@@ -467,6 +467,13 @@
         var wordWatch = null;
         /* D10: the ONLY writer of the real-onstart flag. */
         utter.onstart = function () { state.utterStarted = true; };
+        /* v0.0.6.m: onboundary(charIndex) drives the briefing karaoke on the
+           Web Speech tier — the words glide with the real spoken voice. */
+        if (typeof opts.onBoundary === 'function') {
+          utter.onboundary = function (ev) {
+            try { opts.onBoundary(ev && typeof ev.charIndex === 'number' ? ev.charIndex : 0); } catch (e1) {}
+          };
+        }
         var armGuard = function (ms) {
           guard = global.setTimeout(function () {
             if (state.guardTimer === guard) state.guardTimer = null;
@@ -594,11 +601,13 @@
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
     var done = false;
     var timer = null;
+    var stopTicks = null;
     function finish(ok) {
       if (done) return;
       done = true;
       state.audioPlaying = false;
       if (timer) { try { global.clearTimeout(timer); } catch (e) {} }
+      if (stopTicks) { try { stopTicks(); } catch (e0) {} stopTicks = null; }
       if (state.urlTimer === timer) state.urlTimer = null;
       timer = null;
       /* R1 Path C + v0.0.5.c Path C: detach the handlers AND drop the finished
@@ -627,7 +636,7 @@
       try { el.playbackRate = Math.min(1.2, Math.max(0.7, Number(opts.rate || conf.rate) || 1)); } catch (e) {}
       el.onended = function () { finish(true); };
       el.onerror = function () { finish(false); };
-      /* v0.0.6.l (Pillar 1): the briefing narration needs the clip's real
+      /* v0.0.6.m (Pillar 1): the briefing narration needs the clip's real
          duration (word-flow karaoke timing) and a positive "audio actually
          started" signal (the fresh-Chrome autoplay handshake). */
       var hooks = isObj(opts.hooks) ? opts.hooks : null;
@@ -640,6 +649,10 @@
         if (hooks && typeof hooks.onStarted === 'function') {
           try { hooks.onStarted(); } catch (e2) {}
         }
+        /* v0.0.6.m: the clip is actually playing — start pumping the real
+           clock (currentTime/duration) every frame for the karaoke flow. */
+        if (stopTicks) { try { stopTicks(); } catch (e3) {} stopTicks = null; }
+        stopTicks = pumpClockTicks(el, hooks);
       };
       var playing = el.play();
       if (playing && typeof playing.then === 'function') {
@@ -652,6 +665,7 @@
               done = true;
               state.audioPlaying = false;
               if (timer) { try { global.clearTimeout(timer); } catch (e0) {} }
+              if (stopTicks) { try { stopTicks(); } catch (e5) {} stopTicks = null; }
               try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e1) {}
               var abp = new Error('aborted');
               abp.aborted = true; abp.stale = true;
@@ -659,7 +673,7 @@
             }
             return;
           }
-          /* v0.0.6.l (Pillar 1): Chrome's autoplay policy on a brand-new
+          /* v0.0.6.m (Pillar 1): Chrome's autoplay policy on a brand-new
              session rejects play() with NotAllowedError — surface it so the
              briefing holds its beat behind the tap pill instead of falling
              to a robotic browser voice or skipping silently. */
@@ -668,6 +682,7 @@
               done = true;
               state.audioPlaying = false;
               if (timer) { try { global.clearTimeout(timer); } catch (e3) {} }
+              if (stopTicks) { try { stopTicks(); } catch (e6) {} stopTicks = null; }
               try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e4) {}
               if (state.speechEpoch !== pEpoch) {
                 var abn = new Error('aborted');
@@ -688,6 +703,39 @@
     /* Bounded: a broken URL must hand over to the next tier quickly. */
     timer = global.setTimeout(function () { finish(false); }, Number(opts.timeoutMs) || 12000);
     state.urlTimer = timer;
+  }
+
+  /* v0.0.6.m: the frame-accurate playback clock. While the element plays,
+     a requestAnimationFrame loop (30 ms interval fallback where rAF is not
+     implemented — jsdom, kiosks) pumps hooks.onTick(el.currentTime,
+     el.duration) every frame so the briefing karaoke repaints from the REAL
+     voice clock (never a blind setTimeout ladder). The loop is cancelled
+     from finish() so a tier switch or stop() can never leave it running. */
+  function pumpClockTicks(el, hooks, stopFn) {
+    if (!hooks || typeof hooks.onTick !== 'function' || !el) return null;
+    var running = true;
+    var raf = global.requestAnimationFrame
+      ? function (fn) { return global.requestAnimationFrame(fn); }
+      : function (fn) { return global.setTimeout(fn, 30); };
+    var cancel = global.cancelAnimationFrame
+      ? function (id) { global.cancelAnimationFrame(id); }
+      : function (id) { global.clearTimeout(id); };
+    var id = 0;
+    function tick() {
+      if (!running) return;
+      try {
+        if (hooks && typeof hooks.onTick === 'function') {
+          hooks.onTick(el.currentTime || 0, isFinite(el.duration) ? el.duration : 0);
+        }
+      } catch (e) {}
+      if (running) id = raf(tick);
+    }
+    id = raf(tick);
+    return function () {
+      if (!running) return;
+      running = false;
+      try { cancel(id); } catch (e) {}
+    };
   }
 
   /* ── ElevenLabs manifest: cached clips only (student path, 0 credits) ── */
@@ -985,7 +1033,7 @@
     return false;
   }
 
-  /* ══ v0.0.6.l Pillar 1: Project Briefing narration ══════════════════════
+  /* ══ v0.0.6.m Pillar 1: Project Briefing narration ══════════════════════
    * Tier 1: the committed real British-male clip _intro_male_N from
    *        data/elevenlabs-audio.json (zero latency, zero re-spend) — the
    *        hooks report its true duration (word-flow timing) and the
@@ -1019,7 +1067,10 @@
         rate: 0.97,
         hooks: {
           onStarted: function () { if (typeof hooks.onStarted === 'function') { try { hooks.onStarted(); } catch (e1) {} } },
-          onDuration: function (d) { if (typeof hooks.onDuration === 'function') { try { hooks.onDuration(d); } catch (e2) {} } }
+          onDuration: function (d) { if (typeof hooks.onDuration === 'function') { try { hooks.onDuration(d); } catch (e2) {} } },
+          /* v0.0.6.m: the frame-accurate clock — every playback frame repaints
+             the karaoke from the real clip's currentTime/duration. */
+          onTick: function (t, d) { if (typeof hooks.onTick === 'function') { try { hooks.onTick(t, d); } catch (e3) {} } }
         }
       }, function (err) {
         if (state.speechEpoch !== bEpoch) return;
@@ -1027,7 +1078,7 @@
         if (!err) { state.lastTier = 'intro_male_clip'; cb(null); return; }
         if (err && err.autoplayBlocked) { cb({ autoplayBlocked: true, tier: 'clip' }); return; }
         /* A broken cached clip must still narrate the step. */
-        say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
+        say([text], { persona: 'male', rate: 0.97, onBoundary: function (ci) { if (typeof hooks.onBoundary === 'function') { try { hooks.onBoundary(ci); } catch (e4) {} } } }, function () { cb(null); });
       });
       return true;
     }
@@ -1038,7 +1089,7 @@
     var voiceCount = 0;
     try { if (synth && synth.getVoices) voiceCount = synth.getVoices().length; } catch (e0) {}
     if (synth && voiceCount === 0) { cb({ autoplayBlocked: true, tier: 'device', noVoices: true }); return false; }
-    say([text], { persona: 'male', rate: 0.97 }, function () { cb(null); });
+    say([text], { persona: 'male', rate: 0.97, onBoundary: function (ci) { if (typeof hooks.onBoundary === 'function') { try { hooks.onBoundary(ci); } catch (e4) {} } } }, function () { cb(null); });
     return false;
   }
 
@@ -1200,7 +1251,7 @@
           attempt();
           return;
         }
-        /* v0.0.6.l Pillar 3: an honest audio-tier fallback is a diagnostics
+        /* v0.0.6.m Pillar 3: an honest audio-tier fallback is a diagnostics
            event (privacy-safe, no personal data) so the lecturer can see why
            a word fell back to Youdao or the device voice. */
         try {
@@ -1264,10 +1315,47 @@
       dictionary: 'British human audio',
       guide_clip: 'Alice guide clip',
       guide_audio: 'British guide audio',
+      intro_male_clip: 'British male briefing clip',
       tts: 'Professor voice'
     };
     return names[state.lastTier] || str(state.lastTier) || 'Professor voice';
   }
+
+  /* ══ v0.0.6.m FIX 3: recoverAudioSession() ═════════════════════════════
+   * On mobile Chrome/Safari, a voice review (getUserMedia + MediaRecorder +
+   * SpeechRecognition) switches the OS audio router into Voice
+   * Communication / Mic Capture mode, which ducks or mutes standard media
+   * playback and can leave speechSynthesis cancelled/stuck. This resets the
+   * shared audio element (volume 1.0, muted false, rate 1) and unsticks
+   * speechSynthesis (cancel() + resume()), so the very next Dictation Word
+   * plays at full clarity. Called by SDP.Views.releaseFeedbackAudioLocks()
+   * whenever a review recorder stops / submits / closes and before every
+   * dictation word, start and resume. */
+  function recoverAudioSession(reason) {
+    var changed = false;
+    var el = sharedAudio();
+    if (el) {
+      try {
+        if (el.volume !== 1) { el.volume = 1; changed = true; }
+        if (el.muted) { el.muted = false; changed = true; }
+        if (el.playbackRate !== 1) { try { el.playbackRate = 1; } catch (e0) {} }
+        if (!el.paused) { try { el.pause(); } catch (e1) {} changed = true; }
+      } catch (e2) {}
+    }
+    var synth = global.speechSynthesis;
+    if (synth) {
+      try { if (synth.cancel) synth.cancel(); changed = true; } catch (e3) {}
+      try { if (synth.resume) synth.resume(); } catch (e4) {}
+    }
+    state.micReleased = true;
+    try {
+      if (global.SDP && SDP.Diagnostics) {
+        SDP.Diagnostics.log('audio_session_recovered', { reason: str(reason || 'generic'), tier: str(state.lastTier) });
+      }
+    } catch (e5) {}
+    return changed;
+  }
+  function micReleased() { return state.micReleased !== false; }
 
   var Speech = {
     state: state,
@@ -1288,7 +1376,7 @@
     pickVoice: pickVoice,
     warmProfessorVoice: warmProfessorVoice,
     voiceName: voiceName,
-    /* v0.0.6.l: the deep British male narrator + Project Briefing steps. */
+    /* v0.0.6.m: the deep British male narrator + Project Briefing steps. */
     pickMaleVoice: pickMaleVoice,
     maleVoiceName: maleVoiceName,
     playBriefingStep: playBriefingStep,
@@ -1306,6 +1394,10 @@
     sharedAudio: sharedAudio,
     lastTier: function () { return state.lastTier; },
     lastTierName: lastTierName,
+    /* v0.0.6.m FIX 3: the mic/audio-session recovery surface. */
+    recoverAudioSession: recoverAudioSession,
+    micReleased: micReleased,
+    clipManifest: function () { return state.manifest; },
     activeUtter: function () { return state.activeUtter; },
     lastUtterances: function () { return state.lastUtterances.slice(); },
     isSpeaking: function () { return !!state.speaking; },

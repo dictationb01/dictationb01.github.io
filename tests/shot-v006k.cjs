@@ -28,7 +28,7 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.m');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: 1, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -93,7 +93,7 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.l');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.m');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: 1, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });

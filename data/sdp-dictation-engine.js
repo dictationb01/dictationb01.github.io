@@ -78,7 +78,7 @@
   finished: false,
   pauseReason: '',
   startedAt: 0,
-  /* v0.0.6.l Pillar 4 — session authenticity telemetry: startedAt/endedAt
+  /* v0.0.6.m Pillar 4 — session authenticity telemetry: startedAt/endedAt
      bracket the run; wordsCompletedCount counts words that reached their
      full listen/write beat naturally (vs. manual Next jumps);
      rapidSkipCount counts Next taps within 2.5 s of a word starting. */
@@ -588,6 +588,11 @@
     scheduleNext();
    }
    try {
+    /* v0.0.6.m FIX 3: every dictation word first clears any residual mic /
+       audio-session lock left by a voice review (getUserMedia +
+       MediaRecorder + SpeechRecognition switch mobile Chrome/Safari into
+       Voice Communication mode, which ducks the next word). */
+    if (SDP.Speech && SDP.Speech.recoverAudioSession) { try { SDP.Speech.recoverAudioSession('dictation_word'); } catch (e0) {} }
     if (SDP.Speech && SDP.Speech.playWord) SDP.Speech.playWord(item.word, {}, after);
     else after();
    } catch (e) { after(); }
@@ -1187,7 +1192,7 @@
   renderResults();
   syncMastery();
  }
- /* ══ v0.0.6.l Pillar 4 — the Paper-mode 1-tap self-check helper ════════
+ /* ══ v0.0.6.m Pillar 4 — the Paper-mode 1-tap self-check helper ════════
   * Real students write in their exercise book and look at the 30 words to
   * check their spelling; they never tap Correct/Missed 30 times. This
   * helper fills ONLY the unmarked rows as correct, so the 1-2 words the
@@ -1291,7 +1296,7 @@
   if (panel) panel.hidden = !show;
  }
 
- /* ══ v0.0.6.l Pillar 4 — Session Authenticity & Engagement Analyzer ════
+ /* ══ v0.0.6.m Pillar 4 — Session Authenticity & Engagement Analyzer ════
   * Classifies every finished run from timing + interaction evidence:
   *   GENUINE_FULL        >= 25 words listened to their full beat AND a
   *                         realistic duration (>= 90 s);
@@ -1345,7 +1350,7 @@
  function sessionTelemetry() {
   if (!E.items.length) return null;
   var out = analyzeSession();
-  out.ver = '26';
+  out.ver = '27';
   return out;
  }
 
@@ -1718,7 +1723,7 @@
   toggleMode: toggleMode,
   applySettings: applySettings,
   renderResults: renderResults,
-  /* ══ v0.0.6.l Pillar 4: session authenticity telemetry surface ══ */
+  /* ══ v0.0.6.m Pillar 4: session authenticity telemetry surface ══ */
   analyzeSession: analyzeSession,
   sessionTelemetry: sessionTelemetry,
   markAllUnmarkedCorrect: markAllUnmarkedCorrect,

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F8FAFC">
-<!-- v0.0.6.l (A1): Dark Reader and every dark-mode extension are locked out —
+<!-- v0.0.6.m (A1): Dark Reader and every dark-mode extension are locked out —
    Light Mode is the unconditional default; only the app's own theme button
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player v0.0.6.l — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.m — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -19,7 +19,7 @@
    %3Cpath d='M21 23.5c.6-2.2 1.5-3.6 2.4-4.9.9 1.3 1.8 2.7 2.4 4.9' stroke='%23A5F3FC' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='25' cy='26.5' r='1' fill='%23FFFFFF'/%3E%3C/svg%3E">
 <style id="sdpCloak">html,body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Inter,system-ui,sans-serif}html[data-theme='dark'] body{background:#0F1420}html[data-theme='board'] body{background:#000000}.screen{display:none!important}.screen.active{display:block!important}</style>
 <script>(function(){var d=document.documentElement;try{var s=JSON.parse(localStorage.getItem('sdp.settings')||'{}');var t=s&&s.theme;if(t!=='dark'&&t!=='board')t='light';d.setAttribute('data-theme',t);}catch(e){}
-/* v0.0.6.l (A1): the strict light-mode lock. The app NEVER reads
+/* v0.0.6.m (A1): the strict light-mode lock. The app NEVER reads
    the OS dark preference — light is the default. syncScheme() flips the
    color-scheme meta only when the app's own theme button sets data-theme. */
 function syncScheme(){var t=d.getAttribute('data-theme');var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute('content',(t==='dark'||t==='board')?'dark':'only light');}
@@ -52,7 +52,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
   <span id="brandName">Smart Dictation</span>
   <span class="b1badge">CCBE B1</span>
  </div>
- <!-- v0.0.6.l (CF1): the ULTRA-CLEAN top status bar law — the brand block
+ <!-- v0.0.6.m (CF1): the ULTRA-CLEAN top status bar law — the brand block
     (crest + Smart Dictation + CCBE B1 badge) plus exactly two controls:
     the EN | SI language toggle and the Theme / Dark Mode toggle. Every
     secondary trigger (Beta pill, Creator Note, ? Guide, version pill,
@@ -318,7 +318,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <span id="scorePct" class="muted">0%</span>
      </div>
     </div>
-    <!-- v0.0.6.l Pillar 3: the INSTANT post-session review notification card.
+    <!-- v0.0.6.m Pillar 3: the INSTANT post-session review notification card.
        It renders at the very top of the results view (above all 30 rows) the
        moment a session finishes, so no student ever misses it again. -->
     <div id="reviewPopupCard" class="review-popup-card" role="region" aria-labelledby="reviewPopupTitle" hidden>
@@ -329,9 +329,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <div id="reviewPills" class="pill-row" role="group" aria-label="Quick rating">
       <button type="button" class="pill rpill" data-rpill="fast" aria-pressed="false">⚡ Fast &amp; Smooth</button>
       <button type="button" class="pill rpill" data-rpill="voice_ok" aria-pressed="false">🔊 Voice Clear</button>
-      <button type="button" class="pill rpill" data-rpill="voice_bad" aria-pressed="false">🔇 Voice / Pronunciation Issue</button>
+      <button type="button" class="pill rpill" data-rpill="voice_muted" aria-pressed="false">🔇 Word Audio Not Playing</button>
+      <button type="button" class="pill rpill" data-rpill="voice_robotic" aria-pressed="false">🤖 Robotic / Wrong Pronunciation</button>
+      <button type="button" class="pill rpill" data-rpill="briefing_sync" aria-pressed="false">🎵 Briefing / Lyrics Sync Issue</button>
       <button type="button" class="pill rpill" data-rpill="incomplete" aria-pressed="false">⏳ Dictation Words Incomplete</button>
-      <button type="button" class="pill rpill" data-rpill="bug" aria-pressed="false">🐞 UI / Button Issue</button>
+      <button type="button" class="pill rpill" data-rpill="ui_layout" aria-pressed="false">📱 Screen / Layout Issue</button>
+      <button type="button" class="pill rpill" data-rpill="clock_stuck" aria-pressed="false">⏱ Clock / Play-Pause Stuck</button>
+      <button type="button" class="pill rpill" data-rpill="cache_stale" aria-pressed="false">🔄 Old Words / Cache Issue</button>
      </div>
      <div class="rpc-actions">
       <button id="btnVoiceReview" type="button" class="btn" data-i18n="reviewVoiceBtn">🎤 Record Voice Review (English or Sinhala)</button>
@@ -527,11 +531,11 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <h3 class="set-head"><span class="set-squircle set-squircle--cloud" aria-hidden="true"><span data-icon="cap" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="aboutTitle">5 · About this app</span></h3>
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
-     <!-- v0.0.6.l (CF1): the relocated header triggers live here — the top
+     <!-- v0.0.6.m (CF1): the relocated header triggers live here — the top
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">v0.0.6.l</span>
+      <span id="sdpVerPill">v0.0.6.m</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -540,7 +544,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.l</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.m</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-06</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
@@ -636,7 +640,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
 </div>
 
-<!-- v0.0.6.l Pillar 1: the PROJECT-FIRST executive briefing — a dynamic
+<!-- v0.0.6.m Pillar 1: the PROJECT-FIRST executive briefing — a dynamic
    Oct-22 weekly counter (auto-bumping week label), the 100% E2EE privacy
    law inside Beat 2, word-by-word karaoke flow inside every beat, real
    committed British-male intro clips (_intro_male_1..4) and the fresh-Chrome
@@ -653,7 +657,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    </div>
    <span id="briefingBeatBadge" class="briefing-beat" aria-hidden="true">♪ synced</span>
   </div>
-  <p id="briefingUpdateBadge" class="briefing-update-badge" role="status">📦 Latest Weekly Update (v0.0.6.l) — Dynamic Oct-22 weekly briefing · word-flow lyrics · 6-key $0 pool · instant review popup &amp; session telemetry</p>
+  <p id="briefingUpdateBadge" class="briefing-update-badge" role="status">📦 Latest Weekly Update (v0.0.6.m) — Real API-driven briefing &amp; guide voices · frame-accurate lyrics flow · version-stamped briefing on every device · mic-release audio fix · 9-tap feedback with full UI/cache snapshot</p>
   <div id="briefingLyrics" class="briefing-lyrics" aria-live="polite"></div>
   <div class="briefing-progress" aria-hidden="true"><div id="briefingBar"></div></div>
   <button id="briefingTapPill" class="briefing-tap-pill" type="button" hidden>🔊 Tap Anywhere to Start Voice Briefing</button>
@@ -671,7 +675,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <div id="sdpDataToast" class="toast toast-hidden" role="status" aria-live="polite"></div>
 
-<!-- v0.0.6.l Pillar 3: the floating corner Feedback / Quick-Help launcher
+<!-- v0.0.6.m Pillar 3: the floating corner Feedback / Quick-Help launcher
    (ElevenLabs-style): sits above #tabbar on phones and bottom-right on
    desktop, opens an offline-first troubleshooting drawer (0 AI credits)
    and accepts a voice / category / text review from ANY screen. -->
@@ -685,11 +689,17 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <div class="fab-faq" id="fabFaq"></div>
  <p class="fab-review-note" data-i18n="fabReviewNote">🔒 Every review is end-to-end encrypted — nothing readable ever leaves your device unsealed.</p>
  <div class="fab-quick-chips" id="fabQuickChips" role="group" aria-label="Quick issue chips">
+  <!-- v0.0.6.m FIX 4: the 9 comprehensive 1-tap issue &amp; praise chips —
+     zero typing required, identical on the review card and this drawer. -->
   <button type="button" class="pill rpill" data-rpill="fast" aria-pressed="false">⚡ Fast &amp; Smooth</button>
   <button type="button" class="pill rpill" data-rpill="voice_ok" aria-pressed="false">🔊 Voice Clear</button>
-  <button type="button" class="pill rpill" data-rpill="voice_bad" aria-pressed="false">🔇 Voice / Pronunciation Issue</button>
+  <button type="button" class="pill rpill" data-rpill="voice_muted" aria-pressed="false">🔇 Word Audio Not Playing</button>
+  <button type="button" class="pill rpill" data-rpill="voice_robotic" aria-pressed="false">🤖 Robotic / Wrong Pronunciation</button>
+  <button type="button" class="pill rpill" data-rpill="briefing_sync" aria-pressed="false">🎵 Briefing / Lyrics Sync Issue</button>
   <button type="button" class="pill rpill" data-rpill="incomplete" aria-pressed="false">⏳ Dictation Words Incomplete</button>
-  <button type="button" class="pill rpill" data-rpill="bug" aria-pressed="false">🐞 UI / Button Issue</button>
+  <button type="button" class="pill rpill" data-rpill="ui_layout" aria-pressed="false">📱 Screen / Layout Issue</button>
+  <button type="button" class="pill rpill" data-rpill="clock_stuck" aria-pressed="false">⏱ Clock / Play-Pause Stuck</button>
+  <button type="button" class="pill rpill" data-rpill="cache_stale" aria-pressed="false">🔄 Old Words / Cache Issue</button>
  </div>
  <input id="fabReviewText" class="input" type="text" maxlength="300" autocomplete="off" data-i18n-placeholder="reviewTextPh" placeholder="Or type a quick note (optional)…">
  <div class="chip-row" style="margin-top:8px">
@@ -710,7 +720,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.l';
+ var TARGET = '0.0.6.m';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

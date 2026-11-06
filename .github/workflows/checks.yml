@@ -1,10 +1,10 @@
 name: release gates
 
 # contract: docs/ARCHITECTURE_MAP.md §12 — the twelve release gates plus the
-# v0.0.6.l preserved-payload SHA step (Step 13). Every gate is a plain Node
+# v0.0.6.m preserved-payload SHA step (Step 13). Every gate is a plain Node
 # script; the browser gates launch the Chromium that ships inside
 # @sparticuz/chromium and unpack their own AL2023 libraries.
-# v0.0.6.l feature surface (ultra-clean header, project-first executive
+# v0.0.6.m feature surface (ultra-clean header, project-first executive
 # Briefing + 10s gate, 5-slot Multi-API pool defaulting to 4x Groq + 1x
 # ElevenLabs backup with automatic failover, post-session review card,
 # Studio diagnostics .zip, URL-driven ?beta channel) is asserted by G1 §12-13
@@ -77,6 +77,10 @@ jobs:
 
       - name: G12 · credit-saver delta, 34-clip pack and locked-studio zero-widget proof
         run: node tests/studio-safety.cjs
+
+      # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
+      - name: Lab Environment - briefing, karaoke, mic-release and feedback snapshot (Step 13b)
+        run: node tests/briefing-feedback-lab.cjs
 
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock

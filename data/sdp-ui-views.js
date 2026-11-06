@@ -7,11 +7,11 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.d';
+    return '0.0.6.m';
   })();
-  /* v0.0.6.l (P1/P3): the governed Beta channel stays URL-driven for the
-     Project Briefing suite. The v0.0.6.l features are permanent on Main;
-     ?beta or #beta stamps BETA_SUBVERSION 0.0.6.l.beta and replays the
+  /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
+     Project Briefing suite. The v0.0.6.m features are permanent on Main;
+     ?beta or #beta stamps BETA_SUBVERSION 0.0.6.m.beta and replays the
      briefing so the whole suite is verifiable on a phone in one tap. */
 
   function noop() {}
@@ -322,7 +322,7 @@
     apiCreditsFixNow: 'Open Advanced Tools & Enter New Key',
     pinComplete: '✓ PIN Complete',
     pinDigitsNeeded: 'digits',
-    /* ══ v0.0.6.l — Project-First Executive Briefing, Beta channel, Review ══ */
+    /* ══ v0.0.6.m — Project-First Executive Briefing, Beta channel, Review ══ */
     creatorNoteBtn: '♪ Project Briefing',
     briefingEyebrow: 'OPEN-SOURCE PROJECT BRIEFING · AUTOMATED SYSTEM',
     briefingTitle: 'Smart Dictation · Project Overview',
@@ -334,8 +334,8 @@
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.l.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
-    betaOnToast: 'Beta channel ON — the v0.0.6.l suite is highlighted and the Project Briefing will replay',
+    betaStampLabel: 'BETA · 0.0.6.m.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaOnToast: 'Beta channel ON — the v0.0.6.m suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
     reviewSub: '100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.',
@@ -356,13 +356,13 @@
     reviewRecShort: 'Recording was too short — tap again and speak for a few seconds.',
     reviewRecMicDenied: 'Microphone permission was blocked — allow the mic or type your note instead.',
     reviewFast: '⚡ Fast & Smooth', reviewClear: '🔊 Voice Clear', reviewIssue: '🐞 Found an Issue',
-    /* v0.0.6.l Pillar 3: the five human-centric diagnostic chips. */
+    /* v0.0.6.m Pillar 3: the five human-centric diagnostic chips. */
     chipFast: '⚡ Fast & Smooth', chipVoiceOk: '🔊 Voice Clear', chipVoiceBad: '🔇 Voice / Pronunciation Issue',
     chipIncomplete: '⏳ Dictation Words Incomplete', chipBug: '🐞 UI / Button Issue',
-    /* v0.0.6.l Pillar 4: the Paper-mode 1-tap self-check helper. */
+    /* v0.0.6.m Pillar 4: the Paper-mode 1-tap self-check helper. */
     markAllUnmarked: '✓ Mark All Unmarked as Correct',
     markAllUnmarkedToast: 'All unmarked words marked correct — your Missed marks are kept.',
-    /* v0.0.6.l Pillar 3: the floating Feedback / Quick-Help launcher. */
+    /* v0.0.6.m Pillar 3: the floating Feedback / Quick-Help launcher. */
     fabTitle: 'Feedback & Quick Help',
     fabSub: 'Instant answers — zero AI credits. Or send the creator a 1-tap encrypted review.',
     fabReviewNote: '🔒 Every review is end-to-end encrypted — nothing readable ever leaves your device unsealed.',
@@ -665,7 +665,7 @@
     apiCreditsFixNow: 'උසස් මෙවලම් විවෘත කර යතුර ඇතුළත් කරන්න',
     pinComplete: '✓ PIN සම්පූර්ණයි',
     pinDigitsNeeded: 'ඉලක්කම්',
-    /* ══ v0.0.6.l — ව්‍යාපෘති හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
+    /* ══ v0.0.6.m — ව්‍යාපෘති හඳුන්වාදීම, බීටා නාලිකාව, සැසියෙන් පසු සමාලෝචනය ══ */
     creatorNoteBtn: '♪ ව්‍යාපෘති හඳුන්වාදීම',
     briefingEyebrow: 'විවෘත කේත ව්‍යාපෘති සාරාංශය · ස්වයංක්‍රීය පද්ධතිය',
     briefingTitle: 'Smart Dictation · ව්‍යාපෘති දළ විශ්ලේෂණය',
@@ -677,8 +677,8 @@
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
-    betaStampLabel: 'බීටා · 0.0.6.l.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
-    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.l පොදිය ඉස්මතියේ තිබේ',
+    betaStampLabel: 'බීටා · 0.0.6.m.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
+    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.m පොදිය ඉස්මතියේ තිබේ',
     betaOffToast: 'බීටා නාලිකාව වසා ඇත — සාමාන්‍ය ප්‍රධාන කොක්පිට් එකට ආපසු',
     reviewTitle: 'Smart Dictation වඩාත් හොඳ කරන්න — ඔබේ ඉක්මන් සමාලෝචනය බෙදාගන්න',
     reviewSub: '100% අවශ්‍ය නැත — තට්ටු දෙකක් හෝ කෙටි කටහඬක්. එය කේතනය කර නිර්මාණකරුට යයි.',
@@ -1188,6 +1188,9 @@
       return false;
     }
     try { SDP.Data.saveSettings({ mode: chosen }); } catch (e) {}
+    /* v0.0.6.m FIX 3: entering a dictation session first releases any mic /
+       audio-session lock left by a voice review. */
+    releaseFeedbackAudioLocks('dictation_start');
     try { SDP.Engine.start({ mode: chosen }); } catch (e) {}
     showTab('player');
     return true;
@@ -1195,6 +1198,8 @@
   function resumeDictation() {
     var draft = null;
     try { draft = SDP.Data.session(); } catch (e) {}
+    /* v0.0.6.m FIX 3: resuming a session first releases any mic / audio lock. */
+    releaseFeedbackAudioLocks('dictation_resume');
     /* D11: Engine.resume() restores the exact beat (countdown for 'writing',… */
     var resumed = false;
     try { resumed = !!(SDP.Engine && SDP.Engine.resume && SDP.Engine.resume()); } catch (e) { resumed = false; }
@@ -2493,13 +2498,13 @@
   }
 
   function bindShell() {
-    /* v0.0.6.l (CF1): btnGuideTop / btnCreatorNote / btnStudioQuick moved
+    /* v0.0.6.m (CF1): btnGuideTop / btnCreatorNote / btnStudioQuick moved
        from the header into the Settings About card — the same ids keep
        their contracts, only the roof they live under changed. */
     on('btnGuideTop', 'click', openGuide);
     on('btnGuide', 'click', openGuide);
     on('btnGuideClose', 'click', closeGuide);
-    /* v0.0.6.l: the relocated Project Briefing button replays the synced
+    /* v0.0.6.m: the relocated Project Briefing button replays the synced
        executive briefing from the About card. */
     on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
     on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
@@ -2891,7 +2896,7 @@
     return true;
   }
 
-  /* ══ v0.0.6.l Pillar 1 — Dynamic Oct-22 Weekly Briefing ════════════════
+  /* ══ v0.0.6.m Pillar 1 — Dynamic Oct-22 Weekly Briefing ════════════════
    * Re-architected around how a brand-new visitor actually experiences the
    * briefing on a fresh Chrome session:
    *   - the week counter is COMPUTED from PROJECT_START_ISO (2026-10-22), so
@@ -2908,7 +2913,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.l.beta';
+  var BETA_SUBVERSION = '0.0.6.m.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2917,7 +2922,7 @@
     if (!(t0 > 0)) return 2;
     return Math.max(2, Math.floor((Date.now() - t0) / (7 * 86400000)));
   }
-  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [] };
+  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync. */
   var BRIEFING_SENTENCES = [
@@ -2950,12 +2955,25 @@
   }
   function briefingSeen() {
     var s = settings();
-    return !!(s && (s.briefingSeen === 1 || s.briefingSeen === '1' || s.briefingSeen === true));
+    /* v0.0.6.m law: the stamp is the RELEASE VERSION, never a boolean. Any
+       device that saw an older build stored briefingSeen:1 — which no longer
+       equals APP_VERSION — so 100% of devices (existing phones, PCs and
+       brand-new visitors) replay the updated briefing the moment v0.0.6.m
+       deploys. */
+    return !!(s && s.briefingSeen === APP_VERSION);
   }
   function markBriefingSeen() {
-    try { SDP.Data.saveSettings({ briefingSeen: 1 }); } catch (e) {}
+    try { SDP.Data.saveSettings({ briefingSeen: APP_VERSION }); } catch (e) {}
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_seen', { ver: APP_VERSION }); } catch (e) {}
   }
+  /* ── v0.0.6.m: the frame-accurate karaoke clock ─────────────────────────
+   * The v0.0.6.m word flow was a blind setTimeout ladder that drifted away
+   * from the narrator. The v0.0.6.m law: the highlighted word is derived
+   * from the REAL playback clock — audio.currentTime / audio.duration via
+   * requestAnimationFrame (playUrl pumps hooks.onTick every frame), or
+   * utterance onboundary(charIndex) on the Web Speech tier. The estimate
+   * timer survives only as a last-resort stall guard for silent browsers. */
+  var PUNCT_PAUSE_MS = { ',': 140, '\u2014': 180, '.': 240, ';': 160, ':': 160, '!': 220, '?': 220 };
   /* Word-by-word flow: every beat is tokenized into .b-word spans so the
      active sentence illuminates smoothly while the other beats stay
      readable for read-ahead and read-back. */
@@ -2980,12 +2998,54 @@
     if (!host || !host.querySelector) return null;
     return host.querySelector('.b-line[data-bline="' + Number(idx) + '"]');
   }
+  function wordPauseMs(token) {
+    var t = str(token), extra = 0, i, c;
+    for (i = 0; i < t.length; i++) {
+      c = t.charAt(i);
+      if (PUNCT_PAUSE_MS[c]) extra = Math.max(extra, PUNCT_PAUSE_MS[c]);
+    }
+    return extra;
+  }
+  /* Per-word timing weights: character/syllable length + trailing
+     punctuation pauses. When the Studio's LLM script pass (Step A) stored
+     per-word syllable weights on the synthesized clip entry (ww), those
+     weights win — the AI-verified phrasing of the real British voice. */
+  function briefingWordWeights(idx, line) {
+    var out = [], i, words, entry, ww = null, list;
+    try {
+      var pack = SDP.Speech && SDP.Speech.clipManifest ? SDP.Speech.clipManifest() : null;
+      entry = pack && pack.clips ? pack.clips['_intro_male_' + (Number(idx) + 1)] : null;
+      if (entry && Array.isArray(entry.ww) && entry.ww.length) ww = entry.ww;
+    } catch (e) { ww = null; }
+    words = line.querySelectorAll('.b-word');
+    for (i = 0; i < words.length; i++) {
+      if (ww && i < ww.length && Number(ww[i]) > 0) { out.push(Math.max(1, Number(ww[i]))); continue; }
+      out.push(Math.max(2, ((words[i].textContent || '').length + 2) + (wordPauseMs(words[i].textContent) / 24)));
+    }
+    return out;
+  }
+  /* Cumulative time slices: slice[i] = the fraction of the duration at which
+     word i ENDS. The active word at time t is the first i with slice[i] > t. */
+  function briefingTimeSlices(weights) {
+    var total = 0, i, out = [], at = 0;
+    for (i = 0; i < weights.length; i++) total += weights[i];
+    if (!(total > 0)) return out;
+    for (i = 0; i < weights.length; i++) { at += weights[i]; out.push(at / total); }
+    return out;
+  }
+  function briefingFlowState() { return briefingState.flow; }
   function clearBriefingWordTimers() {
     var i;
     for (i = 0; i < briefingState.wordTimers.length; i++) {
       try { global.clearTimeout(briefingState.wordTimers[i]); } catch (e) {}
     }
     briefingState.wordTimers = [];
+    var f = briefingState.flow;
+    if (f) {
+      if (f.raf && global.cancelAnimationFrame) { try { global.cancelAnimationFrame(f.raf); } catch (e) {} }
+      if (f.estTimer) { try { global.clearInterval(f.estTimer); } catch (e) {} }
+      f.raf = 0; f.estTimer = 0; f.active = false;
+    }
   }
   function resetBriefingWords(idx) {
     var line = briefingLineNode(idx);
@@ -3008,31 +3068,92 @@
     }
     return true;
   }
-  /* Distribute the real clip duration across the words (weighted by word
-     length) so the illumination tracks the British male narration. Without
-     a clip duration an estimate keeps the flow moving gracefully. */
+  /* Distribute the narration duration across the words. With no real clock
+     available (silent browser) an estimate keeps the flow moving; the FIRST
+     real clock tick or boundary event switches the flow to clock mode and
+     cancels the estimate, so the words glide in musical lockstep with the
+     actual voice. */
   function startBriefingWordFlow(idx, durSec, epoch) {
     var line = briefingLineNode(idx);
     if (!line) return false;
     var words = line.querySelectorAll('.b-word');
     if (!words.length) return false;
-    var lens = [], total = 0, i;
-    for (i = 0; i < words.length; i++) {
-      lens.push(Math.max(2, (words[i].textContent || '').length + 2));
-      total += lens[i];
-    }
+    var weights = briefingWordWeights(idx, line);
+    var slices = briefingTimeSlices(weights);
+    if (!slices.length) return false;
     var dur = Number(durSec);
-    if (!(dur > 0)) dur = (words.length * 0.36) + (total * 0.012);
+    if (!(dur > 0)) {
+      var total = 0, w;
+      for (w = 0; w < weights.length; w++) total += weights[w];
+      dur = (words.length * 0.36) + (total * 0.012);
+    }
     dur = Math.max(1200, Math.min(90000, dur * 1000));
-    var at = 0;
-    for (i = 0; i < words.length; i++) {
-      at += lens[i];
-      (function (wordIdx, t) {
-        briefingState.wordTimers.push(global.setTimeout(function () {
-          if (!briefingState.open || epoch !== briefingState.epoch) return;
-          paintBriefingWordFlow(idx, wordIdx);
-        }, Math.round((t / total) * dur)));
-      })(i, at);
+    clearBriefingWordTimers();
+    briefingState.flow = { idx: idx, epoch: epoch, durMs: dur, slices: slices, mode: 'estimate', active: true, raf: 0, estTimer: 0, lastWord: -1, startedAt: 0 };
+    /* Estimate mode: a 100 ms self-advancing tick — smooth, and instantly
+       replaced by the real clock on the first onTick / onBoundary. */
+    var f = briefingState.flow;
+    f.startedAt = Date.now();
+    f.estTimer = global.setInterval(function () {
+      if (!f.active || !briefingState.open || epoch !== briefingState.epoch) { clearBriefingWordTimers(); return; }
+      if (f.mode !== 'estimate') return;
+      paintBriefingClockAt((Date.now() - f.startedAt) / f.durMs, f);
+    }, 100);
+    return true;
+  }
+  /* The shared painter: frac is the fraction of the narration (0..1). */
+  function paintBriefingClockAt(frac, f) {
+    if (!f || !f.active) return false;
+    frac = Math.max(0, Math.min(1.0001, Number(frac) || 0));
+    var i, wordIdx = f.slices.length - 1;
+    for (i = 0; i < f.slices.length; i++) { if (f.slices[i] > frac) { wordIdx = i; break; } }
+    if (wordIdx === f.lastWord) return true;
+    f.lastWord = wordIdx;
+    paintBriefingWordFlow(f.idx, wordIdx);
+    return true;
+  }
+  /* Real clock tick from the playing <audio> element (currentTime/duration,
+     pumped per animation frame by SDP.Speech.playBriefingStep). */
+  function onBriefingClockTick(idx, epoch, tSec, durSec) {
+    var f = briefingFlowState();
+    if (!f || !f.active || f.idx !== Number(idx) || epoch !== briefingState.epoch) return false;
+    if (!(Number(tSec) >= 0)) return false;
+    if (f.mode !== 'clock') {
+      f.mode = 'clock';
+      if (f.estTimer) { try { global.clearInterval(f.estTimer); } catch (e) {} f.estTimer = 0; }
+    }
+    var d = Number(durSec) || (f.durMs / 1000);
+    if (!(d > 0)) d = f.durMs / 1000;
+    paintBriefingClockAt(Math.max(0, Number(tSec)) / d, f);
+    return true;
+  }
+  /* Web Speech tier: onboundary(charIndex) maps the spoken char position to
+     the word index, so device synthesis is karaoke-synced too. */
+  function onBriefingBoundary(idx, epoch, charIndex) {
+    var f = briefingFlowState();
+    if (!f || !f.active || f.idx !== Number(idx) || epoch !== briefingState.epoch) return false;
+    var line = briefingLineNode(idx);
+    if (!line) return false;
+    var words = line.querySelectorAll('.b-word');
+    if (!words.length) return false;
+    if (f.mode !== 'clock') {
+      f.mode = 'clock';
+      if (f.estTimer) { try { global.clearInterval(f.estTimer); } catch (e) {} f.estTimer = 0; }
+    }
+    var ci = Math.max(0, Number(charIndex) || 0), text = briefingSentence(idx), pos = 0, i, tok;
+    var tokens = [];
+    for (i = 0; i < words.length; i++) { tok = str(words[i].textContent); tokens.push(tok); }
+    /* Walk the tokens accumulating their start offsets in the sentence. */
+    var search = 0, wordIdx = tokens.length - 1;
+    for (i = 0; i < tokens.length; i++) {
+      pos = text.indexOf(tokens[i], search);
+      if (pos < 0) { search += 0; continue; }
+      if (ci <= pos + tokens[i].length) { wordIdx = i; break; }
+      search = pos + tokens[i].length;
+    }
+    if (wordIdx !== f.lastWord) {
+      f.lastWord = wordIdx;
+      paintBriefingWordFlow(idx, wordIdx);
     }
     return true;
   }
@@ -3123,7 +3244,12 @@
           realNext();
         }, {
           onStarted: function () { briefingHideTapPill(); },
-          onDuration: function (durSec) { startFlow(durSec); }
+          onDuration: function (durSec) { startFlow(durSec); },
+          /* v0.0.6.m: the frame-accurate clock — every real playback frame
+             (audio.currentTime / audio.duration) and every Web Speech
+             boundary event repaints the karaoke directly from the voice. */
+          onTick: function (tSec, durSec) { onBriefingClockTick(idx, epoch, tSec, durSec); },
+          onBoundary: function (charIndex) { onBriefingBoundary(idx, epoch, charIndex); }
         });
         /* If neither the clip duration nor a rejection arrives (silent
            browser), an estimate keeps the karaoke flowing gracefully. */
@@ -3229,8 +3355,8 @@
     return true;
   }
 
-  /* ══ v0.0.6.l — the governed Beta channel (?beta / #beta URL only) ══════
-   * The v0.0.6.l suite (Project Briefing, 5-key Multi-API pool, post-session
+  /* ══ v0.0.6.m — the governed Beta channel (?beta / #beta URL only) ══════
+   * The v0.0.6.m suite (Project Briefing, 5-key Multi-API pool, post-session
    * reviews, diagnostics .zip) is live on the MAIN cockpit by default; the
    * Beta channel is a URL-driven testing state that stamps the sub-version
    * and replays the briefing so it can be verified on a phone in one tap.
@@ -3241,7 +3367,7 @@
     return false;
   }
   function paintBeta() {
-    /* v0.0.6.l (CF1): the Beta pill left the ultra-clean header — the
+    /* v0.0.6.m (CF1): the Beta pill left the ultra-clean header — the
        governed channel is still available at ?beta / #beta and through
        SDP.Views.applyBetaChannel(); the floating stamp is retired with it. */
     var on = betaActive();
@@ -3270,7 +3396,7 @@
     return betaActive();
   }
 
-  /* ══ v0.0.6.l Pillar 3 — instant review popup + dual-engine voice ════
+  /* ══ v0.0.6.m Pillar 3 — instant review popup + dual-engine voice ════
    * Human-factors rework of the post-session review:
    *   - the card renders at the TOP of the results view (above all 30 rows)
    *     the moment a session finishes, so it can never be missed again;
@@ -3355,6 +3481,8 @@
     var card = byId('reviewPopupCard');
     if (card) card.hidden = true;
     stopReviewVoice(false);
+    /* v0.0.6.m FIX 3: hiding the card also ends any live mic session. */
+    releaseFeedbackAudioLocks('review_card_hidden');
   }
   function stopReviewTracks0(stream) {
     try {
@@ -3394,6 +3522,53 @@
       return true;
     } catch (e) { return false; }
   }
+  /* ══ v0.0.6.m FIX 3: releaseFeedbackAudioLocks() ═══════════════════════
+   * A voice review (getUserMedia + MediaRecorder + SpeechRecognition) puts
+   * mobile Chrome/Safari into Voice Communication / Mic Capture mode, which
+   * ducks or mutes standard media playback and can leave speechSynthesis
+   * cancelled/stuck — the exact "Dictation Words mispronounce / stay muted
+   * after a review" bug. This is the bulletproof release: called when
+   * recording stops, when the review is sent or skipped, when the feedback
+   * drawer closes, and before every dictation word / start / resume. */
+  function releaseFeedbackAudioLocks(reason) {
+    var had = false;
+    /* 1. stop every active MediaRecorder */
+    if (reviewState.rec) {
+      var rec = reviewState.rec;
+      reviewState.rec = null;
+      had = true;
+      try { if (rec.state && rec.state !== 'inactive') { rec.onstop = null; rec.stop(); } } catch (e) {}
+    }
+    /* 2. stop + nullify every MediaStreamTrack so the OS exits Mic mode */
+    if (reviewState.recStream) {
+      had = true;
+      try {
+        var stream = reviewState.recStream;
+        reviewState.recStream = null;
+        var tracks = stream.getTracks ? stream.getTracks() : [], i;
+        for (i = 0; i < tracks.length; i++) { try { tracks[i].stop(); } catch (e1) {} }
+      } catch (e2) {}
+    }
+    /* 3. abort/stop any active SpeechRecognition */
+    if (reviewState.recog) {
+      had = true;
+      var recog = reviewState.recog;
+      reviewState.recog = null;
+      try { if (recog.abort) recog.abort(); } catch (e3) {}
+      try { if (recog.stop) recog.stop(); } catch (e4) {}
+    }
+    reviewState.listening = false;
+    if (reviewState.recTimer) { global.clearInterval(reviewState.recTimer); reviewState.recTimer = 0; }
+    /* 4. reset the shared <audio> (volume 1.0, muted false) and unstick
+          speechSynthesis (cancel + resume) — the next word plays crisply. */
+    try { if (SDP.Speech && SDP.Speech.recoverAudioSession) SDP.Speech.recoverAudioSession(reason || 'feedback'); } catch (e5) {}
+    if (had) {
+      try {
+        if (SDP.Diagnostics) SDP.Diagnostics.log('feedback_audio_released', { reason: str(reason || 'generic') });
+      } catch (e6) {}
+    }
+    return true;
+  }
   function stopReviewVoice(attach) {
     reviewState.listening = false;
     if (reviewState.recTimer) { global.clearInterval(reviewState.recTimer); reviewState.recTimer = 0; }
@@ -3408,12 +3583,19 @@
     reviewState.rec = null;
     if (rec) {
       try {
-        if (attach && rec.state !== 'inactive') { rec.stop(); return true; }
+        if (attach && rec.state !== 'inactive') {
+          /* keep the natural onstop so the clip is assembled, then release */
+          rec.onstop = function () { try { rec.onstop = null; } catch (e0) {} assembleReviewClip(); releaseFeedbackAudioLocks('recorder_stopped'); };
+          rec.stop();
+          return true;
+        }
         if (rec.state !== 'inactive') { rec.onstop = null; rec.stop(); }
       } catch (e) {}
       stopReviewTracks();
       reviewState.recChunks = [];
     }
+    /* v0.0.6.m FIX 3: every stop path releases the mic + audio session. */
+    releaseFeedbackAudioLocks('recorder_stopped');
     return true;
   }
   function startReviewRecognition() {
@@ -3528,17 +3710,26 @@
        BOTH paths — Send Review and Skip — No Thanks. */
     var tel = engineTelemetry();
     if (tel) payload.telemetry = tel;
+    /* v0.0.6.m FIX 4: the automatic full UI + DOM + Cache + Audio snapshot
+       rides on BOTH paths too — the creator can inspect the exact screen
+       geometry, cache state and audio pipeline at the moment of the review. */
+    try {
+      if (SDP.Diagnostics && SDP.Diagnostics.captureFullUiSnapshot) {
+        payload.uiSnapshot = SDP.Diagnostics.captureFullUiSnapshot();
+      }
+    } catch (e0) {}
     try {
       if (SDP.Diagnostics) SDP.Diagnostics.captureReview(payload);
     } catch (e) {}
     reviewState.done = true;
     stopReviewVoice(false);
+    releaseFeedbackAudioLocks('review_sent');
     hideReviewCard();
     toggleFeedbackDrawer(false);
     showCapsule(skipped ? t('reviewSkipToast') : t('reviewSentToast'));
     return true;
   }
-  /* ══ v0.0.6.l Pillar 3: the floating Feedback / Quick-Help launcher ══ */
+  /* ══ v0.0.6.m Pillar 3: the floating Feedback / Quick-Help launcher ══ */
   function feedbackDrawerOpen() {
     var drawer = byId('sdpFeedbackDrawer');
     return !!(drawer && !drawer.hidden);
@@ -3565,6 +3756,9 @@
     drawer.hidden = !want;
     if (fab) fab.setAttribute('aria-expanded', want ? 'true' : 'false');
     if (want) { markFabBadgeSeen(); renderFabFaq(); }
+    /* v0.0.6.m FIX 3: closing the drawer releases every mic / audio lock —
+       the next dictation session must speak crisply. */
+    if (!want) releaseFeedbackAudioLocks('drawer_closed');
     return want;
   }
   /* Offline-first FAQ: every answer is a real, checkable in-app fact —
@@ -3632,7 +3826,7 @@
     paintIconHosts();
     bindTeacherUpdates();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
-    setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.l: pill lives in the About card */
+    setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.m: pill lives in the About card */
     setText(byId('aboutVersion'), APP_VERSION);
     setText(byId('brandName'), 'Smart Dictation');
     initBetaFromUrl();
@@ -3649,7 +3843,7 @@
     renderGuideSteps();
     renderSettings();
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
-    /* v0.0.6.l Pillar 1: a brand-new visitor gets the Project Briefing first;
+    /* v0.0.6.m Pillar 1: a brand-new visitor gets the Project Briefing first;
        the student guide follows the moment the briefing closes. Returning
        students (any guide_seen stamp) are never interrupted again. */
     if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true });
@@ -3787,7 +3981,7 @@
     sessionIntroShown: function () { return !!sessionState.introShown; },
     openStudio: openStudio,
     startOver: startOver,
-    /* ══ v0.0.6.l public surface: briefing, beta channel, review card ══ */
+    /* ══ v0.0.6.m public surface: briefing, beta channel, review card ══ */
     openBriefing: openBriefing,
     closeBriefing: closeBriefing,
     briefingSentences: briefingSentences,
@@ -3795,6 +3989,11 @@
     briefingGateLeft: briefingGateLeft,
     briefingSeek: briefingSeek,
     briefingIsOpen: function () { return !!briefingState.open; },
+    /* v0.0.6.m: the frame-accurate karaoke clock + mic-release surface. */
+    onBriefingClockTick: onBriefingClockTick,
+    onBriefingBoundary: onBriefingBoundary,
+    releaseFeedbackAudioLocks: releaseFeedbackAudioLocks,
+    reviewVoiceActive: function () { return !!(reviewState.listening || reviewState.rec || reviewState.recog || reviewState.recStream); },
     betaSubversion: function () { return BETA_SUBVERSION; },
     betaActive: betaActive,
     applyBetaChannel: applyBetaChannel,

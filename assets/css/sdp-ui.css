@@ -486,9 +486,6 @@ select.input { appearance: none; }
 }
 .table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
 
-/* ============================================================================
-   6 · HOME LAUNCHPAD (#screen-home) — one hero, one path, quiet support
-   ========================================================================== */
 #screen-home.active { display: block; }
 
 /* Hero — sapphire glow crown over the card surface */
@@ -655,9 +652,6 @@ html[lang='si'] .credit-line { font-family: var(--font-si); }
 .symbol-card:hover { background: var(--bg-interactive); border-color: var(--border); }
 .symbol-card:active { transform: translateY(2px); }
 
-/* ============================================================================
-   7 · DICTATION COCKPIT (#screen-player) — the beat owns the screen
-   ========================================================================== */
 
 /* Progress strip — one honest line */
 .progress-strip { padding: 12px 16px; }
@@ -976,9 +970,6 @@ tr.is-missed td.r-word { color: var(--danger); }
 .mark-btn[data-mark='correct'][aria-pressed='true'] { color: var(--ok-ink); background: var(--ok); border-color: var(--ok); }
 .mark-btn[data-mark='missed'][aria-pressed='true'] { color: var(--danger-ink); background: var(--danger); border-color: var(--danger); }
 
-/* ============================================================================
-   8 · 30-WORD STUDY DECK (#screen-dict) — two-line card anatomy
-   ========================================================================== */
 #dictSearch { margin-bottom: 10px; }
 .dict-list { display: grid; gap: 10px; margin-top: 10px; }
 .dict-card {
@@ -1089,9 +1080,6 @@ tr.is-missed td.r-word { color: var(--danger); }
 .prac-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .prac-verdict { margin-top: 12px; font-size: 14px; font-weight: 750; }
 
-/* ============================================================================
-   10 · SETTINGS (#screen-settings) — grouped, numbered, calm
-   ========================================================================== */
 #settingsSections { display: grid; gap: 14px; }
 .set-card { background: var(--bg-card); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 18px; }
 .set-head {
@@ -1120,9 +1108,6 @@ tr.is-missed td.r-word { color: var(--danger); }
 }
 .lecturer-banner .btn { margin-top: 12px; }
 
-/* ============================================================================
-   11 · LECTURER STUDIO (#screen-studio) — tactile console
-   ========================================================================== */
 #screen-studio .muted { margin: 0 0 12px; }
 .studio-shell { display: grid; gap: 14px; }
 .studio-sync-dock { margin-bottom: 2px; }
@@ -1145,7 +1130,7 @@ tr.is-missed td.r-word { color: var(--danger); }
   grid-template-columns: repeat(3, minmax(64px, 76px));
   gap: 10px;
   justify-content: center;
-  margin: 10px auto 0;
+  margin: 14px auto 0;
 }
 .pin-key {
   min-height: 56px;
@@ -1165,7 +1150,7 @@ tr.is-missed td.r-word { color: var(--danger); }
 .pin-key-soft { background: var(--bg-sunken); font-size: 15px; }
 .pin-key-primary { color: var(--accent-ink); background: var(--grad-primary); border: 0; }
 .pin-key-primary:hover { background: var(--grad-primary); filter: brightness(1.08); }
-.pin-dots { display: flex; gap: 9px; justify-content: center; margin-top: 14px; }
+.pin-dots { display: flex; gap: 9px; justify-content: center; margin-top: 16px; margin-bottom: 4px; }
 .pin-dots > span {
   width: 13px; height: 13px; border-radius: 50%;
   background: var(--bg-interactive);
@@ -1261,6 +1246,7 @@ html[lang='si'] .studio-card { font-family: var(--font-si); }
   padding: 3px 11px;
 }
 .studio-free-badge[hidden] { display: none; }
+.studio-free-badge { overflow-wrap: anywhere; }
 .studio-vault-badge {
   display: inline-flex; align-items: center; gap: 7px;
   font-size: 11.5px; font-weight: 850;
@@ -1312,9 +1298,6 @@ html[data-theme='light'] #studioPackDashboard { background: var(--bg-elev); }
 .studio-keys { margin-top: 10px; }
 #btnSyncClassSettings { font-size: 14.5px; }
 
-/* ============================================================================
-   12 · VOICE GUIDE (#guideModal + spotlight) — never traps focus
-   ========================================================================== */
 .modal {
   position: fixed; inset: 0; z-index: 90;
   display: none;
@@ -1412,9 +1395,6 @@ html[lang='si'] .guide-steps p { font-family: var(--font-si); }
   #sdpDataToast, .toast { bottom: 22px; }
 }
 
-/* ============================================================================
-   14 · MORPHE RUNTIME HOOKS (data/sdp-morphe-hooks.js) — no CSS injected
-   ========================================================================== */
 .lit { position: relative; }
 .lit::after {
   content: '';
@@ -1457,9 +1437,6 @@ html.sd.sd-theme-anim .modal-card { transition: background 0.45s var(--ease), bo
 details .studio-body { max-height: var(--studio-body-h, none); overflow: hidden; transition: max-height 0.45s var(--ease); }
 details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
 
-/* ============================================================================
-   15 · RESPONSIVE LAYOUT — one screen law + rail/tabbar swap
-   ========================================================================== */
 @media (min-width: 1024px) {
   #sdpSideRail {
     display: flex;
@@ -1496,7 +1473,13 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
   .hero-actions .btn { width: 100%; justify-content: center; }
   .cta-wrap { width: 100%; }
   .cta-wrap .cue { align-self: center; }
-  .header-cluster { display: none; }
+  /* v0.0.6.f (R6): the Preview/Beta switcher stays on the phone header; the
+     version pill, sync badge and the lecturer launcher yield their space. */
+  .header-cluster { display: flex; gap: 6px; }
+  .header-cluster #sdpVerPill,
+  .header-cluster .sync-badge,
+  .header-cluster .studio-quick { display: none; }
+  .header-cluster #sdpBetaPill { padding: 6px 12px; font-size: 12px; }
   .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .stat { padding: 10px 6px; }
   .stat strong { font-size: 17px; }
@@ -1548,8 +1531,11 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
   position: sticky; top: calc(var(--header-h) + 6px); z-index: 40;
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
   padding: 10px 14px; margin: 0 0 12px;
-  background: var(--warn-glass); border: 1.5px solid var(--warn); border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-soft);
+  /* v0.0.6.f: the sticky bar must be OPAQUE — scrolled cards may never show
+     through a glass fill (the v0.0.6.e glass made chips unreadable). */
+  background: var(--bg-elev);
+  border: 1.5px solid var(--warn); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
 }
 .ssb-badge {
   display: inline-flex; align-items: center; gap: 7px;
@@ -1655,9 +1641,6 @@ body, #appHeader, #brandName { color: var(--text) !important; }
 
 
 /* ── 18 · v0.0.6.c F3/F4 — two-mode chrome + scroll-proof sliders ───────── */
-/* F4: the range INPUT is a visual bar only — a scrolling thumb can never
-   grab it. Steppers (48px) are the tactile path; programmatic value writes
-   + dispatched input/change events still work (G3/G5/G7 contract). */
 .stepper input[type='range'] {
   pointer-events: none;
   -webkit-user-select: none; user-select: none;
@@ -1810,34 +1793,6 @@ html[data-theme='board'] { color-scheme: dark; }
    living Play/Pause badge makes the tap target unmistakable. */
 .ring-under { width: min(220px, 64vw); display: grid; justify-items: stretch; margin-top: 2px; }
 .ring-under .bar-wrap { width: 100%; height: 4px; }
-.ring-affordance {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-  padding: 3px 10px;
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: var(--accent);
-  background: var(--bg-accent-glass);
-  border: 1px solid var(--border);
-  border-radius: 9999px;
-  white-space: nowrap;
-  max-width: 92%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-html[data-theme='light'] .ring-affordance { color: #1D4ED8; border-color: rgba(37, 99, 235, 0.35); }
-html[lang='si'] .ring-affordance { font-size: 10.5px; line-height: 1.45; }
-/* The affordance breathes while a beat is live, and pings on press. */
-.ring-affordance[data-state='live'] { animation: sdp-ring-breathe 2.4s ease-in-out infinite; }
-.ring-affordance[data-state='paused'] { color: #B45309; background: rgba(217, 119, 6, 0.14); border-color: rgba(217, 119, 6, 0.45); }
-@keyframes sdp-ring-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.92; }
-  50% { transform: scale(1.045); opacity: 1; }
-}
-.ring-pressed .ring-affordance { transform: scale(0.94); }
 .ring-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 9999px; }
 .ring-wrap:active .ring { transform: scale(0.985); }
 .ring { transition: transform 0.18s var(--ease); }
@@ -1857,7 +1812,10 @@ html[lang='si'] .ring-affordance { font-size: 10.5px; line-height: 1.45; }
 /* D5 (v0.0.6.d): the CCBE B1 badge stays visible on every viewport — even
    360x640, where the cluster pill hides but the badge does not. */
 @media (max-width: 400px) {
-  .header-cluster { display: none; }
+  /* v0.0.6.f (R6): only the Preview/Beta switcher survives in the cluster. */
+  .header-cluster #sdpVerPill,
+  .header-cluster .sync-badge,
+  .header-cluster .studio-quick { display: none; }
   .b1badge { display: inline-block; }
   #appHeader { gap: 8px; padding: 4px 10px; }
   #brandName { font-size: 13.5px; }
@@ -1907,3 +1865,273 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
   .header-actions { gap: 4px; }
   .header-actions .hbtn { padding: 0 8px; font-size: 12px; }
 }
+
+
+/* ══ v0.0.6.e — Human-UX layer: burst ring, reveal card, beta/capsule, squircles ══ */
+.board-jumper-drawer{display:none !important}
+.ring-tap-overlay{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0}
+.ring-tap-overlay.is-bursting{animation:sdpRingBurst .45s cubic-bezier(.2,.75,.3,1) forwards}
+@keyframes sdpRingBurst{0%{opacity:0;transform:scale(.55)}38%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.22)}}
+.reveal-word-card{display:grid;justify-items:center;gap:3px;margin:0 0 4px;padding:6px 12px 7px;border-radius:16px;background:var(--bg-sunken);border:1px solid var(--stroke)}
+.reveal-word-card .btn{min-height:48px;padding:5px 14px;font-size:13.5px}
+.reveal-word-card[hidden]{display:none}
+.reveal-word-text{margin:0;font-size:clamp(26px,7vw,36px);font-weight:900;letter-spacing:.01em;line-height:1.02;color:var(--text);font-variant-numeric:tabular-nums}
+.reveal-word-text[data-revealed='false']{font-size:15px;letter-spacing:.3em;color:var(--text-muted);line-height:1.1}
+.reveal-paused-badge{font-size:12.5px;font-weight:800;padding:4px 12px;border-radius:999px;background:#F59E0B;color:#04081A}
+.reveal-meaning{display:grid;gap:2px;justify-items:center;margin:0;width:100%;text-align:center}
+.cockpit.reveal-open .paused-banner,
+.cockpit.reveal-open .beat-phase-pill,
+.cockpit.reveal-open .ring-under,
+.cockpit.reveal-open .cockpit-helpers,
+.cockpit.reveal-open .orbital .deck-cap { display: none; }
+.cockpit.reveal-open .orbital { row-gap: 2px; padding-top: 0; }
+.cockpit.reveal-open .ring { width: 132px; height: 132px; }
+.cockpit.reveal-open #beatSeconds { font-size: 30px; }
+.cockpit.reveal-open .orb-btn { width: 50px; height: 50px; min-height: 50px; min-width: 50px; }
+.cockpit.reveal-open .orb-main { width: 62px; height: 62px; min-height: 62px; min-width: 62px; }
+.cockpit.reveal-open .rm-si { font-size: 15.5px; }
+.cockpit.reveal-open .rm-en { font-size: 12.5px; }
+.cockpit.reveal-open .rm-ipa { font-size: 13px; }
+.cockpit.reveal-open .reveal-word-card { padding: 5px 12px 6px; gap: 2px; }
+.reveal-meaning[hidden]{display:none}
+.rm-ipa{margin:0;font-size:14.5px;font-weight:700;color:var(--text-muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+.rm-ipa #revealIpa{font-family:var(--font-mono)}
+.rm-pos{color:var(--accent);font-weight:800;padding:1px 10px;border-radius:999px;background:var(--bg-accent-glass);font-size:12.5px}
+.rm-si{margin:0;font-size:17px;font-weight:800;color:var(--text);font-family:var(--font-si)}
+.rm-en{margin:0;font-size:13.5px;font-weight:600;color:var(--text-muted);max-width:46ch}
+.beta-pill{background:#7C3AED;color:#FFF !important}
+.stale-pill{position:fixed;right:10px;bottom:132px;z-index:61;max-width:62vw;padding:10px 14px;border-radius:999px;border:0;background:#F59E0B;color:#04081A !important;font-weight:700;font-size:13px;box-shadow:0 12px 32px rgba(245,158,11,.42);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.update-card{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:60;max-width:420px;width:calc(100vw - 24px);padding:12px 14px;border-radius:16px;background:#0F1420;color:#F8FAFC;box-shadow:0 18px 48px rgba(2,6,23,.45)}
+.update-card .update-text{margin:0 0 8px;font-weight:600}
+.update-card .update-bar{height:4px;border-radius:999px;overflow:hidden;background:rgba(56,189,248,.25);margin:0 0 8px}
+.update-card .update-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#38BDF8,#10B981);animation:sdpUpdateBar 1.5s linear forwards}
+@keyframes sdpUpdateBar{0%{width:0}100%{width:100%}}
+.update-card .update-actions{display:flex;gap:8px}
+html[data-theme='dark'] .update-card{background:#161D2E}
+.studio-offline-card{margin:8px 0 12px;padding:14px;border-radius:16px;border:1px solid #F59E0B;background:rgba(245,158,11,.12)}
+.studio-offline-title{margin:0 0 6px;font-size:15px;font-weight:700}
+.studio-offline-body{margin:0;font-size:13px;opacity:.9}
+.tab.is-offline,.rail-btn.is-offline{opacity:.55}
+.set-squircle{display:inline-grid;place-items:center;width:30px;height:30px;margin-right:8px;border-radius:10px;flex:none;vertical-align:middle}
+.set-squircle--timing{background:linear-gradient(135deg,#38BDF8,#0EA5E9);color:#04121F}
+.set-squircle--voice{background:linear-gradient(135deg,#10B981,#059669);color:#032118}
+.set-squircle--theme{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#0B0618}
+.set-squircle--cache{background:linear-gradient(135deg,#F59E0B,#D97706);color:#1A1005}
+.set-squircle--cloud{background:linear-gradient(135deg,#60A5FA,#2563EB);color:#040D1F}
+.set-squircle--studio{background:linear-gradient(135deg,#F472B6,#DB2777);color:#1F0512}
+.studio-session-row{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.studio-session-row .lbl{min-width:110px}
+.studio-count-helper{margin:6px 0;font-size:13px}
+.studio-count-helper.is-ready{color:#059669;font-weight:600}
+.studio-count-helper.is-over{display:block;padding:8px 10px;border-radius:12px;background:rgba(245,158,11,.16);border:1px solid #F59E0B;color:#92400E;font-weight:600}
+.studio-count-helper.is-under{opacity:.8}
+.studio-live-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip-word{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:rgba(56,189,248,.16);border:1px solid rgba(56,189,248,.4);font-size:13px}
+.chip-word.chip-extra{background:rgba(245,158,11,.2);border-color:#F59E0B}
+.chip-word b{opacity:.7;font-weight:700}
+.chip-x,.chip-merge{border:0;background:transparent;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px;border-radius:8px}
+.chip-x:hover{background:rgba(239,68,68,.2)}
+.chip-merge:hover{background:rgba(56,189,248,.25)}
+.studio-util-row{margin:6px 0}
+
+
+/* R1: the legacy Smart-Board duplicate transport row and its second jump
+   drawer stay in the DOM (G1/G5 id contract) but are NEVER painted. */
+.board-class-bar, .board-jumper-drawer { display: none !important; }
+
+/* compact cockpit head: one slim line — the strip above already names the word */
+.cockpit-head { align-items: center; margin-bottom: 0; gap: 8px; min-height: 22px; }
+.cockpit-head h2 { font-size: 14.5px; font-weight: 800; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.cockpit-head p { margin: 0; font-size: 12px; white-space: nowrap; }
+.cockpit-head .badge { font-size: 11px; padding: 2px 9px; white-space: nowrap; }
+
+/* the orbital remote grid */
+.orbital {
+  display: grid;
+  grid-template-columns: 58px 1fr 58px;
+  grid-template-areas: "west center east" "south south south";
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 6px;
+  padding: 3px 0 0;
+  width: 100%;
+}
+@media (max-width: 379px) { .orbital { grid-template-columns: 52px 1fr 52px; } }
+@media (min-width: 720px) { .orbital { grid-template-columns: 72px 1fr 72px; row-gap: 12px; } }
+.orb-west { grid-area: west; justify-self: center; }
+.orb-east { grid-area: east; justify-self: center; }
+.orb-center { grid-area: center; display: grid; place-items: center; }
+.orb-south { grid-area: south; display: flex; gap: 20px; align-items: center; justify-content: center; }
+.orbital .deck-key { gap: 4px; }
+.orbital .deck-cap { font-size: 11px; }
+@media (min-width: 720px) {
+  .orb-btn { width: 64px; height: 64px; min-height: 64px; min-width: 64px; }
+  .orb-main { width: 80px; height: 80px; min-height: 80px; min-width: 80px; }
+  /* the remote stays one tight physical object — never stretched card-wide */
+  .orbital { max-width: 420px; margin: 0 auto; }
+  .reveal-word-card { max-width: 520px; margin-left: auto; margin-right: auto; }
+}
+
+/* tactile circular remote keys — Apple Watch crown feel */
+.orb-btn {
+  width: 54px; height: 54px; min-height: 54px; min-width: 54px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; border-radius: 9999px;
+  background: var(--bg-elev);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 3px 0 var(--shadow-btn-line, rgba(15,23,42,.18)), 0 10px 22px var(--shadow-soft, rgba(15,23,42,.16));
+  transition: transform .12s var(--ease), box-shadow .12s var(--ease), background .18s var(--ease);
+}
+.orb-btn:active { transform: translateY(2px) scale(.97); box-shadow: 0 1px 0 var(--shadow-btn-line, rgba(15,23,42,.18)), 0 4px 10px var(--shadow-soft, rgba(15,23,42,.14)); }
+.orb-btn .sdp-icon { color: var(--text); }
+.orb-main {
+  width: 68px; height: 68px; min-height: 68px; min-width: 68px;
+  background: var(--grad-primary);
+  border: none;
+  box-shadow: 0 4px 0 rgba(29,78,216,.45), 0 14px 30px rgba(37,99,235,.35);
+}
+.orb-main .sdp-icon { color: #FFFFFF; }
+.orb-main .sdp-icon .ic-fill { fill: #FFFFFF; }
+.orb-main:active { box-shadow: 0 2px 0 rgba(29,78,216,.45), 0 6px 14px rgba(37,99,235,.3); }
+
+/* the clock dial — bigger, calmer, the hero of the screen */
+.beat { padding: 2px 0 0; gap: 4px; }
+.ring { width: 152px; height: 152px; }
+@media (min-width: 720px) { .ring { width: 176px; height: 176px; } }
+.ring-wrap { border-radius: 9999px; }
+#beatSeconds { font-size: 34px; }
+html[data-theme='board'] #beatSeconds { font-size: 38px; }
+@media (min-width: 720px) { #beatSeconds { font-size: 42px; } }
+.ring-under { margin-top: 0; }
+.ring-under .bar-wrap { height: 4px; }
+
+/* paused: a tasteful amber halo so the state reads at a glance */
+#ringWrap::after {
+  content: ""; position: absolute; inset: -11px; border-radius: 9999px;
+  pointer-events: none; opacity: 0; transition: opacity .3s var(--ease);
+  border: 3px solid rgba(245,158,11,.75);
+  box-shadow: 0 0 0 6px rgba(245,158,11,.16), 0 0 34px 10px rgba(245,158,11,.38);
+}
+#ringWrap.is-paused::after { opacity: 1; animation: sdpPausedGlow 2.4s ease-in-out infinite; }
+@keyframes sdpPausedGlow { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.ring-tap-overlay svg { filter: drop-shadow(0 6px 18px rgba(2,6,23,.35)); }
+
+/* secondary tools: one quiet pill strip, never 11 competing buttons */
+.cockpit-helpers {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; align-items: center;
+  margin-top: 8px;
+}
+.helper-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 48px; padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 12.5px; font-weight: 750;
+  background: var(--bg-sunken);
+  border: 1px solid var(--stroke);
+  color: var(--text-muted);
+}
+.helper-pill .sdp-icon { color: var(--accent); }
+html[data-theme='light'] .helper-pill .sdp-icon { color: #1D4ED8; }
+.helper-pill:active { transform: translateY(1px); }
+
+/* compact progress strip: the counter line and the jump toggle share one row */
+.progress-strip { padding: 5px 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.progress-strip .cockpit-line { flex: 1 1 auto; flex-wrap: wrap; row-gap: 2px; font-size: 12px; }
+.progress-strip .badge { font-size: 10.5px; padding: 2px 8px; }
+/* v0.0.6.f: on a 360px phone the repeat/preset badges duplicate the phase
+   pill below — the strip stays one row (the words stay in the DOM/tests). */
+@media (max-width: 379px) {
+  .progress-strip .cockpit-line .badge { display: none; }
+  /* the strip above already counts WORD #01/30 — the head stays for tablets */
+  .cockpit-head { display: none; }
+}
+.progress-strip .pills-toggle { flex: 0 0 auto; min-height: 48px; padding: 4px 12px; font-size: 12px; }
+.progress-strip .pills-drawer { flex: 1 1 100%; }
+.cockpit .paused-banner { margin-top: 8px; }
+.beat-phase-pill { margin: 4px 0 2px; padding: 4px 12px; font-size: 13px; }
+.beat-state { margin: 2px 0 0; font-size: 14px; }
+.cockpit { padding: 12px 14px 14px; }
+
+/* ══ v0.0.6.f — color-coded squircle icons (iOS Settings / One-UI) ═══════ */
+.tico {
+  display: grid; place-items: center;
+  width: 42px; height: 42px;
+  border-radius: 14px;
+  color: #FFFFFF;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 4px 10px rgba(15,23,42,.18);
+  transition: transform .15s var(--ease);
+}
+.tab:active .tico { transform: scale(.92); }
+.tico-home { background: linear-gradient(135deg, #60A5FA, #1D4ED8); }
+.tico-player { background: linear-gradient(135deg, #22D3EE, #0E7490); }
+.tico-practice { background: linear-gradient(135deg, #FBBF24, #D97706); }
+.tico-dict { background: linear-gradient(135deg, #34D399, #059669); }
+.tico-settings { background: linear-gradient(135deg, #A78BFA, #6D28D9); }
+.tico-studio { background: linear-gradient(135deg, #F472B6, #BE185D); }
+.tab { padding-top: 6px; }
+
+/* the desktop rail carries the same color-coded squircles as the tab bar */
+.rail-ico .tico { width: 38px; height: 38px; border-radius: 12px; margin-bottom: 5px; }
+
+/* vivid settings-card squircles */
+.set-squircle {
+  display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 13px;
+  color: #FFFFFF; flex: 0 0 auto;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 4px 10px rgba(15,23,42,.16);
+}
+.set-squircle--timing { background: linear-gradient(135deg, #60A5FA, #1D4ED8); }
+.set-squircle--voice { background: linear-gradient(135deg, #F472B6, #BE185D); }
+.set-squircle--theme { background: linear-gradient(135deg, #A78BFA, #6D28D9); }
+.set-squircle--cache { background: linear-gradient(135deg, #34D399, #059669); }
+.set-squircle--cloud { background: linear-gradient(135deg, #22D3EE, #0E7490); }
+.set-squircle--studio { background: linear-gradient(135deg, #FBBF24, #D97706); }
+
+/* ══ v0.0.6.f — Samsung One-UI update capsule & beta pill ═══════════════ */
+#sdpBetaPill.beta-pill {
+  background: linear-gradient(135deg, #A78BFA, #7C3AED) !important;
+  color: #FFF !important;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(124,58,237,.35);
+}
+#sdpBetaPill.beta-pill[aria-pressed='true'] { background: linear-gradient(135deg, #F59E0B, #D97706) !important; color: #04081A !important; }
+.update-card {
+  bottom: 84px; padding: 16px 18px; border-radius: 24px;
+  background: linear-gradient(160deg, #1E293B, #0F172A);
+  border: 1px solid rgba(148,163,184,.25);
+  box-shadow: 0 24px 60px rgba(2,6,23,.55);
+}
+html[data-theme='light'] .update-card { background: linear-gradient(160deg, #FFFFFF, #EFF6FF); border-color: rgba(37,99,235,.22); color: #0F172A; }
+html[data-theme='light'] .update-card .update-text { color: #0F172A; }
+.update-card .update-text { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-weight: 750; }
+.update-card .update-bar { height: 5px; margin: 0 0 10px; }
+.update-card .btn-sm { min-height: 48px; }
+.stale-pill { bottom: 148px; }
+
+/* v0.0.6.f — Apple-style step tags on the three Lecturer Studio cards, and
+   the offline studio blind (R5): the PIN pad never unlocks without GitHub. */
+.studio-step-tag {
+  display: inline-flex; align-items: center;
+  margin-right: 10px; margin-bottom: 4px;
+  padding: 3px 12px;
+  font-size: 10.5px; font-weight: 850; letter-spacing: 0.07em;
+  border-radius: 999px;
+  color: #1D4ED8;
+  background: var(--bg-accent-glass);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  vertical-align: middle;
+}
+html[data-theme='dark'] .studio-step-tag { color: #93C5FD; }
+#screen-studio.studio-is-offline .studio-shell,
+#screen-studio.studio-is-offline .studio-sync-dock,
+#screen-studio.studio-is-offline #studioAccordion { display: none !important; }
+#screen-studio.studio-is-offline .studio-offline-card { margin: 14px 0 24px; }
+.studio-offline-card {
+  padding: 22px 20px;
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(245,158,11,.12), rgba(245,158,11,.05));
+  border: 1.5px solid rgba(217,119,6,.45);
+}
+.studio-offline-title { margin: 0 0 6px; font-size: 17px; font-weight: 850; color: #B45309; }
+.studio-offline-body { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text-muted); }

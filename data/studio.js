@@ -255,7 +255,11 @@
   tierWarn: '',
   layerOneRestored: false,
   /* R7 (F7): a master recovery unlock must prompt a fresh PIN immediately. */
-  recoveryMode: false
+  recoveryMode: false,
+  wordsConfirmed: false,
+  rawParsedWords: [],
+  sessionNo: '',
+  title: ''
  };
  var autoLockBound = false;
 
@@ -983,7 +987,7 @@
  }
  /* ══ Card 1 — rebuilt for */
  function keysCardMarkup() {
-  return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4">' + T('studioCardKeys') + '</h4>' +
+  return '<section id="studioCardKeys" class="studio-card studio-card-keys">' + '<h4 class="studio-h4"><span class="studio-step-tag">' + t('studioStep1', 'STEP 1 · ONE-TIME SETUP') + '</span>' + T('studioCardKeys') + '</h4>' +
    /* D2 (v0.0.2.a): the honest one-line status dashboard. */
    '<p id="studioPackDashboard" class="studio-pack-dashboard" role="status" aria-live="polite">' + esc(packDashboardText()) + '</p>' +
    keyRowMarkup('elKeyInput', 'ElevenLabs API key (sk_…)', 'sk_…', 'ElKey') +
@@ -1176,9 +1180,22 @@
   var words = ST.words.length ? ST.words : (sync() && sync().words ? sync().words() : []);
   var names = [];
   for (var i = 0; i < words.length; i++) if (str(words[i] && words[i].w)) names.push(str(words[i].w));
-  return '<section id="studioCardWords" class="studio-card studio-card-words">' + '<h4 class="studio-h4">' + T('studioCardWords') + '</h4>' + '<label class="lbl" for="studioBulkWords">' + T('studioBulkWords') + '</label>' +
+  return '<section id="studioCardWords" class="studio-card studio-card-words">' + '<h4 class="studio-h4"><span class="studio-step-tag">' + t('studioStep2', 'STEP 2 · PASTE 30 WORDS') + '</span>' + T('studioCardWords') + '</h4>' + '<label class="lbl" for="studioBulkWords">' + T('studioBulkWords') + '</label>' +
    '<p id="studioWordCountPill" class="studio-word-count-pill" role="status" aria-live="polite">' + esc(wordCountPillText(names.length)) + '</p>' +
+   '<div class="studio-session-row">' +
+   '<label class="lbl" for="studioSessionNoInput">' + t('sessionNoLabel', 'Session No') + '</label>' +
+   '<input id="studioSessionNoInput" class="input" type="text" maxlength="4" inputmode="numeric" autocomplete="off" value="' + esc(str(ST.sessionNo || liveSessionNo())) + '">' +
+   '<label class="lbl" for="studioSessionTitleInput">' + t('sessionTitleLabel', 'Session Topic / Title') + '</label>' +
+   '<input id="studioSessionTitleInput" class="input" type="text" maxlength="80" autocomplete="off" value="' + esc(str(ST.title || liveSessionTitle())) + '">' +
+   '</div>' +
+   '<p id="studioWordsCountHelper" class="studio-count-helper" role="status" aria-live="polite" data-state="under"></p>' +
    '<textarea id="studioBulkWords" spellcheck="false" rows="6">' + esc(names.join('\n')) + '</textarea>' +
+   '<div class="chip-row studio-util-row">' +
+   btn('btnStudioPasteWords', t('pasteWords', '\ud83d\udccb Paste'), 'btn-ghost') +
+   btn('btnStudioClearWords', t('clearWords', '\ud83e\uddf9 Clear'), 'btn-ghost') +
+   btn('btnStudioConfirmWords', t('confirmWords', '\u2713 Confirm Edited Words'), 'btn-primary') + '</div>' +
+   '<div id="studioLiveChips" class="studio-live-chips" role="list" aria-label="' + esc(t('liveChipsLabel', 'Live word chips')) + '"></div>' +
+   '<p id="studioWordsStatusBanner" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<p id="studioEnrichStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div class="chip-row">' + btn('btnEnrichWords', t('studioEnrich'), 'btn-ghost') +
    btn('btnPreviewWords', t('studioPreview')) + btn('btnPublishWords', t('studioPublish'), 'btn-primary') +
@@ -1192,7 +1209,7 @@
  }
  /* ══ Card 3 — classroom settings */
  function settingsCardMarkup() {
-  return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4">' + T('studioCardSettings') + '</h4>' +
+  return '<section id="studioCardSettings" class="studio-card studio-card-settings">' + '<h4 class="studio-h4"><span class="studio-step-tag">' + t('studioStep3', 'STEP 3 · BROADCAST TO CLASS') + '</span>' + T('studioCardSettings') + '</h4>' +
    '<label class="lbl" for="studioNewPin">' + T('studioPinLabel') + ' — new (4–8 digits)</label>' +
    '<input id="studioNewPin" class="input pin-mask" type="text" inputmode="numeric" autocomplete="off" ' +
    'autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" ' +
@@ -1234,7 +1251,6 @@
  /* R5/SEC-01: while locked the body */
  function lockedMarkup() {
   return '<div id="studioGate" class="studio-gate" role="group" aria-label="' + T('studioPinLabel') + '">' +
-   '<h4>' + T('studioScreenTitle') + '</h4>' +
    '<p class="muted">' + T('studioLocked') + '</p>' +
    '<div class="pin-row">' + '<label class="for-only" for="studioPin">' + T('studioPinLabel') + '</label>' + '<input id="studioPin" class="input pin-mask" type="text" readonly inputmode="none" tabindex="-1" aria-hidden="true" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="8" minlength="4" placeholder="' + T('studioPinLabel') + '">' +
    '<button type="button" class="btn btn-sm" id="pinPadBack" aria-label="Delete last digit">⌫</button>' + '</div>' +
@@ -1353,6 +1369,7 @@
   paintQuickButton();
   paintMasterSteps();
   paintWordManager();
+  if (ST.unlocked) { paintLiveChips(); paintWordsHelper(); }
   paintAiFields();
   placeLecturerBar();
   paintPackDashboard();
@@ -1589,6 +1606,14 @@
    clearStaleEnrichOnDeltas(ST.wordDeltas);
    paintDirtyState();
    scheduleAutoEnrich();
+   paintLiveChips();
+   paintWordsHelper();
+  } else if (id === 'studioSessionNoInput') {
+   ST.sessionNo = str(target.value).replace(/[^0-9]/g, '');
+   ST.dirty = true;
+  } else if (id === 'studioSessionTitleInput') {
+   ST.title = str(target.value);
+   ST.dirty = true;
   } else if (id === 'studioAiKey') {
    var guess = detectProvider(str(target.value));
    if (guess) { ST.aiProvider = guess; var sel = byId('studioAiProvider'); if (sel) sel.value = guess; }
@@ -1723,7 +1748,26 @@
    if (!failed || !failed.key) { msg(t('studioRetryNone'), ''); return; }
    withBusy('btnRetryFailedClip', function (d) { generateClips({ keys: [failed.key] }, function () { d(); }); });
   },
-  btnSaveKeys: function () { withBusy('btnSaveKeys', function (d) { saveKeys(); global.setTimeout(function () { msg(T('studioSavedOk'), 'ok'); d(); }, 1500); }); }
+  btnSaveKeys: function () { withBusy('btnSaveKeys', function (d) { saveKeys(); global.setTimeout(function () { msg(T('studioSavedOk'), 'ok'); d(); }, 1500); }); },
+  /* v0.0.6.e (A): non-destructive chip-grid utilities. */
+  btnStudioPasteWords: function () {
+   pasteInto('studioBulkWords', function (err) {
+    if (!err) { setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk'); }
+    paintLiveChips(); paintWordsHelper();
+   });
+  },
+  btnStudioClearWords: function () {
+   var bulk = byId('studioBulkWords'); if (bulk) bulk.value = '';
+   ST.words = []; ST.rawParsedWords = [];
+   setStudioWords([], 'bulk'); paintLiveChips(); paintWordsHelper();
+   msg(t('wordsCleared', 'Word editor cleared'), '');
+  },
+  btnStudioConfirmWords: function () {
+   ST.wordsConfirmed = true;
+   var b = byId('studioWordsStatusBanner');
+   if (b) { setText(b, t('wordsConfirmedOk', '\u2713 Words confirmed \u2014 ready to Broadcast')); b.setAttribute('data-state', 'ok'); }
+   msg(t('wordsConfirmedOk', '\u2713 Words confirmed \u2014 ready to Broadcast'), 'ok');
+  }
  };
  function onStudioClick(ev) {
   var target = ev && ev.target;
@@ -1737,6 +1781,18 @@
   if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'toggleWmRow') {
    if (ev.preventDefault) ev.preventDefault();
    toggleWmRow(actEl.getAttribute('data-row'));
+   return;
+  }
+  if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'chip-remove') {
+   if (ev.preventDefault) ev.preventDefault();
+   chipRemove(Number(actEl.getAttribute('data-idx')));
+   paintLiveChips(); paintWordsHelper();
+   return;
+  }
+  if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'chip-merge') {
+   if (ev.preventDefault) ev.preventDefault();
+   chipMerge(Number(actEl.getAttribute('data-idx')));
+   paintLiveChips(); paintWordsHelper();
    return;
   }
   var id = ownerId(target, byId('studioAccordion'));
@@ -2680,8 +2736,8 @@ function priorIPAFor(w) {
   if (!sync() || !sync().publishFilesSequential) { clearBusy(); cb(new Error('no_sync')); return { ok: false, reason: 'no_sync' }; }
   var syncRev = nextSyncRev();
   var liveVersion = sync().version ? (sync().version() || {}) : {};
-  var sessionNo = str(opts.sessionNo || liveVersion.session || (sync().sessionNo ? sync().sessionNo() : '8')) || '8';
-  var title = str(opts.title || liveVersion.title || '') || ('Session ' + sessionNo);
+  var sessionNo = str(opts.sessionNo || ST.sessionNo || fieldValue('studioSessionNoInput') || liveVersion.session || (sync().sessionNo ? sync().sessionNo() : '8')) || '8';
+  var title = str(opts.title || ST.title || fieldValue('studioSessionTitleInput') || liveVersion.title || '') || ('Session ' + sessionNo);
   var version = buildVersionPayload(sessionNo, title, syncRev);
   version.payloadFiles = ['data/session.json', 'data/config.json', 'data/elevenlabs-audio.json', 'data/version.json'];
   var session = buildSessionPayload(words, { sessionNo: sessionNo, title: title });
@@ -3733,6 +3789,11 @@ function priorIPAFor(w) {
   for (i = 0; i < parts.length; i++) {
    var line = str(parts[i]).replace(/^\s+|\s+$/g, '');
    if (!line) continue;
+   /* v0.0.6.e (A): strip pasted list numbering (1. / 2) / #03 / 4:) and
+      collapse inner space runs; spaces and hyphens INSIDE a word are never
+      split, so old-fashioned / bus station stay exactly one word. */
+   line = line.replace(/^#\d+[.)]?\s*/, '').replace(/^\d+[.)\]:-]\s*/, '').replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+   if (!line) continue;
    var cols = line.indexOf('|') >= 0 ? line.split('|') : [line];
    var word = str(cols[0]).replace(/^\s+|\s+$/g, '');
    if (!word) continue;
@@ -3754,12 +3815,69 @@ function priorIPAFor(w) {
     rec.p = ''; rec.pos = ''; rec.m = ''; rec.si = ''; rec.s = '';
    }
    out.push(rec);
-   if (out.length >= WORD_CAP) break;
+   /* v0.0.6.e (A): never truncate at 30 — the lecturer sees every extra word
+      as an amber chip so nothing is silently dropped again. */
   }
   return out;
  }
- function setStudioWords(list, source) {
+ 
+function liveSessionNo() { try { return str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') || '8'; } catch (e) { return '8'; } }
+function liveSessionTitle() { try { return str(SDP.Sync && SDP.Sync.sessionTitle ? SDP.Sync.sessionTitle() : ''); } catch (e) { return ''; } }
+function rawParsedFromField() { return parseBulkWords(fieldValue('studioBulkWords') || wordsToText(ST.words)); }
+function currentParsed() { return (ST.rawParsedWords && ST.rawParsedWords.length ? ST.rawParsedWords : rawParsedFromField()).slice(); }
+function wordsHelperState(n) { if (n === 30) return 'ready'; if (n > 30) return 'over'; return 'under'; }
+function paintWordsHelper() {
+  var host = byId('studioWordsCountHelper'); if (!host) return false;
+  var parsed = currentParsed(); var n = parsed.length; var st = wordsHelperState(n); var text = '';
+  if (st === 'ready') text = t('helperReady', '\u2713 30 / 30 words ready');
+  else if (st === 'over') text = t('helperOver', '{n} words detected (need 30) \u2014 tap \u21c4 on a split word to merge it, or tap \u2715 to remove an extra word').replace('{n}', String(n));
+  else text = t('helperUnder', '{n} / 30 words \u2014 add {need} more').replace('{n}', String(n)).replace('{need}', String(30 - n));
+  setText(host, text);
+  host.setAttribute('data-state', st);
+  host.className = 'studio-count-helper is-' + st;
+  return true;
+}
+function paintLiveChips() {
+  var host = byId('studioLiveChips'); if (!host) return false;
+  var parsed = currentParsed(); var html = ''; var i;
+  for (i = 0; i < parsed.length; i++) {
+    var w = str(parsed[i] && parsed[i].w ? parsed[i].w : parsed[i]);
+    var extra = i >= 30 ? ' chip-extra' : '';
+    html += '<span class="chip-word' + extra + '" role="listitem"><b>#' + (i + 1) + '</b> ' + esc(w) +
+     (i < parsed.length - 1 ? ' <button type="button" class="chip-merge" data-action="chip-merge" data-idx="' + i + '" aria-label="' + esc(t('chipMergeLabel', 'Merge with next word')) + '">\u21c4</button>' : '') +
+     ' <button type="button" class="chip-x" data-action="chip-remove" data-idx="' + i + '" aria-label="' + esc(t('chipRemoveLabel', 'Remove word')) + '">\u2715</button></span>';
+  }
+  host.innerHTML = html;
+  var pill = byId('studioWordCountPill');
+  if (pill) {
+    setText(pill, wordCountPillText(Math.min(parsed.length, 30)));
+    pill.setAttribute('data-full', parsed.length >= 30 ? 'true' : 'false');
+    pill.setAttribute('data-state', wordsHelperState(parsed.length));
+  }
+  return true;
+}
+function writeBulkFromParsed(parsed) {
+  var bulk = byId('studioBulkWords'); var arr = []; var i;
+  for (i = 0; i < (parsed || []).length; i++) arr.push(str(parsed[i] && parsed[i].w ? parsed[i].w : parsed[i]));
+  if (bulk) bulk.value = arr.join(', ');
+  setStudioWords(parseBulkWords(fieldValue('studioBulkWords')), 'bulk');
+  try { detectWordDeltas(); } catch (e) {}
+  try { paintDirtyState(); } catch (e) {}
+  try { scheduleAutoEnrich(); } catch (e) {}
+  return true;
+}
+function chipRemove(idx) { var l = currentParsed(); if (!(idx >= 0) || idx >= l.length) return false; l.splice(idx, 1); return writeBulkFromParsed(l); }
+function chipMerge(idx) {
+  var l = currentParsed(); if (!(idx >= 0) || idx + 1 >= l.length) return false;
+  var a = str(l[idx] && l[idx].w ? l[idx].w : l[idx]), b = str(l[idx + 1] && l[idx + 1].w ? l[idx + 1].w : l[idx + 1]);
+  l[idx] = isObj(l[idx]) ? copyParsed(l[idx], a + '-' + b) : { w: a + '-' + b };
+  l.splice(idx + 1, 1);
+  return writeBulkFromParsed(l);
+}
+function copyParsed(src, w) { var o = {}; o.w = w; o.p = str(src.p); o.pos = str(src.pos); o.m = str(src.m); o.si = str(src.si); o.s = str(src.s); return o; }
+function setStudioWords(list, source) {
   ST.words = (Array.isArray(list) ? list : []).slice(0, WORD_CAP);
+  ST.rawParsedWords = Array.isArray(list) ? list.slice() : [];
   var editor = byId('studioWords');
   if (editor) editor.value = wordsToText(ST.words);
   var bulk = byId('studioBulkWords');
@@ -3771,6 +3889,8 @@ function priorIPAFor(w) {
   setText(byId('studioCount'), ST.words.length + ' ' + t('studioWordsCount'));
   setText(byId('costPreviewLine'), costPreviewLine(ST.words));
   paintWordManager();
+  paintLiveChips();
+  paintWordsHelper();
   return ST.words;
  }
  function paintClipTable() {
@@ -3957,6 +4077,11 @@ function priorIPAFor(w) {
   publishBundle: publishBundle,
   sealVaultNow: sealVaultNow,
   parseBulkWords: parseBulkWords,
+  paintLiveChips: paintLiveChips,
+  paintWordsHelper: paintWordsHelper,
+  chipRemove: chipRemove,
+  chipMerge: chipMerge,
+  currentParsed: currentParsed,
   setStudioWords: setStudioWords,
   paintWordManager: paintWordManager,
   paintMasterSteps: paintMasterSteps,

@@ -5,14 +5,14 @@
  * api.elevenlabs.io, api.github.com and raw.githubusercontent.com are never
  * intercepted, never cached and never delayed by this worker. Network-first
  * for the shell and data JSON ({ cache: 'reload' }, 10 s timeout, D3/D4),
-  * cache-first for audio and fonts. v0.0.6.a empties PRESERVE_CACHES, so the
- * stale 'sdp-youdao-v1' (dictionary audio) and 'sdp-audio-clips' caches are
- * purged on upgrade; word audio now comes from the committed Alice pack. */
+  * cache-first for audio and fonts. v0.0.6.f PRESERVES the clip caches
+ * ('sdp-audio-clips' + 'sdp-youdao-v1') across upgrades, so a student
+ * repeating the same session spends 0 KB of mobile data. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.d-s19';
-var SHELL_CACHE = 'sdp-v0.0.6.d-s19-shell';
-var PRESERVE_CACHES = [];
+var SW_VERSION = 'sdp-v0.0.6.f-s21';
+var SHELL_CACHE = 'sdp-v0.0.6.f-s21-shell';
+var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
 var AUDIO_CACHE = CLIP_CACHE;
@@ -46,7 +46,7 @@ function isYoudaoHost(url) {
   return url.indexOf('dict.youdao.com') >= 0 || url.indexOf('/dictvoice') >= 0;
 }
 function isLecturerClipPath(pathname) {
-  return /\/assets\/audio\/session-w/.test(pathname);
+  return /\/assets\/audio\/session-w/.test(pathname) || /\/audio\/elevenlabs\//.test(pathname);
 }
 function isFontOrIcon(url) {
   return /\.(woff2|woff|ttf|png|svg|ico|webp)(\?|$)/i.test(url) || url.indexOf('/assets/fonts/') >= 0;
@@ -185,7 +185,8 @@ self.addEventListener('install', function (event) {
 });
 
 /* Purge every cache-busted '?t=' entry the v0.0.1.d worker left behind (D4),
-   then delete retired caches. v0.0.6.a keeps PRESERVE_CACHES empty, so the stale audio caches are purged too. */
+   then delete retired caches. v0.0.6.f keeps the audio caches alive so a
+   repeated session never re-downloads a single clip. */
 function purgeQueryKeys(cacheName) {
   return caches.open(cacheName).then(function (cache) {
     return cache.keys().then(function (requests) {

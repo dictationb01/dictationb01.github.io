@@ -629,6 +629,10 @@
  function enterWord(index) {
   if (index < 0) index = 0;
   if (index >= E.items.length) { finish(); return; }
+  /* v0.0.6.f (R3 B.2): a rapid Prev/Next/Jump kills the in-flight clip at
+     once — the epoch bump means no dead word can leak into the new beat. */
+  E.epoch += 1;
+  try { if (SDP.Speech) SDP.Speech.stop(); } catch (e) {}
   E.index = index;
   E.finished = false;
   E.paused = false;
@@ -697,6 +701,33 @@
 
  /* D17: the cockpit badges — repeat position, the paused reason banner and
    the Resume button label all live in one painter. */
+
+ /* v0.0.6.e (C): YouTube-style center burst overlay on the clock ring. The
+   literal "Tap to Start" text is gone from the dial; an SVG glyph now
+   scales 0.6 -> 1.18 and fades over 420ms on every play/pause transition. */
+ var lastBurstPhase = '';
+ function burstRing(icon) {
+  var host = byId('ringTapOverlay');
+  if (!host || !host.classList) return false;
+  host.innerHTML = icon === '\u23f8'
+   ? '<svg viewBox="0 0 24 24" width="58" height="58" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#D97706"></circle><circle cx="12" cy="12" r="11" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1"></circle><rect x="7.4" y="7.4" width="3.4" height="9.2" rx="1.2" fill="#FFFFFF"></rect><rect x="13.2" y="7.4" width="3.4" height="9.2" rx="1.2" fill="#FFFFFF"></rect></svg>'
+   : '<svg viewBox="0 0 24 24" width="58" height="58" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#2563EB"></circle><circle cx="12" cy="12" r="11" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1"></circle><path d="M9.6 7.4v9.2l8.2-4.6z" fill="#FFFFFF"></path></svg>';
+  host.classList.remove('is-bursting');
+  void host.offsetWidth;
+  host.classList.add('is-bursting');
+  global.setTimeout(function () { if (host.classList) host.classList.remove('is-bursting'); }, 460);
+  return true;
+ }
+ function burstOnPhase(phase) {
+  if (phase === lastBurstPhase) return;
+  var prev = lastBurstPhase;
+  lastBurstPhase = phase;
+  var icon = '';
+  if (phase === 'listening' || phase === 'writing') icon = '\u25b6';
+  else if (phase === 'paused') icon = '\u23f8';
+  if (!icon) return;
+  if (prev === 'idle' || prev === 'paused' || prev === 'listening' || prev === 'writing') burstRing(icon);
+ }
  function renderBadges() {
   var rep = byId('playerRepeatBadge');
   if (rep) {
@@ -725,18 +756,15 @@
     setBtnIconLabel(btn, 'play', '', t('btnStartDictation', '▶ Start Dictation'));
    }
   }
-  /* v0.0.6.d (D4): the animated Play/Pause affordance inside the clock ring
-     tells a human the ring itself is the tap target. */
-  var afford = byId('ringAffordance');
-  if (afford) {
-   var icon = '▶', label = '';
-   if (E.phase === 'paused') { icon = '▶'; label = t('ringTapResume', 'Tap to Resume'); }
-   else if (E.phase === 'listening' || E.phase === 'writing') { icon = '⏸'; label = t('ringTapPause', 'Tap to Pause'); }
-   else { icon = '▶'; label = t('ringTapStart', 'Tap to Start'); }
-   setText(afford, icon + ' ' + label);
-   afford.setAttribute('data-state', E.phase === 'paused' ? 'paused'
-    : (E.phase === 'listening' || E.phase === 'writing') ? 'live' : 'idle');
+  /* v0.0.6.f (R1): a paused dial wears a soft amber halo — no text inside
+     the dial, the state reads at a glance. */
+  var dial = byId('ringWrap');
+  if (dial && dial.classList) {
+   if (E.phase === 'paused') dial.classList.add('is-paused');
+   else dial.classList.remove('is-paused');
   }
+  burstOnPhase(E.phase);
+  try { if (SDP.Views && SDP.Views.onEngineWordChanged) SDP.Views.onEngineWordChanged(E.index); } catch (e) {}
   return true;
  }
 
@@ -790,6 +818,9 @@
   } else {
    E.phase = 'listening';
    E.epoch += 1;
+   /* v0.0.6.f (R3 B.2): resume invalidates any in-flight cue clip at once so
+     a rapid Pause→Play can never stack two voices on the shared element. */
+   try { if (SDP.Speech) SDP.Speech.stop(); } catch (e0) {}
    E.phaseMs = listenMs();
    E.remainingMs = E.phaseMs;
    E.deadline = now() + E.phaseMs;
@@ -852,7 +883,17 @@
 
  function togglePlayPause() {
   if (E.phase === 'paused') { resume(); return 'resumed'; }
-  if (E.phase === 'idle') { if (E.items.length) enterWord(E.index); return 'started'; }
+  if (E.phase === 'idle') {
+   /* v0.0.6.f (R1): a cold cockpit arms itself from the live word bank, so
+     the dial and the transport behave like a real remote from the FIRST tap. */
+   if (!E.items.length) {
+    var cold = [];
+    try { cold = SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []; } catch (e) { cold = []; }
+    if (cold.length) { start({ mode: settings().mode }); return 'started'; }
+   }
+   if (E.items.length) enterWord(E.index);
+   return 'started';
+  }
   if (E.phase === 'finished') return 'finished';
   pause();
   return 'paused';
@@ -861,6 +902,7 @@
  function repeatWord() {
   var item = current();
   if (!item || !SDP.Speech) return;
+  try { SDP.Speech.stop(); } catch (e0) {}
   try { SDP.Speech.playWord(item.word, {}, noop); } catch (e) {}
  }
 
@@ -1468,6 +1510,7 @@
   start: start,
   stop: stop,
   hardReset: hardReset,
+  burstRing: burstRing,
   bind: bind,
   state: state,
   items: items,

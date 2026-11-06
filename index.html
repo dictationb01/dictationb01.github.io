@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F8FAFC">
-<meta name="description" content="Smart Dictation Player v0.0.6.d — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.f — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -19,7 +19,7 @@
 
 <header id="appHeader">
  <div id="sdpBrand">
-  <!-- v0.0.6.d (D5): custom sapphire/cyan soundwave + nib crest emblem. -->
+  <!-- v0.0.6.e (D5): custom sapphire/cyan soundwave + nib crest emblem. -->
   <svg class="swan" viewBox="0 0 48 32" aria-hidden="true" focusable="false">
    <defs>
     <linearGradient id="sdpLogoGrad" x1="0" y1="0" x2="1" y2="1">
@@ -38,7 +38,8 @@
   <span class="b1badge">CCBE B1</span>
  </div>
  <div class="header-cluster">
-  <span id="sdpVerPill">v0.0.6.d</span>
+  <span id="sdpVerPill">v0.0.6.f</span>
+  <button id="sdpBetaPill" class="hbtn beta-pill" type="button" aria-pressed="false" title="Toggle Beta Preview (?beta in the URL)">Preview</button>
   <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
   <button id="btnStudioQuick" class="hbtn studio-quick" type="button" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
  </div>
@@ -52,24 +53,22 @@
 <div id="sdpLayout">
  <nav id="sdpSideRail" aria-label="Sections">
   <button id="rail-home" type="button" class="rail-btn" data-tab="home" aria-selected="true">
-   <span class="rail-ico" aria-hidden="true"><span data-icon="home"></span></span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-home"><span data-icon="home"></span></span></span>
    <span data-i18n="tabHome">Home</span></button>
   <button id="rail-player" type="button" class="rail-btn" data-tab="player" aria-selected="false">
-   <span class="rail-ico" aria-hidden="true"><span data-icon="play"></span></span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-player"><span data-icon="play"></span></span></span>
    <span data-i18n="tabPlayer">Dictation</span></button>
   <button id="rail-practice" type="button" class="rail-btn" data-tab="practice" aria-selected="false">
-   <span class="rail-ico" aria-hidden="true"><span data-icon="sparkles"></span></span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-practice"><span data-icon="sparkles"></span></span></span>
    <span data-i18n="tabPractice">Practice</span></button>
   <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false">
-   <span class="rail-ico" aria-hidden="true"><span data-icon="list"></span></span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-dict"><span data-icon="list"></span></span></span>
    <span data-i18n="tabWords">30 Words</span></button>
   <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false">
-   <span class="rail-ico" aria-hidden="true">
-    <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
-    </span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-settings"><span data-icon="gear"></span></span></span>
    <span data-i18n="tabSettings">Settings</span></button>
   <button id="rail-studio" type="button" class="rail-btn" data-tab="studio" aria-selected="false">
-   <span class="rail-ico" aria-hidden="true"><span data-icon="cap"></span></span>
+   <span class="rail-ico" aria-hidden="true"><span class="tico tico-studio"><span data-icon="cap"></span></span></span>
    <span data-i18n="tabStudio">Lecturer</span></button>
  </nav>
 
@@ -217,15 +216,39 @@
      <span id="wordPosBadge" class="badge">adj.</span>
     </div>
 
+    <div id="revealWordCard" class="reveal-word-card" hidden>
+     <button id="btnRevealWord" type="button" class="btn btn-ghost btn-reveal"><span data-icon="eye" data-icon-size="18"></span><span class="i18n-label" data-i18n="revealShow"> Show Current Word</span></button>
+     <p id="revealWordText" class="reveal-word-text" aria-live="polite">••••••</p>
+     <div id="revealMeaning" class="reveal-meaning" aria-live="polite">
+      <p class="rm-ipa"><span id="revealIpa">/—/</span><span id="revealPos" class="rm-pos">—</span></p>
+      <p id="revealSi" class="rm-si" lang="si">—</p>
+      <p id="revealEn" class="rm-en">—</p>
+     </div>
+     <span id="revealPausedBadge" class="reveal-paused-badge" hidden>⏸ Paused while viewing word</span>
+    </div>
     <div class="beat">
-     <div class="ring-wrap" id="ringWrap" role="button" tabindex="0" aria-label="Start, pause or resume dictation">
-      <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
-       <circle class="ring-track" cx="40" cy="40" r="34"></circle>
-       <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
-      </svg>
-      <div class="beat-readout">
-       <span id="beatSeconds">08s</span>
-       <span id="ringAffordance" class="ring-affordance" data-state="idle" aria-hidden="true">▶ Tap to Start</span>
+     <div class="orbital" id="orbitalDeck">
+      <div class="orb-west">
+       <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn orb-btn" aria-label="⏮ Prev"><span data-icon="prev" data-icon-size="24"></span></button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
+      </div>
+      <div class="orb-center">
+       <div class="ring-wrap" id="ringWrap" role="button" tabindex="0" aria-label="Start, pause or resume dictation">
+        <svg class="ring" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+         <circle class="ring-track" cx="40" cy="40" r="34"></circle>
+         <circle id="beatRing" cx="40" cy="40" r="34" stroke="#38BDF8" fill="none" stroke-width="6" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
+        </svg>
+        <div class="beat-readout">
+         <span id="beatSeconds">08s</span>
+        </div>
+        <span id="ringTapOverlay" class="ring-tap-overlay" aria-hidden="true"></span>
+       </div>
+      </div>
+      <div class="orb-east">
+       <div class="deck-key"><button id="btnNext" type="button" class="btn deck-btn orb-btn" aria-label="⏭ Next"><span data-icon="next" data-icon-size="24"></span></button><span class="deck-cap" data-i18n="capNext">Next</span></div>
+      </div>
+      <div class="orb-south">
+       <div class="deck-key deck-key-main"><button id="btnPlayPause" type="button" class="btn btn-primary btn-transport deck-btn orb-btn orb-main" data-primary-cta="1" aria-label="⏸ Pause Dictation"><span data-icon="play" data-icon-size="26"></span></button><span class="deck-cap" data-i18n="capPlay">Pause</span></div>
+       <div class="deck-key"><button id="btnReplay" type="button" class="btn deck-btn orb-btn" aria-label=" Replay Word"><span data-icon="volume" data-icon-size="24"></span></button><span class="deck-cap" data-i18n="capReplay">Replay</span></div>
       </div>
      </div>
      <div class="ring-under">
@@ -237,18 +260,11 @@
     <p id="beatStateText" class="beat-state" aria-live="polite">Ready</p>
     <p id="playerPausedBanner" class="paused-banner" role="status" aria-live="polite" data-i18n="pausedBanner" hidden>Paused — Tap Resume to Continue</p>
     <div id="beatStage" class="beat-stage"></div>
-    <!-- Phase 5: a symbol-first transport deck — one glyph, one micro-caption. -->
-    <div class="cockpit-transport transport-deck" id="cockpitTransport">
-     <div class="deck-key"><button id="btnPrev" type="button" class="btn deck-btn" aria-label="⏮ Prev"><span data-icon="prev" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capPrev">Prev</span></div>
-     <div class="deck-key deck-key-main"><button id="btnPlayPause" type="button" class="btn btn-primary btn-transport deck-btn deck-main" data-primary-cta="1" aria-label="⏸ Pause Dictation"><span data-icon="play" data-icon-size="24"></span></button><span class="deck-cap" data-i18n="capPlay">Pause</span></div>
-     <div class="deck-key"><button id="btnReplay" type="button" class="btn deck-btn" aria-label=" Replay Word"><span data-icon="volume" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capReplay">Replay</span></div>
-     <div class="deck-key"><button id="btnNext" type="button" class="btn deck-btn" aria-label="⏭ Next"><span data-icon="next" data-icon-size="22"></span></button><span class="deck-cap" data-i18n="capNext">Next</span></div>
-    </div>
-    <div class="cockpit-controls secondary-controls">
-     <div class="deck-key"><button id="btnRepeat" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Repeat"><span data-icon="repeat" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capRepeat">Repeat</span></div>
-     <div class="deck-key"><button id="btnHint" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Hint"><span data-icon="bulb" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capHint">Hint</span></div>
-     <div class="deck-key"><button id="btnModeSwitch" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Paper / Typing"><span data-icon="edit" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capMode">Mode</span></div>
-     <div class="deck-key"><button id="btnFinish" type="button" class="btn btn-ghost deck-btn deck-btn-sm" aria-label="Finish and check"><span data-icon="check" data-icon-size="20"></span></button><span class="deck-cap" data-i18n="capFinish">Check</span></div>
+    <div class="cockpit-helpers" id="cockpitHelpers" role="group" aria-label="Secondary dictation tools">
+     <button id="btnRepeat" type="button" class="btn btn-ghost helper-pill" aria-label="Repeat"><span data-icon="repeat" data-icon-size="20"></span><span class="i18n-label" data-i18n="capRepeat">Repeat</span></button>
+     <button id="btnHint" type="button" class="btn btn-ghost helper-pill" aria-label="Hint"><span data-icon="bulb" data-icon-size="20"></span><span class="i18n-label" data-i18n="capHint">Hint</span></button>
+     <button id="btnModeSwitch" type="button" class="btn btn-ghost helper-pill" aria-label="Paper / Typing"><span data-icon="edit" data-icon-size="20"></span><span class="i18n-label" data-i18n="capMode">Mode</span></button>
+     <button id="btnFinish" type="button" class="btn btn-ghost helper-pill" aria-label="Finish and check"><span data-icon="check" data-icon-size="20"></span><span class="i18n-label" data-i18n="capFinish">Check</span></button>
     </div>
    </div>
 
@@ -258,7 +274,7 @@
      <button id="boardRepeat" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardRepeat"> Repeat</span></button>
      <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">Next</span></button>
     </div>
-    <details id="boardJumperDrawer" class="board-jumper-drawer">
+    <details id="boardJumperDrawer" class="board-jumper-drawer" aria-hidden="true">
      <summary id="boardJumperToggle" class="btn board-jump-toggle" aria-expanded="false">Jump to Word 1–30 ▾</summary>
      <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
     </details>
@@ -349,7 +365,7 @@
     </section>
 
     <section class="card set-card">
-    <h3 class="set-head" data-i18n="setPacing">1 · Dictation pacing &amp; mode</h3>
+    <h3 class="set-head"><span class="set-squircle set-squircle--timing" aria-hidden="true"><span data-icon="clock" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="setPacing">1 · Dictation pacing &amp; mode</span></h3>
     <p class="lbl" data-i18n="presetHeading">Quick Pacing Presets</p>
     <div id="presetRow" class="pill-row" role="group" aria-label="Quick pacing presets">
       <button type="button" class="pill preset-pill" id="presetBeginner" data-preset="beginner" ><span data-icon="clock" data-icon-size="16"></span><span class="i18n-label" data-i18n="presetBeginner"> Beginner Slow (12s · 4×)</span></button>
@@ -391,7 +407,7 @@
     </section>
 
     <section class="card set-card">
-     <h3 class="set-head" data-i18n="setAudio">2 · Audio &amp; voice</h3>
+     <h3 class="set-head"><span class="set-squircle set-squircle--voice" aria-hidden="true"><span data-icon="volume" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="setAudio">2 · Audio &amp; voice</span></h3>
      <div class="field">
       <label class="lbl" for="setVoiceLock" data-i18n="voiceLockLabel">Voice Persona Lock</label>
       <select id="setVoiceLock" class="input">
@@ -430,7 +446,7 @@
     </section>
 
     <section class="card set-card">
-     <h3 class="set-head" data-i18n="setLangTheme">3 · Language &amp; appearance</h3>
+     <h3 class="set-head"><span class="set-squircle set-squircle--theme" aria-hidden="true"><span data-icon="moon" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="setLangTheme">3 · Language &amp; appearance</span></h3>
      <div class="field">
       <label class="lbl" for="setLang" data-i18n="language">Language</label>
       <select id="setLang" class="input">
@@ -451,7 +467,7 @@
     </section>
 
     <section class="card set-card">
-     <h3 class="set-head" data-i18n="setProgress">4 · Progress &amp; offline storage</h3>
+     <h3 class="set-head"><span class="set-squircle set-squircle--cache" aria-hidden="true"><span data-icon="download" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="setProgress">4 · Progress &amp; offline storage</span></h3>
      <div class="chip-row">
       <button id="btnExportBackup" type="button" class="btn btn-sm" data-i18n="exportBackup">Export backup</button>
       <button id="btnImportBackup" type="button" class="btn btn-sm" data-i18n="importBackup">Import backup</button>
@@ -468,11 +484,11 @@
     </section>
 
     <section id="aboutCard" class="card set-card about-card">
-     <h3 class="set-head" data-i18n="aboutTitle">5 · About this app</h3>
+     <h3 class="set-head"><span class="set-squircle set-squircle--cloud" aria-hidden="true"><span data-icon="cap" data-icon-size="16"></span></span><span class="i18n-label" data-i18n="aboutTitle">5 · About this app</span></h3>
      <p class="about-line" data-i18n="aboutBlurb">A free, offline-first dictation trainer for one class — no accounts, no ads, no tracking.</p>
      <p class="about-line about-audience" data-i18n="aboutAudience">Built for the CCBE Galle Branch — B1 English Class, Sri Lanka.</p>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.d</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.f</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-05</span></li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
@@ -486,8 +502,12 @@
   </section>
 
   <section class="screen" id="screen-studio" aria-label="Lecturer Admin Studio">
-   <h2 class="card-title screen-title" ><span data-icon="cap" data-icon-size="20"></span><span class="i18n-label" data-i18n="studioScreenTitle"> Lecturer Admin Studio</span></h2>
-   <p class="muted" data-i18n="studioScreenSub">Three numbered steps: keys and the 34-clip voice pack, the 30-word session editor, and the classroom settings broadcast.</p>
+   <h2 class="card-title screen-title" ><span class="set-squircle set-squircle--studio" aria-hidden="true"><span data-icon="cap" data-icon-size="20"></span></span><span class="i18n-label" data-i18n="studioScreenTitle"> Lecturer Admin Studio</span></h2>
+   <p class="muted" data-i18n="studioScreenSub">Unlock with the lecturer PIN — paste 30 words, check the session number, then broadcast to every classroom device.</p>
+   <div id="sdpStudioOfflineCard" class="studio-offline-card" role="region" aria-live="polite" hidden>
+    <h3 class="studio-offline-title" data-i18n="studioOfflineTitle">Lecturer Studio needs the internet</h3>
+    <p class="studio-offline-body" data-i18n="studioOfflineBody">Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.</p>
+   </div>
    <div id="studioSyncDock" class="studio-sync-dock">
     <div id="lecturerSyncBar" class="lecturer-sync-bar" role="region" aria-live="polite" hidden>
      <button type="button" class="btn btn-go" id="btnSyncClassSettings" ><span data-icon="sync" data-icon-size="16"></span><span class="i18n-label" data-i18n="lecturerSyncBar"> Broadcast Current Pacing &amp; Settings (Fast Exam 5s · 2×) to All Classroom Devices</span></button>
@@ -506,16 +526,16 @@
 
 <nav id="tabbar" aria-label="Sections">
  <button id="tab-home" type="button" class="tab" data-tab="home" aria-selected="true">
-  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
+  <span class="tab-ico tico tico-home" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg></span>
   <span data-i18n="tabHome">Home</span></button>
  <button id="tab-player" type="button" class="tab" data-tab="player" aria-selected="false">
-  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+  <span class="tab-ico tico tico-player" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
   <span data-i18n="tabPlayer">Dictation</span></button>
  <button id="tab-practice" type="button" class="tab" data-tab="practice" aria-selected="false">
-  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
+  <span class="tab-ico tico tico-practice" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.9 2.6 2.1.9-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15z"/></svg></span>
   <span data-i18n="tabPractice">Practice</span></button>
  <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false">
-  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
+  <span class="tab-ico tico tico-dict" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
   <span data-i18n="tabWords">30 Words</span></button>
  <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false">
   <span class="tab-ico" aria-hidden="true">
@@ -525,7 +545,7 @@
    </span>
   <span data-i18n="tabSettings">Settings</span></button>
  <button id="tab-studio" type="button" class="tab" data-tab="studio" aria-selected="false">
-  <span class="tab-ico" aria-hidden="true"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
+  <span class="tab-ico tico tico-studio" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4L1 9l11 5 9-4.1V15h2V9L12 4zM5 13.5V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2-7-3.2z"/></svg></span>
   <span data-i18n="tabStudio">Lecturer</span></button>
 </nav>
 
@@ -566,10 +586,19 @@
 </div>
 
 <div id="sdpDataToast" class="toast toast-hidden" role="status" aria-live="polite"></div>
+<button id="sdpStalePill" class="stale-pill" type="button" hidden>⚠ Using older word list — Tap here to refresh</button>
+<div id="sdpUpdateCard" class="update-card" role="region" aria-live="polite" hidden>
+ <p id="sdpUpdateText" class="update-text"></p>
+ <div id="sdpUpdateBar" class="update-bar" hidden><i></i></div>
+ <div class="update-actions">
+  <button id="sdpUpdateNowBtn" type="button" class="btn btn-primary btn-sm" hidden data-i18n="updateNow">Update Now (OK)</button>
+  <button id="sdpUpdateLaterBtn" type="button" class="btn btn-ghost btn-sm" hidden data-i18n="updateLater">Later</button>
+ </div>
+</div>
 
 <script>
 (function () {
- var TARGET = '0.0.6.d';
+ var TARGET = '0.0.6.f';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

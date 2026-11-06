@@ -32,7 +32,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         w.localStorage.setItem('sdp.pin_rev_guard', '1');
       },
       files: (() => {
@@ -57,7 +57,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
@@ -79,7 +79,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
@@ -98,7 +98,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } });
     /* R7: use a PIN that is NOT the master recovery code, so the lockout
        assertions below still see a plain refusal. */
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
@@ -127,7 +127,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
   // always opens a recovery session, even while the PIN pad is locked out.
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } });
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
@@ -158,13 +158,13 @@ const sinhala = /[\u0D80-\u0DFF]/;
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.g');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.h');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -175,7 +175,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
@@ -255,7 +255,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -293,7 +293,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -334,7 +334,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         /* The student touched every classroom key — the lecturer still wins. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
@@ -369,7 +369,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.g'); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -386,7 +386,7 @@ const sinhala = /[\u0D80-\u0DFF]/;
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
@@ -532,6 +532,97 @@ const sinhala = /[\u0D80-\u0DFF]/;
       app.byId('settingsLecturerBanner') !== null && app.qa('#screen-settings .studio-card').length === 0 &&
       !app.byId('screen-settings').contains(app.byId('studioBody')),
       app.byId('settingsLecturerBanner').textContent.slice(0, 60));
+    app.close();
+  }
+
+  /* ── G3.12 — v0.0.6.h critical fixes in the jsdom behavioural layer ────
+     contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h CF1 (clock state machine) */
+  {
+    const app = await createApp({
+      before(w) {
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
+      }
+    });
+    await app.settle(2);
+
+    /* CF1: one cold ring tap fires togglePlayPause EXACTLY once (the v0.0.5.b
+       morphe relay used to synthesise a second #btnPlayPause click). */
+    let ringFires = 0;
+    {
+      /* jsdom boots views through DOMContentLoaded, which chains
+         Engine.bind(); make sure the transport listeners exist first. */
+      try { if (app.SDP.Engine && app.SDP.Engine.bind) app.SDP.Engine.bind(); } catch (e) {}
+      const w0 = app.w;
+      /* one physical ring tap must toggle the engine EXACTLY once. The v0.0.5.b
+         morphe relay used to synthesise a second #btnPlayPause click, so one
+         tap landed as start + instant pause. Detect by phase trajectory: a
+         single toggle leaves the beat RUNNING (listening); a double-fire ends
+         PAUSED on the first word. */
+      w0.document.getElementById('ringWrap').dispatchEvent(new w0.MouseEvent('click', { bubbles: true }));
+      await app.settle(1);
+      const phase = app.SDP.Engine.state();
+      const paused = app.SDP.Engine.isPaused();
+      ringFires = (paused === true) ? 2 : ((phase === 'listening' || phase === 'writing') ? 1 : 0);
+    }
+    check('G3.12a one ring tap fires togglePlayPause exactly once (no double bind)',
+      ringFires === 1, ringFires + ' calls');
+
+    /* CF1 cold-start: the cold cockpit arms itself from every word source. */
+    const cold = (() => {
+      const E = app.SDP.Engine;
+      return { active: E.isActive(), paused: E.isPaused(), phase: E.state(), items: E.items().length };
+    })();
+    check('G3.12b the cold ring tap starts Word #1 from the live bank',
+      cold.active === true && cold.items === 30, JSON.stringify(cold));
+
+    /* CF1 Case B: pause during writing freezes; resume restores exactly. */
+    let started = false;
+    {
+      /* with the harness's fake clock, drive the beat forward until the
+         listening handoff opens the writing window (or 40 simulated seconds) */
+      for (let i = 0; i < 160 && !started; i++) {
+        await app.settle(3);
+        started = app.SDP.Engine.state() === 'writing';
+      }
+    }
+    if (!started) {
+      check('G3.12c dictation reaches the writing window', false, 'timeout');
+    } else {
+      const frozen = (() => {
+        app.SDP.Engine.pause('user');
+        const E = app.SDP.Engine;
+        return { paused: E.isPaused(), phase: E.state(), remainingMs: E.config().remainingMs };
+      })();
+      check('G3.12c pause during writing freezes the beat',
+        frozen.paused === true && frozen.phase === 'paused' && frozen.remainingMs > 0, JSON.stringify(frozen));
+      await app.settle(3);
+      const still = app.SDP.Engine.isPaused();
+      check('G3.12d the clock stays frozen while paused (writing)', still === true, String(still));
+      const resumedOk = (() => {
+        app.SDP.Engine.resume();
+        const E = app.SDP.Engine;
+        return { active: E.isActive(), paused: E.isPaused(), phase: E.state() };
+      })();
+      check('G3.12e resume restores the same writing beat without a reset',
+        resumedOk.active === true && resumedOk.paused === false && resumedOk.phase === 'writing', JSON.stringify(resumedOk));
+    }
+
+    /* CF1 Case C: the reveal auto-pause; the ring tap resumes and re-hides. */
+    const revealed = (() => {
+      const E = app.SDP.Engine;
+      if (!E.isActive() && !E.isPaused()) E.togglePlayPause();
+      E.pause('reveal');
+      return E.isPaused();
+    })();
+    check('G3.12f pause("reveal") pauses for the reveal card', revealed === true, String(revealed));
+    const backFromReveal = (() => {
+      app.SDP.Engine.togglePlayPause();
+      const E = app.SDP.Engine;
+      return { paused: E.isPaused(), active: E.isActive() };
+    })();
+    check('G3.12g the ring tap after a reveal resumes cleanly',
+      backFromReveal.paused === false && backFromReveal.active === true, JSON.stringify(backFromReveal));
     app.close();
   }
 

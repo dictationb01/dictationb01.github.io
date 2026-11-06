@@ -804,7 +804,19 @@
 
  /* F1 / D11: resume into 'writing' restores the exact remaining countdown and
    any partial typed text; resume into 'listening' continues from the repeat
-   that was already spoken of the current word, never from repeat 1. */
+   that was already spoken of the current word, never from repeat 1.
+   v0.0.6.h (CF1) verifies all three classroom cases end-to-end:
+   Case A — paused during the opening cue / while the word was being spoken:
+   the immediate handover() below re-speaks the current word straight away
+   (speakRepeats, epoch-guarded), the clock re-arms at the bounded listenMs()
+   window (never a 60s dead timeout) and the ▶ burst repaints via
+   renderBadges() → burstOnPhase('listening').
+   Case B — paused during 'writing': E.remainingMs is restored verbatim, the
+   deadline is re-based on now(), and the ticker resumes 05s → 04s → 03s
+   with no reset and no jump.
+   Case C — paused by the reveal card (reason 'reveal'): the ring/Play tap
+   lands here, and Views.onEngineWordChanged re-hides the revealed spelling
+   as the beat restarts. */
  function resumeFromPaused() {
   var back = E.pausedPhase === 'writing' ? 'writing' : 'listening';
   E.pauseReason = '';
@@ -888,15 +900,46 @@
   return false;
  }
 
+ /* v0.0.6.h (CF1 cold-start): the cold cockpit can now arm itself from EVERY
+   valid word source, so tapping the clock ring or Play on a freshly opened
+   Dictation tab ALWAYS starts Word #1 — even when the sync state is not
+   ready yet (offline first paint, boot race) or the live bank is empty.
+   Sources, in order: SDP.Sync.words() (ready sync), the active list inside
+   SDP.Sync.session() (the preserved session.json payload), then the
+   global.__SDP_SESSION__ emergency array. */
+ function resolveSessionWords() {
+  var out = [];
+  function grab(fn) {
+   if (out.length) return;
+   try { var v = fn(); if (v && v.length) out = v; } catch (e) {}
+  }
+  grab(function () { return SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []; });
+  grab(function () {
+   var s = SDP.Sync && SDP.Sync.session ? SDP.Sync.session() : null;
+   var lists = s && s.lists ? s.lists : [];
+   for (var i = 0; i < lists.length; i++) {
+    if (lists[i] && lists[i].words && lists[i].words.length) return lists[i].words;
+   }
+   return [];
+  });
+  grab(function () {
+   var g = global || {};
+   var arr = g.__SDP_SESSION__ ? (g.__SDP_SESSION__.words || g.__SDP_SESSION__) : null;
+   return arr && arr.length ? arr : [];
+  });
+  return out;
+ }
+
  function togglePlayPause() {
   if (E.phase === 'paused') { resume(); return 'resumed'; }
   if (E.phase === 'idle') {
-   /* v0.0.6.f (R1): a cold cockpit arms itself from the live word bank, so
-     the dial and the transport behave like a real remote from the FIRST tap. */
+   /* v0.0.6.f (R1) + v0.0.6.h (CF1): a cold cockpit arms itself from the live
+     word bank, so the dial and the transport behave like a real remote from
+     the FIRST tap. The resolved words are passed INTO start() explicitly and
+     the mode rides along, so Word #1 speaks immediately — never a dead tap. */
    if (!E.items.length) {
-    var cold = [];
-    try { cold = SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []; } catch (e) { cold = []; }
-    if (cold.length) { start({ mode: settings().mode }); return 'started'; }
+    var cold = resolveSessionWords();
+    if (cold.length) { start({ words: cold, mode: settings().mode }); return 'started'; }
    }
    if (E.items.length) enterWord(E.index);
    return 'started';

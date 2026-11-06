@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-/* Beta-channel + native-dark-mode proof captures for the v0.0.6.g report. */
+/* Beta-channel + native-dark-mode proof captures for the v0.0.6.h report. */
 const path = require('node:path');
 const fs = require('node:fs');
 const { chromium } = require('playwright-core');
@@ -30,7 +30,7 @@ async function launch() {
     });
     await ctx.addInitScript((o) => {
       try {
-        localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+        localStorage.setItem('sdp.guide_seen', '0.0.6.h');
         const s = JSON.parse(localStorage.getItem('sdp.settings') || '{}');
         if (o && o.dark) s.theme = 'dark';
         localStorage.setItem('sdp.settings', JSON.stringify(s));

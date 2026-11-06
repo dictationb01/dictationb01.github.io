@@ -76,12 +76,12 @@
       },
       {
         "w": "advertisement",
-        "p": "/ˈædvətɪsement/",
-        "pos": "n.",
-        "m": "A advertisement.",
+        "p": "/ədˈvɜːtɪsmənt/",
+        "pos": "noun.",
+        "m": "A commercial solicitation designed to sell some commodity, service or similar.",
         "si": "වෙළඳ දැන්වීම",
-        "s": "We saw a advertisement near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+        "s": "Companies try to sell their products using advertisements in form of placards, television spots and print publications.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/advertisement-us.mp3"
       },
       {
         "w": "audience",
@@ -95,8 +95,8 @@
       {
         "w": "bestseller",
         "p": "/ˈbestselə/",
-        "pos": "n.",
-        "m": "A bestseller.",
+        "pos": "noun.",
+        "m": "A book or other product that has sold in large numbers.",
         "si": "වැඩියෙන් අලෙවි වන",
         "s": "We saw a bestseller near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
@@ -112,9 +112,9 @@
       },
       {
         "w": "celebrity",
-        "p": "/ˈkelebrɪtɪ/",
-        "pos": "n.",
-        "m": "A celebrity.",
+        "p": "/sɪˈlɛbɹɪti/",
+        "pos": "noun.",
+        "m": "A rite or ceremony.",
         "si": "කීර්තිමත්",
         "s": "We saw a celebrity near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
@@ -130,12 +130,12 @@
       },
       {
         "w": "circus",
-        "p": "/ˈkɜːkʌs/",
-        "pos": "n.",
-        "m": "A circus.",
+        "p": "/ˈsɜːkəs/",
+        "pos": "noun.",
+        "m": "A traveling company of performers that may include acrobats, clowns, trained animals, and other novelty acts, that gives shows usually in a circular tent.",
         "si": "සර්කස්",
-        "s": "We saw a circus near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+        "s": "The circus will be in town next week.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/circus-us.mp3"
       },
       {
         "w": "classical music",
@@ -148,12 +148,12 @@
       },
       {
         "w": "comedy",
-        "p": "/ˈkɒmedɪ/",
-        "pos": "adj.",
-        "m": "Having the quality of being comedy.",
+        "p": "/ˈkɒmədi/",
+        "pos": "noun.",
+        "m": "A choric song of celebration or revel, especially in Ancient Greece.",
         "si": "විකට",
-        "s": "The story was very comedy to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+        "s": "Why would you be watching comedy when there are kids starving right now?",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/comedy-us.mp3"
       },
       {
         "w": "competition",
@@ -193,21 +193,21 @@
       },
       {
         "w": "documentary",
-        "p": "/ˈdɒkʌmentɑːɪ/",
-        "pos": "adj.",
-        "m": "Having the quality of being documentary.",
+        "p": "/ˌdɒk.jəˈmɛn.tɹi/",
+        "pos": "noun.",
+        "m": "A film, TV program, publication etc. which presents a social, political, scientific or historical subject in a factual or informative manner.",
         "si": "වාර්තාමය",
         "s": "The story was very documentary to read.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
       },
       {
         "w": "drawing",
-        "p": "/ˈdrɔːɪŋ/",
-        "pos": "v.",
-        "m": "To drawing (something).",
+        "p": "/ˈdɹɔ.(w)ɪŋ(ɡ)/",
+        "pos": "verb.",
+        "m": "To move or develop something.",
         "si": "ඇඳීම",
-        "s": "They drawing together every weekend.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+        "s": "She had to draw upon her experience to solve the problem.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
       },
       {
         "w": "exhibition",
@@ -296,7 +296,7 @@
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.6.h",
+      "version": "0.0.6.j",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -358,12 +358,12 @@
         },
         {
           "w": "advertisement",
-          "p": "/ˈædvətɪsement/",
-          "pos": "n.",
-          "m": "A advertisement.",
+          "p": "/ədˈvɜːtɪsmənt/",
+          "pos": "noun.",
+          "m": "A commercial solicitation designed to sell some commodity, service or similar.",
           "si": "වෙළඳ දැන්වීම",
-          "s": "We saw a advertisement near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+          "s": "Companies try to sell their products using advertisements in form of placards, television spots and print publications.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/advertisement-us.mp3"
         },
         {
           "w": "audience",
@@ -377,8 +377,8 @@
         {
           "w": "bestseller",
           "p": "/ˈbestselə/",
-          "pos": "n.",
-          "m": "A bestseller.",
+          "pos": "noun.",
+          "m": "A book or other product that has sold in large numbers.",
           "si": "වැඩියෙන් අලෙවි වන",
           "s": "We saw a bestseller near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
@@ -394,9 +394,9 @@
         },
         {
           "w": "celebrity",
-          "p": "/ˈkelebrɪtɪ/",
-          "pos": "n.",
-          "m": "A celebrity.",
+          "p": "/sɪˈlɛbɹɪti/",
+          "pos": "noun.",
+          "m": "A rite or ceremony.",
           "si": "කීර්තිමත්",
           "s": "We saw a celebrity near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
@@ -412,12 +412,12 @@
         },
         {
           "w": "circus",
-          "p": "/ˈkɜːkʌs/",
-          "pos": "n.",
-          "m": "A circus.",
+          "p": "/ˈsɜːkəs/",
+          "pos": "noun.",
+          "m": "A traveling company of performers that may include acrobats, clowns, trained animals, and other novelty acts, that gives shows usually in a circular tent.",
           "si": "සර්කස්",
-          "s": "We saw a circus near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+          "s": "The circus will be in town next week.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/circus-us.mp3"
         },
         {
           "w": "classical music",
@@ -430,12 +430,12 @@
         },
         {
           "w": "comedy",
-          "p": "/ˈkɒmedɪ/",
-          "pos": "adj.",
-          "m": "Having the quality of being comedy.",
+          "p": "/ˈkɒmədi/",
+          "pos": "noun.",
+          "m": "A choric song of celebration or revel, especially in Ancient Greece.",
           "si": "විකට",
-          "s": "The story was very comedy to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+          "s": "Why would you be watching comedy when there are kids starving right now?",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/comedy-us.mp3"
         },
         {
           "w": "competition",
@@ -475,21 +475,21 @@
         },
         {
           "w": "documentary",
-          "p": "/ˈdɒkʌmentɑːɪ/",
-          "pos": "adj.",
-          "m": "Having the quality of being documentary.",
+          "p": "/ˌdɒk.jəˈmɛn.tɹi/",
+          "pos": "noun.",
+          "m": "A film, TV program, publication etc. which presents a social, political, scientific or historical subject in a factual or informative manner.",
           "si": "වාර්තාමය",
           "s": "The story was very documentary to read.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
         },
         {
           "w": "drawing",
-          "p": "/ˈdrɔːɪŋ/",
-          "pos": "v.",
-          "m": "To drawing (something).",
+          "p": "/ˈdɹɔ.(w)ɪŋ(ɡ)/",
+          "pos": "verb.",
+          "m": "To move or develop something.",
           "si": "ඇඳීම",
-          "s": "They drawing together every weekend.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+          "s": "She had to draw upon her experience to solve the problem.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
         },
         {
           "w": "exhibition",
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T04:45:57.854Z",
+  "updatedAt": "2026-11-06T11:10:31.612Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 40,
+  "settingsRev": 41,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1793940357853,
+  "syncRev": 1794100000001,
   "words": [
     {
       "w": "entertainment",
@@ -1246,12 +1246,12 @@
     },
     {
       "w": "advertisement",
-      "p": "/ˈædvətɪsement/",
-      "pos": "n.",
-      "m": "A advertisement.",
+      "p": "/ədˈvɜːtɪsmənt/",
+      "pos": "noun.",
+      "m": "A commercial solicitation designed to sell some commodity, service or similar.",
       "si": "වෙළඳ දැන්වීම",
-      "s": "We saw a advertisement near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+      "s": "Companies try to sell their products using advertisements in form of placards, television spots and print publications.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/advertisement-us.mp3"
     },
     {
       "w": "audience",
@@ -1265,8 +1265,8 @@
     {
       "w": "bestseller",
       "p": "/ˈbestselə/",
-      "pos": "n.",
-      "m": "A bestseller.",
+      "pos": "noun.",
+      "m": "A book or other product that has sold in large numbers.",
       "si": "වැඩියෙන් අලෙවි වන",
       "s": "We saw a bestseller near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
@@ -1282,9 +1282,9 @@
     },
     {
       "w": "celebrity",
-      "p": "/ˈkelebrɪtɪ/",
-      "pos": "n.",
-      "m": "A celebrity.",
+      "p": "/sɪˈlɛbɹɪti/",
+      "pos": "noun.",
+      "m": "A rite or ceremony.",
       "si": "කීර්තිමත්",
       "s": "We saw a celebrity near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
@@ -1300,12 +1300,12 @@
     },
     {
       "w": "circus",
-      "p": "/ˈkɜːkʌs/",
-      "pos": "n.",
-      "m": "A circus.",
+      "p": "/ˈsɜːkəs/",
+      "pos": "noun.",
+      "m": "A traveling company of performers that may include acrobats, clowns, trained animals, and other novelty acts, that gives shows usually in a circular tent.",
       "si": "සර්කස්",
-      "s": "We saw a circus near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+      "s": "The circus will be in town next week.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/circus-us.mp3"
     },
     {
       "w": "classical music",
@@ -1318,12 +1318,12 @@
     },
     {
       "w": "comedy",
-      "p": "/ˈkɒmedɪ/",
-      "pos": "adj.",
-      "m": "Having the quality of being comedy.",
+      "p": "/ˈkɒmədi/",
+      "pos": "noun.",
+      "m": "A choric song of celebration or revel, especially in Ancient Greece.",
       "si": "විකට",
-      "s": "The story was very comedy to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+      "s": "Why would you be watching comedy when there are kids starving right now?",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/comedy-us.mp3"
     },
     {
       "w": "competition",
@@ -1363,21 +1363,21 @@
     },
     {
       "w": "documentary",
-      "p": "/ˈdɒkʌmentɑːɪ/",
-      "pos": "adj.",
-      "m": "Having the quality of being documentary.",
+      "p": "/ˌdɒk.jəˈmɛn.tɹi/",
+      "pos": "noun.",
+      "m": "A film, TV program, publication etc. which presents a social, political, scientific or historical subject in a factual or informative manner.",
       "si": "වාර්තාමය",
       "s": "The story was very documentary to read.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
     },
     {
       "w": "drawing",
-      "p": "/ˈdrɔːɪŋ/",
-      "pos": "v.",
-      "m": "To drawing (something).",
+      "p": "/ˈdɹɔ.(w)ɪŋ(ɡ)/",
+      "pos": "verb.",
+      "m": "To move or develop something.",
       "si": "ඇඳීම",
-      "s": "They drawing together every weekend.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+      "s": "She had to draw upon her experience to solve the problem.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drawing-us.mp3"
     },
     {
       "w": "exhibition",

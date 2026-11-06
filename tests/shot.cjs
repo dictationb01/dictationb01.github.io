@@ -40,7 +40,7 @@ async function newPage(browser, vp, lang) {
   const page = await ctx.newPage();
   await page.addInitScript((l) => {
     try {
-      localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+      localStorage.setItem('sdp.guide_seen', '0.0.6.i');
       const s = JSON.parse(localStorage.getItem('sdp.settings') || '{}');
       s.lang = l; s.theme = 'light';
       localStorage.setItem('sdp.settings', JSON.stringify(s));

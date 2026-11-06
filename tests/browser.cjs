@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.i'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.i');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -156,12 +156,18 @@ async function bootSettings(page, settings) {
       check('G5.4b each card shows IPA, POS, English, Sinhala, sentence and Play', Object.values(cardFields).every(Boolean), JSON.stringify(cardFields));
       const search = await page.evaluate(async () => {
         const input = document.getElementById('dictSearch');
-        input.value = 'important';
+        /* v0.0.6.i: search for word #1 of the LIVE payload. The classroom word
+           list is lecturer-owned and republished freely, so a hardcoded query
+           would silently stop matching. */
+        const first = document.querySelector('#dictList .dict-card .d-w, #dictList .dict-card [data-word], #dictList .dict-card');
+        const query = (window.__SDP_SESSION__ && window.__SDP_SESSION__.words && window.__SDP_SESSION__.words[0] && window.__SDP_SESSION__.words[0].w) ||
+          (window.SDP && window.SDP.Sync && window.SDP.Sync.word && (window.SDP.Sync.word(0) || {}).w) || '';
+        input.value = query;
         input.dispatchEvent(new Event('input'));
         await new Promise((r) => setTimeout(r, 60));
-        return document.querySelectorAll('#dictList .dict-card').length;
+        return { count: document.querySelectorAll('#dictList .dict-card').length, query: query };
       });
-      check('G5.4c search narrows the list instantly', search === 1, search);
+      check('G5.4c search narrows the list instantly', search.count === 1, JSON.stringify(search));
       check('G5.3b no page errors while routing', errors.length === 0, errors.join(' | '));
       errorsAll.push(...errors);
       await context.close();
@@ -392,14 +398,14 @@ async function bootSettings(page, settings) {
       await context.close();
     }
 
-    /* ── 12. v0.0.6.h mobile human-UI law (A1/A2/A3/A6) ──────────────── */
-    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h — mobile-first human UI
+    /* ── 12. v0.0.6.i mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i — mobile-first human UI
     {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.i');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -527,17 +533,20 @@ async function bootSettings(page, settings) {
         parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
       check('G5.12i the live chips render as a 2-3 column grid',
         studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
-      check('G5.12j the v0.0.6.h cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      check('G5.12j the v0.0.6.i cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
       await context.close();
     }
 
-    /* ── 13. the beta-preview channel (?beta) ─────────────────────────── */
-    {
+    /* ── 13. v0.0.6.i CF-UNIFIED-MAIN: ONE permanent main UI, no channel ──── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i CF-UNIFIED-MAIN — the beta
+    // channel, the Preview/Beta switcher pill and the floating stamp are retired
+    // for good; ?beta / #beta / ?b=1 must land on the SAME unified main UI.
+    for (const flag of ['?beta', '#beta', '?b=1', '']) {
       const context = await browser.newContext({ viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.i');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -547,26 +556,32 @@ async function bootSettings(page, settings) {
         if (url.startsWith(server.origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
         return route.abort();
       });
-      await page.goto(server.origin + '/?beta', { waitUntil: 'domcontentloaded' });
+      await page.goto(server.origin + '/' + flag, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(600);
-      const beta = await page.evaluate(() => ({
+      const main = await page.evaluate(() => ({
         channel: document.documentElement.getAttribute('data-sdp-channel'),
-        pill: (document.getElementById('sdpBetaPill') || {}).textContent || '',
-        stampHidden: (document.getElementById('sdpBetaStamp') || {}).hidden,
-        stampText: (document.getElementById('sdpBetaStamp') || {}).textContent || '',
+        betaPill: !!document.getElementById('sdpBetaPill'),
+        betaStamp: !!document.getElementById('sdpBetaStamp'),
+        headerChildren: Array.from(document.querySelectorAll('#appHeader .header-cluster > *, #appHeader .header-actions > *')).map((n) => n.id).filter(Boolean).join(','),
+        verPill: (document.getElementById('sdpVerPill') || {}).textContent || '',
         fixLive: !!document.querySelector('meta[name="darkreader-lock"]') && getComputedStyle(document.getElementById('hintChips')).display === 'none'
       }));
-      check('G5.13a ?beta switches the channel and stamps the sub-version',
-        beta.channel === 'beta' && /BETA/.test(beta.pill) && /0\.0\.6\.h\.a/.test(beta.pill), JSON.stringify(beta));
-      check('G5.13b the floating beta stamp is visible and names both versions',
-        beta.stampHidden === false && /0\.0\.6\.h\.a/.test(beta.stampText) && /0\.0\.6\.h/.test(beta.stampText), JSON.stringify(beta));
-      check('G5.13c the release fixes are live on the beta channel too', beta.fixLive, JSON.stringify(beta));
+      const tag = flag || '(clean url)';
+      check('G5.13a ' + tag + ' renders the unified main UI with zero Beta/Preview switcher',
+        main.betaPill === false && main.betaStamp === false && main.channel === null &&
+        /beta/i.test(main.headerChildren) === false, JSON.stringify(main));
+      check('G5.13b ' + tag + ' the header keeps only the clean main chrome',
+        main.verPill === 'v0.0.6.i' &&
+        /syncBadge/.test(main.headerChildren) && /btnStudioQuick/.test(main.headerChildren) &&
+        /btnLang/.test(main.headerChildren) && /btnTheme/.test(main.headerChildren), JSON.stringify(main));
+      check('G5.13c ' + tag + ' the release fixes are live on the unified main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }
 
-    /* ── 14. v0.0.6.h critical fixes: clock state machine, pinned #tabbar,
+
+    /* ── 14. v0.0.6.i critical fixes: clock state machine, pinned #tabbar,
        the #tab-settings squircle (CF1 / CF2 / CF3) ────────────────────────
-       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h CF1–CF4 */
+       contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i CF1–CF4 */
     for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }]) {
       const tag = viewport.width + 'x' + viewport.height;
       {

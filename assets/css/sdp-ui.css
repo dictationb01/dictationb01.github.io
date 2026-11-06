@@ -1473,13 +1473,13 @@ details[open] .studio-body { max-height: var(--studio-body-h, 2000px); }
   .hero-actions .btn { width: 100%; justify-content: center; }
   .cta-wrap { width: 100%; }
   .cta-wrap .cue { align-self: center; }
-  /* v0.0.6.f (R6): the Preview/Beta switcher stays on the phone header; the
-     version pill, sync badge and the lecturer launcher yield their space. */
+  /* v0.0.6.i (CF-UNIFIED-MAIN): with the Preview/Beta switcher removed the
+     header keeps only the brand, the B1 badge and the guide pill at 360px;
+     the version pill, sync badge and lecturer launcher yield their space. */
   .header-cluster { display: flex; gap: 6px; }
   .header-cluster #sdpVerPill,
   .header-cluster .sync-badge,
   .header-cluster .studio-quick { display: none; }
-  .header-cluster #sdpBetaPill { padding: 6px 12px; font-size: 12px; }
   .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .stat { padding: 10px 6px; }
   .stat strong { font-size: 17px; }
@@ -1812,7 +1812,8 @@ html[data-theme='board'] { color-scheme: dark; }
 /* D5 (v0.0.6.d): the CCBE B1 badge stays visible on every viewport — even
    360x640, where the cluster pill hides but the badge does not. */
 @media (max-width: 400px) {
-  /* v0.0.6.f (R6): only the Preview/Beta switcher survives in the cluster. */
+  /* v0.0.6.i (CF-UNIFIED-MAIN): the unified main header keeps the brand,
+     the B1 badge and the guide pill at 360px. */
   .header-cluster #sdpVerPill,
   .header-cluster .sync-badge,
   .header-cluster .studio-quick { display: none; }
@@ -1867,7 +1868,7 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
 }
 
 
-/* ══ v0.0.6.e — Human-UX layer: burst ring, reveal card, beta/capsule, squircles ══ */
+/* ══ v0.0.6.e — Human-UX layer: burst ring, reveal card, capsule, squircles ══ */
 .board-jumper-drawer{display:none !important}
 .ring-tap-overlay{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0}
 .ring-tap-overlay.is-bursting{animation:sdpRingBurst .45s cubic-bezier(.2,.75,.3,1) forwards}
@@ -1899,7 +1900,6 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
 .rm-pos{color:var(--accent);font-weight:800;padding:1px 10px;border-radius:999px;background:var(--bg-accent-glass);font-size:12.5px}
 .rm-si{margin:0;font-size:17px;font-weight:800;color:var(--text);font-family:var(--font-si)}
 .rm-en{margin:0;font-size:13.5px;font-weight:600;color:var(--text-muted);max-width:46ch}
-.beta-pill{background:#7C3AED;color:#FFF !important}
 .stale-pill{position:fixed;right:10px;bottom:132px;z-index:61;max-width:62vw;padding:10px 14px;border-radius:999px;border:0;background:#F59E0B;color:#04081A !important;font-weight:700;font-size:13px;box-shadow:0 12px 32px rgba(245,158,11,.42);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .update-card{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:60;max-width:420px;width:calc(100vw - 24px);padding:12px 14px;border-radius:16px;background:#0F1420;color:#F8FAFC;box-shadow:0 18px 48px rgba(2,6,23,.45)}
 .update-card .update-text{margin:0 0 8px;font-weight:600}
@@ -2092,14 +2092,7 @@ html[data-theme='light'] .helper-pill .sdp-icon { color: #1D4ED8; }
 .set-squircle--cloud { background: linear-gradient(135deg, #22D3EE, #0E7490); }
 .set-squircle--studio { background: linear-gradient(135deg, #FBBF24, #D97706); }
 
-/* ══ v0.0.6.f — Samsung One-UI update capsule & beta pill ═══════════════ */
-#sdpBetaPill.beta-pill {
-  background: linear-gradient(135deg, #A78BFA, #7C3AED) !important;
-  color: #FFF !important;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(124,58,237,.35);
-}
-#sdpBetaPill.beta-pill[aria-pressed='true'] { background: linear-gradient(135deg, #F59E0B, #D97706) !important; color: #04081A !important; }
+/* ══ v0.0.6.f — Samsung One-UI update capsule ════════════════ */
 .update-card {
   bottom: 84px; padding: 16px 18px; border-radius: 24px;
   background: linear-gradient(160deg, #1E293B, #0F172A);
@@ -2282,18 +2275,6 @@ html[lang='si'] .cockpit-helpers .helper-pill { font-size: 10.5px; }
 .chip-w { font-style: normal; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (min-width: 520px) { .studio-live-chips { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
-/* ══ v0.0.6.g — Architecture 6: beta sub-version stamp (A6) ═══════════════ */
-.beta-stamp {
-  position: fixed; left: 10px; bottom: calc(var(--tabbar-h) + 46px); z-index: 61;
-  padding: 5px 11px; border-radius: 999px;
-  background: linear-gradient(135deg, #7C3AED, #A78BFA);
-  color: #FFFFFF; font-size: 11px; font-weight: 800; letter-spacing: .02em;
-  box-shadow: 0 8px 20px rgba(124,58,237,.35);
-  pointer-events: none; white-space: nowrap;
-}
-@media (min-width: 720px) { .beta-stamp { bottom: 14px; } }
-
-
 /* v0.0.6.g — 30-Word list mobile law: the three action buttons share the card
    width equally instead of overflowing it on 360-412px phones. */
 @media (max-width: 719px) {
@@ -2465,5 +2446,3 @@ html[data-theme='dark'] #screen-settings .checkline input[type='checkbox'] { bac
 /* the About card keeps a calm, premium close */
 .about-card .about-line { padding: 10px 2px 0; }
 
-/* the beta pill / floating stamp never clutter the promoted main screen */
-.beta-stamp { z-index: 90; }

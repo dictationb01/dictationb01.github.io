@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 'use strict';
-/* Beta-channel + native-dark-mode proof captures for the v0.0.6.h report. */
+/* v0.0.6.i (CF-UNIFIED-MAIN) proof captures: the unified permanent Main
+ * Production UI at the clean URL, plus the same proof with ?beta / #beta /
+ * ?b=1 present — the URLs must stay on the unified main UI too, because the
+ * beta channel no longer exists anywhere in the shipped bytes. Native-dark
+ * theme captures stay for the report. */
 const path = require('node:path');
 const fs = require('node:fs');
 const { chromium } = require('playwright-core');
@@ -30,7 +34,7 @@ async function launch() {
     });
     await ctx.addInitScript((o) => {
       try {
-        localStorage.setItem('sdp.guide_seen', '0.0.6.h');
+        localStorage.setItem('sdp.guide_seen', '0.0.6.i');
         const s = JSON.parse(localStorage.getItem('sdp.settings') || '{}');
         if (o && o.dark) s.theme = 'dark';
         localStorage.setItem('sdp.settings', JSON.stringify(s));
@@ -45,9 +49,12 @@ async function launch() {
     await ctx.close();
   }
 
-  await shot('beta-home-360x640', '/?beta', [360, 640]);
-  await shot('beta-player-390x844', '/?beta', [390, 844], { tabPlayer: true });
-  await shot('hash-beta-360x640', '/#beta', [360, 640]);
+  await shot('main-home-360x640', '/', [360, 640]);
+  await shot('main-player-390x844', '/', [390, 844], { tabPlayer: true });
+  /* the retired channel flags must not change anything — same unified main UI */
+  await shot('legacy-beta-query-360x640', '/?beta', [360, 640]);
+  await shot('legacy-hash-beta-360x640', '/#beta', [360, 640]);
+  await shot('legacy-b1-360x640', '/?b=1', [360, 640]);
   await shot('dark-player-360x640', '/', [360, 640], { dark: true, tabPlayer: true });
   await shot('dark-studio-locked-360x640', '/', [360, 640], { dark: true });
   await shot('studio-unlocked-412x915', '/', [412, 915]);

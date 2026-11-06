@@ -200,17 +200,20 @@
   if (E.phase === 'paused') {
    setText(node, t('pausedAtWord', 'Dictation Paused at Word #') + (E.index + 1) +
     ' (' + t('repeatWord', 'Repeat') + ' ' + rep + ' of ' + total + ')' + t('pausedResumeTail', ' — Press Resume Below'));
-   return;
-  }
-  if (E.phase === 'finished') { setText(node, t('finishedBeat', 'Finished — check your answers')); return; }
-  if (E.phase === 'idle') { setText(node, t('readyBeat', 'Ready')); return; }
-  if (E.phase === 'listening') {
+  } else if (E.phase === 'finished') {
+   setText(node, t('finishedBeat', 'Finished — check your answers'));
+  } else if (E.phase === 'idle') {
+   setText(node, t('readyBeat', 'Ready'));
+  } else if (E.phase === 'listening') {
    setText(node, t('listenCarefully', 'Listen Carefully (Repeat ') + rep + ' of ' + total + ')…');
   } else if (E.phase === 'writing') {
    var left = Math.max(0, Math.ceil(E.remainingMs / 1000));
    setText(node, t('writeInBook', 'Write Word #') + (E.index + 1) +
     t('inYourBook', ' in Your Book! (') + left + t('countdownTail', 's countdown)'));
   }
+  /* v0.0.6.i (human-UX repair): paint the phase pill on EVERY path. The old
+     early returns skipped paintPhasePill() for paused/finished/idle, so the
+     pill kept a stale "Listening" chip while the clock stood paused. */
   paintPhasePill();
  }
 
@@ -805,7 +808,7 @@
  /* F1 / D11: resume into 'writing' restores the exact remaining countdown and
    any partial typed text; resume into 'listening' continues from the repeat
    that was already spoken of the current word, never from repeat 1.
-   v0.0.6.h (CF1) verifies all three classroom cases end-to-end:
+   v0.0.6.i verifies all three classroom cases end-to-end:
    Case A — paused during the opening cue / while the word was being spoken:
    the immediate handover() below re-speaks the current word straight away
    (speakRepeats, epoch-guarded), the clock re-arms at the bounded listenMs()
@@ -900,7 +903,7 @@
   return false;
  }
 
- /* v0.0.6.h (CF1 cold-start): the cold cockpit can now arm itself from EVERY
+ /* v0.0.6.i (cold-start): the cold cockpit can now arm itself from EVERY
    valid word source, so tapping the clock ring or Play on a freshly opened
    Dictation tab ALWAYS starts Word #1 — even when the sync state is not
    ready yet (offline first paint, boot race) or the live bank is empty.
@@ -933,7 +936,7 @@
  function togglePlayPause() {
   if (E.phase === 'paused') { resume(); return 'resumed'; }
   if (E.phase === 'idle') {
-   /* v0.0.6.f (R1) + v0.0.6.h (CF1): a cold cockpit arms itself from the live
+   /* v0.0.6.f (R1) + v0.0.6.i: a cold cockpit arms itself from the live
      word bank, so the dial and the transport behave like a real remote from
      the FIRST tap. The resolved words are passed INTO start() explicitly and
      the mode rides along, so Word #1 speaks immediately — never a dead tap. */

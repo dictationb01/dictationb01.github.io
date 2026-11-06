@@ -9,11 +9,9 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
-  /* v0.0.6.h (A6): the beta-preview sub-version of the NEXT release family —
-     the ?beta channel names it for future previews. The perfected v0.0.6.h
-     fixes are now the MAIN production experience; the floating stamp only
-     ever appears when ?beta / #beta / ?b=1 is in the URL. */
-  var BETA_SUBVERSION = '0.0.6.h.a';
+  /* v0.0.6.i (CF-UNIFIED-MAIN): the retired beta-preview sub-version. There
+     is exactly ONE permanent Main Production UI now; no ?beta / #beta / ?b=1
+     channel, no Preview/Beta switcher, no floating stamp. */
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -303,9 +301,9 @@
     ringTapStart: 'Tap to Start',
     ringTapPause: 'Tap to Pause',
     ringTapResume: 'Tap to Resume',
-    /* v0.0.6.e (C/D/E): reveal card, beta channel, update capsule, offline studio, live chips. */
+    /* v0.0.6.e (C/D/E): reveal card, update capsule, offline studio, live chips. */
     revealShow: 'Show Current Word', revealHide: 'Hide Word', revealPausedBadge: '⏸ Paused while viewing word',
-    betaOn: 'BETA', betaOff: 'Stable', betaPreview: 'Preview', betaStalePill: '⚠ Using older word list — Tap here to refresh',
+    stalePillLabel: '⚠ Using older word list — Tap here to refresh',
     updateSyncing: '🔄 Updating — refreshing automatically…', updateAsk: 'New classroom words are ready. Refresh now?',
     updateNow: 'Update Now (OK)', updateLater: 'Later',
     studioOfflineTitle: 'Lecturer Studio needs the internet',
@@ -594,7 +592,7 @@
     ringTapPause: 'විරාමයට ස්පර්ශ කරන්න',
     ringTapResume: 'දිගටම යාමට ස්පර්ශ කරන්න',
     revealShow: 'වත්මන් වචනය පෙන්වන්න', revealHide: 'වචනය සඟවන්න', revealPausedBadge: '⏸ වචනය බලමින් විරාමයි',
-    betaOn: 'බීටා', betaOff: 'ස්ථාවර', betaPreview: 'පෙරදැක්ම', betaStalePill: '⚠ පැරණි වචන ලැයිස්තුව — නැවුම් කිරීමට ස්පර්ශ කරන්න',
+    stalePillLabel: '⚠ පැරණි වචන ලැයිස්තුව — නැවුම් කිරීමට ස්පර්ශ කරන්න',
     updateSyncing: '🔄 නව පන්ති යාවත්කාලීනයක් හමුවිය — මොහොතකින් නැවුම් වෙමින්…', updateAsk: 'නව පන්ති වචන සූදානම්. දැන් නැවුම් කරන්නද?',
     updateNow: 'දැන් යාවත්කාලීන කරන්න (OK)', updateLater: 'පසුව',
     studioOfflineTitle: 'විද්‍යාගාරයට අන්තර්ජාලය අවශ්‍යයි',
@@ -2412,10 +2410,6 @@
     });
     on('btnLang', 'click', toggleLang);
     on('btnRevealWord', 'click', toggleRevealCard);
-    on('sdpBetaPill', 'click', function () {
-      try { global.localStorage.setItem('sdp_beta_preview', betaActive() ? '0' : '1'); } catch (e) {}
-      try { global.location.reload(); } catch (e2) {}
-    });
     on('sdpStalePill', 'click', applyUpdateNow);
     on('sdpUpdateNowBtn', 'click', applyUpdateNow);
     on('sdpUpdateLaterBtn', 'click', dismissUpdateLater);
@@ -2486,7 +2480,7 @@
   }
 
 
-  /* ══ v0.0.6.e (C/D/E) — reveal card, beta channel, update capsule, offline studio ══ */
+  /* ══ v0.0.6.e (C/D/E) — reveal card, update capsule, offline studio ══ */
   function isOfflineNow() {
     return typeof navigator !== 'undefined' && navigator.onLine === false;
   }
@@ -2579,37 +2573,6 @@
     paintRevealCard();
     try { resetBoardReveal(); } catch (e) {}
     paintBoardWord();
-    return true;
-  }
-  function betaActive() {
-    var ls = '';
-    try { ls = str(global.localStorage && global.localStorage.getItem('sdp_beta_preview')); } catch (e) { ls = ''; }
-    var url = '';
-    try { url = str(global.location && global.location.search) + ' ' + str(global.location && global.location.hash); } catch (e2) { url = ''; }
-    if (ls === '1') return true;
-    if (ls === '0') return false;
-    /* v0.0.6.f (R6): ?beta, #beta or a plain ?b=1 all switch the preview on. */
-    return url.indexOf('beta') !== -1 || /[?&]b=1/.test(url);
-  }
-  function applyBetaChannel() {
-    var pill = byId('sdpBetaPill');
-    var on = betaActive();
-    try { doc.documentElement.setAttribute('data-sdp-channel', on ? 'beta' : 'stable'); } catch (e) {}
-    /* v0.0.6.h (A6): the beta channel names its sub-version — the header pill
-       and the floating stamp pin the preview line v0.0.6.h.a and the main
-       release (v0.0.6.h) it rides on. On the clean main URL the stamp stays
-       hidden and the header keeps the sleek v0.0.6.h pill only. */
-    var stamp = byId('sdpBetaStamp');
-    if (stamp) {
-      stamp.hidden = !on;
-      setText(stamp, 'BETA v' + BETA_SUBVERSION + ' / ' + APP_VERSION);
-    }
-    if (!pill) return false;
-    /* v0.0.6.f (R6): the switcher is ALWAYS in the header — one tap flips the
-       channel; the amber state names the running sub-version. */
-    pill.hidden = false;
-    pill.setAttribute('aria-pressed', on ? 'true' : 'false');
-    setText(pill, on ? (t('betaOn', 'BETA') + ' v' + BETA_SUBVERSION) : t('betaPreview', 'Preview'));
     return true;
   }
   function paintUpdateCard(mode) {
@@ -2810,7 +2773,6 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
-    applyBetaChannel();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION);
     setText(byId('aboutVersion'), APP_VERSION);
@@ -2982,8 +2944,6 @@
     toggleRevealCard: toggleRevealCard,
     toggleHintPanel: toggleHintPanel,
     installExtensionShield: installExtensionShield,
-    applyBetaChannel: applyBetaChannel,
-    betaActive: betaActive,
     paintUpdateCard: paintUpdateCard,
     isOfflineNow: isOfflineNow,
     toastText: toastText,

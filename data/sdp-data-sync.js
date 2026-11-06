@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.h';
+  SDP.version = '0.0.6.i';
   SDP.build = '2026-11-06';
-  SDP.ver = 22;
+  SDP.ver = 23;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.h';
-  var SCHEMA = 22;
-  var SETTINGS_REV = 38;
+  var APP_VERSION = '0.0.6.i';
+  var SCHEMA = 23;
+  var SETTINGS_REV = 39;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1336,7 +1336,7 @@
       notify('version-upgrade', { version: String(nextVersion) });
       try {
         var node = doc && doc.getElementById && doc.getElementById('sdpDataToast');
-        /* v0.0.6.h (CF4): the sleek Samsung One-UI progress capsule — a calm
+        /* v0.0.6.i: the sleek Samsung One-UI progress capsule — a calm
            "🔄 Updating to vX — refreshing automatically…" instead of a blunt
            reload line. Idle devices auto-reload cleanly exactly once; the
            sdp_upgraded_to guard (checked above) is G6.4. */

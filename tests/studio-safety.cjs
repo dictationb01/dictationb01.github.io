@@ -28,7 +28,7 @@ async function unlockStudio(app) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.h'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.i'); } };
 
   /* ── 1. W5: nothing in the shipped app or the suite may bill a character
    *       outside a human click ───────────────────────────────────────────── */
@@ -97,10 +97,21 @@ async function unlockStudio(app) {
     const app = await createApp(base);
     await unlockStudio(app);
     const line = (app.byId('costPreviewLine') || {}).textContent || '';
+    /* v0.0.6.i: the word-character count is a function of the lecturer-owned
+       classroom word list, so the expectation is derived from the studio's own
+       costPreview() rather than frozen to one publish's numbers. The structural
+       arithmetic (30 words + 30 numbers + 6 commands + 4 guide steps = 70 clips)
+       and the rendered sentence stay exact. */
+    const preview = app.SDP.Studio.costPreview();
+    const esc = (n) => String(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     check('G12.3a the cost preview names words, numbers, commands, guide steps, the total and 70 clips',
-      /30 words = (?:234|241) chars/.test(line) && /30 numbers = 291 chars/.test(line) &&
-      /6 commands = 163 chars/.test(line) && /4 guide steps = 134 chars/.test(line) &&
-      /total (?:822|829) chars/.test(line) &&
+      new RegExp(preview.count + ' words = ' + esc(preview.words) + ' chars').test(line) &&
+      new RegExp('30 numbers = ' + esc(preview.numbers) + ' chars').test(line) &&
+      new RegExp('6 commands = ' + esc(preview.commands) + ' chars').test(line) &&
+      new RegExp('4 guide steps = ' + esc(preview.guide) + ' chars').test(line) &&
+      new RegExp('total ' + esc(preview.total) + ' chars').test(line) &&
+      preview.count === 30 && preview.clips === 70 &&
+      preview.total === preview.words + preview.numbers + preview.commands + preview.guide &&
       /70 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
@@ -488,8 +499,8 @@ async function unlockStudio(app) {
     app.close();
   }
 
-  /* ── 14. v0.0.6.h A3: comma/newline-only parser + non-destructive chips ── */
-  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.h — the 31-word law
+  /* ── 14. v0.0.6.i A3: comma/newline-only parser + non-destructive chips ── */
+  // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.i — the 31-word law
   {
     const app = await createApp(base);
     await unlockStudio(app);

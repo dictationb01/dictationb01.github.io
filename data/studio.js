@@ -3843,7 +3843,7 @@ function paintLiveChips() {
   for (i = 0; i < parsed.length; i++) {
     var w = str(parsed[i] && parsed[i].w ? parsed[i].w : parsed[i]);
     var extra = i >= 30 ? ' chip-extra' : '';
-    html += '<span class="chip-word' + extra + '" role="listitem"><b>#' + (i + 1) + '</b> ' + esc(w) +
+    html += '<span class="chip-word' + extra + '" role="listitem"><b>#' + (i + 1) + '</b> <i class="chip-w">' + esc(w) + '</i>' +
      (i < parsed.length - 1 ? ' <button type="button" class="chip-merge" data-action="chip-merge" data-idx="' + i + '" aria-label="' + esc(t('chipMergeLabel', 'Merge with next word')) + '">\u21c4</button>' : '') +
      ' <button type="button" class="chip-x" data-action="chip-remove" data-idx="' + i + '" aria-label="' + esc(t('chipRemoveLabel', 'Remove word')) + '">\u2715</button></span>';
   }

@@ -9,6 +9,9 @@
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
     return '0.0.6.d';
   })();
+  /* v0.0.6.g (A6): the beta-preview sub-version of this release family — the
+     ?beta channel stamps it until the fixes are promoted to main. */
+  var BETA_SUBVERSION = '0.0.6.f.a';
 
   function noop() {}
   function str(v) { return v === null || v === undefined ? '' : String(v); }
@@ -706,6 +709,9 @@
     if (doc && doc.body) doc.body.setAttribute('data-theme', theme);
     var meta = doc.querySelector ? doc.querySelector('meta[name="theme-color"]') : null;
     if (meta) meta.setAttribute('content', theme === 'light' ? '#F8FAFC' : (theme === 'board' ? '#000000' : '#0F1420'));
+    /* v0.0.6.g (A1): the color-scheme meta follows the app's own toggle only. */
+    var schemeMeta = doc.querySelector ? doc.querySelector('meta[name="color-scheme"]') : null;
+    if (schemeMeta) schemeMeta.setAttribute('content', theme === 'light' ? 'only light' : 'dark');
     if (!quiet) { try { SDP.Data.saveSettings({ theme: theme, touchedKeys: touchedPatch('theme') }); } catch (e) {} }
     var select = byId('setTheme');
     if (select) select.value = theme;
@@ -2490,14 +2496,14 @@
     try { if (SDP.Engine && SDP.Engine.pause) SDP.Engine.pause('reveal'); } catch (e) {}
     return true;
   }
-  var revealState = { shown: false, pausedFor: false };
+  var revealState = { shown: false, pausedFor: false, meaningOnly: false };
   /* v0.0.6.f (R2): the reveal card carries the full meaning — IPA, part of
      speech, Sinhala and the English gloss — so the student never scrolls. */
   function paintRevealMeaning(w) {
     var host = byId('revealMeaning');
     if (!host) return false;
     var ipa = byId('revealIpa'), pos = byId('revealPos'), si = byId('revealSi'), en = byId('revealEn');
-    if (!revealState.shown || !w) {
+    if (!(revealState.shown || revealState.meaningOnly) || !w) {
       host.hidden = true;
       if (ipa) setText(ipa, '/—/');
       if (pos) setText(pos, '—');
@@ -2532,22 +2538,32 @@
     if (badge) badge.hidden = !(revealState.shown && revealState.pausedFor);
     var cockpitCard = byId('cockpitBar');
     if (cockpitCard && cockpitCard.classList) { if (revealState.shown) cockpitCard.classList.add('reveal-open'); else cockpitCard.classList.remove('reveal-open'); }
-    paintRevealMeaning(revealState.shown ? currentBoardWord() : null);
+    paintRevealMeaning((revealState.shown || revealState.meaningOnly) ? currentBoardWord() : null);
     return true;
   }
   function toggleRevealCard() {
     revealState.shown = !revealState.shown;
     if (revealState.shown) revealState.pausedFor = autoPauseForReveal();
     else revealState.pausedFor = false;
+    if (revealState.shown) revealState.meaningOnly = false;
     paintRevealCard();
     return revealState.shown;
+  }
+  /* v0.0.6.g (A2): the Hint pill opens the meaning panel — IPA, word type and
+     the Sinhala/English gloss — WITHOUT the spelling, so it is a real hint. */
+  function toggleHintPanel() {
+    if (revealState.shown) { toggleRevealCard(); return false; }
+    revealState.meaningOnly = !revealState.meaningOnly;
+    paintRevealCard();
+    return revealState.meaningOnly;
   }
   var lastRevealIdx = -1;
   function onEngineWordChanged(idx) {
     if (idx === lastRevealIdx) {
       /* same word, engine re-rendered: a resumed beat re-hides the reveal */
-      if (engineRunningNow() && revealState.shown) {
+      if (engineRunningNow() && (revealState.shown || revealState.meaningOnly)) {
         revealState.shown = false;
+        revealState.meaningOnly = false;
         revealState.pausedFor = false;
         paintRevealCard();
       }
@@ -2555,6 +2571,7 @@
     }
     lastRevealIdx = idx;
     revealState.shown = false;
+    revealState.meaningOnly = false;
     revealState.pausedFor = false;
     revealState.wordIdx = idx;
     paintRevealCard();
@@ -2576,12 +2593,20 @@
     var pill = byId('sdpBetaPill');
     var on = betaActive();
     try { doc.documentElement.setAttribute('data-sdp-channel', on ? 'beta' : 'stable'); } catch (e) {}
+    /* v0.0.6.g (A6): the beta channel names its sub-version — the header pill
+       and the floating stamp pin the preview line v0.0.6.f.a and the main
+       release (v0.0.6.g) it promotes to. */
+    var stamp = byId('sdpBetaStamp');
+    if (stamp) {
+      stamp.hidden = !on;
+      setText(stamp, 'BETA v' + BETA_SUBVERSION + ' / ' + APP_VERSION);
+    }
     if (!pill) return false;
     /* v0.0.6.f (R6): the switcher is ALWAYS in the header — one tap flips the
        channel; the amber state names the running sub-version. */
     pill.hidden = false;
     pill.setAttribute('aria-pressed', on ? 'true' : 'false');
-    setText(pill, on ? (t('betaOn', 'BETA') + ' v' + APP_VERSION) : t('betaPreview', 'Preview'));
+    setText(pill, on ? (t('betaOn', 'BETA') + ' v' + BETA_SUBVERSION) : t('betaPreview', 'Preview'));
     return true;
   }
   function paintUpdateCard(mode) {
@@ -2742,10 +2767,39 @@
     return true;
   }
 
+  /* v0.0.6.g (A1): re-arm the anti-extension shield once the modules are up.
+     The inline boot script already locked Dark Reader out of the page; this
+     guard removes anything an extension re-injects after DOM ready. */
+  function installExtensionShield() {
+    function shield() {
+      var d = doc.documentElement, h = doc.head, i;
+      var ax = ['data-darkreader-mode', 'data-darkreader-scheme', 'data-darkreader-proxy-injected'];
+      for (i = 0; i < ax.length; i++) if (d.hasAttribute(ax[i])) d.removeAttribute(ax[i]);
+      if (!h) return;
+      var rm = h.querySelectorAll('meta[name="darkreader"]');
+      for (i = 0; i < rm.length; i++) if (rm[i].parentNode) rm[i].parentNode.removeChild(rm[i]);
+      if (!h.querySelector('meta[name="darkreader-lock"]')) {
+        var L = doc.createElement('meta'); L.setAttribute('name', 'darkreader-lock'); h.appendChild(L);
+      }
+      var rs = h.querySelectorAll('style.darkreader,link.darkreader');
+      for (i = 0; i < rs.length; i++) if (rs[i].parentNode) rs[i].parentNode.removeChild(rs[i]);
+    }
+    shield();
+    if (global.MutationObserver && !installExtensionShield._armed) {
+      installExtensionShield._armed = true;
+      try {
+        new global.MutationObserver(function () { shield(); }).observe(doc.documentElement, { attributes: true, attributeFilter: ['data-darkreader-mode', 'data-darkreader-scheme', 'data-darkreader-proxy-injected'] });
+        new global.MutationObserver(function () { shield(); }).observe(doc.head, { childList: true });
+      } catch (e) {}
+    }
+    return true;
+  }
+
   function init() {
     if (initialized) return false;
     initialized = true;
     var conf = settings();
+    installExtensionShield();
     applyTheme(normalizeTheme(conf.theme), true);
     applyLang(conf.lang === 'si' ? 'si' : 'en', true);
     bindShell();
@@ -2921,6 +2975,8 @@
     onWordsRefresh: onWordsRefresh,
     onEngineWordChanged: onEngineWordChanged,
     toggleRevealCard: toggleRevealCard,
+    toggleHintPanel: toggleHintPanel,
+    installExtensionShield: installExtensionShield,
     applyBetaChannel: applyBetaChannel,
     betaActive: betaActive,
     paintUpdateCard: paintUpdateCard,

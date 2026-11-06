@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.f'); } catch (e) {}
+    try { if (seedGuide) localStorage.setItem('sdp.guide_seen', '0.0.6.g'); } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -61,7 +61,7 @@ async function bootSettings(page, settings) {
   const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.f');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.g');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -389,6 +389,178 @@ async function bootSettings(page, settings) {
       })();
       check('G5.9c the /data route honours ?lang=si', si === 'si', si);
       check('G5.9d the /data route throws no page errors', errors.length === 0, errors.join(' | '));
+      await context.close();
+    }
+
+    /* ── 12. v0.0.6.g mobile human-UI law (A1/A2/A3/A6) ──────────────── */
+    // contract: docs/CHANGELOG_LEDGER.md §v0.0.6.g — mobile-first human UI
+    {
+      const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+      await context.addInitScript(() => {
+        window.__SDP_NO_LIVE__ = true;
+        try {
+          localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
+        } catch (e) {}
+      });
+      const page = await context.newPage();
+      await context.route('**/*', (route) => {
+        const url = route.request().url();
+        if (url.startsWith(server.origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
+        return route.abort();
+      });
+      const errors = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      await page.goto(server.origin + '/index.html', { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(600);
+
+      // A1: the light-mode lock ships on every entry point and survives a
+      // simulated Dark Reader injection (attribute + <style class="darkreader">).
+      const lock = await page.evaluate(async () => {
+        const out = {};
+        out.hasLockMeta = !!document.querySelector('meta[name="darkreader-lock"]');
+        out.scheme = (document.querySelector('meta[name="color-scheme"]') || {}).content || '';
+        out.lightSchemeCss = /only light/.test(String(window.getComputedStyle(document.documentElement).colorScheme || ''));
+        // simulate the extension, then let the MutationObserver shield react
+        document.documentElement.setAttribute('data-darkreader-mode', '1');
+        const st = document.createElement('style');
+        st.className = 'darkreader';
+        st.textContent = 'html{filter:invert(1)}';
+        document.head.appendChild(st);
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        out.modeStripped = !document.documentElement.hasAttribute('data-darkreader-mode');
+        out.styleStripped = !document.querySelector('style.darkreader');
+        out.lockReasserted = !!document.querySelector('meta[name="darkreader-lock"]');
+        return out;
+      });
+      check('G5.12a the darkreader-lock + only-light color-scheme ship',
+        lock.hasLockMeta && /only light/.test(lock.scheme), JSON.stringify(lock));
+      check('G5.12b the MutationObserver shield strips an injected Dark Reader layer',
+        lock.modeStripped && lock.styleStripped && lock.lockReasserted, JSON.stringify(lock));
+
+      // A2: paper mode keeps the phone single-screen; the Hint pill opens the
+      // meaning panel without the spelling; revealing auto-pauses.
+      await page.evaluate(() => { document.getElementById('tab-player').click(); });
+      await page.waitForTimeout(300);
+      const paper = await page.evaluate(() => ({
+        mode: document.body.getAttribute('data-sdp-mode'),
+        chips: getComputedStyle(document.getElementById('hintChips')).display,
+        stage: getComputedStyle(document.getElementById('beatStage')).display,
+        helpers: getComputedStyle(document.getElementById('cockpitHelpers')).display
+      }));
+      check('G5.12c paper mode hides the hint chips and the beat stage',
+        paper.mode === 'paper' && paper.chips === 'none' && paper.stage === 'none' && paper.helpers !== 'none', JSON.stringify(paper));
+      const hint = await page.evaluate(async () => {
+        document.getElementById('btnHint').click();
+        await new Promise((resolve) => setTimeout(resolve, 120));
+        const meaning = document.getElementById('revealMeaning');
+        return {
+          meaningOpen: meaning && meaning.hidden === false,
+          si: (document.getElementById('revealSi') || {}).textContent || '',
+          wordStillMasked: /^\u2022+$/.test((document.getElementById('revealWordText') || {}).textContent || '')
+        };
+      });
+      check('G5.12d the Hint pill opens the meaning panel without the spelling',
+        hint.meaningOpen && /[\u0D80-\u0DFF]/.test(hint.si) && hint.wordStillMasked, JSON.stringify(hint));
+      await page.evaluate(() => { document.getElementById('btnPlayPause').click(); });
+      /* the classroom opening (cue clips) runs before the first word, so wait
+         on the live phase, never on a timer */
+      await page.waitForFunction(
+        () => /Listen Carefully|Write Word #/.test(document.getElementById('beatStateText').textContent),
+        null, { timeout: 20000 });
+      const reveal = await page.evaluate(async () => {
+        document.getElementById('btnRevealWord').click();
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        return {
+          word: (document.getElementById('revealWordText') || {}).textContent || '',
+          paused: window.SDP && SDP.Engine && SDP.Engine.isPaused ? SDP.Engine.isPaused() : null,
+          pausedBadge: (document.getElementById('revealPausedBadge') || {}).hidden === false
+        };
+      });
+      check('G5.12e revealing the current word auto-pauses dictation',
+        reveal.word && !/^\u2022+$/.test(reveal.word) && reveal.paused === true && reveal.pausedBadge, JSON.stringify(reveal));
+      const typing = await page.evaluate(async () => {
+        document.getElementById('btnModeSwitch').click();
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        return {
+          mode: document.body.getAttribute('data-sdp-mode'),
+          chips: getComputedStyle(document.getElementById('hintChips')).display
+        };
+      });
+      check('G5.12f typing mode paints the hint chips again',
+        typing.mode === 'typing' && typing.chips !== 'none', JSON.stringify(typing));
+
+      // A3: the unlocked studio bar is a compact <=60px strip pinned straight
+      // under the header (0px gap) and the toast whispers from the bottom.
+      await page.evaluate(() => {
+        /* visual-gate unlock: bypass BOTH the PIN verifier and the sealed
+           envelope so the studio opens deterministically on a fresh page */
+        SDP.Sync.Vault.verifyPinVerifier = function () { return Promise.resolve(true); };
+        SDP.Sync.Vault.decryptV2 = function () { return Promise.resolve({}); };
+        document.getElementById('tab-studio').click();
+        SDP.Studio.unlock('4321', () => {});
+      });
+      await page.waitForTimeout(800);
+      /* scroll the studio so the sticky bar is pinned, then measure both the
+         bar (gap must be 0px) and the fixed toast (visual bottom edge) */
+      const studio = await page.evaluate(() => {
+        window.scrollTo(0, 320);
+        const bar = document.getElementById('studioSecurityBar');
+        const header = document.getElementById('appHeader').getBoundingClientRect();
+        const r = bar ? bar.getBoundingClientRect() : null;
+        const toast = document.getElementById('sdpDataToast');
+        const tr = toast ? toast.getBoundingClientRect() : null;
+        return {
+          bar: !!bar,
+          h: r ? Math.round(r.height) : 0,
+          gap: r ? Math.round(r.top - header.bottom) : 99,
+          toastBottomCss: toast ? getComputedStyle(toast).bottom : '',
+          toastBottomPx: tr ? Math.round(tr.bottom) : -1,
+          viewportH: window.innerHeight,
+          chipsNode: !!document.getElementById('studioLiveChips'),
+          chipCols: (function (n) { return n ? getComputedStyle(n).gridTemplateColumns : ''; })(document.getElementById('studioLiveChips'))
+        };
+      });
+      check('G5.12g the studio bar stays a compact <=60px strip under the header',
+        studio.bar && studio.h <= 60 && Math.abs(studio.gap) <= 1, JSON.stringify(studio));
+      check('G5.12h the data toast whispers from the bottom edge on phones',
+        parseInt(studio.toastBottomCss, 10) > 0 && studio.toastBottomPx > studio.viewportH - 120, JSON.stringify(studio));
+      check('G5.12i the live chips render as a 2-3 column grid',
+        studio.chipsNode && studio.chipCols.split(' ').length >= 2, JSON.stringify(studio));
+      check('G5.12j the v0.0.6.g cockpit/studio throws no page errors', errors.length === 0, errors.join(' | '));
+      await context.close();
+    }
+
+    /* ── 13. the beta-preview channel (?beta) ─────────────────────────── */
+    {
+      const context = await browser.newContext({ viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+      await context.addInitScript(() => {
+        window.__SDP_NO_LIVE__ = true;
+        try {
+          localStorage.setItem('sdp.guide_seen', '0.0.6.g');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light' }));
+        } catch (e) {}
+      });
+      const page = await context.newPage();
+      await context.route('**/*', (route) => {
+        const url = route.request().url();
+        if (url.startsWith(server.origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
+        return route.abort();
+      });
+      await page.goto(server.origin + '/?beta', { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(600);
+      const beta = await page.evaluate(() => ({
+        channel: document.documentElement.getAttribute('data-sdp-channel'),
+        pill: (document.getElementById('sdpBetaPill') || {}).textContent || '',
+        stampHidden: (document.getElementById('sdpBetaStamp') || {}).hidden,
+        stampText: (document.getElementById('sdpBetaStamp') || {}).textContent || '',
+        fixLive: !!document.querySelector('meta[name="darkreader-lock"]') && getComputedStyle(document.getElementById('hintChips')).display === 'none'
+      }));
+      check('G5.13a ?beta switches the channel and stamps the sub-version',
+        beta.channel === 'beta' && /BETA/.test(beta.pill) && /0\.0\.6\.f\.a/.test(beta.pill), JSON.stringify(beta));
+      check('G5.13b the floating beta stamp is visible and names both versions',
+        beta.stampHidden === false && /0\.0\.6\.f\.a/.test(beta.stampText) && /0\.0\.6\.g/.test(beta.stampText), JSON.stringify(beta));
+      check('G5.13c the release fixes are live on the beta channel too', beta.fixLive, JSON.stringify(beta));
       await context.close();
     }
   } finally {

@@ -316,6 +316,13 @@
   E.hints[name] = !E.hints[name];
   renderHints();
  }
+ /* v0.0.6.g (A2): the Hint pill toggles the reveal card's meaning panel
+    (IPA / word type / Sinhala / English, never the spelling). The per-field
+    chips stay bound for typing mode and direct taps. */
+ function hintOrReveal() {
+  try { if (SDP.Views && SDP.Views.toggleHintPanel) return SDP.Views.toggleHintPanel(); } catch (e) {}
+  return cycleHint();
+ }
  function cycleHint() {
   var order = ['pos', 'first', 'si', 'sentence'], i;
   for (i = 0; i < order.length; i++) {
@@ -928,6 +935,9 @@
 
  function setMode(mode, silent) {
   E.mode = mode === 'typing' ? 'typing' : 'paper';
+  /* v0.0.6.g (A2): the mode rides on <body> so CSS can keep the Paper
+     cockpit single-screen (hint chips + beat stage paint in typing only). */
+  try { if (doc && doc.body) doc.body.setAttribute('data-sdp-mode', E.mode); } catch (e) {}
   if (!silent) {
    try { SDP.Data.saveSettings({ mode: E.mode }); } catch (e) {}
    if (SDP.Views && SDP.Views.applyModePills) SDP.Views.applyModePills(E.mode);
@@ -1392,13 +1402,16 @@
 
  function bind() {
   refreshEls();
+  /* v0.0.6.g (A2): paint the running mode from the very first bind so the
+     paper cockpit is single-screen even before the first word starts. */
+  try { if (doc && doc.body) doc.body.setAttribute('data-sdp-mode', E.mode); } catch (e) {}
   var map = [
    ['btnPrev', goPrev],
    ['btnPlayPause', togglePlayPause],
    ['btnNext', goNext],
    ['btnRepeat', repeatWord],
    ['btnReplay', repeatWord],
-   ['btnHint', cycleHint],
+   ['btnHint', hintOrReveal],
    ['btnModeSwitch', toggleMode],
    ['btnFinish', finish],
    ['btnMarkAll', markAll],

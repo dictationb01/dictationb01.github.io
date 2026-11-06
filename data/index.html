@@ -4,12 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F8FAFC">
-<meta name="description" content="Smart Dictation Player 0.0.6.f — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
-<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.f</title>
+<!-- v0.0.6.g (A1): Dark Reader and dark-mode extensions are locked out; the
+   color-scheme meta follows only this page's own theme button. -->
+<meta name="darkreader-lock">
+<meta name="color-scheme" content="only light">
+<meta name="description" content="Smart Dictation Player 0.0.6.g — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
+<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.g</title>
 <script>
 (function () {
   var vUrl = location.pathname.indexOf('/data/') !== -1 ? './version.json' : './data/version.json';
-  var TARGET = '0.0.6.f';
+  var TARGET = '0.0.6.g';
   if (typeof fetch !== 'function') return;
   fetch(vUrl + '?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { return r && r.ok ? r.json() : null; })
@@ -309,6 +313,9 @@
     theme = next === 'light' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', theme);
     $('themeIcon').textContent = theme === 'light' ? '◑' : '◐';
+    /* v0.0.6.g (A1): the color-scheme meta follows ONLY this page's own theme. */
+    var schemeMeta = document.querySelector('meta[name="color-scheme"]');
+    if (schemeMeta) schemeMeta.setAttribute('content', theme === 'dark' ? 'dark' : 'only light');
     try { localStorage.setItem('sdp.dataPage.theme', theme); } catch (e) {}
   }
 
@@ -456,6 +463,31 @@
   if (window.SDPDataMeter && window.SDPDataMeter.start) {
     try { window.SDPDataMeter.start({ interval: false }); } catch (e) {}
   }
+
+  /* v0.0.6.g (A1): active Dark Reader shield — strip any injected extension
+     attributes/styles and keep the darkreader-lock meta in place. */
+  (function () {
+    var d = document.documentElement, h = document.head;
+    function shield() {
+      var ax = ['data-darkreader-mode', 'data-darkreader-scheme', 'data-darkreader-proxy-injected'], i;
+      for (i = 0; i < ax.length; i++) if (d.hasAttribute(ax[i])) d.removeAttribute(ax[i]);
+      if (!h) return;
+      var rm = h.querySelectorAll('meta[name="darkreader"]');
+      for (i = 0; i < rm.length; i++) rm[i].parentNode.removeChild(rm[i]);
+      if (!h.querySelector('meta[name="darkreader-lock"]')) {
+        var L = document.createElement('meta'); L.setAttribute('name', 'darkreader-lock'); h.appendChild(L);
+      }
+      var rs = h.querySelectorAll('style.darkreader,link.darkreader');
+      for (i = 0; i < rs.length; i++) rs[i].parentNode.removeChild(rs[i]);
+    }
+    shield();
+    if (window.MutationObserver) {
+      try {
+        new MutationObserver(function () { shield(); }).observe(d, { attributes: true, attributeFilter: ['data-darkreader-mode', 'data-darkreader-scheme', 'data-darkreader-proxy-injected'] });
+        new MutationObserver(function () { shield(); }).observe(h, { childList: true });
+      } catch (e) {}
+    }
+  })();
 })();
 </script>
 </body>

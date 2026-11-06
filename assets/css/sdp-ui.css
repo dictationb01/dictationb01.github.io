@@ -2043,7 +2043,11 @@ html[data-theme='light'] .helper-pill .sdp-icon { color: #1D4ED8; }
    pill below — the strip stays one row (the words stay in the DOM/tests). */
 @media (max-width: 379px) {
   .progress-strip .cockpit-line .badge { display: none; }
-  /* the strip above already counts WORD #01/30 — the head stays for tablets */
+}
+/* v0.0.6.g (A2): the strip above already counts WORD #01/30, so the head row
+   (title + n/30 + pos badge) never paints on a phone — one screen, one job.
+   The full session title lives on Home and in the reveal card. */
+@media (max-width: 719px) {
   .cockpit-head { display: none; }
 }
 .progress-strip .pills-toggle { flex: 0 0 auto; min-height: 48px; padding: 4px 12px; font-size: 12px; }
@@ -2135,3 +2139,167 @@ html[data-theme='dark'] .studio-step-tag { color: #93C5FD; }
 }
 .studio-offline-title { margin: 0 0 6px; font-size: 17px; font-weight: 850; color: #B45309; }
 .studio-offline-body { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text-muted); }
+
+
+/* ══ v0.0.6.g — Architecture 1: strict original light-mode lock (A1) ══════ */
+/* Dark Reader, Chrome/Edge/Samsung forced auto-dark and Windows high-contrast
+   may never invert or recolor the app. Light Mode is the unconditional
+   default; color-scheme flips to dark ONLY when the app's own theme button
+   sets html[data-theme='dark'] (the sync boot script + shield keep the
+   <meta name="color-scheme"> in step). Never the OS dark preference. */
+:root, html, html[data-theme='light'], html[data-theme='light'] body {
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
+  -webkit-forced-color-adjust: none !important;
+  filter: none !important;
+}
+html[data-theme='dark'], html[data-theme='dark'] body,
+html[data-theme='board'], html[data-theme='board'] body {
+  color-scheme: dark !important;
+  forced-color-adjust: none !important;
+  -webkit-forced-color-adjust: none !important;
+  filter: none !important;
+}
+
+/* ══ v0.0.6.g — Architecture 2: one unified mobile remote pad (A2) ════════ */
+/* The cockpit reads as ONE physical remote: the reveal card is the top arc
+   (👁 Show Current Word + the word panel), the clock dial is the OK key,
+   Prev/Next hug the left/right arcs, Play/Pause + Replay share the bottom
+   arc — a single tactile object instead of five competing rows. */
+.reveal-word-card {
+  width: 100%; max-width: 340px; margin: 2px auto 0;
+  padding: 7px 12px 8px;
+  border-radius: 26px 26px 12px 12px; border-bottom: 0;
+  background: linear-gradient(180deg, var(--bg-elev), var(--bg-sunken));
+}
+.orbital {
+  grid-template-columns: 54px minmax(0, 1fr) 54px;
+  column-gap: 4px; row-gap: 10px;
+  width: 100%; max-width: 340px; margin: 0 auto;
+  padding: 12px 10px 12px;
+  border-radius: 12px 12px 30px 30px;
+  background: linear-gradient(180deg, var(--bg-sunken), var(--bg-elev));
+  border: 1px solid var(--stroke);
+  border-top: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 12px 28px rgba(15,23,42,.10);
+}
+html[data-theme='dark'] .orbital,
+html[data-theme='board'] .orbital {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 12px 28px rgba(2,6,23,.45);
+}
+.orbital .orb-btn { width: 52px; height: 52px; min-height: 52px; min-width: 52px; }
+.orbital .orb-main { width: 66px; height: 66px; min-height: 66px; min-width: 66px; }
+.orbital .orb-south { gap: 22px; }
+.ring { width: 150px; height: 150px; }
+#beatSeconds { font-size: 36px; }
+@media (max-width: 379px) {
+  .orbital { grid-template-columns: 48px minmax(0, 1fr) 48px; padding: 10px 8px 10px; }
+  .orbital .orb-btn { width: 48px; height: 48px; min-height: 48px; min-width: 48px; }
+  .orbital .orb-main { width: 62px; height: 62px; min-height: 62px; min-width: 62px; }
+  .ring { width: 142px; height: 142px; }
+  #beatSeconds { font-size: 33px; }
+}
+@media (min-width: 720px) {
+  .reveal-word-card { max-width: 430px; }
+  .orbital { max-width: 430px; grid-template-columns: 70px minmax(0, 1fr) 70px; }
+  .ring { width: 176px; height: 176px; }
+  #beatSeconds { font-size: 42px; }
+}
+
+/* A2: the meaning panel animates open — no jump cuts on a phone. */
+.reveal-meaning { transition: opacity .28s var(--ease), transform .28s var(--ease); }
+.reveal-meaning[hidden] { opacity: 0; transform: translateY(-3px); }
+.reveal-word-text { transition: font-size .2s var(--ease), letter-spacing .25s var(--ease), color .2s var(--ease); }
+
+/* A2: Paper mode never paints the bottom hint rows — the reveal card above
+   the clock already carries word + IPA + POS + Si + En. The chips, the
+   hint output and the beat stage stay in the DOM (G5 input law, typing
+   mode mounts #typeInput inside #beatStage) and paint in typing mode only. */
+#hintChips, #hintOutput, .beat-stage { display: none !important; }
+body[data-sdp-mode='typing'] #hintChips { display: flex !important; }
+body[data-sdp-mode='typing'] #hintOutput { display: block !important; }
+body[data-sdp-mode='typing'] .beat-stage { display: block !important; }
+body[data-sdp-mode='typing'] .beat-stage:not(:empty) { margin-top: 8px; }
+
+/* A2: the four helper pills are ONE equal-width dock row — iOS tab bar law. */
+.cockpit-helpers {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px; margin-top: 10px;
+}
+.cockpit-helpers .helper-pill {
+  justify-content: center; min-height: 48px;
+  padding: 0 4px; font-size: 12px; gap: 5px;
+}
+.cockpit-helpers .helper-pill .sdp-icon { flex: none; }
+html[lang='si'] .cockpit-helpers .helper-pill { font-size: 10.5px; }
+@media (min-width: 720px) {
+  .cockpit-helpers { display: flex; flex-wrap: wrap; justify-content: center; }
+  .cockpit-helpers .helper-pill { min-height: 48px; padding: 0 14px; font-size: 12.5px; }
+}
+
+/* ══ v0.0.6.g — Architecture 3: compact mobile Lecturer Studio (A3) ═══════ */
+/* The sticky bar is a sleek ≤60px strip with a 0px gap above it — no text
+   can bleed through and 85%+ of the phone screen stays free for words. */
+.studio-security-bar {
+  top: var(--header-h);
+  background: var(--bg-elev);
+}
+@media (max-width: 719px) {
+  .studio-security-bar {
+    flex-wrap: nowrap; align-items: center; gap: 6px;
+    padding: 5px 8px; margin: 0 0 10px;
+    min-height: 0; max-height: 60px;
+    border-radius: 14px; overflow: hidden;
+  }
+  .studio-security-bar .ssb-badge {
+    flex: 1 1 auto; min-width: 0; font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* the mode pill repeats the badge — on a phone the row stays one line */
+  .studio-security-bar .studio-mode-pill { display: none; }
+  .studio-security-bar .btn { min-height: 42px; padding: 0 10px; font-size: 12.5px; }
+  .studio-security-bar .btn .sdp-icon { display: none; }
+}
+
+/* A3 (Flaw 3): the data capsule never lands on a screen title — on phones
+   it whispers from the bottom edge, above the tab bar, still ≤26px and
+   pointer-transparent (G5.7 contract). */
+@media (max-width: 719px) {
+  #sdpDataToast, .toast {
+    top: auto; bottom: calc(var(--tabbar-h) + 10px);
+    transform: translateX(-50%) translateY(0);
+  }
+  #sdpDataToast:not(.toast-hidden) { transform: translateX(-50%) translateY(0); }
+}
+
+/* A3: the live words render as an ordered 2–3 column chip grid (#01…#30). */
+.studio-live-chips {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px; margin: 8px 0;
+}
+.chip-word { justify-content: space-between; min-width: 0; }
+.chip-word b { flex: none; }
+.chip-w { font-style: normal; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 520px) { .studio-live-chips { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ══ v0.0.6.g — Architecture 6: beta sub-version stamp (A6) ═══════════════ */
+.beta-stamp {
+  position: fixed; left: 10px; bottom: calc(var(--tabbar-h) + 46px); z-index: 61;
+  padding: 5px 11px; border-radius: 999px;
+  background: linear-gradient(135deg, #7C3AED, #A78BFA);
+  color: #FFFFFF; font-size: 11px; font-weight: 800; letter-spacing: .02em;
+  box-shadow: 0 8px 20px rgba(124,58,237,.35);
+  pointer-events: none; white-space: nowrap;
+}
+@media (min-width: 720px) { .beta-stamp { bottom: 14px; } }
+
+
+/* v0.0.6.g — 30-Word list mobile law: the three action buttons share the card
+   width equally instead of overflowing it on 360-412px phones. */
+@media (max-width: 719px) {
+  .dict-card .d-side { flex: 1 1 100%; }
+  .dict-card .d-side .btn {
+    flex: 1 1 0; min-width: 0; justify-content: center;
+    padding: 0 6px; font-size: 12px;
+  }
+}

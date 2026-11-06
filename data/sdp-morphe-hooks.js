@@ -147,8 +147,11 @@
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
   else init();
-  document.addEventListener('click', function (e) {
-    var rw = e && e.target && e.target.closest ? e.target.closest('.ring-wrap') : null;
-    if (rw) { var bp = document.getElementById('btnPlayPause'); if (bp) bp.click(); }
-  }, false);
+  /* v0.0.6.h (CF1): the v0.0.5.b document-level click relay that re-synthesised
+     a #btnPlayPause click for every .ring-wrap tap is REMOVED. The engine
+     already binds its own click + keydown handlers on #ringWrap
+     (sdp-dictation-engine.js bind()), so the relay made one physical tap fire
+     togglePlayPause() twice — the clock started and instantly paused, and a
+     paused session resumed-then-paused again in the same tick. One tap, one
+     toggle; the ring and the transport button stay perfectly in sync. */
 })();

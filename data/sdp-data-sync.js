@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.m';
-  SDP.build = '2026-11-06';
-  SDP.ver = 27;
+  SDP.version = '0.0.6.n';
+  SDP.build = '2026-11-07';
+  SDP.ver = 28;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.m';
-  var SCHEMA = 27;
-  var SETTINGS_REV = 43;
+  var APP_VERSION = '0.0.6.n';
+  var SCHEMA = 28;
+  var SETTINGS_REV = 44;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1323,7 +1323,11 @@
     }
     if (typeof global.fetch !== 'function') { finish(new Error('no_fetch')); return; }
     try {
-      global.fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + 't=' + nowMs(), { cache: 'no-store' })
+      /* v0.0.6.n cache-bust law (RECOMMENDATION 2): every data JSON fetch
+         carries BOTH the release version and the tick — ?v=0.0.6.n&t=<ms> —
+         with cache:'no-store', so a stale SW/HTTP copy of
+         data/elevenlabs-audio.json can never survive an upgrade. */
+      global.fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + APP_VERSION + '&t=' + nowMs(), { cache: 'no-store' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { finish(data ? null : new Error('bad_response'), data); },
           function () { finish(new Error('fetch_failed')); });
@@ -1776,8 +1780,48 @@
           });
         }
       } catch (e) {}
+      /* v0.0.6.n cache-bust law (RC2 fix): a version upgrade must ALSO purge
+         every stale briefing/guide voice clip from the preserved audio cache
+         so no device can ever replay an earlier version's cached narration. */
+      try { Sync.purgeStaleBriefingClips(); } catch (ePurge) {}
       setTimeout(function () { try { location.reload(); } catch (e) {} }, 400);
       return true;
+    },
+
+    /* ══ v0.0.6.n FIX 2 (RECOMMENDATION 2) — the stale audio purge law ══
+     * purgeStaleBriefingClips(): deletes from caches.open('sdp-audio-clips')
+     * every _intro_male_* / guide.en.* / _guide_* entry and any stale
+     * elevenlabs-audio manifest body. The next briefing open re-fetches the
+     * pack with ?v=0.0.6.n&t=<syncRev> + cache:'no-store' and re-primes from
+     * the CURRENT BRIEFING_SENTENCES — an old cached voice can never play.
+     * Returns a promise resolving to the number of purged cache entries. */
+    purgeStaleBriefingClips: function () {
+      var purged = 0;
+      var done = null;
+      var p = new Promise(function (resolve) { done = resolve; });
+      try {
+        if (!global.caches || !global.caches.open) { done(purged); return p; }
+        global.caches.open('sdp-audio-clips').then(function (cache) {
+          return cache.keys().then(function (reqs) {
+            var staleRe = /(_intro_male_|guide\.en\.|_guide_|elevenlabs-audio)/i;
+            var jobs = [];
+            for (var i = 0; i < reqs.length; i++) {
+              (function (req) {
+                var url = String(req && req.url || '');
+                if (!url || !staleRe.test(url)) return;
+                jobs.push(cache.delete(req).then(function (ok) { if (ok) purged += 1; }, function () {}));
+              })(reqs[i]);
+            }
+            return Promise.all(jobs);
+          });
+        }).then(function () {
+          try {
+            if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('stale_audio_purged', { purged: purged, ver: APP_VERSION });
+          } catch (e0) {}
+          done(purged);
+        }, function () { done(purged); });
+      } catch (e) { done(purged); }
+      return p;
     },
 
     /* SYNC-05 + D5: one cheap raw.githubusercontent.com read every 25 s; the

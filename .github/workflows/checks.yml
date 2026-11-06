@@ -1,14 +1,15 @@
 name: release gates
 
 # contract: docs/ARCHITECTURE_MAP.md §12 — the twelve release gates plus the
-# v0.0.6.m preserved-payload SHA step (Step 13). Every gate is a plain Node
-# script; the browser gates launch the Chromium that ships inside
+# v0.0.6.n preserved-payload SHA step (Step 13 / CI-13). Every gate is a
+# plain Node script; the browser gates launch the Chromium that ships inside
 # @sparticuz/chromium and unpack their own AL2023 libraries.
-# v0.0.6.m feature surface (ultra-clean header, project-first executive
-# Briefing + 10s gate, 5-slot Multi-API pool defaulting to 4x Groq + 1x
-# ElevenLabs backup with automatic failover, post-session review card,
-# Studio diagnostics .zip, URL-driven ?beta channel) is asserted by G1 §12-13
-# and G3 §3b/G5 §13/G7 §1.
+# v0.0.6.n feature surface (the SPACIOUS Project Overview reading stage with
+# the badge relocated to Settings › About, the Studio ↔ Briefing multi-API
+# voice bridge — ElevenLabs /with-timestamps wt + Groq/Gemini/OpenRouter ww
+# cascade + 3 triggers + live status bar, the stale-audio purge law, the
+# continuous karaoke progress bar; plus every preserved v0.0.6.m fix) is
+# asserted by G1 §12-13 and the dedicated Lab below (Step 13b).
 on:
   push:
     branches: [main]
@@ -79,7 +80,7 @@ jobs:
         run: node tests/studio-safety.cjs
 
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
-      - name: Lab Environment - briefing, karaoke, mic-release and feedback snapshot (Step 13b)
+      - name: Lab Environment - spacious overview, Studio-Briefing bridge, cache purge, karaoke, mic-release, feedback (Step 13b)
         run: node tests/briefing-feedback-lab.cjs
 
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).

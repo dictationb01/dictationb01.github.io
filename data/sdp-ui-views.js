@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.m';
+    return '0.0.6.n';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -326,16 +326,17 @@
     creatorNoteBtn: '♪ Project Briefing',
     briefingEyebrow: 'OPEN-SOURCE PROJECT BRIEFING · AUTOMATED SYSTEM',
     briefingTitle: 'Smart Dictation · Project Overview',
-    briefingPersona: 'Automated Open-Source Web System · Started 2 Weeks Ago · $0 Cost',
-    briefingLinkCode: 'Inspect Open-Source Code on GitHub ↗',
-    briefingLinkProfile: "Explore Hansana's GitHub & RDB Project ↗",
+    briefingPersona: 'Started 2 Weeks Ago (Oct 22) · $0 Open-Source System',
+    briefingLinkCode: 'Code on GitHub ↗',
+    briefingLinkProfile: "Hansana's GitHub & RDB ↗",
     briefingContinue: 'Continue to Smart Dictation →',
+    briefingContinueWait: 'Continue ({n}s)…',
     briefingSkip: 'Skip & Enter App',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.m.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
-    betaOnToast: 'Beta channel ON — the v0.0.6.m suite is highlighted and the Project Briefing will replay',
+    betaStampLabel: 'BETA · 0.0.6.n.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaOnToast: 'Beta channel ON — the v0.0.6.n suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
     reviewSub: '100% optional — two taps or one short voice note. It goes straight to the creator, encrypted.',
@@ -669,16 +670,17 @@
     creatorNoteBtn: '♪ ව්‍යාපෘති හඳුන්වාදීම',
     briefingEyebrow: 'විවෘත කේත ව්‍යාපෘති සාරාංශය · ස්වයංක්‍රීය පද්ධතිය',
     briefingTitle: 'Smart Dictation · ව්‍යාපෘති දළ විශ්ලේෂණය',
-    briefingPersona: 'ස්වයංක්‍රීය විවෘත-කේත වෙබ් පද්ධතියක් · සති දෙකකට පෙර ආරම්භ විය · $0 වියදම',
-    briefingLinkCode: 'GitHub හි විවෘත කේතය බලන්න ↗',
-    briefingLinkProfile: "Hansana ගේ GitHub සහ RDB ව්‍යාපෘතිය බලන්න ↗",
+    briefingPersona: 'ඔක්තෝබර් 22 ආරම්භ විය (සති 2) · $0 විවෘත-කේත පද්ධතිය',
+    briefingLinkCode: 'GitHub කේතය ↗',
+    briefingLinkProfile: "Hansana ගේ GitHub සහ RDB ↗",
     briefingContinue: 'Smart Dictation වෙත පිවිසෙන්න →',
+    briefingContinueWait: 'ඉදිරියට ({n}s)…',
     briefingSkip: 'මඟහරින්න සහ යෙදුමට පිවිසෙන්න',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
-    betaStampLabel: 'බීටා · 0.0.6.m.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
-    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.m පොදිය ඉස්මතියේ තිබේ',
+    betaStampLabel: 'බීටා · 0.0.6.n.beta — ව්‍යාපෘති හඳුන්වාදීම · Multi-API · සමාලෝචන · දයග්නොස්ටික්ස්',
+    betaOnToast: 'බීටා නාලිකාව ක්‍රියාත්මකයි — v0.0.6.n පොදිය ඉස්මතියේ තිබේ',
     betaOffToast: 'බීටා නාලිකාව වසා ඇත — සාමාන්‍ය ප්‍රධාන කොක්පිට් එකට ආපසු',
     reviewTitle: 'Smart Dictation වඩාත් හොඳ කරන්න — ඔබේ ඉක්මන් සමාලෝචනය බෙදාගන්න',
     reviewSub: '100% අවශ්‍ය නැත — තට්ටු දෙකක් හෝ කෙටි කටහඬක්. එය කේතනය කර නිර්මාණකරුට යයි.',
@@ -2913,7 +2915,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.m.beta';
+  var BETA_SUBVERSION = '0.0.6.n.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2943,14 +2945,16 @@
   }
   function briefingWeekLabel() {
     var w = weeksSinceStart();
-    return (lang === 'si') ? ('සති ' + w + 'කට පෙර ආරම්භ විය') : ('Started ' + w + ' Weeks Ago');
+    return (lang === 'si') ? ('ඔක්තෝබර් 22 (සති ' + w + ') ආරම්භ විය') : ('Started ' + w + ' Weeks Ago (Oct 22)');
   }
   function paintBriefingPersona() {
     var persona = byId('briefingPersona');
     if (!persona) return false;
+    /* v0.0.6.n Pillar 1: the compact single-line subtitle of the minimal
+       2-line header — Started N Weeks Ago (Oct 22) · $0 Open-Source System. */
     persona.textContent = (lang === 'si')
-      ? ('ස්වයංක්‍රීය විවෘත-කේත වෙබ් පද්ධතියක් · ' + briefingWeekLabel() + ' · $0 වියදම')
-      : ('Automated Open-Source Web System · ' + briefingWeekLabel() + ' · $0 Cost');
+      ? (briefingWeekLabel() + ' · $0 විවෘත-කේත පද්ධතිය')
+      : (briefingWeekLabel() + ' · $0 Open-Source System');
     return true;
   }
   function briefingSeen() {
@@ -3024,6 +3028,26 @@
     }
     return out;
   }
+  /* v0.0.6.n Pillar 3 — the EXACT word timestamps: when the Studio
+     synthesized the beat through the timestamped ElevenLabs TTS
+     endpoint, the clip entry carries wt = [[startMs, endMs], …]
+     aligned per word. Those absolute boundaries win over every estimate:
+     the karaoke highlights the exact word being spoken right now. */
+  function briefingWordTimings(idx) {
+    var entry = null;
+    try {
+      var pack = SDP.Speech && SDP.Speech.clipManifest ? SDP.Speech.clipManifest() : null;
+      entry = pack && pack.clips ? pack.clips['_intro_male_' + (Number(idx) + 1)] : null;
+    } catch (e) { entry = null; }
+    if (!entry || !Array.isArray(entry.wt) || !entry.wt.length) return null;
+    var out = [], i, pair;
+    for (i = 0; i < entry.wt.length; i++) {
+      pair = entry.wt[i];
+      if (!Array.isArray(pair) || !(Number(pair[0]) >= 0) || !(Number(pair[1]) > 0)) return null;
+      out.push([Number(pair[0]), Number(pair[1])]);
+    }
+    return out;
+  }
   /* Cumulative time slices: slice[i] = the fraction of the duration at which
      word i ENDS. The active word at time t is the first i with slice[i] > t. */
   function briefingTimeSlices(weights) {
@@ -3089,7 +3113,11 @@
     }
     dur = Math.max(1200, Math.min(90000, dur * 1000));
     clearBriefingWordTimers();
-    briefingState.flow = { idx: idx, epoch: epoch, durMs: dur, slices: slices, mode: 'estimate', active: true, raf: 0, estTimer: 0, lastWord: -1, startedAt: 0 };
+    /* v0.0.6.n: wt (exact /with-timestamps word boundaries) takes absolute
+       precedence — the flow paints from the real clip clock against the
+       ElevenLabs alignment, falling back to weighted slices only without it. */
+    var wt = briefingWordTimings(idx);
+    briefingState.flow = { idx: idx, epoch: epoch, durMs: dur, slices: slices, mode: 'estimate', active: true, raf: 0, estTimer: 0, lastWord: -1, startedAt: 0, wt: wt };
     /* Estimate mode: a 100 ms self-advancing tick — smooth, and instantly
        replaced by the real clock on the first onTick / onBoundary. */
     var f = briefingState.flow;
@@ -3107,9 +3135,23 @@
     frac = Math.max(0, Math.min(1.0001, Number(frac) || 0));
     var i, wordIdx = f.slices.length - 1;
     for (i = 0; i < f.slices.length; i++) { if (f.slices[i] > frac) { wordIdx = i; break; } }
+    /* v0.0.6.n Pillar 3: the bar advances CONTINUOUSLY across all four
+       beats — (beatIndex + inBeatFraction) / 4 — instead of jumping in
+       quarter-steps at each beat boundary. */
+    paintBriefingContinuousBar(f.idx, frac);
     if (wordIdx === f.lastWord) return true;
     f.lastWord = wordIdx;
     paintBriefingWordFlow(f.idx, wordIdx);
+    return true;
+  }
+  /* Continuous 0..100% across Beat 1 → Beat 4: the narration is one song,
+     the progress bar tracks it word by word like an Apple Music scrubber. */
+  function paintBriefingContinuousBar(beatIdx, frac) {
+    var bar = byId('briefingBar');
+    if (!bar) return false;
+    var total = BRIEFING_SENTENCES.length || 4;
+    var pct = ((Number(beatIdx) || 0) + Math.max(0, Math.min(1, Number(frac) || 0))) / total * 100;
+    bar.style.width = (Math.max(0, Math.min(100, pct))).toFixed(2) + '%';
     return true;
   }
   /* Real clock tick from the playing <audio> element (currentTime/duration,
@@ -3124,6 +3166,21 @@
     }
     var d = Number(durSec) || (f.durMs / 1000);
     if (!(d > 0)) d = f.durMs / 1000;
+    var tMs = Math.max(0, Number(tSec)) * 1000;
+    /* v0.0.6.n: with wt (the /with-timestamps alignment) the current word
+       is the exact word whose [startMs, endMs] window spans the real clock
+       — frame-accurate karaoke straight from the studio synthesis. */
+    if (f.wt && f.wt.length) {
+      var wi, hit = f.wt.length - 1;
+      for (wi = 0; wi < f.wt.length; wi++) { if (tMs < f.wt[wi][1]) { hit = wi; break; } }
+      var endMs = f.wt[f.wt.length - 1][1];
+      paintBriefingContinuousBar(f.idx, endMs > 0 ? Math.min(1, tMs / endMs) : 0);
+      if (hit !== f.lastWord) {
+        f.lastWord = hit;
+        paintBriefingWordFlow(f.idx, hit);
+      }
+      return true;
+    }
     paintBriefingClockAt(Math.max(0, Number(tSec)) / d, f);
     return true;
   }
@@ -3173,8 +3230,21 @@
     var bar = byId('briefingBar');
     if (bar) bar.style.width = (Math.round(((idx + 1) / BRIEFING_SENTENCES.length) * 100)) + '%';
     var active = host.querySelector('.b-line.on');
-    if (active && host.scrollTo) {
-      try { host.scrollTo({ top: Math.max(0, active.offsetTop - host.clientHeight * 0.38), behavior: 'smooth' }); } catch (e) {}
+    /* v0.0.6.n Pillar 1 — the NO-YANK auto-centering law: the stage only
+       scrolls when the active beat is genuinely OUT of the visible band.
+       Beat 1 LIVES at the very top of the stage and is never scrolled away
+       from, so the Project Overview always opens readable from word one.
+       (In v0.0.6.m the unconditional offsetTop-centre scroll dragged Beat 1
+       and Beat 2 off-screen the moment the narration started.) */
+    if (active && host.scrollTo && idx > 0) {
+      try {
+        var top = active.offsetTop, bot = top + active.offsetHeight;
+        var view0 = host.scrollTop, view1 = host.scrollTop + host.clientHeight;
+        var hidden = (top < view0 + 8) || (bot > view1 - 8);
+        if (hidden) {
+          host.scrollTo({ top: Math.max(0, top - host.clientHeight * 0.30), behavior: 'smooth' });
+        }
+      } catch (e) {}
     }
     return true;
   }
@@ -3268,6 +3338,26 @@
     var i;
     for (i = 0; i < BRIEFING_SENTENCES.length; i++) paintBriefingWordFlow(i, 9999);
   }
+  /* v0.0.6.n Pillar 1: the hard top-reset — overrides the CSS smooth-scroll,
+     zeroes scrollTop synchronously and re-asserts on the next frame so a
+     late focus() or reflow can never leave the stage scrolled (the 360x800
+     8px-drift bug this replaces). */
+  function briefingResetStageTop() {
+    var stage = byId('briefingLyrics');
+    if (!stage) return false;
+    try {
+      stage.style.scrollBehavior = 'auto';
+      stage.scrollTop = 0;
+      var raf = global.requestAnimationFrame
+        ? function (fn) { return global.requestAnimationFrame(fn); }
+        : function (fn) { return global.setTimeout(fn, 16); };
+      raf(function () {
+        try { stage.scrollTop = 0; } catch (e1) {}
+        try { stage.style.scrollBehavior = ''; } catch (e2) {}
+      });
+    } catch (e0) {}
+    return true;
+  }
   function briefingTickGate() {
     if (!briefingState.open) return;
     if (briefingState.gateLeft > 0) {
@@ -3276,15 +3366,29 @@
       if (count && briefingState.gateLeft > 0) {
         count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
       }
+      /* v0.0.6.n Pillar 1: the visible countdown lives INSIDE the Continue
+         button label — never a separate bulky yellow box stealing stage height. */
+      paintBriefingCtaLabel();
       if (briefingState.gateLeft > 0) return;
     }
     briefingUnlockCta();
+  }
+  function paintBriefingCtaLabel() {
+    var cont = byId('btnBriefingContinue');
+    if (!cont) return false;
+    if (briefingState.gateLeft > 0) {
+      cont.textContent = t('briefingContinueWait', 'Continue ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    } else {
+      cont.textContent = t('briefingContinue', 'Continue to Smart Dictation →');
+    }
+    return true;
   }
   function briefingUnlockCta() {
     var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
     if (cont) { cont.disabled = false; cont.removeAttribute('aria-disabled'); }
     if (skip) { skip.disabled = false; skip.removeAttribute('aria-disabled'); }
     if (count) count.textContent = t('briefingUnlocked', 'Thank you for listening — continue whenever you are ready.');
+    paintBriefingCtaLabel();
     var card = byId('briefingModal');
     if (card && card.classList) card.classList.add('b-gate-open');
     briefingState.gateLeft = 0;
@@ -3309,13 +3413,35 @@
     if (cont) { cont.disabled = true; cont.setAttribute('aria-disabled', 'true'); }
     if (skip) { skip.disabled = true; skip.setAttribute('aria-disabled', 'true'); }
     if (count) count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    paintBriefingCtaLabel();
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
     if (modal.classList) { modal.classList.remove('hidden'); modal.classList.add('is-open'); }
     if (modal.classList) modal.classList.remove('b-gate-open');
+    /* v0.0.6.n Pillar 1 — the ALWAYS-START-AT-BEAT-1 law: the reading stage
+       is scrolled to the very top and Beat 1 / Word 1 are highlighted the
+       instant the modal opens, so the Project Overview is ALWAYS read from
+       the beginning — never mid-way through Beat 3 or 4. The reset overrides
+       the CSS smooth-scroll behaviour and re-asserts on the next frame, so
+       no late focus/reflow can nudge the stage off zero. */
+    briefingResetStageTop();
     if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive(), weeks: weeksSinceStart() }); } catch (e) {}
+    /* v0.0.6.n Pillar 2 — Trigger 2: the creator opens the Project Overview
+       on the device where the vault was unlocked THIS session and the
+       _intro_male_1..4 clips are missing → the Studio synthesizes them live
+       on the fly (real keys, real George voice), injects them into this
+       playback and caches them — the direct Studio ↔ Briefing bridge. */
+    try {
+      if (SDP.Studio && typeof SDP.Studio.ensureBriefingAndGuideVoices === 'function') {
+        SDP.Studio.ensureBriefingAndGuideVoices({ source: 'briefing-open' }, function (err, info) {
+          if (!err && info && info.made && window.__SDP_BRIEFING_BRIDGE__) {
+            try { window.__SDP_BRIEFING_BRIDGE__({ source: 'briefing-open', made: info.made }); } catch (e2) {}
+          }
+        });
+      }
+    } catch (eBridge) {}
     var epoch = briefingState.epoch;
     global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
     return true;
@@ -3992,6 +4118,8 @@
     /* v0.0.6.m: the frame-accurate karaoke clock + mic-release surface. */
     onBriefingClockTick: onBriefingClockTick,
     onBriefingBoundary: onBriefingBoundary,
+    /* v0.0.6.n: the exact /with-timestamps word boundaries for the lab. */
+    briefingWordTimings: briefingWordTimings,
     releaseFeedbackAudioLocks: releaseFeedbackAudioLocks,
     reviewVoiceActive: function () { return !!(reviewState.listening || reviewState.rec || reviewState.recog || reviewState.recStream); },
     betaSubversion: function () { return BETA_SUBVERSION; },

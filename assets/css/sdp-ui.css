@@ -1194,6 +1194,24 @@ html[data-theme='light'] .pin-complete-hint { color: #065F46; }
 html[lang='si'] .studio-card { font-family: var(--font-si); }
 .studio-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
 .studio-h4 { font-size: 15px; font-weight: 850; margin: 0 0 10px; }
+/* ═══ v0.0.6.n FIX 2 — the Studio ↔ Briefing bridge card at the studio top ═══ */
+.studio-card-briefing-voices { border-top: 3px solid #7C3AED; }
+.studio-bridge-row { margin: 0 0 10px; }
+.studio-briefing-voice-bar {
+  margin: 0; padding: 9px 12px; border-radius: 10px;
+  font-size: 12.5px; line-height: 1.45; font-weight: 700;
+  background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE;
+  transition: background 300ms ease, color 300ms ease, border-color 300ms ease;
+}
+.studio-briefing-voice-bar[data-state='checking'] { background: #FEF9C3; color: #854D0E; border-color: #FDE68A; }
+.studio-briefing-voice-bar[data-state='ok'], .studio-briefing-voice-bar[data-state='noop'] { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+.studio-briefing-voice-bar[data-state='nokey'] { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+.studio-briefing-voice-bar[data-state='error'] { background: #FEE2E2; color: #991B1B; border-color: #FECACA; }
+html[data-theme='dark'] .studio-briefing-voice-bar { background: #2E1065; color: #DDD6FE; border-color: #4C1D95; }
+html[data-theme='dark'] .studio-briefing-voice-bar[data-state='checking'] { background: #422006; color: #FDE68A; border-color: #713F12; }
+html[data-theme='dark'] .studio-briefing-voice-bar[data-state='ok'], html[data-theme='dark'] .studio-briefing-voice-bar[data-state='noop'] { background: #052E16; color: #BBF7D0; border-color: #14532D; }
+html[data-theme='dark'] .studio-briefing-voice-bar[data-state='nokey'] { background: #422006; color: #FDE68A; border-color: #713F12; }
+html[data-theme='dark'] .studio-briefing-voice-bar[data-state='error'] { background: #450A0A; color: #FECACA; border-color: #7F1D1D; }
 .studio-h5 { font-size: 13px; font-weight: 800; margin: 14px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .studio-mode-pill { margin-left: auto; }
 .studio-card-keys, .studio-card-words, .studio-card-settings { border-top: 3px solid var(--accent); }
@@ -2442,57 +2460,68 @@ html[data-theme='dark'] #screen-settings .checkline input[type='checkbox'] { bac
 .about-card .about-line { padding: 10px 2px 0; }
 
 
-/* ═════════ v0.0.6.m — Pillar 1: Project-First Executive Briefing (synced transcript) ═════════
-   Apple-Music-style narration: the active sentence is crisp and large
-   (19px, #0F172A) while past/upcoming sentences stay readable at softer
-   opacity, with a smooth auto-scroll and a live progress bar. The 10-second
-   timed gate keeps both exit buttons locked until the countdown completes. */
+/* ═════════ v0.0.6.n — Pillar 1: the SPACIOUS Project Overview reading stage ═════════
+   Apple-Music-grade lyrics law: the modal is a minimal 2-line header + a
+   generous breathable stage. The bulky update badge, the eyebrow row and the
+   yellow countdown box left the modal (the countdown lives inside the
+   Continue button) so on a 390x844 phone #briefingLyrics keeps >= 260px —
+   never the ~80px slit of v0.0.6.m. Beat 1 word 1 is always visible at
+   scrollTop 0. */
 .briefing-modal { z-index: 95; }
-/* v0.0.6.m (CF2): the executive Product Briefing Card — sleek, spacious and
-   mature. All three core project summary beats are visible at once on a
-   390x844 phone with zero scrolling; Beat 4 stays readable just below. */
 .briefing-card { width: min(680px, 100%); max-height: min(88vh, 800px); display: flex; flex-direction: column; }
-.briefing-head { align-items: flex-start; border-bottom: 1px solid var(--stroke); padding-bottom: 12px; }
-.briefing-eyebrow {
-  margin: 0 0 6px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.14em;
-  text-transform: uppercase; color: #0369A1; background: #E0F2FE;
-  display: inline-block; padding: 4px 10px; border-radius: 999px;
-}
-.briefing-head h2 { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; }
-.briefing-persona { margin: 5px 0 0; font-size: 12.5px; font-weight: 650; color: var(--text-muted); }
-.briefing-beat { flex: none; margin-left: auto; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px; background: #E0F2FE; color: #0369A1; }
+.briefing-head { align-items: flex-start; border-bottom: 1px solid var(--stroke); padding-bottom: 10px; }
+.briefing-head-txt { min-width: 0; }
+.briefing-head h2 { font-size: 18px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 800; }
+.briefing-persona { margin: 3px 0 0; font-size: 12.5px; font-weight: 650; color: var(--text-muted); }
+.briefing-beat { flex: none; margin-left: auto; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.4px; background: #E0F2FE; color: #0369A1; }
 .briefing-lyrics {
   flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  max-height: 52vh; margin: 10px 0 10px; padding: 2px 2px 2px 0;
-  scroll-behavior: smooth;
+  min-height: clamp(260px, 48vh, 480px); margin: 12px 0 10px; padding: 16px 18px;
+  scroll-behavior: smooth; border-radius: 14px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.55));
+  border: 1px solid rgba(203, 213, 225, 0.55);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+html[data-theme='dark'] .briefing-lyrics {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(2, 6, 23, 0.25));
+  border-color: rgba(51, 65, 85, 0.6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(148, 163, 184, 0.08);
 }
 .b-line {
-  margin: 0 0 12px; padding: 8px 10px 8px 14px; border-left: 3px solid transparent;
+  margin: 0 0 14px; padding: 8px 10px 8px 14px; border-left: 3px solid transparent;
   border-radius: 0 12px 12px 0;
-  font-size: 15.5px; line-height: 1.5; font-weight: 500; color: #0F172A;
-  opacity: 0.72; transition: opacity 260ms ease, border-color 260ms ease, background 260ms ease, transform 260ms ease;
+  font-size: 16.5px; line-height: 1.58; font-weight: 500; color: #0F172A;
+  opacity: 0.74; transition: opacity 260ms ease, border-color 260ms ease, background 260ms ease, transform 260ms ease;
   cursor: pointer;
 }
+.b-line:last-child { margin-bottom: 2px; }
 .b-line[data-state='past'] { opacity: 0.5; }
 .b-line.on {
-  opacity: 1; font-weight: 700; border-left-color: #0EA5E9; transform: translateX(2px);
+  opacity: 1; font-weight: 700; font-size: 17.5px; border-left-color: #0EA5E9; transform: translateX(2px);
   background: linear-gradient(90deg, rgba(14, 165, 233, 0.10), rgba(14, 165, 233, 0) 70%);
 }
 html[data-theme='dark'] .b-line { color: #E2E8F0; }
 html[data-theme='dark'] .b-line.on { background: linear-gradient(90deg, rgba(14, 165, 233, 0.22), rgba(14, 165, 233, 0) 70%); }
-html[data-theme='dark'] .briefing-beat, html[data-theme='dark'] .briefing-eyebrow { background: #0C4A6E; color: #BAE6FD; }
-.briefing-progress { height: 6px; border-radius: 999px; background: #E2E8F0; overflow: hidden; }
-#briefingBar { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #0EA5E9, #6366F1); transition: width 420ms ease; }
+html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
+.briefing-progress { flex: none; height: 6px; border-radius: 999px; background: #E2E8F0; overflow: hidden; }
+#briefingBar { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #0EA5E9, #6366F1); transition: width 120ms linear; }
+/* v0.0.6.n: the countdown is screen-reader-only — the visible seconds live
+   inside the Continue button label. Never a bulky yellow box again. */
 .briefing-count {
-  margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; text-align: center;
-  font-size: 13.5px; font-weight: 700; background: #FEF9C3; color: #854D0E;
-  border: 1px solid #FDE68A;
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap;
 }
-.briefing-modal.b-gate-open .briefing-count { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
-.briefing-links { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; font-size: 13px; }
-.briefing-links a { color: #0369A1; font-weight: 650; text-decoration: none; border-bottom: 1px dashed #7DD3FC; }
-.briefing-links a:hover, .briefing-links a:focus-visible { border-bottom-style: solid; }
-.briefing-foot { margin-top: 14px; }
+.briefing-links {
+  display: flex; flex-wrap: nowrap; gap: 8px; margin: 10px 0 0; font-size: 12.5px;
+}
+.briefing-links a {
+  flex: 1 1 0; min-width: 0; text-align: center; padding: 6px 8px; border-radius: 999px;
+  color: #0369A1; font-weight: 700; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: #F0F9FF; border: 1px solid #BAE6FD;
+}
+.briefing-links a:hover, .briefing-links a:focus-visible { border-bottom: 1px solid #7DD3FC; background: #E0F2FE; }
+html[data-theme='dark'] .briefing-links a { background: #0C4A6E; border-color: #075985; color: #BAE6FD; }
+.briefing-foot { margin-top: 10px; gap: 10px; }
 #btnBriefingContinue[disabled], #btnBriefingSkip[disabled] { opacity: 0.55; cursor: not-allowed; filter: grayscale(0.25); }
 #btnBriefingContinue[disabled]::after { content: ' ⏳'; }
 
@@ -2510,15 +2539,13 @@ html[data-theme='dark'] .briefing-beat, html[data-theme='dark'] .briefing-eyebro
 @keyframes sdpPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* ═════════ v0.0.6.m — Pillar 1: dynamic briefing, word-flow & autoplay handshake ═════════ */
-.briefing-update-badge {
-  margin: 10px 0 0; padding: 7px 11px; border-radius: 10px; display: block;
-  font-size: 12px; line-height: 1.45; font-weight: 700;
-  background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE;
-}
-html[data-theme='dark'] .briefing-update-badge { background: #2E1065; color: #DDD6FE; border-color: #4C1D95; }
+/* v0.0.6.n: the release note row inside Settings › About (the DOM id
+   #briefingUpdateBadge moved here from the modal — 0px of the lyrics stage). */
+.about-release-note { font-size: 12.5px; line-height: 1.5; color: #5B21B6; }
+html[data-theme='dark'] .about-release-note { color: #C4B5FD; }
 .briefing-tap-pill {
-  display: block; width: 100%; margin: 10px 0 0; padding: 12px 14px; border: none; cursor: pointer;
-  border-radius: 999px; font-size: 14.5px; font-weight: 800; text-align: center;
+  display: block; width: 100%; margin: 10px 0 0; padding: 10px 14px; border: none; cursor: pointer;
+  border-radius: 999px; font-size: 14px; font-weight: 800; text-align: center;
   background: #0EA5E9; color: #FFFFFF; box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
   animation: sdpPulse 1.15s ease infinite;
 }

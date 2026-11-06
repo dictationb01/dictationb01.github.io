@@ -49,7 +49,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         w.localStorage.setItem('sdp.pin_rev_guard', '1');
       },
       files: (() => {
@@ -74,7 +74,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
@@ -96,7 +96,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
@@ -115,7 +115,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } });
     /* R7: use a PIN that is NOT the master recovery code, so the lockout
        assertions below still see a plain refusal. */
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
@@ -144,7 +144,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
   // always opens a recovery session, even while the PIN pad is locked out.
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } });
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
@@ -168,7 +168,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.m' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.n' }));
     } });
     check('G3.3a guide auto-opens on the first visit', app.byId('guideModal').hidden === false);
     check('G3.3b guide renders exactly four steps', app.byId('guideSteps').children.length === 4, app.byId('guideSteps').children.length);
@@ -179,13 +179,13 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.m');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.n');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -216,7 +216,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     check('G3.13h continue closes the briefing and hands over to the guide',
       app.byId('briefingModal').hidden === true && app.byId('guideModal').hidden === false);
     check('G3.13i completion is stamped inside sdp.settings (five-key law)',
-      /"briefingSeen":"0\.0\.6\.m"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
+      /"briefingSeen":"0\.0\.6\.n"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
     app.byId('btnGuideClose').click();
     app.byId('btnCreatorNote').click();
     check('G3.13j the relocated Project Briefing button replays it anytime',
@@ -228,8 +228,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
       !/Z\.ai|Arena|Gemini|ChatGPT|Claude/i.test(app.byId('briefingLyrics').textContent));
     app.close();
     const ret = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.m' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.n' }));
     } });
     check('G3.13m returning students are never blocked by the briefing',
       ret.byId('briefingModal').hidden === true);
@@ -241,7 +241,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
@@ -321,7 +321,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -359,7 +359,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -407,7 +407,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         /* The student touched every classroom key — the lecturer still wins. */
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
@@ -442,7 +442,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -459,7 +459,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         w.localStorage.setItem('sdp.settings', JSON.stringify({
           mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
@@ -571,8 +571,9 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     const barDocked = app.byId('lecturerSyncBar').parentNode.id;
     await new Promise((resolve) => app.SDP.Studio.unlock('78987898', resolve));
     await app.settle(4);
-    check('G3.11b unlock mounts exactly the four numbered cards (+diagnostics vault)',
-      app.qa('.studio-card').length === 4 && app.byId('studioGate') === null && app.byId('studioCardDiag') !== null,
+    check('G3.11b unlock mounts the four numbered cards + diagnostics vault + the v0.0.6.n Studio ↔ Briefing bridge card',
+      app.qa('.studio-card').length === 5 && app.byId('studioGate') === null && app.byId('studioCardDiag') !== null &&
+      app.byId('studioCardBriefingVoices') !== null && app.byId('studioBriefingVoiceBar') !== null,
       app.qa('.studio-card').length + ' cards');
     check('G3.11c the 74-clip dashboard states X/74 live',
       /Voice Pack: \d+\/74 Clips/.test(app.byId('studioPackDashboard').textContent),
@@ -613,7 +614,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.m');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.n');
         w.localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
       }
     });

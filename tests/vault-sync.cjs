@@ -48,7 +48,7 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.m'); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -397,7 +397,7 @@ function gitHubStub(opts) {
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 15, appVersion: '0.0.6.m', version: '0.0.6.m', schema: 15, settingsRev: nextRev,
+      ver: 15, appVersion: '0.0.6.n', version: '0.0.6.n', schema: 15, settingsRev: nextRev,
       session: '8', title: 'Session 8', syncRev: nextSync,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']

@@ -121,12 +121,12 @@
       },
       {
         "w": "channel",
-        "p": "/ˈtʃænel/",
-        "pos": "n.",
-        "m": "A channel.",
+        "p": "/ˈtʃænəl/",
+        "pos": "noun.",
+        "m": "The physical confine of a river or slough, consisting of a bed and banks.",
         "si": "නාලිකාව",
-        "s": "We saw a channel near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+        "s": "The water coming out of the waterwheel created a standing wave in the channel.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/channel-us.mp3"
       },
       {
         "w": "circus",
@@ -140,8 +140,8 @@
       {
         "w": "classical music",
         "p": "/ˈklæsɪkæl ˈmʌsɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being classical music.",
+        "pos": "noun.",
+        "m": "Music of the classical period; the music of Mozart, Haydn, etc; the musical period before the romantic.",
         "si": "සම්භාව්ය සංගීතය",
         "s": "The story was very classical music to read.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
@@ -157,21 +157,21 @@
       },
       {
         "w": "competition",
-        "p": "/ˈkɒmpetɪʃn/",
-        "pos": "n.",
-        "m": "A competition.",
+        "p": "/ˌkɒmpəˈtɪʃən/",
+        "pos": "noun.",
+        "m": "The action of competing.",
         "si": "තරඟය",
-        "s": "We saw a competition near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+        "s": "The competition for this job is strong.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/competition-us.mp3"
       },
       {
         "w": "concert",
-        "p": "/ˈkɒnkət/",
-        "pos": "n.",
-        "m": "A concert.",
+        "p": "/ˈkɒnsət/",
+        "pos": "noun.",
+        "m": "Agreement in a design or plan; union formed by mutual communication of opinions and views; accordance in a scheme; harmony; simultaneous action.",
         "si": "ප්රසංගය",
-        "s": "We saw a concert near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
+        "s": "I'm going to the rock concert on Friday.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
       },
       {
         "w": "disco",
@@ -266,20 +266,20 @@
       {
         "w": "headphones",
         "p": "/ˈhiːdfɒnz/",
-        "pos": "n.",
-        "m": "A headphones.",
+        "pos": "noun.",
+        "m": "A pair of speakers worn over or in the ears so only the wearer can hear the sound.",
         "si": "හෙඩ්ෆෝන්",
         "s": "We saw a headphones near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
       },
       {
         "w": "hero",
-        "p": "/ˈhəɒ/",
-        "pos": "n.",
-        "m": "A hero.",
+        "p": "/ˈhɛɹ.oʊ/",
+        "pos": "noun.",
+        "m": "Somebody who possesses great bravery and carries out extraordinary or noble deeds.",
         "si": "වීරයා",
-        "s": "We saw a hero near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+        "s": "Let's discuss how to play if the hero has KK, and there's an ace on board.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hero-us.mp3"
       },
       {
         "w": "heroine",
@@ -403,12 +403,12 @@
         },
         {
           "w": "channel",
-          "p": "/ˈtʃænel/",
-          "pos": "n.",
-          "m": "A channel.",
+          "p": "/ˈtʃænəl/",
+          "pos": "noun.",
+          "m": "The physical confine of a river or slough, consisting of a bed and banks.",
           "si": "නාලිකාව",
-          "s": "We saw a channel near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+          "s": "The water coming out of the waterwheel created a standing wave in the channel.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/channel-us.mp3"
         },
         {
           "w": "circus",
@@ -422,8 +422,8 @@
         {
           "w": "classical music",
           "p": "/ˈklæsɪkæl ˈmʌsɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being classical music.",
+          "pos": "noun.",
+          "m": "Music of the classical period; the music of Mozart, Haydn, etc; the musical period before the romantic.",
           "si": "සම්භාව්ය සංගීතය",
           "s": "The story was very classical music to read.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
@@ -439,21 +439,21 @@
         },
         {
           "w": "competition",
-          "p": "/ˈkɒmpetɪʃn/",
-          "pos": "n.",
-          "m": "A competition.",
+          "p": "/ˌkɒmpəˈtɪʃən/",
+          "pos": "noun.",
+          "m": "The action of competing.",
           "si": "තරඟය",
-          "s": "We saw a competition near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+          "s": "The competition for this job is strong.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/competition-us.mp3"
         },
         {
           "w": "concert",
-          "p": "/ˈkɒnkət/",
-          "pos": "n.",
-          "m": "A concert.",
+          "p": "/ˈkɒnsət/",
+          "pos": "noun.",
+          "m": "Agreement in a design or plan; union formed by mutual communication of opinions and views; accordance in a scheme; harmony; simultaneous action.",
           "si": "ප්රසංගය",
-          "s": "We saw a concert near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
+          "s": "I'm going to the rock concert on Friday.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
         },
         {
           "w": "disco",
@@ -548,20 +548,20 @@
         {
           "w": "headphones",
           "p": "/ˈhiːdfɒnz/",
-          "pos": "n.",
-          "m": "A headphones.",
+          "pos": "noun.",
+          "m": "A pair of speakers worn over or in the ears so only the wearer can hear the sound.",
           "si": "හෙඩ්ෆෝන්",
           "s": "We saw a headphones near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
         },
         {
           "w": "hero",
-          "p": "/ˈhəɒ/",
-          "pos": "n.",
-          "m": "A hero.",
+          "p": "/ˈhɛɹ.oʊ/",
+          "pos": "noun.",
+          "m": "Somebody who possesses great bravery and carries out extraordinary or noble deeds.",
           "si": "වීරයා",
-          "s": "We saw a hero near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+          "s": "Let's discuss how to play if the hero has KK, and there's an ace on board.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hero-us.mp3"
         },
         {
           "w": "heroine",
@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-06T11:11:19.644Z",
+  "updatedAt": "2026-11-06T11:11:37.594Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 42,
@@ -1291,12 +1291,12 @@
     },
     {
       "w": "channel",
-      "p": "/ˈtʃænel/",
-      "pos": "n.",
-      "m": "A channel.",
+      "p": "/ˈtʃænəl/",
+      "pos": "noun.",
+      "m": "The physical confine of a river or slough, consisting of a bed and banks.",
       "si": "නාලිකාව",
-      "s": "We saw a channel near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+      "s": "The water coming out of the waterwheel created a standing wave in the channel.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/channel-us.mp3"
     },
     {
       "w": "circus",
@@ -1310,8 +1310,8 @@
     {
       "w": "classical music",
       "p": "/ˈklæsɪkæl ˈmʌsɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being classical music.",
+      "pos": "noun.",
+      "m": "Music of the classical period; the music of Mozart, Haydn, etc; the musical period before the romantic.",
       "si": "සම්භාව්ය සංගීතය",
       "s": "The story was very classical music to read.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
@@ -1327,21 +1327,21 @@
     },
     {
       "w": "competition",
-      "p": "/ˈkɒmpetɪʃn/",
-      "pos": "n.",
-      "m": "A competition.",
+      "p": "/ˌkɒmpəˈtɪʃən/",
+      "pos": "noun.",
+      "m": "The action of competing.",
       "si": "තරඟය",
-      "s": "We saw a competition near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+      "s": "The competition for this job is strong.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/competition-us.mp3"
     },
     {
       "w": "concert",
-      "p": "/ˈkɒnkət/",
-      "pos": "n.",
-      "m": "A concert.",
+      "p": "/ˈkɒnsət/",
+      "pos": "noun.",
+      "m": "Agreement in a design or plan; union formed by mutual communication of opinions and views; accordance in a scheme; harmony; simultaneous action.",
       "si": "ප්රසංගය",
-      "s": "We saw a concert near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=concert"
+      "s": "I'm going to the rock concert on Friday.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
     },
     {
       "w": "disco",
@@ -1436,20 +1436,20 @@
     {
       "w": "headphones",
       "p": "/ˈhiːdfɒnz/",
-      "pos": "n.",
-      "m": "A headphones.",
+      "pos": "noun.",
+      "m": "A pair of speakers worn over or in the ears so only the wearer can hear the sound.",
       "si": "හෙඩ්ෆෝන්",
       "s": "We saw a headphones near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
     },
     {
       "w": "hero",
-      "p": "/ˈhəɒ/",
-      "pos": "n.",
-      "m": "A hero.",
+      "p": "/ˈhɛɹ.oʊ/",
+      "pos": "noun.",
+      "m": "Somebody who possesses great bravery and carries out extraordinary or noble deeds.",
       "si": "වීරයා",
-      "s": "We saw a hero near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+      "s": "Let's discuss how to play if the hero has KK, and there's an ace on board.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hero-us.mp3"
     },
     {
       "w": "heroine",

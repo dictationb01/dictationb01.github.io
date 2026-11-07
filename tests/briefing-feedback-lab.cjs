@@ -601,13 +601,28 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
               }
             } catch (e2) {}
             const barNode = document.getElementById('studioBriefingVoiceBar');
-            if (barNode) out.barStates.push(barNode.getAttribute('data-state'));
+            const barState = function () { return barNode ? barNode.getAttribute('data-state') : ''; };
+            if (barNode) out.barStates.push(barState());
             /* v0.0.6.o: the stale _intro_male_* beats are PURGED from the pack,
-               so the first ensureBriefingAndGuideVoices() call synthesizes all
-               4 missing beats — the exact creator-device flow. The FIRST call
-               can also race the briefing-open trigger on boot (busy); retry
-               until the ✓ ok state (bounded). */
-            for (let round = 0; round < 3; round += 1) {
+               so ensureBriefingAndGuideVoices() synthesizes all 4 missing
+               beats — the exact creator-device flow. The boot 'unlock' /
+               'briefing-open' trigger can already be holding the bridge lock,
+               so a call inside that window only answers `busy`. Both ✓
+               terminal states are success: 'ok' (this call made the beats)
+               and 'noop' ("✓ … voices already up to date" — the concurrent
+               boot bridge made them). LAB2j/LAB2k still prove the real
+               timestamped ElevenLabs synthesis happened in THIS page. */
+            const syncedState = function (s2) { return s2 === 'ok' || s2 === 'noop'; };
+            for (let round = 0; round < 4; round += 1) {
+              /* Wait out an in-flight bridge (busy) or a live synthesis
+                 (checking) before asking again — never launch a second one. */
+              for (let w = 0; w < 80 && (barState() === 'busy' || barState() === 'checking'); w += 1) {
+                await new Promise(function (r) { setTimeout(r, 250); });
+              }
+              if (syncedState(barState())) {
+                if (out.bridgeMade === null) out.bridgeMade = 0;
+                break;
+              }
               const res = await new Promise(function (resolve) {
                 let settled = false;
                 const finish = function (err, info) { if (!settled) { settled = true; resolve({ err: err ? String(err.message || err) : null, info: info || null }); } };
@@ -617,9 +632,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
                 } catch (e3) { finish(e3, null); }
               });
               out.bridgeErr = res.err;
-              out.bridgeMade = res.info && res.info.made;
-              if (barNode) out.barStates.push(barNode.getAttribute('data-state'));
-              if ((barNode && barNode.getAttribute('data-state') === 'ok') || (res.info && res.info.stage === 'done')) break;
+              if (res.info && typeof res.info.made === 'number') out.bridgeMade = res.info.made;
+              if (barNode) out.barStates.push(barState());
+              if (syncedState(barState()) || (res.info && (res.info.stage === 'done' || res.info.stage === 'noop'))) break;
               await new Promise(function (r) { setTimeout(r, 700); });
             }
             out.delta = window.SDP.Studio.briefingVoiceDelta ? window.SDP.Studio.briefingVoiceDelta() : null;
@@ -633,8 +648,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         audit.wtParsed === true, JSON.stringify({ wtShape: audit.wtShape }));
       check('LAB2h an authentic committed clip rides the same public injectClips() surface the Studio uses (no local synthesis)',
         audit.injected === true, JSON.stringify(audit));
-      check('LAB2i the bridge ran live: the studio unlocked and the status bar reached the ✓ synced state',
-        audit.unlocked === true && (audit.barStates || []).indexOf('ok') >= 0,
+      check('LAB2i the bridge ran live: the studio unlocked and the status bar reached the ✓ synced state (ok, or "already up to date" noop)',
+        audit.unlocked === true && ['ok', 'noop'].some(function (want) { return (audit.barStates || []).indexOf(want) >= 0; }),
         JSON.stringify({ unlocked: audit.unlocked, barStates: audit.barStates, bridgeErr: audit.bridgeErr, bridgeMade: audit.bridgeMade, err: audit.err }));
       check('LAB2j the ONLY synthesis endpoints contacted were the real ElevenLabs API — the 4 George beats via /with-timestamps — plus the Groq/OpenRouter/Gemini $0 timing cascade',
         synthesis.elevenTs >= 4 && synthesis.groq >= 1 && synthesis.tts.every(function (u) {

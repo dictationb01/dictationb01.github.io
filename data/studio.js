@@ -2400,7 +2400,7 @@
     /* v0.0.6.n: the Advanced-Tools button now routes through the SAME
        direct bridge (live status bar + live-session injection + cache
        prime + GitHub sync) as the top-of-studio 1-click control. */
-    ensureBriefingAndGuideVoices({ source: 'button' }, function (err, info) {
+    ensureBriefingAndGuideVoices({ source: 'button', force: true }, function (err, info) {
      d();
      if (err && str(err.message) === 'no_key') return;
      if (err) { msg(' Project Briefing voice failed · ' + quotaError(err), 'bad'); return; }
@@ -2430,6 +2430,7 @@
       if (global.SDP && SDP.Views && global.confirm && global.confirm('Project Overview & Guide voices are already up to date.\\n\\nForce a full regeneration with the stored ElevenLabs keys now?')) { run(true); return; }
      } catch (e1) {}
      paintBriefingVoiceBar('noop');
+     d();
      return;
     }
     run(false);

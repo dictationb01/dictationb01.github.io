@@ -67,36 +67,36 @@ function bootSync(seed) {
 test('R1: app, schema and service-worker constants are all 0.0.6.e', () => {
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R1 version & cache constants
   const { SDP } = bootSync();
-  assert.equal(SDP.version, '0.0.6.o');
+  assert.equal(SDP.version, '0.0.6.p');
   assert.equal(SDP.build, '2026-11-07');
-  assert.equal(SDP.ver, 29);
+  assert.equal(SDP.ver, 30);
   assert.equal(SDP.SDPCore, undefined); // alias lives on window, not inside SDP
   assert.equal(SDP.Sync.Vault.PREFIX, 'SDP_ENC_V2:');
   assert.equal(SDP.Sync.Vault.ITERATIONS, 250000);
 
   const version = readJSON('data/version.json');
-  assert.equal(version.ver, 29);
-  assert.equal(version.appVersion, '0.0.6.o');
-  assert.equal(version.version, '0.0.6.o');
-  assert.equal(version.schema, 29);
-  assert.equal(version.settingsRev, 45);
-  assert.equal(Number(version.syncRev), 1794600000000);
+  assert.equal(version.ver, 30);
+  assert.equal(version.appVersion, '0.0.6.p');
+  assert.equal(version.version, '0.0.6.p');
+  assert.equal(version.schema, 30);
+  assert.equal(version.settingsRev, 46);
+  assert.equal(Number(version.syncRev), 1794700000000);
   assert.equal(String(version.session), '8');
 
   const cfg = readJSON('data/config.json');
-  assert.equal(cfg.ver, 29);
-  assert.equal(cfg.appVersion, '0.0.6.o');
-  assert.equal(cfg.version, '0.0.6.o');
-  assert.equal(cfg.schema, 29);
-  assert.equal(cfg.settingsRev, 45);
+  assert.equal(cfg.ver, 30);
+  assert.equal(cfg.appVersion, '0.0.6.p');
+  assert.equal(cfg.version, '0.0.6.p');
+  assert.equal(cfg.schema, 30);
+  assert.equal(cfg.settingsRev, 46);
   assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
 
   const sw = read('sw.js');
-  assert.match(sw, /SW_VERSION = 'sdp-v0.0.6.o-s30'/);
-  assert.match(sw, /SHELL_CACHE = 'sdp-v0.0.6.o-s30-shell'/);
+  assert.match(sw, /SW_VERSION = 'sdp-v0.0.6.p-s31'/);
+  assert.match(sw, /SHELL_CACHE = 'sdp-v0.0.6.p-s31-shell'/);
   assert.match(sw, /PRESERVE_CACHES = \['sdp-audio-clips', 'sdp-youdao-v1'\]/);
   const index = read('index.html');
-  assert.match(index, /var TARGET = '0.0.6.o'/);
+  assert.match(index, /var TARGET = '0.0.6.p'/);
 });
 
 test('R1: the five localStorage keys and the settings default shape are exact', () => {
@@ -328,6 +328,8 @@ test('R1: a payload leg that never proves its syncRev is never adopted', async (
 
 test('R2: fetchFreshDataJson keeps the higher syncRev and reports its source', async () => {
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R2 dual-source reader
+  /* v0.0.6.p PILLAR 1: the dual-source race is the FRESH refresh mode
+     ({fresh:true}) — the boot mode reads only the cache-first origin leg. */
   const { SDP, setFetch } = bootSync();
   const version = readJSON('data/version.json');
   const originJson = Object.assign({}, version, { syncRev: 5, tag: 'origin' });
@@ -337,7 +339,7 @@ test('R2: fetchFreshDataJson keeps the higher syncRev and reports its source', a
     const body = isRaw ? rawJson : originJson;
     return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
   });
-  const higher = await new Promise((resolve) => SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result)));
+  const higher = await new Promise((resolve) => SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result), { fresh: true }));
   assert.equal(higher.ok, true);
   assert.equal(higher.json.tag, 'raw', 'the higher syncRev wins');
   assert.equal(higher.source, 'raw');
@@ -348,16 +350,62 @@ test('R2: fetchFreshDataJson keeps the higher syncRev and reports its source', a
       const body = isRaw ? originJson : rawJson;
       return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
     });
-    SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result));
+    SDP.Sync.fetchFreshDataJson('data/version.json', (err, result) => resolve(result), { fresh: true });
   });
   assert.equal(flipped.json.syncRev, 9, 'the freshest body wins whichever source carried it');
   assert.equal(flipped.source, 'origin', 'and the winning source is reported honestly');
   /* and when both sources die the caller is told, once */
   const failed = await new Promise((resolve) => {
     setFetch(() => Promise.reject(new Error('offline')));
-    SDP.Sync.fetchFreshDataJson('data/version.json', (err) => resolve(err ? 'err' : 'ok'));
+    SDP.Sync.fetchFreshDataJson('data/version.json', (err) => resolve(err ? 'err' : 'ok'), { fresh: true });
   });
   assert.equal(failed, 'err');
+});
+
+/* ── v0.0.6.p PILLAR 1 — the low-mobile-data cache-first boot law ────────── */
+test('P1: the boot fetchFreshDataJson is cache-first (single origin leg, no raw race)', async () => {
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 low-mobile-data boot path
+  const { SDP, setFetch } = bootSync();
+  const version = readJSON('data/version.json');
+  const originJson = Object.assign({}, version, { syncRev: 5, tag: 'origin' });
+  const saw = { raw: 0, origin: 0, tick: 0, cacheMode: [] };
+  setFetch((url, opts) => {
+    const u = String(url);
+    if (u.indexOf('raw.githubusercontent.com') >= 0) { saw.raw += 1; }
+    else {
+      saw.origin += 1;
+      if (/[?&]t=\d+/.test(u)) saw.tick += 1;
+      saw.cacheMode.push(String((opts && opts.cache) || ''));
+    }
+    const body = u.indexOf('raw.githubusercontent.com') >= 0
+      ? Object.assign({}, version, { syncRev: 99, tag: 'raw' }) : originJson;
+    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
+  });
+  const boot = await new Promise((resolve) => SDP.Sync.fetchFreshDataJson('data/elevenlabs-audio.json', (err, result) => resolve({ err, result })));
+  assert.equal(boot.err, null, 'the cache-first boot read resolves');
+  assert.equal(boot.result.source, 'origin', 'the boot read settles on the origin leg alone');
+  assert.equal(saw.raw, 0, 'no raw.githubusercontent.com leg may run at boot (weak-data 5s race)');
+  assert.equal(saw.tick, 0, 'no ?t= tick on the boot read (the SW/HTTP cache must serve it)');
+  assert.ok(saw.cacheMode.every(function (m) { return m === 'default'; }), 'the boot read carries cache:default, never no-store');
+});
+
+test('P1: fetchJSON fresh mode keeps no-store + tick for the tiny version.json pointer', async () => {
+  // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 pointer freshness
+  const { SDP, setFetch } = bootSync();
+  const version = readJSON('data/version.json');
+  const seen = [];
+  setFetch((url, opts) => {
+    seen.push({ url: String(url), cache: (opts && opts.cache) || '' });
+    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(version) });
+  });
+  await new Promise((resolve) => SDP.Sync.fetchJSON('./data/version.json', resolve, { fresh: true }));
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0].cache, 'no-store', 'the pointer stays no-store');
+  assert.ok(/[?&]t=\d+/.test(seen[0].url), 'the pointer keeps its tick');
+  await new Promise((resolve) => SDP.Sync.fetchJSON('./data/session.json', resolve));
+  assert.equal(seen[1].cache, 'default', 'the session boot leg is cache-first');
+  assert.ok(!/[?&]t=\d+/.test(seen[1].url), 'the session boot leg carries no tick');
+  assert.ok(/[?&]v=0\.0\.6\.p/.test(seen[1].url), 'the boot legs carry the release version bust');
 });
 
 /* ── R7 publishing payloads ─────────────────────────────────────────────── */
@@ -383,7 +431,7 @@ test('R7: GitHub Contents payload, CORS-simple GAS relay and 40K word chunking',
   assert.equal(parsed.pin, undefined, 'relay must not carry the PIN');
   assert.equal(relay.indexOf(SDP.Studio ? '78987898' : '78987898'), -1, 'the PIN must not appear anywhere in the body');
   // contract: docs/CHANGELOG_LEDGER.md §Release ledger — relay pins the current build version
-  assert.equal(parsed.ver, '0.0.6.o');
+  assert.equal(parsed.ver, '0.0.6.p');
 
   const longWords = Array.from({ length: 1200 }, (_, i) => ({
     w: 'word' + i,

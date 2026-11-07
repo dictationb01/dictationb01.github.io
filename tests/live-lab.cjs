@@ -88,7 +88,7 @@ const TARGET_VERSION = /var TARGET = '([^']+)'/.exec(fs.readFileSync(path.join(R
 /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
  * this pacing against a classSettings adoption; guideAutoPlay is off so a
  * resilience tap reaches the cockpit without the quick walkthrough. */
-const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 };
+const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99, briefingSeen: TARGET_VERSION };
 
 (async function main() {
   const server = await start({ root: ROOT });

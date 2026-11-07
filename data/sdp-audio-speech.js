@@ -105,6 +105,13 @@
     /* D15/R9: paid clips are mirrored here because a manifest load already in
        flight when they were paid for replaces state.manifest wholesale. */
     injectedClips: {},
+    /* v0.0.6.p PILLAR 1 — the ZERO-DROP clip base: the union of every clip
+       key ever adopted (newest entry wins per key). applyManifest() merges
+       each freshly parsed pack INTO this base, so a reload that arrives
+       empty, partial or stale on weak mobile data can never make the 131
+       committed Alice clips (or the 4 George briefing beats) vanish from
+       the in-memory voice pack mid-session. */
+    clipBase: {},
     manifestRetryBound: false,
     lastTier: '',
     lastUtterances: [],
@@ -927,11 +934,27 @@
     return map;
   }
   function applyManifest(data) {
-    state.manifest = data && isObj(data) ? data : { clips: {} };
-    if (!isObj(state.manifest.clips)) state.manifest.clips = {};
+    var next = data && isObj(data) ? data : { clips: {} };
+    if (!isObj(next.clips)) next.clips = {};
+    /* v0.0.6.p PILLAR 1 — the ZERO-DROP MERGE law: the previously adopted
+       clips are merged UNDER the incoming pack (an incoming key wins, an old
+       key is never dropped) before the manifest is swapped in. A weak-data
+       reload that resolves empty or partial therefore leaves the live voice
+       pack 100% intact — the 131 Alice clips and the 4 George beats can
+       never disappear mid-session. */
+    if (!isObj(state.clipBase)) state.clipBase = {};
+    var base = state.clipBase, k;
+    for (k in base) {
+      if (!Object.prototype.hasOwnProperty.call(base, k)) continue;
+      if (!Object.prototype.hasOwnProperty.call(next.clips, k)) next.clips[k] = base[k];
+    }
+    for (k in next.clips) {
+      if (Object.prototype.hasOwnProperty.call(next.clips, k)) base[k] = next.clips[k];
+    }
+    state.manifest = next;
     hydrateClips(state.manifest.clips);
     reapplyInjectedClips();
-    state.manifestSyncRev = Number(state.manifest.syncRev || 0);
+    state.manifestSyncRev = Math.max(Number(state.manifestSyncRev || 0), Number(state.manifest.syncRev || 0));
     state.manifestRequested = false;
     return state.manifest;
   }
@@ -953,7 +976,12 @@
   /* D2 / R2: the manifest is read through SDP.Sync.fetchFreshDataJson, so a
      freshly published Alice pack is heard from raw.githubusercontent.com even
      while the Pages CDN still serves yesterday's clips. A same-origin-only
-     read kept the old word pack alive for minutes after a publish. */
+     read kept the old word pack alive for minutes after a publish.
+     v0.0.6.p PILLAR 1: the BOOT read is cache-first (?v=<release>, no tick,
+     cache:'default' — the SW answers in < 30 ms on 0-bar mobile data); only
+     a FORCED reload (post-publish adoption chain, online retry) runs the
+     fresh raw-vs-origin race, and even then the zero-drop merge law in
+     applyManifest() keeps every committed clip live while it downloads. */
   function loadManifest(cb, force) {
     cb = cb || noop;
     if (state.manifest && !force) { cb(null, state.manifest); return; }
@@ -973,7 +1001,7 @@
           var manifest = applyManifest(result.json);
           manifest.manifestSource = str(result.source);
           cb(null, manifest);
-        });
+        }, { fresh: force === true });
         return;
       } catch (e) {
         state.manifestRequested = false;
@@ -984,10 +1012,15 @@
     }
     if (typeof global.fetch !== 'function') { state.manifestRequested = false; bindManifestRetry(); cb(new Error('no_fetch')); return; }
     try {
-      /* v0.0.6.n cache-bust law: the pack fetch carries the release version
-         AND the tick with cache:'no-store' — a stale cached manifest from an
-         earlier release can never be served after the s29 SW takes over. */
-      global.fetch('./data/elevenlabs-audio.json?v=0.0.6.o&t=' + nowMs(), { cache: 'no-store' })
+      /* v0.0.6.p low-mobile-data law: the boot fetch carries ONLY the release
+         version — ?v=<APP_VERSION> — with cache:'default', so the Service
+         Worker / HTTP cache serves the ~3 MB pack instantly and a weak 2G
+         link is never asked to re-download it. A forced reload keeps the
+         tick + no-store bust so a proven publish can never be masked by a
+         stale cache. */
+      var fresh = force === true;
+      var url = './data/elevenlabs-audio.json?v=0.0.6.p' + (fresh ? '&t=' + nowMs() : '');
+      global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { cb(null, applyManifest(data)); }, function () {
           state.manifestRequested = false;
@@ -1023,7 +1056,10 @@
   function reloadManifest(cb, force) {
     if (typeof cb === 'boolean') { force = cb; cb = noop; }
     cb = cb || noop;
-    state.manifest = null;
+    /* v0.0.6.p PILLAR 1 — the ZERO-DROP RELOAD law: the previous manifest is
+       NOT nulled while the fresh pack downloads. Every committed clip stays
+       playable through the whole reload window; applyManifest() swaps the
+       new pack in atomically only after it has fully downloaded and parsed. */
     state.manifestRequested = false;
     loadManifest(cb, force !== false);
     return true;
@@ -1628,7 +1664,10 @@
       var detail = (ev && ev.detail) || {};
       var nextRev = Number(detail.syncRev || 0);
       if (state.manifest && nextRev && nextRev <= Number(state.manifestSyncRev || 0)) return;
-      state.manifest = null;
+      /* v0.0.6.p PILLAR 1: the manifest is NOT nulled — the zero-drop law
+         keeps every committed clip playable while the fresh pack downloads;
+         loadManifest(force) bypasses the cached copy and applyManifest()
+         swaps the new pack in atomically once it has fully parsed. */
       state.manifestRequested = false;
       loadManifest(noop, true);
     };

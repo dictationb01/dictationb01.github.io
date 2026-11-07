@@ -49,7 +49,8 @@ function installVoices(app, list) {
   /* ── 1. D-V1: the ReferenceError that killed v0.0.1.b ────────────────── */
   // contract: docs/CHANGELOG_LEDGER.md §D-V1 — pickVoice must always be a function
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     check('G10.1a the speech module exports pickVoice as a function',
       typeof app.SDP.Speech.pickVoice === 'function');
     let picked = 'unset';
@@ -65,7 +66,8 @@ function installVoices(app, list) {
   /* ── 2. D-V2: one unified British female professor, male names banned ── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 male-name blacklist
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     const list = fakeVoices();
     installVoices(app, list);
     await new Promise((resolve) => app.SDP.Speech.selectProfessorVoice((v) => { app.w.__picked = v; resolve(); }));
@@ -91,7 +93,7 @@ function installVoices(app, list) {
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.o' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' }));
     } });
     const steps = app.qa('#guideSteps .guide-step');
     check('G10.3a the hidden step list carries exactly four sentences', steps.length === 4, steps.length);
@@ -117,7 +119,8 @@ function installVoices(app, list) {
       app.byId('guideStepText').textContent);
     const footButtons = Array.from(app.q('#guideModal .modal-foot').querySelectorAll('button')).map((b) => b.id);
     check('G10.3g the guide carries exactly two buttons',
-      JSON.stringify(footButtons) === JSON.stringify(['btnGuideSkipStart', 'btnGuideClose']), footButtons.join(','));
+      /* v0.0.6.p Pillar 3: Exit is on the LEFT, ▶ Click Start Dictation Now on the RIGHT. */
+      JSON.stringify(footButtons) === JSON.stringify(['btnGuideClose', 'btnGuideSkipStart']), footButtons.join(','));
     check('G10.3h the retired step/next/replay controls are gone',
       app.byId('guideNextStep') === null && app.byId('guideReplayStep') === null && app.byId('guideSpeak') === null);
     app.byId('guideLangPill').click();
@@ -137,7 +140,7 @@ function installVoices(app, list) {
       /runId !== guideState\.guideRunId/.test(block) && /guideState\.guideRunId \+= 1/.test(viewSrc));
     app.byId('btnGuideClose').click();
     check('G10.3l closing hides the modal and stamps the visit',
-      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.o');
+      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.p');
     app.close();
   }
 
@@ -149,7 +152,8 @@ function installVoices(app, list) {
     check('G10.4b a banner tap resumes the CURRENT step, never step 1',
       /startGuideNarration\(guideState\.activeStep\)/.test(viewSrc) &&
       !/onGuideBannerTap[\s\S]{0,400}?startGuideNarration\(0\)/.test(viewSrc));
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     app.byId('btnReplayGuide').click();
     await app.settle(4);
     const banner = app.byId('guideTapBanner');
@@ -174,9 +178,9 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
         /* appliedSettingsRev pins the student's own lock against adoption. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
       }
     });
     check('G10.5a a custom voice lock is preserved, not overwritten',
@@ -190,7 +194,7 @@ function installVoices(app, list) {
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.o' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' }));
     } });
     const banner = app.byId('guideAutoplayBanner');
     check('G10.6a the autoplay banner ships in the guide modal',
@@ -215,9 +219,8 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
           voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
         }));
@@ -251,9 +254,8 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
           voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
         }));

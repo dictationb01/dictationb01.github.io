@@ -49,7 +49,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' }));
         w.localStorage.setItem('sdp.pin_rev_guard', '1');
       },
       files: (() => {
@@ -74,9 +75,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
           touchedKeys: { pacingPreset: true, writeSecs: true, repeats: true },
           appliedSettingsRev: 7
@@ -96,9 +96,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
           /* D10: above the shipped settingsRev, so adoption cannot overwrite. */
           defaultsResetV001f: true, appliedSettingsRev: 99
@@ -115,7 +114,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     /* R7: use a PIN that is NOT the master recovery code, so the lockout
        assertions below still see a plain refusal. */
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
@@ -144,7 +144,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
   // always opens a recovery session, even while the PIN pad is locked out.
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
@@ -168,7 +169,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.o' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' }));
     } });
     check('G3.3a guide auto-opens on the first visit', app.byId('guideModal').hidden === false);
     check('G3.3b guide renders exactly four steps', app.byId('guideSteps').children.length === 4, app.byId('guideSteps').children.length);
@@ -179,13 +180,14 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.o');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.p');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -216,7 +218,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     check('G3.13h continue closes the briefing and hands over to the guide',
       app.byId('briefingModal').hidden === true && app.byId('guideModal').hidden === false);
     check('G3.13i completion is stamped inside sdp.settings (five-key law)',
-      /"briefingSeen":"0\.0\.6\.o"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
+      /"briefingSeen":"0\.0\.6\.p"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
     app.byId('btnGuideClose').click();
     app.byId('btnCreatorNote').click();
     check('G3.13j the relocated Project Briefing button replays it anytime',
@@ -228,8 +230,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
       !/Z\.ai|Arena|Gemini|ChatGPT|Claude/i.test(app.byId('briefingLyrics').textContent));
     app.close();
     const ret = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.o' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' }));
     } });
     check('G3.13m returning students are never blocked by the briefing',
       ret.byId('briefingModal').hidden === true);
@@ -241,12 +243,12 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
            classroom adoption cannot overwrite this test's own pacing. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, appliedSettingsRev: 99, defaultsResetV001f: true }));
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, appliedSettingsRev: 99, defaultsResetV001f: true }));
       }
     });
     check('G3.4a boot loads the 30-word active list', app.SDP.Sync.wordCount() === 30, app.SDP.Sync.wordCount());
@@ -321,7 +323,45 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
+    app.byId('tab-dict').click();
+    const cards = app.byId('dictList').querySelectorAll('.dict-card');
+    check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
+    const firstSi = cards[0].querySelector('.word-si');
+    check('G3.5b each card carries the Sinhala meaning in .word-si', !!firstSi && sinhala.test(firstSi.textContent), firstSi && firstSi.textContent);
+    app.SDP.Views.applyLang('en');
+    // the vocabulary cards' .word-si / .hp-si are the ONLY legal Sinhala in EN mode
+    const dictWithoutSi = app.byId('dictList').cloneNode(true);
+    Array.from(dictWithoutSi.querySelectorAll('.word-si')).forEach((n) => n.remove());
+    const homeClone = app.byId('screen-home').cloneNode(true);
+    Array.from(homeClone.querySelectorAll('.word-si, .hp-si')).forEach((n) => n.remove());
+    const chromeEn = [app.byId('tabbar'), app.byId('appHeader'), homeClone, app.byId('screen-settings'), app.byId('screen-studio')]
+      .map((n) => n.textContent).join(' ') + ' ' + dictWithoutSi.textContent;
+    check('G3.5c English chrome contains zero Sinhala outside the vocabulary cards', !sinhala.test(chromeEn), (chromeEn.match(/[\u0D80-\u0DFF]+/g) || []).join(','));
+    app.SDP.Views.applyLang('si');
+    const chromeSi = [app.byId('tabbar'), app.byId('appHeader'), app.byId('screen-home'), app.byId('screen-settings')]
+      .map((n) => n.textContent).join(' ');
+    check('G3.5d Sinhala chrome is rendered in Sinhala', sinhala.test(chromeSi));
+    check('G3.5e proper nouns survive the switch', chromeSi.indexOf('CCBE B1') >= 0 && app.byId('appHeader').textContent.indexOf('Smart Dictation') >= 0);
+    const guide = app.SDP.Views.t('guideSpotlight1');
+    check('G3.5f Sinhala guide step one is natural Sinhala', sinhala.test(guide) && guide.length > 40, guide.slice(0, 60));
+    check('G3.5g English and Sinhala tables have identical key sets',
+      JSON.stringify(Object.keys(app.SDP.STRINGS_EN).sort()) === JSON.stringify(Object.keys(app.SDP.STRINGS_SI).sort()),
+      Object.keys(app.SDP.STRINGS_EN).filter((k) => !(k in app.SDP.STRINGS_SI)).join(','));
+    app.SDP.Views.applyLang('en');
+    const tail = app.SDP.Views.t('creditsLine');
+    check('G3.5h the attribution line is exact in English',
+      tail === 'Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)', tail);
+    check('G3.5i the credits pill reads CREDITS GOES TO Hansana',
+      app.q('#creditFoot .credits-pill').textContent === 'CREDITS GOES TO Hansana',
+      app.q('#creditFoot .credits-pill').textContent);
+    app.close();
+  }
+
+  /* ── 5. language purity ─────────────────────────────────────────────── */
+  // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
+  {
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -359,7 +399,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -407,10 +448,9 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
         /* The student touched every classroom key — the lecturer still wins. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
           pacingPreset: 'exam', voiceLock: 'custom', voiceSource: 'custom', rate: 1.1, theme: 'board',
           lang: 'si', volume: 0.4, appliedSettingsRev: 0, langResetV001e: true,
           defaultsResetV001f: true,
@@ -442,7 +482,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.o'); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -459,9 +500,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({
-          mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
         }));
       }
@@ -475,7 +515,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
       app.byId('guideTitle').textContent);
     check('G3.9c #btnGuideSkipStart is visible and labelled',
       app.byId('btnGuideSkipStart').hidden === false &&
-      /▶ Start Dictation Now/.test(app.byId('btnGuideSkipStart').textContent),
+      /▶ Click Start Dictation Now/.test(app.byId('btnGuideSkipStart').textContent),
       app.byId('btnGuideSkipStart').textContent);
     await app.advance(1200);
     const spoken = app.SDP.Speech.lastUtterances();
@@ -614,8 +654,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.o');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p', appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
       }
     });
     await app.settle(2);

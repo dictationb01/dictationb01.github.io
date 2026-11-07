@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.o';
+  SDP.version = '0.0.6.p';
   SDP.build = '2026-11-07';
-  SDP.ver = 29;
+  SDP.ver = 30;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.o';
-  var SCHEMA = 29;
-  var SETTINGS_REV = 45;
+  var APP_VERSION = '0.0.6.p';
+  var SCHEMA = 30;
+  var SETTINGS_REV = 46;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1243,12 +1243,29 @@
     if (sameActiveList(payload)) return true;
     return false;
   }
-  /* D2: one reader for both sources. Same-origin Pages CDN (6 s) and the
-   * raw.githubusercontent.com edge (5 s) race in parallel; the payload with the
-   * higher syncRev wins and raw breaks a tie. Never a mixed pair. */
-  function fetchFreshDataJson(relPath, cb) {
+  /* D2: one reader for both sources. FRESH mode (post-publish refresh, the
+   * default) races the same-origin Pages CDN (6 s) against the
+   * raw.githubusercontent.com edge (5 s); the payload with the higher syncRev
+   * wins and raw breaks a tie — a freshly published pack is heard while the
+   * Pages CDN still serves yesterday's clips. Never a mixed pair.
+   * v0.0.6.p PILLAR 1: BOOT mode (opts.fresh !== true) reads ONLY the
+   * same-origin cache-first leg and settles the instant it answers — on weak
+   * mobile data the Service Worker resolves it in < 30 ms and no 5 s raw
+   * race may hold the voice pack hostage. Freshness after boot is owned by
+   * the tiny version.json watcher, which escalates to a fresh refresh only
+   * when a pointer actually moved. */
+  function fetchFreshDataJson(relPath, cb, opts) {
     cb = cb || noop;
+    var o = isObj(opts) ? opts : {};
     var path = str(relPath).replace(/^\.?\/+/, '');
+    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
+    if (o.fresh !== true) {
+      fetchJSON('./' + path, function (err, data) {
+        if (err || !isObj(data)) { cb(err || new Error('no_data')); return; }
+        cb(null, { ok: true, json: data, source: 'origin' });
+      });
+      return true;
+    }
     var pending = 2, settled = false, origin = null, originErr = null, raw = null, rawErr = null;
     function finish() {
       if (settled) return;
@@ -1262,11 +1279,10 @@
       var useRaw = rawOk && (!originOk || rRev > oRev || (rRev === oRev && rRev > 0));
       cb(null, { ok: true, json: useRaw ? raw : origin, source: useRaw ? 'raw' : 'origin' });
     }
-    if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
     fetchJSON('./' + path, function (err, data) {
       if (!err && isObj(data)) origin = data; else originErr = err || new Error('bad_response');
       finish();
-    });
+    }, { fresh: true });
     Sync.fetchRawMainJson(path, function (err, data) {
       if (!err && isObj(data)) raw = data; else rawErr = err || new Error('raw_failed');
       finish();
@@ -1314,7 +1330,27 @@
     emit('sdp:' + name, payload);
   }
 
-  function fetchJSON(url, cb) {
+  /* ══ v0.0.6.p PILLAR 1 — the LOW-MOBILE-DATA cache law ══════════════════
+   * The v0.0.6.n/o cache-bust law (?v=<ver>&t=<tick> + cache:'no-store' on
+   * every data JSON) forced a weak 2G/slow-3G Sri Lankan phone to re-download
+   * the ~3 MB voice pack on EVERY boot: the fetch outran the SW shell cache,
+   * timed out after 6 s and left SDP.Speech with an EMPTY pack — all 131
+   * Alice clips vanished and the clock fell back to robotic TTS.
+   * The v0.0.6.p law splits the two worlds:
+   *   - BOOT payloads (session.json, config.json, elevenlabs-audio.json) are
+   *     fetched CACHE-FIRST: only the release version ?v=<APP_VERSION> — no
+   *     tick, cache:'default' — so the Service Worker / HTTP cache answers in
+   *     < 30 ms even on 0-bar mobile data.
+   *   - Only the tiny 428-byte data/version.json pointer keeps
+   *     cache:'no-store' + the tick, with a 2500 ms budget (fresh leg). A
+   *     pointer timeout is silent: the cached payloads keep serving.
+   *   - Post-publish refresh legs (pullVerified / fetchFreshDataJson with
+   *     {fresh:true}) also carry the tick + no-store — they run in the
+   *     background AFTER the UI is already live, so freshness never blocks
+   *     boot and a slow leg can never blank the in-memory pack. */
+  function fetchJSON(url, cb, opts) {
+    var o = isObj(opts) ? opts : {};
+    var fresh = o.fresh === true;
     var done = false;
     function finish(err, data) {
       if (done) return;
@@ -1323,17 +1359,17 @@
     }
     if (typeof global.fetch !== 'function') { finish(new Error('no_fetch')); return; }
     try {
-      /* v0.0.6.n cache-bust law (RECOMMENDATION 2): every data JSON fetch
-         carries BOTH the release version and the tick — ?v=0.0.6.n&t=<ms> —
-         with cache:'no-store', so a stale SW/HTTP copy of
-         data/elevenlabs-audio.json can never survive an upgrade. */
-      global.fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + APP_VERSION + '&t=' + nowMs(), { cache: 'no-store' })
+      var bust = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + APP_VERSION + (fresh ? '&t=' + nowMs() : '');
+      global.fetch(bust, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { finish(data ? null : new Error('bad_response'), data); },
           function () { finish(new Error('fetch_failed')); });
     } catch (e) { finish(new Error('fetch_failed')); }
-    /* A hung network must never freeze the boot. contract: docs/ARCHITECTURE_MAP.md §R6 */
-    global.setTimeout(function () { finish(new Error('timeout')); }, 6000);
+    /* A hung network must never freeze the boot. contract: docs/ARCHITECTURE_MAP.md §R6
+       Fresh pointer reads (version.json) get the tight 2500 ms mobile-data
+       budget; cache-first boot reads keep the classic 6 s window because the
+       SW cache answers long before it ever fires. */
+    global.setTimeout(function () { finish(new Error('timeout')); }, fresh ? 2500 : 6000);
   }
 
   function normalizeWord(raw, index) {
@@ -1562,7 +1598,12 @@
         state.source = failed === 3 ? 'offline' : 'network';
         finishBoot(state.ready ? null : new Error('no_words'), state);
       }
-      fetchJSON('./data/version.json', function (e, d) { settle('version', e, d); });
+      /* v0.0.6.p PILLAR 1: only the 428-byte version.json pointer is fetched
+         fresh (no-store + tick, 2500 ms) — the session/config legs are
+         CACHE-FIRST (?v=<release>, cache:'default') so the SW shell cache
+         answers instantly on weak mobile data and a slow leg can never
+         blank the cockpit. */
+      fetchJSON('./data/version.json', function (e, d) { settle('version', e, d); }, { fresh: true });
       fetchJSON('./data/config.json', function (e, d) { settle('config', e, d); });
       fetchJSON('./data/session.json', function (e, d) { settle('session', e, d); });
     },
@@ -1588,7 +1629,9 @@
         settled = true;
         proceed();
       }
-      fetchJSON('./data/version.json', function (err, data) { cdnErr = err; cdnVersion = err ? null : data; joined(); });
+      /* v0.0.6.p PILLAR 1: the watcher reads only the tiny pointer fresh; a
+         pointer timeout on weak mobile data is non-fatal (Never-Red law). */
+      fetchJSON('./data/version.json', function (err, data) { cdnErr = err; cdnVersion = err ? null : data; joined(); }, { fresh: true });
       Sync.fetchRawMainJson('data/version.json', function (err, data) {
         if (err || !data) rawFailed = true; else rawVersion = data;
         joined();
@@ -1653,7 +1696,10 @@
         var usedSources = {};
         function fetchLeg(source, path, done) {
           if (source === 'raw') { Sync.fetchRawMainJson(path, done); return; }
-          fetchJSON('./' + path, done);
+          /* v0.0.6.p PILLAR 1: refresh legs run AFTER a syncRev advance was
+             proven by the pointer, with the UI already live — they stay fresh
+             (tick + no-store) so the CDN cannot answer yesterday's payload. */
+          fetchJSON('./' + path, done, { fresh: true });
         }
         function pullVerified(path, kind, assign, done) {
           var alternate = primarySource === 'raw' ? 'origin' : 'raw';
@@ -1792,9 +1838,10 @@
      * purgeStaleBriefingClips(): deletes from caches.open('sdp-audio-clips')
      * every _intro_male_* / guide.en.* / _guide_* entry and any stale
      * elevenlabs-audio manifest body. The next briefing open re-fetches the
-     * pack with ?v=0.0.6.n&t=<syncRev> + cache:'no-store' and re-primes from
-     * the CURRENT BRIEFING_SENTENCES — an old cached voice can never play.
-     * Returns a promise resolving to the number of purged cache entries. */
+     * pack (v0.0.6.p: cache-first at boot, fresh after a proven syncRev bump)
+     * and re-primes from the CURRENT BRIEFING_SENTENCES — an old cached
+     * voice can never play. Returns a promise resolving to the number of
+     * purged cache entries. */
     purgeStaleBriefingClips: function () {
       var purged = 0;
       var done = null;
@@ -2150,7 +2197,7 @@
         fetchJSON('./data/version.json', function (err2, data2) {
           if (err2 || !data2) { cb(err2 || err || new Error('bad_response'), { ok: false, changed: false }); return; }
           compare(data2);
-        });
+        }, { fresh: true });
       });
     },
 

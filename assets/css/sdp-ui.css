@@ -2539,6 +2539,96 @@ html[data-theme='dark'] .briefing-links a { background: #0C4A6E; border-color: #
 @keyframes sdpPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* ═════════ v0.0.6.m — Pillar 1: dynamic briefing, word-flow & autoplay handshake ═════════ */
+/* ═════════ v0.0.6.o Pillar 1 — the TWO-STAGE cinematic welcome ═════════ */
+/* Stage 1 (#welcomeStage): the animated "Welcome to Smart Dictation Web App"
+   splash. The Continue click unlocks audio inside the gesture, then the
+   stage cross-fades into the Project Overview (#briefingStage). */
+.welcome-stage {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; min-height: clamp(300px, 56vh, 520px); padding: 26px 18px 22px; text-align: center;
+}
+.welcome-stage[hidden] { display: none; }
+.briefing-stage[hidden] { display: none; }
+.briefing-stage.is-entering { animation: sdpWelcomeIn 320ms ease both; }
+.welcome-stage.is-leaving { animation: sdpWelcomeOut 320ms ease both; }
+.welcome-eyebrow {
+  margin: 0; padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 800;
+  letter-spacing: 1.6px; text-transform: uppercase;
+  background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD;
+  animation: sdpWelcomeFadeUp 520ms ease 60ms both;
+}
+.welcome-crest { position: relative; width: 108px; height: 108px; margin: 6px 0 2px; }
+.welcome-glyph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 44px; border-radius: 50%;
+  background: linear-gradient(180deg, #F0F9FF, #E0F2FE); border: 1px solid #BAE6FD;
+  box-shadow: 0 10px 26px rgba(14, 165, 233, 0.28);
+  animation: sdpWelcomePop 640ms cubic-bezier(0.22, 1.2, 0.36, 1) 140ms both;
+}
+.welcome-orbit { position: absolute; inset: -8px; display: block; }
+.welcome-orbit::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 2px dashed rgba(14, 165, 233, 0.55);
+  animation: sdpWelcomeSpin 9s linear infinite;
+}
+.welcome-orbit::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 2px solid rgba(99, 102, 241, 0.28);
+  animation: sdpWelcomeSpin 14s linear infinite reverse;
+}
+.welcome-orbit i {
+  position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; margin-left: -5px;
+  border-radius: 50%; background: #6366F1; box-shadow: 0 0 12px rgba(99, 102, 241, 0.9);
+  animation: sdpWelcomeSpin 9s linear infinite;
+}
+.welcome-title {
+  margin: 4px 0 0; font-size: clamp(26px, 7.4vw, 40px); line-height: 1.14; font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(100deg, #0EA5E9 12%, #6366F1 52%, #0EA5E9 88%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: sdpWelcomeFadeUp 560ms ease 200ms both, sdpWelcomeShimmer 3.4s ease-in-out 900ms infinite;
+}
+.welcome-sub {
+  margin: 2px 0 0; font-size: 13.5px; line-height: 1.55; font-weight: 650; color: var(--text-muted);
+  animation: sdpWelcomeFadeUp 560ms ease 330ms both;
+}
+.welcome-cta {
+  margin-top: 14px; min-width: min(300px, 86%); padding: 13px 22px; font-size: 15.5px; font-weight: 800;
+  border-radius: 999px;
+  animation: sdpWelcomeFadeUp 560ms ease 460ms both, sdpPulse 1.9s ease 1200ms infinite;
+}
+html[data-theme='dark'] .welcome-eyebrow { background: #0C4A6E; color: #BAE6FD; border-color: #075985; }
+html[data-theme='dark'] .welcome-glyph {
+  background: linear-gradient(180deg, #0C4A6E, #082F49); border-color: #075985;
+  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.6);
+}
+html[data-theme='dark'] .welcome-title {
+  background: linear-gradient(100deg, #38BDF8 12%, #A5B4FC 52%, #38BDF8 88%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+@keyframes sdpWelcomeFadeUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sdpWelcomePop {
+  from { opacity: 0; transform: scale(0.55); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sdpWelcomeSpin { to { transform: rotate(360deg); } }
+@keyframes sdpWelcomeShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes sdpWelcomeIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sdpWelcomeOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-10px) scale(0.985); }
+}
 /* v0.0.6.n: the release note row inside Settings › About (the DOM id
    #briefingUpdateBadge moved here from the modal — 0px of the lyrics stage). */
 .about-release-note { font-size: 12.5px; line-height: 1.5; color: #5B21B6; }

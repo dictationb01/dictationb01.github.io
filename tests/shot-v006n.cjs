@@ -36,7 +36,7 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.n');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.o');
           localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: 1, mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
@@ -90,8 +90,8 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.n');
-          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: '0.0.6.n', mode: 'paper', lang: 'en', theme: 'light' }));
+          localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: '0.0.6.o', mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
       const page = await ctx.newPage();
@@ -121,8 +121,8 @@ async function launch() {
       await ctx.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.n');
-          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: '0.0.6.n', mode: 'paper', lang: 'en', theme: 'light' }));
+          localStorage.setItem('sdp.guide_seen', '0.0.6.o');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, guideAutoPlay: false, briefingSeen: '0.0.6.o', mode: 'paper', lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
       const page = await ctx.newPage();

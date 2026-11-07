@@ -71,8 +71,8 @@ const BUDGETS = {
      shadows, spring motion, screen/modal/accordion transitions, mobile
      collision fixes) moved the ceiling in lockstep with the release. */
   'assets/css/sdp-ui.css': 136000,
-  'data/sdp-data-sync.js': 119000, /* v0.0.6.q: +Pillar-1 cache-first fetchJSON */
-  'data/sdp-audio-speech.js': 80000,
+  'data/sdp-data-sync.js': 121000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
+  'data/sdp-audio-speech.js': 82000, /* v0.0.6.r: +restoreLocalBriefingPack local-pack merge */
   'data/sdp-dictation-engine.js': 78000,
   'data/sdp-ui-views.js': 257000, /* v0.0.6.q: +beat1Done completion gate lock */
   'data/studio.js': 268000, /* v0.0.6.q G9.3a lockstep — identical to check.cjs BUDGET and the L117 monolith threshold */
@@ -89,7 +89,7 @@ const BUDGETS = {
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
   'data.html': 34000,
   'data/index.html': 34000,
-  'sw.js': 16000 /* v0.0.6.q: +staleWhileRevalidateDataJson (Pillar 1) */,
+  'sw.js': 17000 /* v0.0.6.r: +SWR background revalidation + syncrev overwrite guard */,
   'manifest.webmanifest': 4000
 };
 const over = [];
@@ -195,7 +195,9 @@ const keyHits = new Set();
 const keyRe = /['"]sdp\.([a-z_]+)['"]/g;
 let k;
 while ((k = keyRe.exec(allJs)) !== null) keyHits.add('sdp.' + k[1]);
-const allowed = ['sdp.progress', 'sdp.settings', 'sdp.session', 'sdp.guide_seen', 'sdp.migrated_from_legacy'];
+const allowed = ['sdp.progress', 'sdp.settings', 'sdp.session', 'sdp.guide_seen', 'sdp.migrated_from_legacy',
+  /* v0.0.6.r gate-align: 'sdp.last_pack_syncrev' is the one-number voice-pack pointer (§R4a) — not student data */
+  'sdp.last_pack_syncrev'];
 const strayKeys = Array.from(keyHits).filter((name) => allowed.indexOf(name) < 0);
 check('G9.5c only the five R4 localStorage keys are named in scripts', strayKeys.length === 0, strayKeys.join(','));
 
@@ -216,7 +218,7 @@ check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lo
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
   voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.voiceName === 'Alice' &&
-  voicePack.version === '0.0.6.q' && voicePack.hashAlgo === 'sha1' &&
+  voicePack.version === '0.0.6.r' && voicePack.hashAlgo === 'sha1' &&
   typeof voicePack.clips === 'object' && Object.keys(voicePack.clips).length === 135, JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
@@ -236,18 +238,18 @@ const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
   // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.q is ver 30 / schema 31 / settingsRev 47
-  config.ver === 31 && config.appVersion === '0.0.6.q' && config.version === '0.0.6.q' && config.schema === 31 && config.settingsRev === 47,
+  config.ver === 32 && config.appVersion === '0.0.6.r' && config.version === '0.0.6.r' && config.schema === 32 && config.settingsRev === 48,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.6.q in its description', /0.0.6.q/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.6.r in its description', /0\.0\.6\.r/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
 check('G9.7c theme and background are the 0.0.6.e daylight light', manifest.theme_color === '#F8FAFC' && manifest.background_color === '#F8FAFC', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.6.q cache names', sw.indexOf('sdp-v0.0.6.q-s32') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.6.q cache names', sw.indexOf('sdp-v0.0.6.r-s33') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
 /* v0.0.5.b: sdp-morphe-hooks.js loads last so it decorates the finished DOM. */

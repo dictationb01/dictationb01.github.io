@@ -999,8 +999,12 @@
             return;
           }
           var manifest = applyManifest(result.json);
-          manifest.manifestSource = str(result.source);
-          cb(null, manifest);
+          /* v0.0.6.r: the local briefing pack (a newer in-browser synthesis)
+             merges on top of the loaded manifest before the callback. */
+          restoreLocalBriefingPack(function () {
+            manifest.manifestSource = str(result.source);
+            cb(null, manifest);
+          });
         }, { fresh: force === true });
         return;
       } catch (e) {
@@ -1019,15 +1023,54 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.q' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.r' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
-        .then(function (data) { cb(null, applyManifest(data)); }, function () {
+        .then(function (data) {
+          var m = applyManifest(data);
+          restoreLocalBriefingPack(function () { cb(null, m); });
+        }, function () {
           state.manifestRequested = false;
           bindManifestRetry();
           cb(new Error('manifest_failed'));
         });
     } catch (e) { state.manifestRequested = false; bindManifestRetry(); cb(new Error('manifest_failed')); }
+  }
+  /* v0.0.6.r Pillar 1 — the LOCAL BRIEFING PACK RESTORE: after every boot
+     manifest load, this browser's own sdp-audio-clips copy of the last
+     synthesized briefing/guide pack ('./local-briefing-pack.json', written by
+     Studio.primeLocalVoicePackCache) is merged ON TOP whenever its syncRev
+     is >= the manifest's, so a reload — or the GitHub Pages CDN lag after a
+     commit — can never revert the creator's generated / cloned voice back
+     to the repository preload. */
+  function restoreLocalBriefingPack(done) {
+    done = typeof done === 'function' ? done : noop;
+    try {
+      if (!global.caches || !global.caches.open) { done(0); return; }
+      global.caches.open('sdp-audio-clips').then(function (cache) {
+        return cache.match('./local-briefing-pack.json');
+      }).then(function (hit) {
+        if (!hit || !hit.json) { done(0); return null; }
+        return hit.json().then(function (localPack) {
+          if (!isObj(localPack) || !isObj(localPack.clips)) { done(0); return; }
+          var m = state.manifest;
+          if (!isObj(m)) { done(0); return; }
+          if (Number(localPack.syncRev || 0) < Number(m.syncRev || 0)) { done(0); return; }
+          if (!isObj(m.clips)) m.clips = {};
+          var n = 0, k;
+          for (k in localPack.clips) {
+            if (!Object.prototype.hasOwnProperty.call(localPack.clips, k)) continue;
+            if (isObj(localPack.clips[k]) && str(localPack.clips[k].b64)) { m.clips[k] = localPack.clips[k]; n += 1; }
+          }
+          if (n) {
+            if (Number(localPack.syncRev || 0) > Number(m.syncRev || 0)) m.syncRev = Number(localPack.syncRev);
+            hydrateClips(m.clips);
+            reapplyInjectedClips();
+          }
+          done(n);
+        });
+      }).catch(function () { done(0); });
+    } catch (e) { done(0); }
   }
   /* D15 / R9: generated clips are injected into live memory the moment they
      are paid for, so the very next tap plays the Alice recording with 0 API
@@ -1279,12 +1322,12 @@
     if (clip) {
       var bEpoch = state.speechEpoch;
       state.speaking = true;
-      /* v0.0.6.q Pillar 2: the briefing beats play at a crisp broadcast
-         cadence (1.08×) so the tightened executive script lands with punch —
-         Paragraph 1's 35 words speak completely in ~10–12 s right as the
-         10-second gate matures. */
+      /* v0.0.6.r Pillar 3: the tightened ultra-crisp executive script plays
+         at a crisp broadcast cadence (1.12×) so all four beats land with
+         punch — Beat 1's tightened opening speaks completely in ~8.5–9.5 s,
+         right as the 10-second gate matures. */
       playUrl(playableUrl(clip), {
-        rate: 1.08,
+        rate: 1.12,
         hooks: {
           onStarted: function () { if (typeof hooks.onStarted === 'function') { try { hooks.onStarted(); } catch (e1) {} } },
           onDuration: function (d) { if (typeof hooks.onDuration === 'function') { try { hooks.onDuration(d); } catch (e2) {} } },
@@ -1614,6 +1657,8 @@
     playableUrl: playableUrl,
     scoreVoice: scoreVoice,
     loadManifest: loadManifest,
+    applyManifest: applyManifest,
+    restoreLocalBriefingPack: restoreLocalBriefingPack,
     reloadManifest: reloadManifest,
     injectClips: injectClips,
     /* v0.0.6.o: the welcome stage primes THIS element inside the Continue

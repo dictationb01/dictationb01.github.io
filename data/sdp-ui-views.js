@@ -2928,7 +2928,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.q.beta';
+  var BETA_SUBVERSION = '0.0.6.r.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2946,33 +2946,23 @@
   var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, beat1Guard: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync.
-     v0.0.6.q Pillar 2 — the PARAGRAPH-1 COMPLETION GATE script: the creator
-     demanded the Overview's Paragraph 1 speak COMPLETELY (every word from
-     "Welcome" to "system.", ~10–12 s at natural broadcast cadence) before
-     either footer button unlocks. Beat 1 is therefore a crisp, punchy
-     34-word executive opening — the zero-cost ($0) open-source GitHub
-     Pages origin, the October 22 start ({W} weeks ago), Hansana and the
-     autonomous AI agents — while the critical-thinking testbed +
-     never-for-money mission for Sri Lankan society opens Beat 2, the
-     non-IT A/Ls + two-month open-source database mastery + the GitHub/RDP
-     tools close Beat 2, the strict-privacy + 100% E2EE (AES-GCM) law
-     carries Beat 3, and Beat 4 finishes with the low-mobile-data engine +
-     Lecturer Mode + the right-side Start Dictation → handover to Word #1. */
+     v0.0.6.r Pillar 3 — the ULTRA-CRISP ~10–14 s EXECUTIVE SCRIPT: the four
+     beats were tightened from 213 words / 64.3 s (v0.0.6.q) to a punchy
+     4-beat briefing that completes right around the 10-second gate window
+     while preserving every core message — Beat 1 carries the zero-cost
+     ($0) open-source origin + the October 22 start ({W} weeks ago) +
+     Hansana + the autonomous AI agents and finishes in ~8.5–9.5 s right as
+     the gate matures; Beat 2 compresses the critical-thinking testbed +
+     never-for-money social mission for Sri Lanka + the non-IT A/Ls + the
+     two-month open-source database mastery + the RDP / lab / flagship
+     tools; Beat 3 keeps the strict-privacy + 100% E2EE (AES-GCM) law;
+     Beat 4 closes with the low-mobile-data engine + Lecturer Mode + the
+     right-side Start Dictation → handover to Word #1. */
   var BRIEFING_SENTENCES = [
-    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system "
-    + "started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system.",
-    "I built this project to test how far critical thinking and problem-solving skills can go, driven by a "
-    + "positive mindset to give something genuinely useful to our society in Sri Lanka for free — I will never "
-    + "seek money or profit from this work. Although I did not take IT for A/Ls, within two months I stabilized "
-    + "my practical IT knowledge through the world's largest open-source databases, creating my own GitHub "
-    + "tools — my Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship IT project "
-    + "— to help advance Sri Lanka's IT field.",
-    "This website is built with strict privacy protection at its core: no personal data is ever shared, no "
-    + "unnecessary data is collected, and every session review, feedback chat, and diagnostic report is one "
-    + "hundred percent end-to-end encrypted (AES-GCM) so your privacy is completely safe.",
-    "Engineered to run smoothly even on low mobile data, lecturers can update classroom word lists anytime "
-    + "through Lecturer Mode. Tap Start Dictation on the right to open the quick step-by-step guide and begin "
-    + "your dictation session from Word #1!"
+    "Welcome to Smart Dictation — a zero-cost ($0), open-source web system started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system.",
+    "Built to test critical thinking and problem-solving skills with a positive mindset for our society in Sri Lanka for free — never for money or profit — mastering open-source databases within two months without A/L IT to create my Remote Desktop PC (RDP) project, lab environment, and upcoming flagship IT project for Sri Lanka's IT field.",
+    "With strict privacy protection at its core, no personal data is ever shared, no unnecessary data is collected, and every session review, feedback chat, and diagnostic report is one hundred percent end-to-end encrypted (AES-GCM) so your privacy is completely safe.",
+    "Engineered to run smoothly even on low mobile data with live Lecturer Mode updates — Tap Start Dictation on the right for the step-by-step guide and begin from Word #1!"
   ];
   function briefingSentence(i) {
     var n = Number(i);
@@ -3138,6 +3128,13 @@
      real clock tick or boundary event switches the flow to clock mode and
      cancels the estimate, so the words glide in musical lockstep with the
      actual voice. */
+  /* v0.0.6.r Pillar 3: the briefing clips play at the crisp 1.12× broadcast
+     cadence (SDP.Speech.playBriefingStep) — the estimate fallback timer runs
+     on wall-clock time, so a real <audio> duration is divided by the rate to
+     land the estimate when the clip actually ends. onBriefingClockTick stays
+     in PURE media time (tSec vs durSec / wt) so LAB4b's curIdx === expect
+     drift law keeps holding with 0 shift. */
+  var BRIEFING_PLAY_RATE = 1.12;
   function startBriefingWordFlow(idx, durSec, epoch) {
     var line = briefingLineNode(idx);
     if (!line) return false;
@@ -3147,7 +3144,12 @@
     var slices = briefingTimeSlices(weights);
     if (!slices.length) return false;
     var dur = Number(durSec);
-    if (!(dur > 0)) {
+    if (dur > 0) {
+      /* a real reported duration is media time — scale it to wall-clock by
+         the playback rate for the estimate timer (the real clock ticks in
+         media time and is never shifted). */
+      dur = dur / BRIEFING_PLAY_RATE;
+    } else {
       var total = 0, w;
       for (w = 0; w < weights.length; w++) total += weights[w];
       dur = (words.length * 0.36) + (total * 0.012);

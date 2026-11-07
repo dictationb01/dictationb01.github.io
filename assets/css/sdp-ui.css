@@ -2702,15 +2702,47 @@ html[data-theme='dark'] .briefing-tap-pill { background: #0C4A6E; color: #E0F2FE
 /* Word-by-word karaoke flow inside the active beat: words illuminate in
    sequence (is-spoken) with a brighter head word (is-current) while all four
    beats stay visible for read-ahead/read-back. */
-.b-word { transition: color 170ms linear, background-color 170ms linear, box-shadow 170ms linear; border-radius: 6px; padding: 0 1px; }
-.b-line[data-state='past'] .b-word.is-spoken { color: inherit; }
-.b-word.is-spoken { color: #0F172A; font-weight: 700; }
-.b-word.is-current {
-  color: #0369A1; font-weight: 800; background: #E0F2FE;
-  box-shadow: 0 1px 0 2px rgba(14, 165, 233, 0.18);
+.b-word {
+  /* v0.0.6.r Pillar 2 — the DARK-LYRICS law: inside the active paragraph the
+     unspoken words hold a soft muted slate while the spoken words darken
+     into bold ink word-by-word, exactly like Apple Music dark lyrics. */
+  transition: color 110ms ease-out, background-color 110ms ease-out, box-shadow 110ms ease-out;
+  border-radius: 6px;
+  padding: 0 2px;
 }
-html[data-theme='dark'] .b-word.is-spoken { color: #E2E8F0; }
-html[data-theme='dark'] .b-word.is-current { color: #BAE6FD; background: #0C4A6E; box-shadow: 0 1px 0 2px rgba(56, 189, 248, 0.25); }
+.b-line[data-state='past'] .b-word.is-spoken { color: inherit; }
+/* Inside the active paragraph, UNSPOKEN words are soft muted slate so spoken words visibly darken like Apple Music lyrics */
+.b-line.on .b-word:not(.is-spoken) {
+  color: #94A3B8;
+  font-weight: 500;
+}
+/* SPOKEN words lock into deep, high-contrast dark ink */
+.b-word.is-spoken,
+.b-line.on .b-word.is-spoken {
+  color: #0F172A;
+  font-weight: 750;
+}
+/* The CURRENT word being spoken right now gets a crisp sky-indigo highlight pill */
+.b-word.is-current,
+.b-line.on .b-word.is-current {
+  color: #0369A1;
+  font-weight: 800;
+  background: #E0F2FE;
+  box-shadow: 0 1px 0 2px rgba(14, 165, 233, 0.24);
+}
+html[data-theme='dark'] .b-line.on .b-word:not(.is-spoken) {
+  color: #64748B;
+}
+html[data-theme='dark'] .b-word.is-spoken,
+html[data-theme='dark'] .b-line.on .b-word.is-spoken {
+  color: #F8FAFC;
+}
+html[data-theme='dark'] .b-word.is-current,
+html[data-theme='dark'] .b-line.on .b-word.is-current {
+  color: #BAE6FD;
+  background: #0C4A6E;
+  box-shadow: 0 1px 0 2px rgba(56, 189, 248, 0.28);
+}
 
 /* ═════════ v0.0.6.m — Pillar 3: instant review popup + floating feedback launcher ═════════ */
 .review-popup-card {

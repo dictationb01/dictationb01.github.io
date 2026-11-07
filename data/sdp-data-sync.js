@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.q';
+  SDP.version = '0.0.6.r';
   SDP.build = '2026-11-07';
-  SDP.ver = 31;
+  SDP.ver = 32;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.q';
-  var SCHEMA = 31;
-  var SETTINGS_REV = 47;
+  var APP_VERSION = '0.0.6.r';
+  var SCHEMA = 32;
+  var SETTINGS_REV = 48;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1534,6 +1534,61 @@
     for (var i = 0; i < cbs.length; i++) { try { cbs[i](err || null, info || state); } catch (e) {} }
     if (!err) notify('ready', state);
   }
+  /* v0.0.6.r Pillar 1 — the PACK-SYNCREV REVALIDATION LAW: when the freshly
+   * settled data/version.json carries a syncRev NEWER than the voice-pack
+   * manifest this device booted with (or than the last pack rev it pulled,
+   * recorded in localStorage), the pack is reloaded immediately through the
+   * fresh origin-vs-raw race — so every other browser, incognito window or
+   * student phone downloads the newly committed Cloned Voice pack the
+   * moment the version.json pointer advances, never minutes later. */
+  function maybeRevalidateVoicePack() {
+    try {
+      var remote = state.version || {};
+      var rev = Number(remote.syncRev || 0);
+      if (!(rev > 0)) return false;
+      var lastPulled = 0;
+      try {
+        if (global.localStorage && global.localStorage.getItem) lastPulled = Number(global.localStorage.getItem('sdp.last_pack_syncrev')) || 0;
+      } catch (eL) { lastPulled = 0; }
+      /* fast exit: this device already pulled this pointer (or newer) — the
+         cache-first boot read owns the pack, zero extra network. */
+      if (!(rev > lastPulled)) return false;
+      /* DEFERRED compare: wait for the boot manifest read (cache-first, the
+         low-mobile-data law) to settle BEFORE deciding, so the revalidation
+         can compare the pointer against the LOADED pack instead of racing
+         (and hijacking) the boot read into a fresh no-store pull. */
+      var tries = 0;
+      var tick = function () {
+        var packRev = 0;
+        try {
+          if (global.SDP && global.SDP.Speech && global.SDP.Speech.clipManifest && global.SDP.Speech.clipManifest()) {
+            packRev = Number(global.SDP.Speech.clipManifest().syncRev || 0) || 0;
+          }
+        } catch (eS) { packRev = 0; }
+        if (packRev > 0) {
+          if (rev > packRev) {
+            try {
+              if (global.localStorage && global.localStorage.setItem) global.localStorage.setItem('sdp.last_pack_syncrev', String(rev));
+            } catch (eW) {}
+            try {
+              if (global.SDP && global.SDP.Speech && global.SDP.Speech.reloadManifest) global.SDP.Speech.reloadManifest(noop, true);
+            } catch (eR) {}
+          } else {
+            try {
+              if (global.localStorage && global.localStorage.setItem) global.localStorage.setItem('sdp.last_pack_syncrev', String(Math.max(rev, packRev)));
+            } catch (eW2) {}
+          }
+          return true;
+        }
+        tries += 1;
+        if (tries < 40) global.setTimeout(tick, 350);
+        return false;
+      };
+      global.setTimeout(tick, 600);
+      return true;
+    } catch (e) {}
+    return false;
+  }
 
   var Sync = {
     state: state,
@@ -1596,6 +1651,8 @@
         settled = true;
         applyPayloads(results.version, results.config, results.session);
         state.source = failed === 3 ? 'offline' : 'network';
+        /* v0.0.6.r: the voice pack re-pulls the moment the pointer advanced. */
+        try { maybeRevalidateVoicePack(); } catch (eRev) {}
         finishBoot(state.ready ? null : new Error('no_words'), state);
       }
       /* v0.0.6.q PILLAR 1: only the 428-byte version.json pointer is fetched

@@ -40,7 +40,7 @@ async function openPage(browser, origin, viewport, opts) {
      the guide itself is exercised by G7. */
   await context.addInitScript((seedGuide) => {
     window.__SDP_NO_LIVE__ = true;
-    try { if (seedGuide) { localStorage.setItem('sdp.guide_seen', '0.0.6.p'); localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.p' })); } } catch (e) {}
+    try { if (seedGuide) { localStorage.setItem('sdp.guide_seen', '0.0.6.q'); localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.q' })); } } catch (e) {}
   }, opts.guide !== true);
   const page = await context.newPage();
   const errors = [];
@@ -58,10 +58,10 @@ async function bootSettings(page, settings) {
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R11.2 — appliedSettingsRev pins
      the test's own pacing against a classSettings adoption, and guideAutoPlay
      keeps Start on the fast path (the quick guide is G3/G7's job). */
-  const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, briefingSeen: '0.0.6.p' }, settings);
+  const seed = Object.assign({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, briefingSeen: '0.0.6.q' }, settings);
   await page.evaluate((s) => {
     localStorage.setItem('sdp.settings', JSON.stringify(s));
-    localStorage.setItem('sdp.guide_seen', '0.0.6.p');
+    localStorage.setItem('sdp.guide_seen', '0.0.6.q');
   }, seed);
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
@@ -409,8 +409,8 @@ async function bootSettings(page, settings) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.p');
-          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, briefingSeen: '0.0.6.p', mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
+          localStorage.setItem('sdp.guide_seen', '0.0.6.q');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, briefingSeen: '0.0.6.q', mode: 'paper', writeSecs: 8, repeats: 1, pauseSecs: 1, autoAdvance: true, lang: 'en', theme: 'light' }));
         } catch (e) {}
       });
       const page = await context.newPage();
@@ -552,8 +552,8 @@ async function bootSettings(page, settings) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.p');
-          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light', briefingSeen: '0.0.6.p' }));
+          localStorage.setItem('sdp.guide_seen', '0.0.6.q');
+          localStorage.setItem('sdp.settings', JSON.stringify({ appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', lang: 'en', theme: 'light', briefingSeen: '0.0.6.q' }));
         } catch (e) {}
       });
       const page = await context.newPage();
@@ -582,7 +582,7 @@ async function bootSettings(page, settings) {
       const tag = flag || '(clean url)';
       const wantsBeta = flag === '?beta' || flag === '#beta';
       check('G5.13a ' + tag + ' the governed Beta channel state matches the URL',
-        main.betaActive === wantsBeta && main.betaSub === '0.0.6.p.beta',
+        main.betaActive === wantsBeta && main.betaSub === '0.0.6.q.beta',
         JSON.stringify(main));
       check('G5.13a2 ' + tag + ' the Beta channel replays the Project Briefing',
         main.briefingOpen === wantsBeta, JSON.stringify(main));
@@ -594,7 +594,7 @@ async function bootSettings(page, settings) {
         !/Beta|Creator Note|Guide|Synced|Lecturer Admin|v0\.0\.6/.test(main.headerText),
         JSON.stringify(main));
       check('G5.13c ' + tag + ' the relocated triggers live inside the About card',
-        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.p', JSON.stringify(main));
+        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.q', JSON.stringify(main));
       check('G5.13d ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }

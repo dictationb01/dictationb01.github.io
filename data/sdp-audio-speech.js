@@ -105,7 +105,7 @@
     /* D15/R9: paid clips are mirrored here because a manifest load already in
        flight when they were paid for replaces state.manifest wholesale. */
     injectedClips: {},
-    /* v0.0.6.p PILLAR 1 — the ZERO-DROP clip base: the union of every clip
+    /* v0.0.6.q PILLAR 1 — the ZERO-DROP clip base: the union of every clip
        key ever adopted (newest entry wins per key). applyManifest() merges
        each freshly parsed pack INTO this base, so a reload that arrives
        empty, partial or stale on weak mobile data can never make the 131
@@ -936,7 +936,7 @@
   function applyManifest(data) {
     var next = data && isObj(data) ? data : { clips: {} };
     if (!isObj(next.clips)) next.clips = {};
-    /* v0.0.6.p PILLAR 1 — the ZERO-DROP MERGE law: the previously adopted
+    /* v0.0.6.q PILLAR 1 — the ZERO-DROP MERGE law: the previously adopted
        clips are merged UNDER the incoming pack (an incoming key wins, an old
        key is never dropped) before the manifest is swapped in. A weak-data
        reload that resolves empty or partial therefore leaves the live voice
@@ -977,7 +977,7 @@
      freshly published Alice pack is heard from raw.githubusercontent.com even
      while the Pages CDN still serves yesterday's clips. A same-origin-only
      read kept the old word pack alive for minutes after a publish.
-     v0.0.6.p PILLAR 1: the BOOT read is cache-first (?v=<release>, no tick,
+     v0.0.6.q PILLAR 1: the BOOT read is cache-first (?v=<release>, no tick,
      cache:'default' — the SW answers in < 30 ms on 0-bar mobile data); only
      a FORCED reload (post-publish adoption chain, online retry) runs the
      fresh raw-vs-origin race, and even then the zero-drop merge law in
@@ -1012,14 +1012,14 @@
     }
     if (typeof global.fetch !== 'function') { state.manifestRequested = false; bindManifestRetry(); cb(new Error('no_fetch')); return; }
     try {
-      /* v0.0.6.p low-mobile-data law: the boot fetch carries ONLY the release
+      /* v0.0.6.q low-mobile-data law: the boot fetch carries ONLY the release
          version — ?v=<APP_VERSION> — with cache:'default', so the Service
          Worker / HTTP cache serves the ~3 MB pack instantly and a weak 2G
          link is never asked to re-download it. A forced reload keeps the
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.p' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.q' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { cb(null, applyManifest(data)); }, function () {
@@ -1056,7 +1056,7 @@
   function reloadManifest(cb, force) {
     if (typeof cb === 'boolean') { force = cb; cb = noop; }
     cb = cb || noop;
-    /* v0.0.6.p PILLAR 1 — the ZERO-DROP RELOAD law: the previous manifest is
+    /* v0.0.6.q PILLAR 1 — the ZERO-DROP RELOAD law: the previous manifest is
        NOT nulled while the fresh pack downloads. Every committed clip stays
        playable through the whole reload window; applyManifest() swaps the
        new pack in atomically only after it has fully downloaded and parsed. */
@@ -1279,8 +1279,12 @@
     if (clip) {
       var bEpoch = state.speechEpoch;
       state.speaking = true;
+      /* v0.0.6.q Pillar 2: the briefing beats play at a crisp broadcast
+         cadence (1.08×) so the tightened executive script lands with punch —
+         Paragraph 1's 35 words speak completely in ~10–12 s right as the
+         10-second gate matures. */
       playUrl(playableUrl(clip), {
-        rate: 0.97,
+        rate: 1.08,
         hooks: {
           onStarted: function () { if (typeof hooks.onStarted === 'function') { try { hooks.onStarted(); } catch (e1) {} } },
           onDuration: function (d) { if (typeof hooks.onDuration === 'function') { try { hooks.onDuration(d); } catch (e2) {} } },
@@ -1664,7 +1668,7 @@
       var detail = (ev && ev.detail) || {};
       var nextRev = Number(detail.syncRev || 0);
       if (state.manifest && nextRev && nextRev <= Number(state.manifestSyncRev || 0)) return;
-      /* v0.0.6.p PILLAR 1: the manifest is NOT nulled — the zero-drop law
+      /* v0.0.6.q PILLAR 1: the manifest is NOT nulled — the zero-drop law
          keeps every committed clip playable while the fresh pack downloads;
          loadManifest(force) bypasses the cached copy and applyManifest()
          swaps the new pack in atomically once it has fully parsed. */

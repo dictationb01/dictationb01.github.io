@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.p';
+  SDP.version = '0.0.6.q';
   SDP.build = '2026-11-07';
-  SDP.ver = 30;
+  SDP.ver = 31;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.p';
-  var SCHEMA = 30;
-  var SETTINGS_REV = 46;
+  var APP_VERSION = '0.0.6.q';
+  var SCHEMA = 31;
+  var SETTINGS_REV = 47;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1248,7 +1248,7 @@
    * raw.githubusercontent.com edge (5 s); the payload with the higher syncRev
    * wins and raw breaks a tie — a freshly published pack is heard while the
    * Pages CDN still serves yesterday's clips. Never a mixed pair.
-   * v0.0.6.p PILLAR 1: BOOT mode (opts.fresh !== true) reads ONLY the
+   * v0.0.6.q PILLAR 1: BOOT mode (opts.fresh !== true) reads ONLY the
    * same-origin cache-first leg and settles the instant it answers — on weak
    * mobile data the Service Worker resolves it in < 30 ms and no 5 s raw
    * race may hold the voice pack hostage. Freshness after boot is owned by
@@ -1330,13 +1330,13 @@
     emit('sdp:' + name, payload);
   }
 
-  /* ══ v0.0.6.p PILLAR 1 — the LOW-MOBILE-DATA cache law ══════════════════
+  /* ══ v0.0.6.q PILLAR 1 — the LOW-MOBILE-DATA cache law ══════════════════
    * The v0.0.6.n/o cache-bust law (?v=<ver>&t=<tick> + cache:'no-store' on
    * every data JSON) forced a weak 2G/slow-3G Sri Lankan phone to re-download
    * the ~3 MB voice pack on EVERY boot: the fetch outran the SW shell cache,
    * timed out after 6 s and left SDP.Speech with an EMPTY pack — all 131
    * Alice clips vanished and the clock fell back to robotic TTS.
-   * The v0.0.6.p law splits the two worlds:
+   * The v0.0.6.q law splits the two worlds:
    *   - BOOT payloads (session.json, config.json, elevenlabs-audio.json) are
    *     fetched CACHE-FIRST: only the release version ?v=<APP_VERSION> — no
    *     tick, cache:'default' — so the Service Worker / HTTP cache answers in
@@ -1598,7 +1598,7 @@
         state.source = failed === 3 ? 'offline' : 'network';
         finishBoot(state.ready ? null : new Error('no_words'), state);
       }
-      /* v0.0.6.p PILLAR 1: only the 428-byte version.json pointer is fetched
+      /* v0.0.6.q PILLAR 1: only the 428-byte version.json pointer is fetched
          fresh (no-store + tick, 2500 ms) — the session/config legs are
          CACHE-FIRST (?v=<release>, cache:'default') so the SW shell cache
          answers instantly on weak mobile data and a slow leg can never
@@ -1629,7 +1629,7 @@
         settled = true;
         proceed();
       }
-      /* v0.0.6.p PILLAR 1: the watcher reads only the tiny pointer fresh; a
+      /* v0.0.6.q PILLAR 1: the watcher reads only the tiny pointer fresh; a
          pointer timeout on weak mobile data is non-fatal (Never-Red law). */
       fetchJSON('./data/version.json', function (err, data) { cdnErr = err; cdnVersion = err ? null : data; joined(); }, { fresh: true });
       Sync.fetchRawMainJson('data/version.json', function (err, data) {
@@ -1696,7 +1696,7 @@
         var usedSources = {};
         function fetchLeg(source, path, done) {
           if (source === 'raw') { Sync.fetchRawMainJson(path, done); return; }
-          /* v0.0.6.p PILLAR 1: refresh legs run AFTER a syncRev advance was
+          /* v0.0.6.q PILLAR 1: refresh legs run AFTER a syncRev advance was
              proven by the pointer, with the UI already live — they stay fresh
              (tick + no-store) so the CDN cannot answer yesterday's payload. */
           fetchJSON('./' + path, done, { fresh: true });
@@ -1838,7 +1838,7 @@
      * purgeStaleBriefingClips(): deletes from caches.open('sdp-audio-clips')
      * every _intro_male_* / guide.en.* / _guide_* entry and any stale
      * elevenlabs-audio manifest body. The next briefing open re-fetches the
-     * pack (v0.0.6.p: cache-first at boot, fresh after a proven syncRev bump)
+     * pack (v0.0.6.q: cache-first at boot, fresh after a proven syncRev bump)
      * and re-primes from the CURRENT BRIEFING_SENTENCES — an old cached
      * voice can never play. Returns a promise resolving to the number of
      * purged cache entries. */

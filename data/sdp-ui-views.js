@@ -331,11 +331,12 @@
     briefingLinkProfile: "Hansana's GitHub & RDP ↗",
     briefingContinue: '▶ Start Dictation →',
     briefingContinueWait: 'Start Dictation ({n}s)…',
+    briefingContinueBeat1: 'Start Dictation (finishing Paragraph 1…)',
     briefingSkip: 'Exit',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.p.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaStampLabel: 'BETA · 0.0.6.q.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
     betaOnToast: 'Beta channel ON — the v0.0.6.n suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
@@ -675,6 +676,7 @@
     briefingLinkProfile: "Hansana ගේ GitHub සහ RDP ↗",
     briefingContinue: '▶ Start Dictation →',
     briefingContinueWait: 'Start Dictation ({n}s)…',
+    briefingContinueBeat1: 'Start Dictation (පළමු පාරාග්‍රාෆය සම්පූර්ණ වෙමින්…)',
     briefingSkip: 'ඉවත් වන්න',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
@@ -1416,7 +1418,7 @@
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
     /* v0.0.5.c Path A: a cold boot paints the guide silently.
-       v0.0.6.p Pillar 3: the BRIEFING HANDOVER (fromHandover) narrates
+       v0.0.6.q Pillar 3: the BRIEFING HANDOVER (fromHandover) narrates
        Step 1 → Step 4 with the committed guide.en.0..3 clips immediately —
        the user's ▶ Start Dictation → click already unlocked audio, so the
        guide speaks from the very first step with no banner, no tap. */
@@ -1472,7 +1474,7 @@
     if (!btn) return false;
     btn.hidden = show === false;
     btn.setAttribute('aria-hidden', show === false ? 'true' : 'false');
-    /* v0.0.6.p Pillar 3: the guide footer's RIGHT-side highlighted CTA —
+    /* v0.0.6.q Pillar 3: the guide footer's RIGHT-side highlighted CTA —
        ▶ Click Start Dictation Now — exactly as the creator requested. */
     btn.textContent = t('guideSkipStartNow', '▶ Click Start Dictation Now');
     return true;
@@ -2533,7 +2535,7 @@
     }
     bindReviewCard();
     on('btnGuideSkipStart', 'click', function () {
-      /* v0.0.6.p Pillar 3 — STAGE 4 of the onboarding pipeline: ▶ Click
+      /* v0.0.6.q Pillar 3 — STAGE 4 of the onboarding pipeline: ▶ Click
          Start Dictation Now closes the guide, stamps guideSeen, switches to
          the Dictation screen (#screen-player) and starts the Dictation Clock
          cleanly at Word #1 (Engine.start with no startIndex → index 0),
@@ -2926,7 +2928,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.p.beta';
+  var BETA_SUBVERSION = '0.0.6.q.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2935,28 +2937,36 @@
     if (!(t0 > 0)) return 2;
     return Math.max(2, Math.floor((Date.now() - t0) / (7 * 86400000)));
   }
-  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null };
+  /* v0.0.6.q Pillar 2 — the PARAGRAPH-1 COMPLETION GATE STATE: beat1Done is
+     false until Paragraph 1 (Beat 1, idx === 0) has genuinely finished
+     speaking its FINAL word; gateLeft is the 10-second minimum-listen gate
+     that now starts ONLY when Stage 2 actually begins narrating (inside
+     welcomeContinueToOverview), never on the Welcome splash. Both footer
+     buttons stay disabled until beat1Done === true && gateLeft <= 0. */
+  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, beat1Guard: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync.
-     v0.0.6.p Pillar 4 — the creator's exact social-impact executive script:
-     the critical-thinking testbed + positive mindset + never-for-money
-     mission for Sri Lankan society (Beat 1), the non-IT A/Ls + two-month
-     self-stabilized knowledge through the world's largest open-source
-     databases + the GitHub/RDP open-source tools (Beat 2), the strictly
-     privacy-focused + 100% E2EE (AES-GCM) website with encrypted feedback
-     chat (Beat 3), and the low-mobile-data classroom engine + the
-     right-side Start Dictation → guide handover (Beat 4). */
+     v0.0.6.q Pillar 2 — the PARAGRAPH-1 COMPLETION GATE script: the creator
+     demanded the Overview's Paragraph 1 speak COMPLETELY (every word from
+     "Welcome" to "system.", ~10–12 s at natural broadcast cadence) before
+     either footer button unlocks. Beat 1 is therefore a crisp, punchy
+     34-word executive opening — the zero-cost ($0) open-source GitHub
+     Pages origin, the October 22 start ({W} weeks ago), Hansana and the
+     autonomous AI agents — while the critical-thinking testbed +
+     never-for-money mission for Sri Lankan society opens Beat 2, the
+     non-IT A/Ls + two-month open-source database mastery + the GitHub/RDP
+     tools close Beat 2, the strict-privacy + 100% E2EE (AES-GCM) law
+     carries Beat 3, and Beat 4 finishes with the low-mobile-data engine +
+     Lecturer Mode + the right-side Start Dictation → handover to Word #1. */
   var BRIEFING_SENTENCES = [
     "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system "
-    + "started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system. "
-    + "I built this project to test how far critical thinking and problem-solving skills can go, driven by a "
+    + "started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system.",
+    "I built this project to test how far critical thinking and problem-solving skills can go, driven by a "
     + "positive mindset to give something genuinely useful to our society in Sri Lanka for free — I will never "
-    + "seek money or profit from this work.",
-    "Although I did not take IT as an A/L subject, within just two months I stabilized my practical IT knowledge "
-    + "by exploring and harnessing several of the world's largest open-source databases and engineering "
-    + "resources. Building on those global open-source foundations, I have created my own open-source tools on "
-    + "GitHub — including my Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship "
-    + "IT project — to help advance the future of Sri Lanka's IT field.",
+    + "seek money or profit from this work. Although I did not take IT for A/Ls, within two months I stabilized "
+    + "my practical IT knowledge through the world's largest open-source databases, creating my own GitHub "
+    + "tools — my Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship IT project "
+    + "— to help advance Sri Lanka's IT field.",
     "This website is built with strict privacy protection at its core: no personal data is ever shared, no "
     + "unnecessary data is collected, and every session review, feedback chat, and diagnostic report is one "
     + "hundred percent end-to-end encrypted (AES-GCM) so your privacy is completely safe.",
@@ -3301,6 +3311,19 @@
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_gesture_unlock', { idx: briefingState.idx }); } catch (e) {}
     var idx = (briefingState.idx >= 0) ? briefingState.idx : 0;
     briefingState.epoch += 1;
+    /* v0.0.6.q Pillar 2: the gate clock restarts with the re-armed narration
+       (the tap pill held the beat, so the held seconds cannot count against
+       the 10-second minimum) and the Paragraph-1 lock stays engaged until
+       this fresh narration genuinely finishes Beat 1's final word. */
+    if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
+    if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
+    briefingState.beat1Guard = global.setTimeout(function () {
+      if (!briefingState.open || briefingState.beat1Done) return;
+      briefingState.beat1Done = true;
+      briefingCheckGateUnlock();
+    }, 14000);
+    briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     briefingNarrate(idx, briefingState.epoch);
     return true;
   }
@@ -3366,6 +3389,25 @@
          from the welcome stage can ever skip Paragraph 1. */
       briefingResetStageTop();
       briefingState.idx = -1;
+      /* v0.0.6.q Pillar 2, Rule A — the 10-second gate timer starts HERE,
+         the exact moment Stage 2 (#briefingStage) is revealed and Paragraph 1
+         begins — NEVER on the Welcome splash. In v0.0.6.p openBriefing()
+         armed this interval while #welcomeStage was still on screen, so
+         seconds silently burned before the user ever clicked Continue. */
+      if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
+      briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
+      /* v0.0.6.q Rule B — the 14-second safety ceiling: if browser audio is
+         completely dead or the tab is throttled, beat1Done is force-armed so
+         a broken environment can never trap a student behind the lock for
+         ever. A healthy playback always finishes Paragraph 1 well inside it
+         (the beat itself is ~10–12 s of speech). */
+      if (briefingState.beat1Guard) global.clearTimeout(briefingState.beat1Guard);
+      briefingState.beat1Guard = global.setTimeout(function () {
+        if (!briefingState.open || epoch !== briefingState.epoch) return;
+        if (briefingState.beat1Done) return;
+        briefingState.beat1Done = true;
+        briefingCheckGateUnlock();
+      }, 14000);
       global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
         briefingNarrate(0, epoch);
@@ -3374,7 +3416,7 @@
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('welcome_continue', { ver: APP_VERSION }); } catch (e) {}
     return true;
   }
-  /* v0.0.6.p Pillar 2 — the ANTI-7-SECOND MINIMUM-DWELL LAW. In v0.0.6.o the
+  /* v0.0.6.q Pillar 2 — the ANTI-7-SECOND MINIMUM-DWELL LAW. In v0.0.6.o the
      four _intro_male clips were missing, so speechSynthesis (0 voices on
      Android/iOS) fired onerror/onend instantly; with gestureArmed already
      true, every beat advanced in ~320 ms and the whole briefing silently
@@ -3402,7 +3444,7 @@
     resetBriefingWords(idx);
     var text = briefingSentence(idx);
     var advanced = false;
-    /* v0.0.6.p: the beat clock starts NOW; next() may not fire before the
+    /* v0.0.6.q: the beat clock starts NOW; next() may not fire before the
        minimum dwell (>= 1.8 s) has fully elapsed. A REAL clip's own 'ended'
        event already enforces its natural spoken duration, so once a real
        duration is reported only the 1.8 s anti-race floor applies; without
@@ -3427,7 +3469,7 @@
         if (el.paused || el.ended) return false;
         var ct = Number(el.currentTime) || 0;
         if (ct <= 0) return false;
-        /* v0.0.6.p liveness law: an element parked at its own end (a missed
+        /* v0.0.6.q liveness law: an element parked at its own end (a missed
            'ended' event, a throttled background tab, a stalled media source)
            is NOT still speaking — otherwise the guard below would re-arm for
            ever and the briefing would freeze on one paragraph. */
@@ -3442,7 +3484,7 @@
          'ended', silent TTS failure, autoplay-block fallthrough), the
          paragraph holds until its natural duration has elapsed. */
       var wait = Math.max(0, dwellMs() - (Date.now() - startedAt));
-      /* v0.0.6.p: the OPENING beat keeps a longer 2.6 s floor. Paragraph 1 is
+      /* v0.0.6.q: the OPENING beat keeps a longer 2.6 s floor. Paragraph 1 is
          the longest beat (~600 chars / 79 words) and it is painted the instant
          Stage 2 appears while the welcome cross-fade is still settling, so on a
          slow phone ~0.6 s can pass before the paragraph is actually on screen.
@@ -3453,6 +3495,15 @@
       global.setTimeout(function () {
         if (advanced || epoch !== briefingState.epoch) return;
         advanced = true;
+        /* v0.0.6.q Pillar 2, Rule B — the PARAGRAPH-1 COMPLETION LAW: the
+           instant Beat 1 (idx === 0) has finished speaking its final word and
+           the narration advances to Beat 2, beat1Done latches true and the
+           gate is re-checked — the ▶ Start Dictation → button unlocks the
+           exact moment Paragraph 1's last word lands (never before). */
+        if (idx === 0) {
+          briefingState.beat1Done = true;
+          briefingCheckGateUnlock();
+        }
         /* Hold the final word highlighted (wordIdx = last) through a natural
            320ms inter-paragraph breathing pause after 'ended' fires, so the
            user SEES the last word spoken cleanly before the next paragraph. */
@@ -3561,31 +3612,49 @@
       paintBriefingCtaLabel();
       if (briefingState.gateLeft > 0) return;
     }
-    briefingUnlockCta();
+    /* v0.0.6.q: the gate matured — but the unlock also needs Paragraph 1 to
+       have finished speaking (beat1Done). briefingCheckGateUnlock holds the
+       lock and keeps the label honest until both conditions are true. */
+    briefingCheckGateUnlock();
   }
   function paintBriefingCtaLabel() {
     var cont = byId('btnBriefingContinue');
     if (!cont) return false;
-    /* v0.0.6.p Pillar 3: the RIGHT-side highlighted primary CTA is
-       ▶ Start Dictation → — during the 10 s gate its label carries the
-       countdown; unlocked it pulses and hands over to the step-by-step
-       guide. */
+    /* v0.0.6.q Pillar 2: the RIGHT-side CTA carries the live gate state —
+       the 10-second countdown while gateLeft > 0, the Paragraph-1 finishing
+       note while the beat is still speaking its final words, and the glowing
+       ▶ Start Dictation → the instant BOTH conditions are satisfied. */
     if (briefingState.gateLeft > 0) {
       cont.textContent = t('briefingContinueWait', 'Start Dictation ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    } else if (!briefingState.beat1Done) {
+      cont.textContent = t('briefingContinueBeat1', 'Start Dictation (finishing Paragraph 1…)');
     } else {
       cont.textContent = t('briefingContinue', '▶ Start Dictation →');
     }
     return true;
   }
-  function briefingUnlockCta() {
-    var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
+  /* v0.0.6.q Pillar 2, Rule B — the HARD PARAGRAPH-1 COMPLETION LOCK. Both
+     #btnBriefingContinue (▶ Start Dictation →) and #btnBriefingSkip (Exit)
+     may unlock ONLY when the 10-second minimum gate has fully elapsed AND
+     Paragraph 1 has finished speaking all the way to its final word
+     (beat1Done === true). While Paragraph 1 is still speaking — even if the
+     countdown reached zero first — the buttons stay disabled and the label
+     keeps explaining why. */
+  function briefingCheckGateUnlock() {
+    if (!briefingState.open) return false;
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) {
+      paintBriefingCtaLabel();
+      return false;
+    }
+    if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
+    var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), cnt = byId('briefingCount'), card = byId('briefingModal');
     if (cont) { cont.disabled = false; cont.removeAttribute('aria-disabled'); }
     if (skip) { skip.disabled = false; skip.removeAttribute('aria-disabled'); }
-    if (count) count.textContent = t('briefingUnlocked', 'Thank you for listening — continue whenever you are ready.');
-    paintBriefingCtaLabel();
-    var card = byId('briefingModal');
     if (card && card.classList) card.classList.add('b-gate-open');
-    briefingState.gateLeft = 0;
+    paintBriefingCtaLabel();
+    if (cnt) cnt.textContent = t('briefingUnlocked', 'Thank you for listening — continue whenever you are ready.');
+    return true;
   }
   function openBriefing(opts) {
     opts = opts || {};
@@ -3596,7 +3665,14 @@
     briefingState.epoch += 1;
     briefingState.idx = -1;
     briefingState.waitGesture = false;
+    /* v0.0.6.q Pillar 2: every open re-arms the Paragraph-1 completion lock —
+       beat1Done is false, the gate countdown is at its full 10 seconds, and
+       BOTH footer buttons are disabled until Stage 2's narration finishes
+       Paragraph 1 AND the minimum-listen gate matures. */
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
+    briefingState.beat1Done = false;
+    if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
     paintBriefingPersona();
     renderBriefingLyrics();
     paintBriefingLine(-1);
@@ -3619,7 +3695,7 @@
        the CSS smooth-scroll behaviour and re-asserts on the next frame, so
        no late focus/reflow can nudge the stage off zero. */
     briefingResetStageTop();
-    /* v0.0.6.p Pillar 2 — the ALWAYS-STAGE-1 law: EVERY open of the Project
+    /* v0.0.6.q Pillar 2 — the ALWAYS-STAGE-1 law: EVERY open of the Project
        Briefing — automatic first-visit boot, version-upgrade replay, the
        About-card Project Briefing button, the Beta channel — begins at
        Stage 1 (#welcomeStage): the animated "Welcome to Smart Dictation Web
@@ -3628,8 +3704,10 @@
        to the reading stage is retired; the user ALWAYS sees the Welcome
        first, exactly as the creator demanded. */
     welcomeShowStage();
-    if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
-    briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
+    /* v0.0.6.q Pillar 2, Rule A — the gate timer is NOT started here. While
+       the Welcome splash (#welcomeStage) is on screen the countdown must not
+       burn: welcomeContinueToOverview() arms it the exact moment Stage 2 is
+       revealed and Paragraph 1 starts speaking. */
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive(), weeks: weeksSinceStart() }); } catch (e) {}
     /* v0.0.6.n Pillar 2 — Trigger 2: the creator opens the Project Overview
        on the device where the vault was unlocked THIS session and the
@@ -3645,7 +3723,7 @@
         });
       }
     } catch (eBridge) {}
-    /* v0.0.6.p: the narration start is ALWAYS owned by #btnWelcomeContinue
+    /* v0.0.6.q: the narration start is ALWAYS owned by #btnWelcomeContinue
        (welcomeContinueToOverview), which fires it at idx = 0 inside the
        click-gesture-unlocked epoch — every open begins at Stage 1, so no
        path may narrate from here anymore. */
@@ -3654,13 +3732,15 @@
   function closeBriefing(viaButton) {
     var modal = byId('briefingModal');
     if (!modal || !briefingState.open) return false;
-    /* The 10-second law: the briefing cannot be dismissed while gated. */
-    if (briefingState.gateLeft > 0) return false;
+    /* The Paragraph-1 completion law: the briefing cannot be dismissed while
+       gated OR before Paragraph 1 has fully finished speaking. */
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) return false;
     briefingState.open = false;
     briefingState.waitGesture = false;
     briefingState.epoch += 1;
     clearBriefingWordTimers();
     if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
     modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
     if (modal.classList) modal.classList.remove('is-open');
@@ -3668,7 +3748,7 @@
     try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
     markBriefingSeen();
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_close', { via: viaButton || 'other' }); } catch (e) {}
-    /* v0.0.6.p Pillar 3 — the BRIEFING → GUIDE HANDOVER: clicking the
+    /* v0.0.6.q Pillar 3 — the BRIEFING → GUIDE HANDOVER: clicking the
        right-side ▶ Start Dictation → ALWAYS opens the compact Step-by-Step
        Interactive Voice User Guide from Step 1 of 4 (audio is already
        unlocked by the user's click, so the guide narrates immediately).
@@ -3679,6 +3759,7 @@
     return true;
   }
   function briefingGateLeft() { return briefingState.gateLeft; }
+  function briefingBeat1Done() { return !!briefingState.beat1Done; }
   function briefingSeek(idx) {
     if (!briefingState.open) return false;
     var i = Number(idx);
@@ -4188,7 +4269,7 @@
        because briefingSeen() only matches THIS release, every existing
        phone/PC and every brand-new visitor meets the animated splash and
        unlocks audio through the Continue gesture.
-       v0.0.6.p Pillar 2 — THE GUARANTEED WELCOME LAW: the two-stage entry
+       v0.0.6.q Pillar 2 — THE GUARANTEED WELCOME LAW: the two-stage entry
        fires whenever !briefingSeen() ALONE — a stale sdp.guide_seen stamp
        from an earlier release can never hide the Welcome splash again (the
        exact v0.0.6.o field bug: `!briefingSeen() && !guideSeen()` skipped
@@ -4334,6 +4415,7 @@
     briefingSentences: briefingSentences,
     briefingSeen: briefingSeen,
     briefingGateLeft: briefingGateLeft,
+    briefingBeat1Done: briefingBeat1Done,
     briefingSeek: briefingSeek,
     briefingIsOpen: function () { return !!briefingState.open; },
     /* v0.0.6.m: the frame-accurate karaoke clock + mic-release surface. */
@@ -4341,6 +4423,9 @@
     onBriefingBoundary: onBriefingBoundary,
     /* v0.0.6.n: the exact /with-timestamps word boundaries for the lab. */
     briefingWordTimings: briefingWordTimings,
+    /* v0.0.6.q: the live weekly counter so the Studio's briefingVoiceDelta()
+       stamps and checks the exact same weekStamp the header renders. */
+    weeksSinceStart: weeksSinceStart,
     /* v0.0.6.o: the live karaoke clock mode ('estimate' until the first real
        onTick/onBoundary, then 'clock') so the lab can wait for the documented
        estimate→clock handoff instead of guessing with a fixed sleep. */

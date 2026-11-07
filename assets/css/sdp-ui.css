@@ -1197,6 +1197,15 @@ html[lang='si'] .studio-card { font-family: var(--font-si); }
 /* ═══ v0.0.6.n FIX 2 — the Studio ↔ Briefing bridge card at the studio top ═══ */
 .studio-card-briefing-voices { border-top: 3px solid #7C3AED; }
 .studio-bridge-row { margin: 0 0 10px; }
+/* ═══ v0.0.6.q Pillar 1 — the Executive Male Voice selector row ═══ */
+.studio-voice-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
+.studio-voice-row .lbl { margin: 0; flex: 0 0 auto; font-weight: 800; }
+.studio-voice-select { flex: 1 1 200px; min-width: 0; }
+.studio-voice-custom { flex: 1 1 180px; min-width: 0; }
+@media (max-width: 480px) {
+  .studio-voice-row { flex-direction: column; align-items: stretch; }
+  .studio-voice-select, .studio-voice-custom { flex: 1 1 auto; width: 100%; }
+}
 .studio-briefing-voice-bar {
   margin: 0; padding: 9px 12px; border-radius: 10px;
   font-size: 12.5px; line-height: 1.45; font-weight: 700;

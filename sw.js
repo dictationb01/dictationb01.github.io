@@ -9,7 +9,7 @@
  * v0.0.6.f PRESERVES the clip caches ('sdp-audio-clips' + 'sdp-youdao-v1')
  * across upgrades, so a student repeating the same session spends 0 KB of
  * mobile data.
- * v0.0.6.p PILLAR 1 — the LOW-MOBILE-DATA data-JSON law: the boot payloads
+ * v0.0.6.q PILLAR 1 — the LOW-MOBILE-DATA data-JSON law: the boot payloads
  * (data/session.json, data/config.json, data/elevenlabs-audio.json) are
  * served STALE-WHILE-REVALIDATE from SHELL_CACHE: a cached copy of the SAME
  * release (?v= match on the x-sdp-release stamp) answers in < 30 ms with
@@ -21,9 +21,9 @@
  * masked by a stale cache. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.p-s31';
-var SHELL_CACHE = 'sdp-v0.0.6.p-s31-shell';
-var SW_RELEASE = '0.0.6.p';
+var SW_VERSION = 'sdp-v0.0.6.q-s32';
+var SHELL_CACHE = 'sdp-v0.0.6.q-s32-shell';
+var SW_RELEASE = '0.0.6.q';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
@@ -144,7 +144,7 @@ function networkFirstDataJson(request, url) {
   });
 }
 
-/* ══ v0.0.6.p PILLAR 1 — STALE-WHILE-REVALIDATE for the boot data JSONs ══
+/* ══ v0.0.6.q PILLAR 1 — STALE-WHILE-REVALIDATE for the boot data JSONs ══
  * The cached body is stamped with the release it was fetched for
  * (x-sdp-release). A boot read (?v=<release>, no tick) is answered from the
  * cache INSTANTLY when the release matches — zero network, zero mobile data,
@@ -294,7 +294,7 @@ self.addEventListener('fetch', function (event) {
     return;
   }
   if (isDataJsonPath(url.pathname)) {
-    /* v0.0.6.p PILLAR 1: data/version.json (the 428-byte pointer) and every
+    /* v0.0.6.q PILLAR 1: data/version.json (the 428-byte pointer) and every
        fresh ?t= refresh read stay network-first; the boot payloads
        (session.json / config.json / elevenlabs-audio.json) are read
        cache-first through the stale-while-revalidate law. */

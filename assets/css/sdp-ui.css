@@ -2524,6 +2524,54 @@ html[data-theme='dark'] .briefing-links a { background: #0C4A6E; border-color: #
 .briefing-foot { margin-top: 10px; gap: 10px; }
 #btnBriefingContinue[disabled], #btnBriefingSkip[disabled] { opacity: 0.55; cursor: not-allowed; filter: grayscale(0.25); }
 #btnBriefingContinue[disabled]::after { content: ' ⏳'; }
+/* ═════════ v0.0.6.p Pillar 3 — the RIGHT-side highlighted primary CTAs ═════════
+   Exit sits on the LEFT as the quiet ghost; ▶ Start Dictation → (briefing)
+   and ▶ Click Start Dictation Now (guide) glow on the RIGHT with a pulsing
+   emerald→indigo gradient + focus ring the moment the gate unlocks, so the
+   creator's "main attention on Start Dictation" law is impossible to miss. */
+.briefing-cta-right, .guide-cta-right {
+  background: linear-gradient(135deg, #10B981 0%, #059669 45%, #4F46E5 100%);
+  color: #FFFFFF;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.38), 0 0 0 1px rgba(79, 70, 229, 0.35);
+}
+.briefing-cta-right:hover, .guide-cta-right:hover {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 45%, #6366F1 100%);
+  filter: brightness(1.05); border: 0;
+}
+.b-gate-open .briefing-cta-right:not([disabled]) { animation: sdpCtaPulse 1.6s ease-in-out infinite; }
+.modal.is-open .guide-cta-right { animation: sdpCtaPulse 1.6s ease-in-out infinite; }
+@keyframes sdpCtaPulse {
+  0%, 100% { box-shadow: 0 6px 18px rgba(16, 185, 129, 0.38), 0 0 0 1px rgba(79, 70, 229, 0.35); }
+  50% { box-shadow: 0 6px 26px rgba(16, 185, 129, 0.62), 0 0 0 5px rgba(79, 70, 229, 0.22); }
+}
+.briefing-cta-right:focus-visible, .guide-cta-right:focus-visible {
+  outline: 3px solid #4F46E5; outline-offset: 2px;
+}
+
+/* ═════════ v0.0.6.p Patch 2A — PHONE STAGE-FIT LAW ═════════
+   On a 390x844 / 360x800 phone the constrained reading stage can be shorter
+   than the fully-highlighted Beat 1 paragraph (~460px at 16.5/17.5px), which
+   made LAB1h fail and clipped the last lines of paragraph 1. These phone-only
+   rules let the card use more of the viewport, trim the header/pill chrome and
+   set a compact (still >=14.5px) briefing type scale, so Beat 1 fits WHOLLY
+   inside #briefingLyrics while #briefingLyrics itself keeps its >=220px
+   spacious-stage guarantee and the Exit LEFT / Start Dictation RIGHT footer
+   stays 100% inside the screen. Desktop/tablet type is untouched. */
+@media (max-width: 430px), (max-height: 820px) {
+  .briefing-card { max-height: min(92vh, 820px); }
+  .briefing-head { padding-bottom: 6px; }
+  .briefing-head h2 { font-size: 16px; }
+  .briefing-persona { margin-top: 2px; font-size: 11.5px; }
+  .briefing-lyrics {
+    min-height: clamp(220px, 42vh, 440px); margin: 8px 0;
+    padding: 12px 14px; font-size: 14.5px;
+  }
+  .b-line { font-size: 15px; line-height: 1.45; padding: 6px 8px 6px 12px; margin-bottom: 10px; }
+  .b-line.on { font-size: 15.5px; }
+  .briefing-links { margin-top: 6px; font-size: 11.5px; }
+  .briefing-foot { margin-top: 8px; }
+}
 
 /* ═════════ v0.0.6.m — Pillar 3: post-session review card ═════════ */
 .review-card { margin-top: 14px; border: 1.5px solid #C7D2FE; }
@@ -2548,6 +2596,7 @@ html[data-theme='dark'] .briefing-links a { background: #0C4A6E; border-color: #
   gap: 14px; min-height: clamp(300px, 56vh, 520px); padding: 26px 18px 22px; text-align: center;
 }
 .welcome-stage[hidden] { display: none; }
+.briefing-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; max-height: 100%; overflow: hidden; }
 .briefing-stage[hidden] { display: none; }
 .briefing-stage.is-entering { animation: sdpWelcomeIn 320ms ease both; }
 .welcome-stage.is-leaving { animation: sdpWelcomeOut 320ms ease both; }

@@ -9,7 +9,7 @@
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.o — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player 0.0.6.p — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -535,7 +535,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">0.0.6.o</span>
+      <span id="sdpVerPill">0.0.6.p</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -544,12 +544,12 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.o</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.p</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-07</span></li>
-      <!-- 0.0.6.o Pillar 1: the weekly release note lives HERE in About —
+      <!-- 0.0.6.p Pillar 1: the weekly release note lives HERE in About —
          changelog information — so it takes 0px away from the spacious
          #briefingLyrics reading stage. The DOM id contract is preserved. -->
-      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.o) — Spacious Project Overview reading stage · Studio ↔ Briefing multi-API voice bridge (ElevenLabs /with-timestamps + Groq + Gemini + OpenRouter) · stale-audio cache purge · continuous lyrics progress</li>
+      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.p) — Low-mobile-data cache-first voice pack (135 clips, zero-drop) · guaranteed Welcome splash on every release · Exit LEFT + highlighted Start Dictation → RIGHT · step-by-step guide handover to Word #1</li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -631,8 +631,11 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <ol id="guideSteps" class="guide-steps-sr" hidden aria-hidden="true"></ol>
   </div>
   <div class="modal-foot">
-   <button id="btnGuideSkipStart" type="button" class="btn btn-go" data-i18n="guideSkipStartNow">▶ Start Dictation Now</button>
+   <!-- v0.0.6.p Pillar 3: Exit on the LEFT, the highlighted primary CTA
+        ▶ Click Start Dictation Now on the RIGHT (rect.left of the CTA is
+        strictly greater than rect.left of Exit — the creator's exact law). -->
    <button id="btnGuideClose" type="button" class="btn" ><span data-icon="close" data-icon-size="16"></span><span class="i18n-label" data-i18n="guideExitBtn"> Exit</span></button>
+   <button id="btnGuideSkipStart" type="button" class="btn btn-go guide-cta-right" data-i18n="guideSkipStartNow">▶ Click Start Dictation Now</button>
   </div>
  </div>
 </div>
@@ -644,16 +647,16 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
 </div>
 
-<!-- v0.0.6.o Pillar 1: the TWO-STAGE CINEMATIC ENTRY. Stage 1 (#welcomeStage)
+<!-- v0.0.6.p Pillar 1: the TWO-STAGE CINEMATIC ENTRY. Stage 1 (#welcomeStage)
    greets every brand-new visitor (or any device whose briefingSeen stamp is
-   older than v0.0.6.o) with a choreographed animated "Welcome to Smart
+   older than v0.0.6.p) with a choreographed animated "Welcome to Smart
    Dictation Web App" splash. The Continue click itself unlocks browser audio
    (autoplay law), then a 320ms cross-fade hands over to the Project Overview,
    which auto-plays from Paragraph 1, Word 1 — the tap pill is retired from
    the normal flow. -->
 <div id="briefingModal" class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle" aria-hidden="true" hidden>
  <div class="modal-card briefing-card">
-  <!-- v0.0.6.o Stage 1 — the cinematic welcome splash. -->
+  <!-- v0.0.6.p Stage 1 — the cinematic welcome splash. -->
   <div id="welcomeStage" class="welcome-stage" hidden>
    <p class="welcome-eyebrow">CCBE GALLE BRANCH · B1 ENGLISH CLASS</p>
    <div class="welcome-crest" aria-hidden="true"><span class="welcome-orbit"><i></i></span><span class="welcome-glyph">✍️</span></div>
@@ -661,9 +664,9 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <p class="welcome-sub">Zero-Cost ($0) · 100% Open-Source<br>Autonomous AI-Engineered System by Hansana</p>
    <button id="btnWelcomeContinue" type="button" class="btn btn-go welcome-cta">Continue to Project Overview →</button>
   </div>
-  <!-- v0.0.6.o Stage 2 — the Project Overview reading stage. -->
+  <!-- v0.0.6.p Stage 2 — the Project Overview reading stage. -->
   <div id="briefingStage" class="briefing-stage" hidden>
-  <!-- 0.0.6.o Pillar 1: a sleek MINIMAL 2-line header — the eyebrow row and
+  <!-- 0.0.6.p Pillar 1: a sleek MINIMAL 2-line header — the eyebrow row and
      the bulky purple #briefingUpdateBadge left the modal (the release note
      now lives in Settings › About) so #briefingLyrics gets the breathing
      room the creator demanded on 390x844 phones. -->
@@ -677,7 +680,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
   <div id="briefingLyrics" class="briefing-lyrics" aria-live="polite"></div>
   <div class="briefing-progress" aria-hidden="true"><div id="briefingBar"></div></div>
   <button id="briefingTapPill" class="briefing-tap-pill" type="button" hidden>🔊 Tap Anywhere to Start Voice Briefing</button>
-  <!-- 0.0.6.o: the countdown is screen-reader-only — the visible seconds
+  <!-- 0.0.6.p: the countdown is screen-reader-only — the visible seconds
      live INSIDE the Continue button label, never in a bulky yellow box. -->
   <p id="briefingCount" class="briefing-count" role="status" aria-live="polite">Please listen / read (10s)…</p>
   <p class="briefing-links">
@@ -685,8 +688,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <a href="https://github.com/dictationb1" target="_blank" rel="noopener" data-i18n="briefingLinkProfile">Hansana's GitHub &amp; RDP ↗</a>
   </p>
   <div class="modal-foot briefing-foot">
-   <button id="btnBriefingContinue" type="button" class="btn btn-go" disabled data-i18n="briefingContinue">Continue (10s)…</button>
-   <button id="btnBriefingSkip" type="button" class="btn btn-ghost" disabled data-i18n="briefingSkip">Skip &amp; Enter App</button>
+   <!-- v0.0.6.p Pillar 3: Exit on the LEFT (secondary ghost), the highlighted
+        glowing ▶ Start Dictation → primary CTA on the RIGHT — clicking it
+        closes the briefing and hands over to the Step-by-Step Voice User
+        Guide (#guideModal) from Step 1 of 4. DOM order guarantees
+        rect(Continue).left > rect(Skip).left. -->
+   <button id="btnBriefingSkip" type="button" class="btn btn-ghost" disabled data-i18n="briefingSkip">Exit</button>
+   <button id="btnBriefingContinue" type="button" class="btn btn-go briefing-cta-right" disabled data-i18n="briefingContinue">Start Dictation (10s)…</button>
   </div>
   </div>
 </div>
@@ -739,7 +747,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.o';
+ var TARGET = '0.0.6.p';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

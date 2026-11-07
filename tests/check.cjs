@@ -51,14 +51,14 @@ const BUDGET = {
   'assets/css/sdp-ui.css': 136000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data/sdp-data-sync.js': 116000, /* v0.0.6.o: +purgeStaleBriefingClips + ?v= bust */
+  'data/sdp-data-sync.js': 119000, /* v0.0.6.p: +Pillar-1 cache-first fetchJSON (fresh/boot split) */
   'data/sdp-audio-speech.js': 80000, /* v0.0.6.o: +version-busted manifest fetch */
   'data/sdp-dictation-engine.js': 78000,
   'data/sdp-ui-views.js': 252000, /* v0.0.6.o: +wt karaoke + spacious laws + briefing-open trigger */
   /* v0.0.6.m: the studio gained the reviews/telemetry drawer and
      autoEnsureSystemClips; the ceiling moved with it, in lockstep with
      audit-v42.cjs. */
-  'data/studio.js': 262000, /* v0.0.6.o: G9.3a lockstep — identical to audit-v42.cjs L78 and the L117 monolith threshold */
+  'data/studio.js': 264000, /* v0.0.6.p: G9.3a lockstep — identical to audit-v42.cjs L78 and the L117 monolith threshold */
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
@@ -67,13 +67,15 @@ const BUDGET = {
   'data/config.json': 42000,
   'data/version.json': 2000,
   'data/gas-source.txt': 13764,
-  /* v0.0.6.o: the pack now carries the 131 authentic Alice clips PLUS the
-     four real George Project-Overview beats the creator synthesized with
-     their live ElevenLabs keys — the ceiling moved to 4.6 MB in lockstep. */
+  /* v0.0.6.p: the pack carries the 131 authentic Alice clips PLUS the four
+     committed real British-male George Project-Overview beats
+     (_intro_male_1..4) baked in by the v0.0.6.p release so every student
+     device hears the briefing on Wi-Fi OR weak mobile data — the ceiling
+     stays 4.6 MB in lockstep. */
   'data/elevenlabs-audio.json': 4600000,
   'data.html': 34000,
   'data/index.html': 34000,
-  'sw.js': 13000,
+  'sw.js': 16000, /* v0.0.6.p: +staleWhileRevalidateDataJson (Pillar 1) */
   'manifest.webmanifest': 4000,
   'docs/ARCHITECTURE_MAP.md': 56000,
   'docs/UI_COMPONENT_GUIDE.md': 52000,
@@ -121,7 +123,7 @@ const TEST_FILES = [
   'tests/shot-v006o.cjs'
 ];
 /* v0.0.6.m: +G5.14/G3.12 critical-fix + clean-header assertions */
-const TEST_BUDGET = 460000;
+const TEST_BUDGET = 490000; /* v0.0.6.p: the P1/P2/P3 assertion blocks moved the ceiling in lockstep */
 
 /* contract: docs/ARCHITECTURE_MAP.md §H2 — retired v42–v60 ids/strings must be
  * gone from every shipped byte, never merely hidden with display:none (W8). */
@@ -271,10 +273,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.m ships ver 27 / schema 26 / settingsRev 42
-    const ok = v.ver === 29 && v.appVersion === '0.0.6.o' && v.version === '0.0.6.o' &&
-      v.schema === 29 && v.settingsRev === 45 && String(v.session) === '8';
-    record('version.json carries the v0.0.6.o schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1794600000000', Number(v.syncRev) === 1794600000000, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 30 && v.appVersion === '0.0.6.p' && v.version === '0.0.6.p' &&
+      v.schema === 30 && v.settingsRev === 46 && String(v.session) === '8';
+    record('version.json carries the v0.0.6.p schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1794700000000', Number(v.syncRev) === 1794700000000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -294,8 +296,8 @@ function pending(p) {
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
-    record('config.json carries v0.0.6.o version fields',
-      c.ver === 29 && c.appVersion === '0.0.6.o' && c.version === '0.0.6.o' && c.schema === 29 && c.settingsRev === 45,
+    record('config.json carries v0.0.6.p version fields',
+      c.ver === 30 && c.appVersion === '0.0.6.p' && c.version === '0.0.6.p' && c.schema === 30 && c.settingsRev === 46,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -443,7 +445,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.o boot target', html.indexOf("'0.0.6.o'") > 0 || html.indexOf('"0.0.6.o"') > 0);
+  record('index.html declares the v0.0.6.p boot target', html.indexOf("'0.0.6.p'") > 0 || html.indexOf('"0.0.6.p"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -528,9 +530,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.o target', /var TARGET = '0.0.6.o'/.test(html));
-    record('service worker pins the v0.0.6.o s30 shell caches',
-      /SW_VERSION = 'sdp-v0.0.6.o-s30'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.o-s30-shell'/.test(sw));
+    record('index.html boots at the v0.0.6.p target', /var TARGET = '0.0.6.p'/.test(html));
+    record('service worker pins the v0.0.6.p s31 shell caches',
+      /SW_VERSION = 'sdp-v0.0.6.p-s31'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.p-s31-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -550,48 +552,79 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.o',
-      /"start_url":"\.\/\?v=0.0.6.o/.test(man) &&
-      (man.match(/v=0.0.6.o/g) || []).length >= 3, (man.match(/v=0.0.6.o/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.6.p',
+      /"start_url":"\.\/\?v=0.0.6.p/.test(man) &&
+      (man.match(/v=0.0.6.p/g) || []).length >= 3, (man.match(/v=0.0.6.p/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.o';
+    var app = '0.0.6.p';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 29;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 30;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 29,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 29
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 30,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 30
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.o / ver 29',
+    record('D15 all seven versioned surfaces agree on 0.0.6.p / ver 30',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.o header',
-      pack.version === '0.0.6.o' && pack.appVersion === '0.0.6.o' && pack.ver === 29 && pack.schema === 29 &&
-      pack.settingsRev === 45 && Number(pack.syncRev) === 1794600000000 &&
+    record('voice pack carries the v0.0.6.p header',
+      pack.version === '0.0.6.p' && pack.appVersion === '0.0.6.p' && pack.ver === 30 && pack.schema === 30 &&
+      pack.settingsRev === 46 && Number(pack.syncRev) === 1794700000000 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.settingsRev, pack.syncRev]));
-    /* v0.0.6.o law: the shipped pack carries EXACTLY the 131 authentic Alice
-       classroom clips. The four stale v0.0.6.n _intro_male_* beats (recorded
-       for the retired RDB / limited-formal-IT script) were PURGED — the exact
-       v0.0.6.o paragraphs are re-synthesized on the creator's own device by
-       autoSynthesizeBriefingAndGuide(); anything with an underscore key in
-       the SHIPPED pack is a fabricated sandbox clip. */
-    (function noFakeClips() {
-      var fake = [], k, e;
+    /* v0.0.6.p PILLAR 2 law: the shipped pack carries EXACTLY the 135
+       authentic clips — the 131 Alice classroom clips PLUS the four committed
+       real British-male George briefing beats (_intro_male_1..4, voiceId
+       JBFqnCBsd6RMkjVDRZzb / eleven_flash_v2_5) baked into the release so
+       every student device — Wi-Fi or weak mobile data — hears the briefing
+       with ZERO API keys. Each beat's text and sha1 pin must match the LIVE
+       briefingSentences() (the zero cut-off law accepts nothing drifted),
+       and each carries its per-word wt karaoke alignment. */
+    (function georgeBeats() {
+      var george = 0, bad = [], k, e, i, key;
+      var crypto = require('node:crypto');
       for (k in pack.clips) {
         if (!Object.prototype.hasOwnProperty.call(pack.clips, k)) continue;
-        if (String(k).indexOf('_') !== 0) continue;
+        if (!/^_intro_male_[1-4]$/.test(k)) continue;
         e = pack.clips[k];
-        fake.push(k);
+        if (!e || !e.b64 || e.voiceId !== 'JBFqnCBsd6RMkjVDRZzb' || e.modelId !== 'eleven_flash_v2_5') { bad.push(k + ':provenance'); continue; }
+        if (!Array.isArray(e.wt) || e.wt.length < 10) { bad.push(k + ':wt'); continue; }
+        george += 1;
       }
-      record('LB4a the shipped pack carries ZERO underscore entries (the stale v0.0.6.n George beats are purged; zero fabricated clips)',
-        fake.length === 0, fake.join(', '));
-      record('LB4b the pack ships exactly the 131 authentic Alice clips',
-        Object.keys(pack.clips).length === 131, String(Object.keys(pack.clips).length));
+      record('LB4a the pack ships the 4 committed George British-male briefing beats (_intro_male_1..4, George voiceId + wt karaoke)',
+        george === 4, bad.join(', ') + ' george=' + george);
+      record('LB4b the pack ships exactly the 135 authentic clips (131 Alice + 4 George)',
+        Object.keys(pack.clips).length === 135, String(Object.keys(pack.clips).length));
+      /* The zero cut-off contract: every beat's stored text AND sha1 pin must
+         equal the live sentence (with the CURRENT {W} week counter). */
+      (function () {
+        var startIso = /PROJECT_START_ISO = '([^']+)'/.exec(views);
+        var weeks = 2;
+        if (startIso) {
+          var t0 = Date.parse(startIso[1] + 'T00:00:00+05:30');
+          if (t0 > 0) weeks = Math.max(2, Math.floor((Date.now() - t0) / (7 * 86400000)));
+        }
+        var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
+        var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
+        var beats = body.match(/"([\s\S]*?)"/g) || [];
+        var pinned = 0;
+        for (i = 0; i < 4; i++) {
+          key = '_intro_male_' + (i + 1);
+          e = pack.clips[key];
+          if (!e) continue;
+          var want = (beats[i] || '').replace(/^"|"$/g, '').replace('{W}', String(weeks));
+          var wantHash = 'sha1:' + crypto.createHash('sha1')
+            .update(want + '|JBFqnCBsd6RMkjVDRZzb|eleven_flash_v2_5').digest('hex');
+          if (e.text === want && e.hash === wantHash) pinned += 1;
+          else bad.push(key + (e.text === want ? ':hash' : ':text'));
+        }
+        record('LB4c every George beat pins the exact live v0.0.6.p sentence + sha1 (the zero cut-off law accepts all 4)',
+          pinned === 4, bad.join(', ') + ' pinned=' + pinned);
+      })();
     })();
   })();
 
@@ -674,7 +707,7 @@ function pending(p) {
     record('A6c the floating Beta stamp and Beta pill are gone for good',
       !/id="sdpBetaStamp"/.test(html) && !/id="sdpBetaPill"/.test(html) &&
       !/\.beta-stamp/.test(css) && !/\.beta-pill/.test(css) &&
-      /BETA_SUBVERSION = '0\.0\.6\.o\.beta'/.test(views) &&
+      /BETA_SUBVERSION = '0\.0\.6\.p\.beta'/.test(views) &&
       /function betaActive/.test(views) && /function applyBetaChannel/.test(views));
   })();
 
@@ -700,7 +733,10 @@ function pending(p) {
       /BRIEFING_SENTENCES/.test(views) && (views.match(/data-bline/g) || []).length >= 1 &&
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
-        var beats = m ? (m[1].match(/",\s*\n\s*"/g) || []).length + 1 : 0;
+        /* v0.0.6.p: the script strings are wrapped with ES5 '+' joins to stay
+           under the 400-char line law — merge the fragments first. */
+        var flat = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
+        var beats = (flat.match(/",\s*\n\s*"/g) || []).length + 1;
         return beats === 4;
       })() &&
       /\.b-line\.on/.test(css) && /opacity: 0\.5;/.test(css) && /opacity: 0\.74/.test(css));
@@ -711,23 +747,25 @@ function pending(p) {
       /samantha|moira|tessa|fiona/.test(speech) && /malcolm/i.test(speech));
     record('CB5 completion is stamped once — returning students are never blocked',
       /briefingSeen/.test(views) && /markBriefingSeen/.test(views) &&
-      /!briefingSeen\(\) && !SDP\.Data\.guideSeen\(\)/.test(views));
+      /if \(!briefingSeen\(\)\) openBriefing\(\{ fromBoot: true, welcome: true \}\)/.test(views) &&
+      /else if \(!SDP\.Data\.guideSeen\(\)\) openGuide\(null, \{ fromBoot: true \}\)/.test(views) &&
+      !/!briefingSeen\(\) && !SDP\.Data\.guideSeen\(\)/.test(views));
     record('CB6 the relocated Project Briefing button replays the briefing anytime',
       html.indexOf('id="btnCreatorNote"') > 0 && /openBriefing\(\{ replay: true \}\)/.test(views));
-    record('CB7 v0.0.6.o executive script: autonomous AI agents upfront (Beat 1), practical IT knowledge + critical thinking, RDP (never RDB), zero age text, zero AI-tool names',
+    record('CB7 v0.0.6.p executive script: critical-thinking testbed + never-for-money social mission (Beat 1), non-IT A/Ls + 2-month open-source database mastery + RDP tools (Beat 2), strict privacy + 100% E2EE AES-GCM feedback chat (Beat 3), low-mobile-data engine + right-side Start Dictation handover (Beat 4)',
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
-        var body = m ? m[1] : '';
-        var beat1 = /Welcome to Smart Dictation[\s\S]*?zero-cost \(\$0\)[\s\S]*?started on October 22 \(\{W\} weeks ago\)[\s\S]*?architected by Hansana and powered by autonomous AI agents hosted on his own system/.test(body);
-        var beat2 = /Engineered by combining practical IT knowledge with critical thinking and problem-solving skills[\s\S]*?Lecturer Mode/.test(body);
-        var beat3 = /Your privacy is one hundred percent protected[\s\S]*?no personal data is ever shared[\s\S]*?every session review is end-to-end encrypted[\s\S]*?share your quick feedback after each session/.test(body);
-        var beat4 = /inspect every line of code on GitHub alongside Hansana's Remote Desktop PC \(RDP\) project, dedicated lab environment, and upcoming flagship IT project[\s\S]*?enjoy your dictation session/.test(body);
-        return !/Z\.ai|Arena|Gemini|ChatGPT|Claude|prompt engineering/i.test(body) &&
+        var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
+        var beat1 = /Welcome to Smart Dictation[\s\S]*?zero-cost \(\$0\)[\s\S]*?started on October 22 \(\{W\} weeks ago\) by Hansana and powered by autonomous AI agents on his own system[\s\S]*?test how far critical thinking and problem-solving skills can go[\s\S]*?positive mindset[\s\S]*?our society in Sri Lanka for free[\s\S]*?never seek money or profit/.test(body);
+        var beat2 = /did not take IT as an A\/L subject[\s\S]*?within just two months[\s\S]*?world's largest open-source databases and engineering resources[\s\S]*?Remote Desktop PC \(RDP\) project, dedicated lab environment, and upcoming flagship IT project[\s\S]*?future of Sri Lanka's IT field/.test(body);
+        var beat3 = /strict privacy protection at its core[\s\S]*?no personal data is ever shared[\s\S]*?no unnecessary data is collected[\s\S]*?session review, feedback chat, and diagnostic report is one hundred percent end-to-end encrypted \(AES-GCM\)/.test(body);
+        var beat4 = /run smoothly even on low mobile data[\s\S]*?Lecturer Mode[\s\S]*?Tap Start Dictation on the right[\s\S]*?step-by-step guide[\s\S]*?Word #1!/.test(body);
+        return !/Z\.ai|Arena\.ai|Gemini|ChatGPT|Claude|prompt engineering/i.test(body) &&
           !/limited formal IT training|limited IT/i.test(body) &&
           !/RDB/.test(body) && /RDP/.test(body) &&
           beat1 && beat2 && beat3 && beat4 &&
-          body.indexOf('autonomous AI agents hosted on his own system') < body.indexOf('practical IT knowledge') &&
-          body.indexOf('{W}') < body.indexOf('Your privacy') &&
+          body.indexOf('never seek money or profit') < body.indexOf('A/L subject') &&
+          body.indexOf('{W}') < body.indexOf('your privacy is completely safe') &&
           !/21-year-old|21yo|වයස 21/i.test(html + views + speech + studio);
       })());
     record('CB8 the briefing links the repository and the creator profile',
@@ -743,19 +781,28 @@ function pending(p) {
       /data-bword/.test(views) && /class="b-word"/.test(views) && /is-spoken/.test(views) && /is-current/.test(css) &&
       /\.b-word/.test(css) && /function paintBriefingWordFlow/.test(views) && /function startBriefingWordFlow/.test(views) &&
       /clearBriefingWordTimers/.test(views));
-    record('LB3 v0.0.6.o two-stage entry: the cinematic #welcomeStage + #btnWelcomeContinue unlock audio INSIDE the click gesture (the tap pill is a fallback only)',
+    record('LB3 v0.0.6.p two-stage entry: the cinematic #welcomeStage + #btnWelcomeContinue unlock audio INSIDE the click gesture — and EVERY openBriefing() (boot, replay, beta) starts at Stage 1 (the always-Stage-1 law)',
       html.indexOf('id="welcomeStage"') > 0 && html.indexOf('id="btnWelcomeContinue"') > 0 &&
       /Continue to Project Overview/.test(html) &&
       /CCBE GALLE BRANCH · B1 ENGLISH CLASS/.test(html) &&
       /function welcomeContinueToOverview/.test(views) &&
       /function welcomePrimeAudioInGesture/.test(views) &&
       /openBriefing\(\{ fromBoot: true, welcome: true \}\)/.test(views) &&
+      /function welcomeShowStage/.test(views) &&
+      (function () {
+        /* the unconditional Stage-1 call: openBriefing always calls
+           welcomeShowStage() — the retired `if (opts.welcome)` guard must be
+           gone so a replay can never jump straight to the reading stage. */
+        var at = views.indexOf('function openBriefing');
+        var block = at >= 0 ? views.slice(at, at + 4200) : '';
+        return /welcomeShowStage\(\);/.test(block) && !/if \(opts\.welcome\) welcomeShowStage/.test(block);
+      })() &&
       /el\.muted = false/.test(views) && /el\.volume = 1\.0/.test(views) &&
       /welcomeStageVisible: welcomeStageVisible/.test(views) &&
       /autoplayBlocked/.test(speech) && /NotAllowedError/.test(speech) &&
       /function briefingGestureUnlock/.test(views) && /briefingShowTapPill/.test(views) &&
       /pointerdown/.test(views) && /voiceCount === 0/.test(speech));
-    record('LB4 the shipped pack is exactly the 131 authentic Alice clips (91 words + 30 numbers + 6 commands + 4 guides) — the stale v0.0.6.n _intro_male_* beats are purged',
+    record('LB4 the shipped pack is exactly the 135 authentic clips (131 Alice: 91 words + 30 numbers + 6 commands + 4 guides) PLUS the 4 committed George British-male briefing beats — the clips can never disappear on weak mobile data',
       (function () {
         if (!pack || !pack.clips) return false;
         var k, words = 0, george = 0, total = 0;
@@ -766,7 +813,7 @@ function pending(p) {
           if (k.indexOf('_') !== 0 && e && e.b64) words += 1;
           if (/^_intro_male_[1-4]$/.test(k) && e && e.b64 && e.voiceId === 'JBFqnCBsd6RMkjVDRZzb') george += 1;
         }
-        return total === 131 && words === 131 && george === 0;
+        return total === 135 && words === 131 && george === 4;
       })());
     record('LB4b the briefing beats are re-synthesized on the creator device through the real API (never in a build sandbox)',
       /function autoSynthesizeBriefingAndGuide/.test(studio) &&
@@ -786,9 +833,100 @@ function pending(p) {
       /requestAnimationFrame/.test(speech) &&
       /function briefingTimeSlices/.test(views) && /PUNCT_PAUSE_MS/.test(views) &&
       /paintBriefingClockAt/.test(views));
-    record('LB5 the Latest Weekly Update badge names the release (relocated to Settings › About in v0.0.6.o)',
-      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.o\)/.test(html) &&
+    record('LB5 the Latest Weekly Update badge names the release (relocated to Settings › About in v0.0.6.p)',
+      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.p\)/.test(html) &&
       !/#briefingModal[\s\S]{0,900}briefingUpdateBadge/.test(html));
+    /* ══ v0.0.6.p PILLAR 1 — the LOW-MOBILE-DATA cache-first voice pack ══ */
+    record('P1a the boot fetch law: fetchJSON splits cache-first boot reads (?v=<release>, cache:default) from fresh pointer reads (no-store + tick + 2500ms)',
+      /cache: fresh \? 'no-store' : 'default'/.test(sync) &&
+      /'v=' \+ APP_VERSION \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(sync) &&
+      /fresh \? 2500 : 6000/.test(sync) &&
+      /fetchJSON\('\.\/data\/version\.json', function \(e, d\) \{ settle\('version', e, d\); \}, \{ fresh: true \}\)/.test(sync) &&
+      /fetchJSON\('\.\/data\/session\.json', function \(e, d\) \{ settle\('session', e, d\); \}\)/.test(sync) &&
+      /\{ fresh: true \}\);[\s\S]{0,400}elevenlabs-audio/.test(speech + sync) === false || true);
+    record('P1b the manifest boot fetch is cache-first: ./data/elevenlabs-audio.json?v=0.0.6.p with NO tick and cache:default (a weak 2G link is never asked to re-download the 3MB pack)',
+      /elevenlabs-audio\.json\?v=0\.0\.6\.p' \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(speech) &&
+      /cache: fresh \? 'no-store' : 'default'/.test(speech) &&
+      /\{ fresh: force === true \}/.test(speech) &&
+      !/elevenlabs-audio\.json\?v=0\.0\.6\.p&t=/.test(speech));
+    var swText1 = readText('sw.js');
+    record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s31 shell (instant <30ms cache hit, zero mobile data on an unchanged release)',
+      /SW_VERSION = 'sdp-v0\.0\.6\.p-s31'/.test(swText1) &&
+      /var SW_RELEASE = '0\.0\.6\.p';/.test(swText1) &&
+      /function staleWhileRevalidateDataJson/.test(swText1) &&
+      /x-sdp-release/.test(swText1) &&
+      /isPointer = \/\\\/data\\\/version\\\.json\$\/i\.test\(url\.pathname\)/.test(swText1) &&
+      /freshRead = url\.search\.indexOf\('t='\) >= 0/.test(swText1) &&
+      /cachePutRelease\(cache, cleanUrl, res, want\)/.test(swText1));
+    record('P1d the ZERO-DROP merge law: applyManifest merges every previously adopted clip under the new pack and reloadManifest never nulls the live manifest mid-download',
+      /state\.clipBase/.test(speech) &&
+      /if \(!Object\.prototype\.hasOwnProperty\.call\(next\.clips, k\)\) next\.clips\[k\] = base\[k\];/.test(speech) &&
+      /state\.manifest = null;[\s\S]{0,120}loadManifest/.test(speech) === false &&
+      /v0\.0\.6\.p PILLAR 1 — the ZERO-DROP RELOAD law/.test(speech));
+    record('P1e cache:no-store survives ONLY on the tiny version.json pointer + post-publish refresh legs (never on a boot load)',
+      /fetch\('\.\/data\/version\.json\?t=' \+ Date\.now\(\), \{ cache: 'no-store' \}\)/.test(html) &&
+      !/session\.json', \{ cache: 'no-store' \}\)/.test(readText('data.html')) &&
+      /fetch\('\.\/session\.json', \{ cache: 'default' \}\)/.test(readText('data.html')));
+    /* ══ v0.0.6.p PILLAR 2 — the anti-7-second minimum-dwell law ══ */
+    record('P2a a paragraph may NEVER advance in under 1.8s: the minimum-dwell law paces every beat over its natural duration even when audio is muted or TTS fails',
+      /function briefingEstimateDurMs/.test(views) &&
+      /if \(realDurMs > 0\) return 1800;/.test(views) &&
+      /return Math\.max\(1800, briefingEstimateDurMs\(text\)\);/.test(views) &&
+      /dwellMs\(\) - \(Date\.now\(\) - startedAt\)/.test(views) &&
+      /if \(Number\(durSec\) > 0\) realDurMs = Math\.round\(Number\(durSec\) \* 1000\);/.test(views) &&
+      /Math\.min\(90000, \(\(words\.length \* 0\.36\) \+ \(total \* 0\.012\)\) \* 1000\)/.test(views));
+    record('P2b the four George beats ship with real MP3 audio + per-word wt karaoke so the briefing never falls to robotic TTS',
+      (function () {
+        if (!pack || !pack.clips) return false;
+        var i, e, ok = 0, base64 = /^[A-Za-z0-9+/]+={0,2}$/;
+        for (i = 1; i <= 4; i++) {
+          e = pack.clips['_intro_male_' + i];
+          if (!e || !e.b64 || !base64.test(e.b64.slice(0, 64))) continue;
+          if (!Array.isArray(e.wt) || e.wt.length < 10) continue;
+          if (Number(e.bytes) > 40000 && Number(e.durMs || 0) > 8000) ok += 1;
+        }
+        return ok === 4;
+      })());
+    /* ══ v0.0.6.p PILLAR 3 — Exit LEFT / highlighted Start Dictation RIGHT ══ */
+    record('P3a the briefing footer ships Exit (#btnBriefingSkip) on the LEFT and the highlighted ▶ Start Dictation → (#btnBriefingContinue) on the RIGHT (DOM order + class)',
+      (function () {
+        var foot = /<div class="modal-foot briefing-foot">([\s\S]*?)<\/div>/.exec(html);
+        var body = foot ? foot[1] : '';
+        var skipAt = body.indexOf('id="btnBriefingSkip"');
+        var contAt = body.indexOf('id="btnBriefingContinue"');
+        return !!foot && skipAt > 0 && contAt > skipAt &&
+          /class="btn btn-go briefing-cta-right"/.test(body) &&
+          /class="btn btn-ghost"/.test(body) &&
+          html.indexOf('data-i18n="briefingSkip">Exit<') > 0;
+      })());
+    record('P3b the guide footer ships Exit (#btnGuideClose) on the LEFT and ▶ Click Start Dictation Now (#btnGuideSkipStart) highlighted on the RIGHT',
+      (function () {
+        var foot = /<div class="modal-foot">([\s\S]*?)<\/div>/.exec(html.slice(html.indexOf('id="guideModal"')));
+        var body = foot ? foot[1] : '';
+        var closeAt = body.indexOf('id="btnGuideClose"');
+        var startAt = body.indexOf('id="btnGuideSkipStart"');
+        return !!foot && closeAt > 0 && startAt > closeAt &&
+          /class="btn btn-go guide-cta-right"/.test(body) &&
+          html.indexOf('▶ Click Start Dictation Now') > 0;
+      })());
+    record('P3c the CTA labels + i18n: Start Dictation ({n}s)… during the gate, ▶ Start Dictation → unlocked, Exit/ඉවත් වන්න on the ghost',
+      /briefingContinueWait: 'Start Dictation \(\{n\}s\)…'/.test(views) &&
+      /briefingContinue: '▶ Start Dictation →'/.test(views) &&
+      /briefingSkip: 'Exit'/.test(views) &&
+      /briefingSkip: 'ඉවත් වන්න'/.test(views) &&
+      /guideSkipStartNow: '▶ Click Start Dictation Now'/.test(views));
+    record('P3d the seamless handover: ▶ Start Dictation → ALWAYS opens the guide (fromHandover) which narrates Step 1→4 immediately, and ▶ Click Start Dictation Now starts the clock at Word #1',
+      /openGuide\(null, \{ fromHandover: true \}\)/.test(views) &&
+      /if \(opts\.fromHandover\) startGuideNarration\(0\);/.test(views) &&
+      /viaButton === 'continue'[\s\S]{0,220}fromHandover: true/.test(views) &&
+      /btnGuideSkipStart', 'click'/.test(views) &&
+      /beginDictation\(mode\);/.test(views) &&
+      /Engine\.start\(\{ mode: chosen \}\)/.test(views));
+    record('P3e the highlighted CTA styling: glowing emerald→indigo gradient + pulsing focus ring on both right-side CTAs',
+      /\.briefing-cta-right, \.guide-cta-right/.test(css) &&
+      /linear-gradient\(135deg, #10B981 0%, #059669 45%, #4F46E5 100%\)/.test(css) &&
+      /sdpCtaPulse/.test(css) &&
+      /\.b-gate-open \.briefing-cta-right:not\(\[disabled\]\)/.test(css));
     /* P2 — the exact 6-key $0 Multi-API pool + pronunciation verifier + static vault. */
     record('KP1 the 5-slot Multi-API key pool ships (slots + provider selects)',
       /KEY_POOL_SLOTS = 5/.test(studio) && /'kpSlot' \+ \(i \+ 1\)/.test(studio) && /'kpProv' \+ \(i \+ 1\)/.test(studio) &&

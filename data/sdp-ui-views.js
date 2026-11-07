@@ -269,7 +269,7 @@
     pillWriting: 'Write the word ·',
     pillFinishWarn: 'Finish writing ·',
     studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
-    guideSkipStartNow: '▶ Start Dictation Now',
+    guideSkipStartNow: '▶ Click Start Dictation Now',
     /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
     guideSpotlight1: 'Press Start Dictation to begin.',
     guideSpotlight2: 'Listen twice, then write in five seconds.',
@@ -328,14 +328,14 @@
     briefingTitle: 'Smart Dictation · Project Overview',
     briefingPersona: 'Started 2 Weeks Ago (Oct 22) · $0 Open-Source System',
     briefingLinkCode: 'Code on GitHub ↗',
-    briefingLinkProfile: "Hansana's GitHub & RDB ↗",
-    briefingContinue: 'Continue to Smart Dictation →',
-    briefingContinueWait: 'Continue ({n}s)…',
-    briefingSkip: 'Skip & Enter App',
+    briefingLinkProfile: "Hansana's GitHub & RDP ↗",
+    briefingContinue: '▶ Start Dictation →',
+    briefingContinueWait: 'Start Dictation ({n}s)…',
+    briefingSkip: 'Exit',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
-    betaStampLabel: 'BETA · 0.0.6.n.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
+    betaStampLabel: 'BETA · 0.0.6.p.beta — Project Briefing · Multi-API · Reviews · Diagnostics',
     betaOnToast: 'Beta channel ON — the v0.0.6.n suite is highlighted and the Project Briefing will replay',
     betaOffToast: 'Beta channel OFF — back to the standard main cockpit',
     reviewTitle: 'Help Improve Smart Dictation — Share Your Quick Review',
@@ -615,7 +615,7 @@
     pillWriting: '✍️ වචනය ලියන්න ·',
     pillFinishWarn: '⏳ ලිවීම අවසන් කරන්න ·',
     studioBroadcast34: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
-    guideSkipStartNow: '▶ දැන්ම ඩික්ටේෂන් ආරම්භ කරන්න',
+    guideSkipStartNow: '▶ දැන් Start Dictation ඔබන්න',
     guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
     guideSpotlight2: 'සෑම වචනයක්ම දෙවරක් අසන්න, පසුව තත්පර පහක් තුළ ලියන්න.',
     guideSpotlight3: 'වාරය අවසන් වූ පසු වචන තිහම පිළිවෙලින් පරීක්ෂා කරන්න.',
@@ -672,10 +672,10 @@
     briefingTitle: 'Smart Dictation · ව්‍යාපෘති දළ විශ්ලේෂණය',
     briefingPersona: 'ඔක්තෝබර් 22 ආරම්භ විය (සති 2) · $0 විවෘත-කේත පද්ධතිය',
     briefingLinkCode: 'GitHub කේතය ↗',
-    briefingLinkProfile: "Hansana ගේ GitHub සහ RDB ↗",
-    briefingContinue: 'Smart Dictation වෙත පිවිසෙන්න →',
-    briefingContinueWait: 'ඉදිරියට ({n}s)…',
-    briefingSkip: 'මඟහරින්න සහ යෙදුමට පිවිසෙන්න',
+    briefingLinkProfile: "Hansana ගේ GitHub සහ RDP ↗",
+    briefingContinue: '▶ Start Dictation →',
+    briefingContinueWait: 'Start Dictation ({n}s)…',
+    briefingSkip: 'ඉවත් වන්න',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
@@ -1415,8 +1415,13 @@
     var conf = settings();
     hideGuideTapBanner();
     hideGuideAutoplayBanner();
-    /* v0.0.5.c Path A: a cold boot paints the guide silently. */
-    if (!opts.fromBoot && conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
+    /* v0.0.5.c Path A: a cold boot paints the guide silently.
+       v0.0.6.p Pillar 3: the BRIEFING HANDOVER (fromHandover) narrates
+       Step 1 → Step 4 with the committed guide.en.0..3 clips immediately —
+       the user's ▶ Start Dictation → click already unlocked audio, so the
+       guide speaks from the very first step with no banner, no tap. */
+    if (opts.fromHandover) startGuideNarration(0);
+    else if (!opts.fromBoot && conf.guideAutoPlay !== false && !opts.quick) startGuideNarration(0);
     armGuideAutoplayWatch();
     var banner = byId('guideTapBanner');
     if (banner && !banner._sdpBound) {
@@ -1467,7 +1472,9 @@
     if (!btn) return false;
     btn.hidden = show === false;
     btn.setAttribute('aria-hidden', show === false ? 'true' : 'false');
-    btn.textContent = t('guideSkipStartNow', '▶ Start Dictation Now');
+    /* v0.0.6.p Pillar 3: the guide footer's RIGHT-side highlighted CTA —
+       ▶ Click Start Dictation Now — exactly as the creator requested. */
+    btn.textContent = t('guideSkipStartNow', '▶ Click Start Dictation Now');
     return true;
   }
   function restoreGuideTitle() {
@@ -2526,7 +2533,11 @@
     }
     bindReviewCard();
     on('btnGuideSkipStart', 'click', function () {
-      /* R2: ▶ Start Dictation Now — close, stamp, speak the lesson. */
+      /* v0.0.6.p Pillar 3 — STAGE 4 of the onboarding pipeline: ▶ Click
+         Start Dictation Now closes the guide, stamps guideSeen, switches to
+         the Dictation screen (#screen-player) and starts the Dictation Clock
+         cleanly at Word #1 (Engine.start with no startIndex → index 0),
+         speaking Word #1 through its committed ElevenLabs Alice clip. */
       var mode = guideState.pendingMode || settings().mode;
       closeGuide();
       beginDictation(mode);
@@ -2915,7 +2926,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.o.beta';
+  var BETA_SUBVERSION = '0.0.6.p.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2927,17 +2938,31 @@
   var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync.
-     v0.0.6.o Pillar 2 — the creator's exact executive script: autonomous AI
-     agents hosted on his own system UPFRONT (Beat 1), practical IT knowledge
-     + critical thinking and problem-solving (never "limited formal IT
-     training"), the 100% E2EE privacy law with the feedback request, and the
-     open-source ecosystem with the RDP (Remote Desktop PC) project, dedicated
-     lab environment and flagship IT project. */
+     v0.0.6.p Pillar 4 — the creator's exact social-impact executive script:
+     the critical-thinking testbed + positive mindset + never-for-money
+     mission for Sri Lankan society (Beat 1), the non-IT A/Ls + two-month
+     self-stabilized knowledge through the world's largest open-source
+     databases + the GitHub/RDP open-source tools (Beat 2), the strictly
+     privacy-focused + 100% E2EE (AES-GCM) website with encrypted feedback
+     chat (Beat 3), and the low-mobile-data classroom engine + the
+     right-side Start Dictation → guide handover (Beat 4). */
   var BRIEFING_SENTENCES = [
-    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system started on October 22 ({W} weeks ago), architected by Hansana and powered by autonomous AI agents hosted on his own system.",
-    "Engineered by combining practical IT knowledge with critical thinking and problem-solving skills, this platform runs automatically and lag-free on any phone or computer while allowing lecturers to update classroom word lists anytime through Lecturer Mode.",
-    "Your privacy is one hundred percent protected: no personal data is ever shared, no unnecessary data is collected, and every session review is end-to-end encrypted — so please share your quick feedback after each session to help improve the system.",
-    "You can inspect every line of code on GitHub alongside Hansana's Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship IT project — enjoy your dictation session!"
+    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system "
+    + "started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system. "
+    + "I built this project to test how far critical thinking and problem-solving skills can go, driven by a "
+    + "positive mindset to give something genuinely useful to our society in Sri Lanka for free — I will never "
+    + "seek money or profit from this work.",
+    "Although I did not take IT as an A/L subject, within just two months I stabilized my practical IT knowledge "
+    + "by exploring and harnessing several of the world's largest open-source databases and engineering "
+    + "resources. Building on those global open-source foundations, I have created my own open-source tools on "
+    + "GitHub — including my Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship "
+    + "IT project — to help advance the future of Sri Lanka's IT field.",
+    "This website is built with strict privacy protection at its core: no personal data is ever shared, no "
+    + "unnecessary data is collected, and every session review, feedback chat, and diagnostic report is one "
+    + "hundred percent end-to-end encrypted (AES-GCM) so your privacy is completely safe.",
+    "Engineered to run smoothly even on low mobile data, lecturers can update classroom word lists anytime "
+    + "through Lecturer Mode. Tap Start Dictation on the right to open the quick step-by-step guide and begin "
+    + "your dictation session from Word #1!"
   ];
   function briefingSentence(i) {
     var n = Number(i);
@@ -3349,6 +3374,25 @@
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('welcome_continue', { ver: APP_VERSION }); } catch (e) {}
     return true;
   }
+  /* v0.0.6.p Pillar 2 — the ANTI-7-SECOND MINIMUM-DWELL LAW. In v0.0.6.o the
+     four _intro_male clips were missing, so speechSynthesis (0 voices on
+     Android/iOS) fired onerror/onend instantly; with gestureArmed already
+     true, every beat advanced in ~320 ms and the whole briefing silently
+     auto-scrolled to the bottom in ~7 seconds without a single spoken word.
+     The law: a paragraph may NEVER advance in under 1.8 s, and in the
+     absence of a real clock it paces over its natural reading duration —
+     the SAME estimate the karaoke flow uses — so a muted or failed clip
+     still reads at a human pace. Real playback (clip 'ended' / utterance
+     onend) always wins when it takes longer; the dwell is only a floor. */
+  function briefingEstimateDurMs(text) {
+    var words = str(text).split(/\s+/);
+    var total = 0, i, w;
+    for (i = 0; i < words.length; i++) {
+      w = Math.max(2, (words[i].length + 2) + (wordPauseMs(words[i]) / 24));
+      total += w;
+    }
+    return Math.max(1200, Math.min(90000, ((words.length * 0.36) + (total * 0.012)) * 1000));
+  }
   function briefingNarrate(idx, epoch) {
     if (!briefingState.open || epoch !== briefingState.epoch) return;
     if (idx >= BRIEFING_SENTENCES.length) { briefingFinishNarration(epoch); return; }
@@ -3358,6 +3402,18 @@
     resetBriefingWords(idx);
     var text = briefingSentence(idx);
     var advanced = false;
+    /* v0.0.6.p: the beat clock starts NOW; next() may not fire before the
+       minimum dwell (>= 1.8 s) has fully elapsed. A REAL clip's own 'ended'
+       event already enforces its natural spoken duration, so once a real
+       duration is reported only the 1.8 s anti-race floor applies; without
+       real audio (muted device, dead TTS) the beat paces over the natural
+       reading estimate so a silent browser can never flash-scroll. */
+    var startedAt = Date.now();
+    var realDurMs = 0;
+    var dwellMs = function () {
+      if (realDurMs > 0) return 1800;
+      return Math.max(1800, briefingEstimateDurMs(text));
+    };
     /* v0.0.6.o Pillar 3 — THE ZERO CUT-OFF LAW: the fallback guard may only
        advance the beat when NOTHING is genuinely still speaking. While the
        shared <audio> element is playing (paused === false, ended === false,
@@ -3369,26 +3425,53 @@
         var el = byId('sdpSharedAudio');
         if (!el) return false;
         if (el.paused || el.ended) return false;
-        return (Number(el.currentTime) > 0);
+        var ct = Number(el.currentTime) || 0;
+        if (ct <= 0) return false;
+        /* v0.0.6.p liveness law: an element parked at its own end (a missed
+           'ended' event, a throttled background tab, a stalled media source)
+           is NOT still speaking — otherwise the guard below would re-arm for
+           ever and the briefing would freeze on one paragraph. */
+        var dur = Number(el.duration);
+        if (isFinite(dur) && dur > 0 && ct >= dur - 0.15) return false;
+        return true;
       } catch (e) { return false; }
     };
     var next = function () {
       if (advanced || epoch !== briefingState.epoch) return;
-      advanced = true;
-      /* Hold the final word highlighted (wordIdx = last) through a natural
-         320ms inter-paragraph breathing pause after 'ended' fires, so the
-         user SEES the last word spoken cleanly before the next paragraph. */
-      global.setTimeout(function () { briefingNarrate(idx + 1, epoch); }, 320);
+      /* The minimum-dwell floor: however the beat reports completion (real
+         'ended', silent TTS failure, autoplay-block fallthrough), the
+         paragraph holds until its natural duration has elapsed. */
+      var wait = Math.max(0, dwellMs() - (Date.now() - startedAt));
+      /* v0.0.6.p: the OPENING beat keeps a longer 2.6 s floor. Paragraph 1 is
+         the longest beat (~600 chars / 79 words) and it is painted the instant
+         Stage 2 appears while the welcome cross-fade is still settling, so on a
+         slow phone ~0.6 s can pass before the paragraph is actually on screen.
+         The extra hold guarantees the user truly SEES beat 1 held before beat 2
+         arrives; it can never delay a real clip, because wait() is already zero
+         once a real duration has elapsed — this is a floor, never a delay. */
+      if (idx === 0) wait = Math.max(wait, 2600 - (Date.now() - startedAt));
+      global.setTimeout(function () {
+        if (advanced || epoch !== briefingState.epoch) return;
+        advanced = true;
+        /* Hold the final word highlighted (wordIdx = last) through a natural
+           320ms inter-paragraph breathing pause after 'ended' fires, so the
+           user SEES the last word spoken cleanly before the next paragraph. */
+        global.setTimeout(function () { briefingNarrate(idx + 1, epoch); }, 320);
+      }, wait);
     };
     /* The speech layer always calls back (clip, device voice or watchdog);
        the parallel estimate timer is only a last-resort stall guard — and it
        stands down whenever real audio/utterance playback is in flight. */
     var guardMs = 2200 + (text.length * 95);
+    var guardPushes = 0;
     var guard = global.setTimeout(function runner() {
       if (advanced || epoch !== briefingState.epoch) return;
-      if (audioStillSpeaking()) {
+      if (audioStillSpeaking() && guardPushes < 15) {
         /* Real playback in flight: push the guard back 800ms and keep
-           pushing while the element is still speaking. Never cut it off. */
+           pushing while the element is still speaking. Never cut it off —
+           but never re-arm for ever either (15 pushes = 12 s past the
+           estimate); a truthful duration always ends the beat first. */
+        guardPushes += 1;
         guard = global.setTimeout(runner, 800);
         return;
       }
@@ -3399,6 +3482,9 @@
     var startFlow = function (durSec) {
       if (flowStarted || !briefingState.open || epoch !== briefingState.epoch) return;
       flowStarted = true;
+      /* A real reported duration means real audio is playing — the clip's
+         'ended' event owns the natural pacing from here on. */
+      if (Number(durSec) > 0) realDurMs = Math.round(Number(durSec) * 1000);
       startBriefingWordFlow(idx, durSec, epoch);
     };
     try {
@@ -3440,6 +3526,7 @@
     if (bar) bar.style.width = '100%';
     var i;
     for (i = 0; i < BRIEFING_SENTENCES.length; i++) paintBriefingWordFlow(i, 9999);
+    briefingResetStageTop();
   }
   /* v0.0.6.n Pillar 1: the hard top-reset — overrides the CSS smooth-scroll,
      zeroes scrollTop synchronously and re-asserts on the next frame so a
@@ -3479,10 +3566,14 @@
   function paintBriefingCtaLabel() {
     var cont = byId('btnBriefingContinue');
     if (!cont) return false;
+    /* v0.0.6.p Pillar 3: the RIGHT-side highlighted primary CTA is
+       ▶ Start Dictation → — during the 10 s gate its label carries the
+       countdown; unlocked it pulses and hands over to the step-by-step
+       guide. */
     if (briefingState.gateLeft > 0) {
-      cont.textContent = t('briefingContinueWait', 'Continue ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+      cont.textContent = t('briefingContinueWait', 'Start Dictation ({n}s)…').replace('{n}', String(briefingState.gateLeft));
     } else {
-      cont.textContent = t('briefingContinue', 'Continue to Smart Dictation →');
+      cont.textContent = t('briefingContinue', '▶ Start Dictation →');
     }
     return true;
   }
@@ -3528,19 +3619,15 @@
        the CSS smooth-scroll behaviour and re-asserts on the next frame, so
        no late focus/reflow can nudge the stage off zero. */
     briefingResetStageTop();
-    /* v0.0.6.o Pillar 1 — the TWO-STAGE law: a brand-new visitor (or any
-       device whose briefingSeen stamp is older than this release) first
-       meets the cinematic Welcome stage; the Continue click unlocks audio
-       inside the gesture and hands over to the Overview. A replay (the
-       Project Briefing button, beta channel) skips the welcome and goes
-       straight to the Overview — audio was already unlocked earlier in
-       that session's lifetime. */
-    if (opts.welcome) welcomeShowStage();
-    else {
-      var wStage = byId('welcomeStage'), bStage = byId('briefingStage');
-      if (wStage) wStage.hidden = true;
-      if (bStage) bStage.hidden = false;
-    }
+    /* v0.0.6.p Pillar 2 — the ALWAYS-STAGE-1 law: EVERY open of the Project
+       Briefing — automatic first-visit boot, version-upgrade replay, the
+       About-card Project Briefing button, the Beta channel — begins at
+       Stage 1 (#welcomeStage): the animated "Welcome to Smart Dictation Web
+       App" splash with the Continue to Project Overview → gesture that
+       unlocks browser audio. The v0.0.6.o replay path that jumped straight
+       to the reading stage is retired; the user ALWAYS sees the Welcome
+       first, exactly as the creator demanded. */
+    welcomeShowStage();
     if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive(), weeks: weeksSinceStart() }); } catch (e) {}
@@ -3558,14 +3645,10 @@
         });
       }
     } catch (eBridge) {}
-    var epoch = briefingState.epoch;
-    /* v0.0.6.o: on the two-stage path the narration start is owned by
-       #btnWelcomeContinue (welcomeContinueToOverview), which fires it at
-       idx = 0 inside the click-gesture-unlocked epoch. Only the direct
-       (replay / beta) path narrates from here. */
-    if (!opts.welcome) {
-      global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
-    }
+    /* v0.0.6.p: the narration start is ALWAYS owned by #btnWelcomeContinue
+       (welcomeContinueToOverview), which fires it at idx = 0 inside the
+       click-gesture-unlocked epoch — every open begins at Stage 1, so no
+       path may narrate from here anymore. */
     return true;
   }
   function closeBriefing(viaButton) {
@@ -3585,9 +3668,13 @@
     try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
     markBriefingSeen();
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_close', { via: viaButton || 'other' }); } catch (e) {}
-    /* First visit: the student guide takes over exactly as before (R2/F3). */
-    if (viaButton === 'continue' && !SDP.Data.guideSeen()) {
-      global.setTimeout(function () { openGuide(null, { fromBoot: true }); }, 260);
+    /* v0.0.6.p Pillar 3 — the BRIEFING → GUIDE HANDOVER: clicking the
+       right-side ▶ Start Dictation → ALWAYS opens the compact Step-by-Step
+       Interactive Voice User Guide from Step 1 of 4 (audio is already
+       unlocked by the user's click, so the guide narrates immediately).
+       A stale guide_seen stamp never suppresses the handover. */
+    if (viaButton === 'continue') {
+      global.setTimeout(function () { openGuide(null, { fromHandover: true }); }, 260);
     }
     return true;
   }
@@ -4100,8 +4187,13 @@
        v0.0.6.o: the boot path always opens the CINEMATIC WELCOME stage —
        because briefingSeen() only matches THIS release, every existing
        phone/PC and every brand-new visitor meets the animated splash and
-       unlocks audio through the Continue gesture. */
-    if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true, welcome: true });
+       unlocks audio through the Continue gesture.
+       v0.0.6.p Pillar 2 — THE GUARANTEED WELCOME LAW: the two-stage entry
+       fires whenever !briefingSeen() ALONE — a stale sdp.guide_seen stamp
+       from an earlier release can never hide the Welcome splash again (the
+       exact v0.0.6.o field bug: `!briefingSeen() && !guideSeen()` skipped
+       the whole briefing on every phone that had seen an older guide). */
+    if (!briefingSeen()) openBriefing({ fromBoot: true, welcome: true });
     else if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
     showToast();
     try { SDP.Sync.registerSW(); } catch (e) {}

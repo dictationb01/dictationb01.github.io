@@ -602,7 +602,16 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             } catch (e2) {}
             const barNode = document.getElementById('studioBriefingVoiceBar');
             const barState = function () { return barNode ? barNode.getAttribute('data-state') : ''; };
-            if (barNode) out.barStates.push(barState());
+            /* Record every DISTINCT state the bar passes through — including a
+               boot bridge that finishes on its own (the ✓ can arrive without
+               this lab ever calling ensureBriefingAndGuideVoices). */
+            const record = function () {
+              const s2 = barState();
+              if (s2 && out.barStates[out.barStates.length - 1] !== s2) out.barStates.push(s2);
+              return s2;
+            };
+            const sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+            record();
             /* v0.0.6.o: the stale _intro_male_* beats are PURGED from the pack,
                so ensureBriefingAndGuideVoices() synthesizes all 4 missing
                beats — the exact creator-device flow. The boot 'unlock' /
@@ -617,8 +626,10 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
               /* Wait out an in-flight bridge (busy) or a live synthesis
                  (checking) before asking again — never launch a second one. */
               for (let w = 0; w < 80 && (barState() === 'busy' || barState() === 'checking'); w += 1) {
-                await new Promise(function (r) { setTimeout(r, 250); });
+                await sleep(250);
+                record();
               }
+              record();
               if (syncedState(barState())) {
                 if (out.bridgeMade === null) out.bridgeMade = 0;
                 break;
@@ -633,9 +644,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
               });
               out.bridgeErr = res.err;
               if (res.info && typeof res.info.made === 'number') out.bridgeMade = res.info.made;
-              if (barNode) out.barStates.push(barState());
+              record();
               if (syncedState(barState()) || (res.info && (res.info.stage === 'done' || res.info.stage === 'noop'))) break;
-              await new Promise(function (r) { setTimeout(r, 700); });
+              await sleep(700);
             }
             out.delta = window.SDP.Studio.briefingVoiceDelta ? window.SDP.Studio.briefingVoiceDelta() : null;
           }

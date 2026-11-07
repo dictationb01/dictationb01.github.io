@@ -436,3 +436,37 @@ preserved SHA-256 4/4 (session.json c06e197c..., gas-source.txt, both fonts).
 Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52, G8 39,
 G9 47, G10 38, G11 74, G12 94 = 650 assertions.
 ```
+
+## v0.0.6.q (ver 31) — SHA-256 verification stamp — 2026-11-07
+
+Unpacked from `sdp_v0.0.6.q_pro_male_voice_beat1_lock_release_pack.zip`, then Post-Audit
+Fixes A–D applied to `data/studio.js` (267840 B → 267569 B; cap 268000 B, headroom 431 B).
+Target: appVersion 0.0.6.q, ver 31, schema 31, settingsRev 47, syncRev 1794800000000,
+SW_VERSION `sdp-v0.0.6.q-s32`. The four `LOCK-OK` rows are the read-only classroom
+payloads pinned by PRESERVED_SHA in `tests/check.cjs`.
+
+```
+index.html                                     59759 B  616732b07ed4251455a48a7cff769bb2f192a697ad54af326ead726b5dc90a5d
+data.html                                      29847 B  a768355c5af45641edbdfcff14072827cccbe816e02fe6f745cbd318e7e61f05
+data/index.html                                29847 B  a768355c5af45641edbdfcff14072827cccbe816e02fe6f745cbd318e7e61f05
+sw.js                                          14640 B  a098f8514b1f883dd76320b577921cc016f7b0dfb247b07067edbf15460b6641
+manifest.webmanifest                            1743 B  431046b1009ca2f7fc141f13d4dd98d9fb31586a6eba855598a7a6c82b057d69
+assets/css/sdp-ui.css                         134475 B  0892b765aa9c1ccb174917bf154f111066e2f629a1a816e25752a9c729613bb1
+data/sdp-data-sync.js                         117111 B  deba9aad93cb956dad8947074deac551f4ef3221d11ae23740c9a5d08699e52e
+data/sdp-audio-speech.js                       79044 B  f8aa63a1ee47a8207c2595bb060988c3772dd56ecc393da3df4a24fb7d11b9be
+data/sdp-dictation-engine.js                   68990 B  4fdad11617c5f845ee32abb74b1faf9e69c74f7385062a661d98ab64f34ebd86
+data/sdp-ui-views.js                          256696 B  d6aea450411660ad17357bd505081b834e05975f8df5c85503bae037b1abfd84
+data/studio.js                                267569 B  bafd7d140e3b7158e345e4d532a299df1850d4cb0be4ee7856410187150a3cb4
+data/data-meter.js                             22850 B  f4f800440b0e58525afb616ff68b277cada273cbb5c567776d1fd2fffd1ac3fe
+data/sdp-morphe-hooks.js                        6738 B  e0c4f4ab625dbf3787f760e2194e3ceef733a58b2932e6efbbd17ab8b87805ec
+data/version.json                                428 B  a8ee84ab5bcbec9cb65f0e514dd0339095df809ddb2f64ca589a0fdc346262c9
+data/config.json                               38827 B  8c1de4d84d0f9508b99bc8c81503315259e109a638a647ff28e1e8061f17a35e
+data/session.json                              62427 B  931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1  LOCK-OK
+data/gas-source.txt                            13764 B  591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  LOCK-OK
+data/elevenlabs-audio.json                   4239630 B  3836e6beae559cf95158a3577dff5bcdfc79f00476edbbec355fdb1973c24f78
+assets/fonts/NotoSansSinhala-Regular.woff2     48520 B  23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  LOCK-OK
+assets/fonts/NotoSansSinhala-Bold.woff2        48748 B  bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  LOCK-OK
+```
+
+Hard gates: 12 gates + Lab, 0 FAIL — G1 189, G2 14, G3 134, G4 8, G5 107, G6 15, G7 58,
+G8 39, G9 47, G10 38, G11 74, G12 103, Lab 84 = 910 assertions.

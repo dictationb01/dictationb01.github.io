@@ -8,12 +8,12 @@
    color-scheme meta follows only this page's own theme button. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.q — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
-<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.q</title>
+<meta name="description" content="Smart Dictation Player 0.0.6.r — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
+<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.r</title>
 <script>
 (function () {
   var vUrl = location.pathname.indexOf('/data/') !== -1 ? './version.json' : './data/version.json';
-  var TARGET = '0.0.6.q';
+  var TARGET = '0.0.6.r';
   if (typeof fetch !== 'function') return;
   fetch(vUrl + '?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { return r && r.ok ? r.json() : null; })
@@ -359,7 +359,7 @@
   }
 
   function renderCaches() {
-    var roles = { 'sdp-v0.0.6.q-s32-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
+    var roles = { 'sdp-v0.0.6.r-s33-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
     function paint(entries) {
       var html = '', i;
       if (!entries) { $('cacheTable').innerHTML = '<tr><td colspan="3" class="muted">' + tr('noCaches') + '</td></tr>'; return; }

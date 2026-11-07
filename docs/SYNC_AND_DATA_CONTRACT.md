@@ -85,6 +85,14 @@ pointer file back in.
 | `sdp.guide_seen` | `"0.0.2.a"` once the student closes `#guideModal` (a version stamp, so a new release re-opens it) |
 | `sdp.migrated_from_legacy` | `"1"` after the one-time import |
 
+**R4a — creator-side pointer keys (v0.0.6.r).** Two dot-namespaced mirrors and
+one flat pointer ride OUTSIDE the five student keys: `sdp.briefing.meta`
+(`{syncRev, voiceId, voiceName, weekStamp, at}` — the Studio's local
+briefing-pack mirror) and `sdp.last_pack_syncrev` (a single number: the newest
+voice-pack `syncRev` this device has already pulled, so `boot()` re-pulls the
+pack only when `version.json` genuinely advanced). None of them ever holds
+student answers or settings; `G9.5c` allows the flat pointer by name.
+
 **Corruption policy.** `Data.read()` wraps `JSON.parse` in try/catch. A corrupt
 value is removed and replaced by the schema default; boot never throws
 (G3 covers this).

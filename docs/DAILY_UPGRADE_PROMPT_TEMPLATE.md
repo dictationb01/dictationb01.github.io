@@ -357,53 +357,6 @@ Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 100, G4 8, G5 60, G6 15, G7 52
 G9 47, G10 26, G11 74, G12 94 = 636 assertions; preserved SHA-256 4/4; merge to main.
 ```
 
-## v0.0.1.g upgrade prompt (copy/paste block, 2026-11-02)
-
-```
-Upgrade dictationb1/dictationb1.github.io from v0.0.1.f to v0.0.1.g in one autonomous pass.
-Target: appVersion/version 0.0.1.g, ver 7, schema 7, settingsRev 7, syncRev 1793600000000,
-buildDate 2026-11-02, SW sdp-v0.0.1.g / sdp-v0.0.1.g-shell.
-
-D1/D2  Rule 1A — fetchSubscription 3-rung ladder (subscription -> /v1/voices -> format
-       check). scoped => green, remaining:null, SCOPED_NOTE. Only invalid_api_key fatal.
-       quotaError() must never emit the literal "subscription_failed".
-D3/D4  Rule 1B — oneClickMasterSetup 4 steps; GitHub token is the ONLY fatal step; a
-       401/402/403/429 during clip generation warns, keeps made clips, resolves to step 4.
-D5/D8/D9  Layer 1 = sdp.settings.vaultLock {fails,lockUntil,strikes,until,encVault,
-       pinVerifier,updatedAt}; self-heal at boot, in resolveEnvelope(), in
-       unlockWithVerifier(); copy encVault+pinVerifier when Layer 1 is real and newer.
-D6     saveKeys = Layer 2 (seal -> Layer 1 -> config.json + version.json when ghToken).
-D7     Auto-fill elKey/ghToken/gasUrl/aiKey/aiProvider on unlock, masked, + #studioVaultBadge.
-D10    5-slot #studioAiProvider: free_dict (default) -> pollinations_free (zero-key) ->
-       groq -> openrouter -> gemini; omit Authorization when keyless; #studioFreeNoKey on 1-2.
-D11/D12  Harvest entry.phonetics[].audio (-uk.mp3/_gb, // -> https://); audioForWord(w,dAudio)
-       falls back to Youdao type=1; normalizeWord keeps custom audio.
-D13    keysCardMarkup: 3 credential rows [Show][Paste][Test]; hidden #btnCheckQuota/
-       #btnRefreshQuota; two-button primary bar #btnSaveKeys + #btnOneClickMasterSetup;
-       diagnostics strip; 4-step list; #studioVaultBadge.
-D14    One visible #studioForceRegen; #chkForceRegen hidden and mirrored.
-D15    Config-sovereign settle(): adopt version+config when the config leg verifies even if
-       the session leg failed; return deferredSession:true; defer-all only on config failure.
-D16    verifyPayloadLeg(session): matching session no. + words.length >= 1, or the same
-       active list by id + length + updatedAt.
-D17    needSession also true when the session no. differs, state.deferredSession, or legacy
-       payloadFiles includes data/session.json.
-D18    Re-stamp every versioned literal, re-baseline BUDGET (W2 ceilings below), extend
-       G11 (74) and G12 (78), bump the appliedSettingsRev fixtures 6 -> 7.
-
-W2 ceilings (v0.0.2.a): index.html 38000, sdp-ui.css 68000, sdp-data-sync.js 86000,
-sdp-audio-speech.js 52000, sdp-dictation-engine.js 62000, sdp-ui-views.js 136000,
-studio.js 126000, data-meter.js 24000, session.json exactly 57381,
-data.html = data/index.html 34000, sw.js 13000, manifest 4000, config.json 36000,
-version.json 2000, docs 52000 each (CHANGELOG 52000, template 26000).
-
-Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 100, G4 8, G5 60, G6 15, G7 52, G8 39,
-G9 47, G10 26, G11 74, G12 94 = 636 assertions; shasum -a 256 -c 4/4 OK;
-data/session.json and gas-source.txt byte-identical; zero occurrences of the retired PIN;
-verbatim EN + SI credit lines on Home, About and /data; all five docs updated with real
-bytes; merge to main only with --no-ff.
-```
-
 ## v0.0.2.b upgrade prompt (copy/paste block, 2026-11-02)
 
 ```
@@ -470,3 +423,40 @@ assets/fonts/NotoSansSinhala-Bold.woff2        48748 B  bf59c1487b0a88a07a678190
 
 Hard gates: 12 gates + Lab, 0 FAIL — G1 189, G2 14, G3 134, G4 8, G5 107, G6 15, G7 58,
 G8 39, G9 47, G10 38, G11 74, G12 103, Lab 84 = 910 assertions.
+
+## v0.0.6.r (ver 32) — SHA-256 verification stamp — 2026-11-07
+
+Built in the release tree: Cloned-Voice Persistence Across Reloads & Browsers +
+True Dark-Lyrics Word-by-Word Karaoke Sync + the Ultra-Crisp ~10–14 s Briefing.
+appVersion 0.0.6.r, ver 32, schema 32, settingsRev 48, syncRev 1794900000000,
+SW_VERSION `sdp-v0.0.6.r-s33`, studio.js 267226 B (cap 268000 B). LOCK-OK rows
+are the read-only classroom payloads pinned by PRESERVED_SHA in tests/check.cjs.
+Post-Audit Patch 1 trimmed `docs/CHANGELOG_LEDGER.md` 112122 B → 111050 B (cap
+112000 B); Post-Audit Patch 2 guards `staleWhileRevalidateDataJson()` with
+`voicePackOverwriteAllowed()` and stamps `x-sdp-syncrev` (sw.js 16240 B → 16387 B).
+
+```
+index.html                                       59737B  81224c01e7ccbeab6d9b8b02e84c8751c6ae4ae3acdb416a6b57a8ec30a1d136
+data.html                                        29847B  915f80d979f0232f420312e77f3a1e64a6fa57dc5e67d0a9277eeb18f3bc20a8
+data/index.html                                  29847B  915f80d979f0232f420312e77f3a1e64a6fa57dc5e67d0a9277eeb18f3bc20a8
+sw.js                                            16387B  7f69f3d29b9338edb6dd86d6cc240bc85d00f60bd8db1fb7b06639886230e388
+manifest.webmanifest                              1743B  ef7e1bd70b8a2754b6242d71e1c4cb5bd49f08054ddb44d69007fb91bc2c75ae
+assets/css/sdp-ui.css                           135328B  0a81337b89987e677c79e5cfedad6e2daefb16c083c28332d911a3f481602cba
+data/sdp-data-sync.js                           119893B  86a529c11c2d636d7a65221c5f26705404e0a03c3a2a8906e108ebe685d6000e
+data/sdp-audio-speech.js                         81288B  66623e77dc35315b7ce32930d34be8804345bc02fba6602951b8caa0410049ad
+data/sdp-dictation-engine.js                     68990B  4fdad11617c5f845ee32abb74b1faf9e69c74f7385062a661d98ab64f34ebd86
+data/sdp-ui-views.js                            256963B  ca1a4fce395983fa18e578b42596ae6c0a625809bb90fe5d51bd2808519e23a2
+data/studio.js                                  267226B  49638760c97c75fc9c1e1d72eb228249e3f87aa13b7ad7b1f5ed8bcbd21dbe95
+data/data-meter.js                               22850B  3b5b60168f108d643d10ba62fe1db0fd0cd8d5cb4ba800a0430eeedd4bf77a20
+data/sdp-morphe-hooks.js                          6738B  e0c4f4ab625dbf3787f760e2194e3ceef733a58b2932e6efbbd17ab8b87805ec
+data/version.json                                  428B  4f4de6b6f6fbaf30a67efebb940f87958028d889e1bf2a17454ed8f6571de544
+data/config.json                                 38828B  e8bc6ae93f0f7c1f86b28d610a584287c6052509f0b66fd0cce98774ed420b3e
+data/session.json                                62427B  931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1  LOCK-OK
+data/gas-source.txt                              13764B  591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  LOCK-OK
+data/elevenlabs-audio.json                     3963211B  7c90d36fc2d0f32ad74692c76835e85d28bb3b2343e4a49978a5412d67cfc54c
+assets/fonts/NotoSansSinhala-Regular.woff2       48520B  23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  LOCK-OK
+assets/fonts/NotoSansSinhala-Bold.woff2          48748B  bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  LOCK-OK
+```
+
+Hard gates: 13 commands, 0 FAIL — G1 190, G2 14, G3 134, G4 8, G5 107, G6 15,
+G7 58, G8 39, G9 47, G10 38, G11 74, G12 103, Lab 86 = 913 assertions.

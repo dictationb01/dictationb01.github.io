@@ -816,25 +816,7 @@ two routers · D11 resume replaying repeat 1 · D12 no 30-row editor · D13 stal
 narration silent on a cold boot · D17 object-vs-string `version` · D18 one giant studio
 scroll · D19 mixed publish clocks · D20 second publish path in one-click setup.
 
-### Release verification — v0.0.1.g (2026-11-02, full twelve-gate run on the release tree)
-
-```
-shasum -a 256 -c /tmp/sdp-preserve.sha256   → 4 × OK
-node tests/check.cjs                        → G1  88 PASS / 0 FAIL
-node --test tests/upgrade.test.cjs          → G2  12 pass / 0 fail
-node tests/phase1.cjs                       → G3  81 PASS / 0 FAIL
-node tests/server.cjs                       → G4   8 PASS / 0 FAIL
-node tests/browser.cjs                      → G5  46 PASS / 0 FAIL
-node tests/upgrade-browser.cjs              → G6  15 PASS / 0 FAIL
-node tests/e2e.cjs                          → G7  52 PASS / 0 FAIL
-node tests/live-lab.cjs                     → G8  39 PASS / 0 FAIL
-node tests/audit-v42.cjs                    → G9  47 PASS / 0 FAIL
-node tests/voice-guide.cjs                  → G10 26 PASS / 0 FAIL
-node tests/vault-sync.cjs                   → G11 74 PASS / 0 FAIL
-node tests/studio-safety.cjs                → G12 78 PASS / 0 FAIL
-                                              ─────────────────────
-                                              566 assertions, 0 FAIL
-```
+### Release verification — v0.0.1.g (2026-11-02): G1–G12 green (566 assertions, 0 FAIL).
 
 ### Byte budgets actually used (W2 ceilings)
 
@@ -939,3 +921,21 @@ SW caches `sdp-v0.0.6.f-s21` (+ preserved `sdp-audio-clips`, `sdp-youdao-v1`).
 
 Gates: G1 110, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52, G8 39, G9 47, G10 38,
 G11 74, G12 94 — 12/12 green.
+
+## v0.0.6.r — 2026-11-07 — Permanent Cloned-Voice Persistence + Dark-Lyrics Karaoke + Ultra-Crisp Briefing
+
+| File | Bytes | Δ | Gate |
+| --- | --- | --- | --- |
+| data/studio.js | 267226 | -343 | G1, G9, G12 |
+| data/elevenlabs-audio.json | 3963211 | -276419 | G1, Lab |
+
+Gates: G1 190 · G2 14 · G3 134 · G4 8 · G5 107 · G6 15 · G7 58 · G8 39 ·
+G9 47 · G10 38 · G11 74 · G12 103 · Lab 86 = 913/0. Preservation 4/4.
+
+Pillar 1: packClipsForDisk keeps wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName;
+commitVoicePack publishes the pack + version.json atomically, primes the local pack
+caches, never force-reloads the manifest; loadManifest merges the local pack; boot()
+re-pulls only on a genuine pointer advance; cloned-voice auto-select survives mount();
+briefingVoiceDelta never overwrites a live cloned beat passively. Pillar 2:
+j.alignment preferred; never-null alignment map; dark-lyrics palette. Pillar 3:
+script 213 → 156 words.

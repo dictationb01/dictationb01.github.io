@@ -21,9 +21,9 @@
  * masked by a stale cache. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.q-s32';
-var SHELL_CACHE = 'sdp-v0.0.6.q-s32-shell';
-var SW_RELEASE = '0.0.6.q';
+var SW_VERSION = 'sdp-v0.0.6.r-s33';
+var SHELL_CACHE = 'sdp-v0.0.6.r-s33-shell';
+var SW_RELEASE = '0.0.6.r';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
@@ -109,6 +109,23 @@ function isJsonRequest(request, url) {
    window is 10 s, and the fallback cache match ignores the ?t= cache-buster.
    A ?t= request is never written into SHELL_CACHE — only its clean pathname
    is cached, and activate() purges any ?t= key that older versions left. */
+/* v0.0.6.r — the VOICE-PACK OVERWRITE GUARD: a network-first response for
+   data/elevenlabs-audio.json may only replace a cached copy whose
+   x-sdp-syncrev stamp is ABSENT (legacy) or older-or-equal. A stale GitHub
+   Pages CDN response (the pre-commit pack, minutes before propagation)
+   can never clobber the fresher locally-synthesized pack the Studio primed
+   into SHELL_CACHE with a higher syncRev. */
+function voicePackOverwriteAllowed(cache, cleanUrl, res) {
+  if (!/elevenlabs-audio\.json$/.test(cleanUrl)) return Promise.resolve(true);
+  return cache.match(cleanUrl, { ignoreSearch: true }).then(function (hit) {
+    if (!hit) return true;
+    var hitRev = Number(hit.headers.get('x-sdp-syncrev') || 0);
+    if (!(hitRev > 0)) return true;
+    return res.clone().json().then(function (j) {
+      return Number(j && j.syncRev || 0) >= hitRev;
+    }).catch(function () { return false; });
+  }).catch(function () { return true; });
+}
 function networkFirstDataJson(request, url) {
   return caches.open(SHELL_CACHE).then(function (cache) {
     return new Promise(function (resolve) {
@@ -129,7 +146,9 @@ function networkFirstDataJson(request, url) {
         settled = true;
         clearTimeout(timer);
         if (res && res.ok) {
-          try { cache.put(cleanUrl, res.clone()); } catch (e) {}
+          voicePackOverwriteAllowed(cache, cleanUrl, res).then(function (allowed) {
+            if (allowed) { try { cache.put(cleanUrl, res.clone()); } catch (e) {} }
+          });
           resolve(res);
           return;
         }
@@ -157,10 +176,11 @@ function requestRelease(search) {
   var m = /[?&]v=([^&]+)/.exec(search || '');
   return m ? m[1] : '';
 }
-function cachePutRelease(cache, cleanUrl, res, release) {
+function cachePutRelease(cache, cleanUrl, res, release, syncRev) {
   try {
     var headers = new Headers(res.headers);
     if (release) headers.set('x-sdp-release', release);
+    if (Number(syncRev) > 0) headers.set('x-sdp-syncrev', String(Number(syncRev)));
     return cache.put(cleanUrl, new Response(res.clone().body, {
       status: res.status, statusText: res.statusText, headers: headers
     }));
@@ -172,10 +192,22 @@ function staleWhileRevalidateDataJson(request, url) {
   return caches.open(SHELL_CACHE).then(function (cache) {
     return cache.match(cleanUrl, { ignoreSearch: true }).then(function (hit) {
       var hitRelease = hit ? (hit.headers.get('x-sdp-release') || '') : '';
-      /* Same release (or a legacy un-stamped hit): instant cache serve, the
-         network is never touched — the tiny version.json pointer owns
-         freshness, so this costs 0 KB of mobile data per boot. */
-      if (hit && (!hitRelease || hitRelease === want)) return hit;
+      /* Same release (or a legacy un-stamped hit): instant cache serve, and
+         v0.0.6.r ALSO fires a NON-BLOCKING background revalidation guarded
+         by voicePackOverwriteAllowed so a stale CDN never overwrites a newer
+         locally-synthesized pack. */
+      if (hit && (!hitRelease || hitRelease === want)) {
+        fetch(new Request(cleanUrl + '?t=' + Date.now(), { cache: 'no-store' })).then(function (res) {
+          if (!res || !res.ok) return false;
+          return voicePackOverwriteAllowed(cache, cleanUrl, res).then(function (allowed) {
+            if (!allowed) return false;
+            return res.clone().json().then(function (j) {
+              return cachePutRelease(cache, cleanUrl, res, want, j && j.syncRev);
+            }).catch(function () { return false; });
+          });
+        }).catch(function () {});
+        return hit;
+      }
       if (hit) {
         /* A new release shipped: serve the stale body NOW (the zero-drop
            law — the app boots on the old pack instantly) and revalidate the

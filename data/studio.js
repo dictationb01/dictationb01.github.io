@@ -39,9 +39,7 @@
  /* v0.0.4.a: auto-generation runs in the real app only — never inside the */
  function allowAutoGen() {
   if (global.__SDP_ALLOW_AUTOGEN === true) return true;
-  /* v0.0.6.n lab law: a cross-world bridge flag (localStorage) authorizes the
-     creator-device bridge from automation contexts where the isolated-world
-     window property is invisible to the main-world closure. */
+  /* v0.0.6.n lab law: a cross-world bridge flag (localStorage) authorizes the */
   try {
     if (global.localStorage && global.localStorage.getItem('sdp.lab.allowAutoGen') === '1') return true;
   } catch (eL) {}
@@ -81,18 +79,7 @@
   gemini: { url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', model: 'gemini-2.5-flash' }
  };
 
- /* ══ v0.0.6.m Pillar 2 — Multi-API Key Pool: the exact 6-key $0 layout ══
-  * (1 Primary ElevenLabs key in Step 1 + 5 pool slots):
-  *   Slot #1 elevenlabs  — ElevenLabs Key #2, the automatic backup that
-  *                         carries the batch the moment the primary key
-  *                         hits HTTP 401/402/429 / quota_exhaustion;
-  *   Slot #2 groq        — Groq Free Tier Key #1 (AI British IPA, Sinhala
-  *                         & lexical / pronunciation verifier);
-  *   Slot #3 groq        — Groq Free Tier Key #2 (quota auto-rotation);
-  *   Slot #4 openrouter  — OpenRouter Free Models Key #1
-  *                         (llama-3.3-70b:free / gemini-2.0-flash:free);
-  *   Slot #5 openrouter  — OpenRouter Free Models Key #2 (free LLM
-  *                         failover) — 100% $0 cost, all free-tier keys. */
+ /* ══ v0.0.6.m Pillar 2 — Multi-API Key Pool: the exact 6-key $0 layout */
  var KEY_POOL_SLOTS = 5;
  var POOL_PROVIDERS = {
   elevenlabs: { label: 'ElevenLabs · backup voice', keyHint: 'sk_…' },
@@ -102,11 +89,7 @@
   cloudflare: { label: 'Cloudflare Workers AI', keyHint: 'key / token' }
  };
  var POOL_PROVIDER_ORDER = ['elevenlabs', 'groq', 'openrouter', 'gemini', 'cloudflare'];
- /* v0.0.6.m: the creator's exact 6-key default architecture — Slot #1 the
-    ElevenLabs backup (instant credit-exhaustion failover), Slots #2-3 the
-    two Groq free-tier keys (AI IPA / Sinhala / lexical engine with
-    auto-rotation on HTTP 429), Slots #4-5 the two OpenRouter free-model
-    keys (free LLM failover after Groq, before the free dictionary APIs). */
+ /* v0.0.6.m: the creator's exact 6-key default architecture — Slot #1 the */
  var POOL_DEFAULT_PROVIDERS = ['elevenlabs', 'groq', 'groq', 'openrouter', 'openrouter'];
  var POOL_DEFAULT_HINTS = [
   'sk_… (ElevenLabs Key #2 — Backup)',
@@ -115,12 +98,7 @@
   'sk-or-… (OpenRouter Free Key #1)',
   'sk-or-… (OpenRouter Free Key #2)'
  ];
- /* ══ v0.0.6.q Pillar 1 — the High-Professional Executive Male Voice
-  * Catalog + Clone Engine: the curated ElevenLabs personas (Daniel / George
-  * / Brian / Callum) are selectable in the Studio, a Custom / Cloned Voice
-  * ID can be pasted, and 🔄 Fetch My Cloned Voices discovers the account's
-  * voices via GET /v1/voices. The selection stamps voiceId on every clip,
-  * so briefingVoiceDelta() re-synthesizes when the persona changes. */
+ /* ══ v0.0.6.q Pillar 1 — the High-Professional Executive Male Voice */
  var BRIEFING_VOICE_CATALOG = {
   daniel: { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel (British Broadcast Presenter)', persona: 'Authoritative BBC-style British male executive presenter' },
   george: { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George (British Master Narrator)', persona: 'Warm, deep British academic & storyteller male voice' },
@@ -129,19 +107,13 @@
   custom: { id: '', name: 'Custom / Cloned Voice ID…', persona: 'A Custom or Cloned voice from the creator\'s ElevenLabs account (/v1/voices)' }
  };
  var BRIEFING_VOICE_ORDER = ['daniel', 'george', 'brian', 'callum', 'custom'];
- /* v0.0.6.q: the high-professional broadcast voice settings; the legacy
-    George pin below stays as the documented fallback profile. */
+ /* v0.0.6.q: the high-professional broadcast voice settings; the legacy */
  var INTRO_VOICE_SETTINGS = { stability: 0.50, similarity_boost: 0.85, style: 0.32, use_speaker_boost: true };
  var INTRO_VOICE_SETTINGS_LEGACY = { stability: 0.55, similarity_boost: 0.80, style: 0.25 };
- /* The dedicated deep British male narrators for the Project Briefing:
-    George (warm British male storyteller) is the default; Daniel
-    (authoritative British male) is the drop-in alternative. */
+ /* The dedicated deep British male narrators for the Project Briefing: */
  var INTRO_VOICE = { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George · deep British male', model: 'eleven_flash_v2_5' };
  var INTRO_VOICE_ALT = { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel · authoritative British male', model: 'eleven_flash_v2_5' };
- /* v0.0.6.q: the chosen briefing persona key + custom cloned Voice ID live
-    in the unlocked studio settings (briefingVoiceKey / briefingCustomVoiceId).
-    chosenBriefingVoiceId() resolves the LIVE voice id: the custom paste
-    field wins, then the catalog persona, then the George default. */
+ /* v0.0.6.q: the chosen briefing persona key + custom cloned Voice ID live */
  function briefingVoiceKey() {
   try {
    if (isObj(ST.secrets) && str(ST.secrets.briefingVoiceKey)) return str(ST.secrets.briefingVoiceKey);
@@ -174,9 +146,7 @@
   var base = (persona && str(persona.name)) ? str(persona.name) : INTRO_VOICE.name;
   return briefingCustomVoiceId() ? (base + ' · ' + briefingCustomVoiceId()) : base;
  }
- /* v0.0.6.q Pillar 1 — the WEEKLY AUTO-REGENERATION clock: the same
-    weeks-since-2026-10-22 counter the briefing header computes (sourced
-    from SDP.Views so the app and the Studio can never drift apart). */
+ /* v0.0.6.q Pillar 1 — the WEEKLY AUTO-REGENERATION clock: the same */
  function currentWeeksSinceStart() {
   try {
    if (global.SDP && SDP.Views && typeof SDP.Views.weeksSinceStart === 'function') return Number(SDP.Views.weeksSinceStart()) || 2;
@@ -187,7 +157,6 @@
   return Math.max(2, Math.floor((Date.now() - t0) / (7 * 86400000)));
  }
 
- /* ══ R5: synchronous pure-ES5 SHA-1 (no async, no build step) ══════════ */
  function utf8Bytes(text) {
   var out = [], s = str(text), i, c, c2, cp;
   for (i = 0; i < s.length; i++) {
@@ -267,7 +236,6 @@
  ];
  function numberClipText(n) { return 'Number ' + n + '.'; }
 
- /* ══ v0.0.6.m Pillar 2 — the Permanent Static Clip Vault ════════════════ */
  var STATIC_CLIP_KEYS = (function () {
   var keys = [], i;
   for (i = 0; i < CMD_CLIPS.length; i++) keys.push(CMD_CLIPS[i].key);
@@ -285,9 +253,7 @@
    if (global.SDP && SDP.Views && SDP.Views.briefingSentences) lines = SDP.Views.briefingSentences();
   } catch (e) { lines = []; }
   var out = [];
-  /* v0.0.6.m: the executive briefing carries exactly 4 beats — the three
-     project-summary beats inside the 10-second gate plus the end-of-note
-     creator context. */
+  /* v0.0.6.m: the executive briefing carries exactly 4 beats — the three */
   for (i = 0; i < lines.length && i < 4; i++) out.push({ key: '_intro_male_' + (i + 1), text: str(lines[i]) });
   return out;
  }
@@ -300,17 +266,7 @@
   return { total: total, locked: locked, keys: STATIC_CLIP_KEYS.slice() };
  }
 
- /* ══ v0.0.6.m Pillar 2 — 100% automatic system & briefing audio ═══════
-  * The creator only ever updates the 30 Dictation Words by hand. Every
-  * essential SYSTEM clip — the command cues (_cmd_play/_cmd_pause/
-  * _cmd_resume/_cmd_complete, stored under their canonical keys
-  * cmd.preparing/cmd.paused/cmd.resumed/cmd.complete), the four guide
-  * steps (_guide_1..4) and the four Project Briefing beats
-  * (_intro_male_1..4) — is checked whenever the Studio unlocks or a
-  * publish runs. MISSING clips, and clips whose stored text has DRIFTED
-  * (e.g. the Oct-22 week counter bumping the Beat 1 sentence), are
-  * synthesized as a delta with the configured ElevenLabs keys and ride
-  * along in the GitHub sync automatically. */
+ /* ══ v0.0.6.m Pillar 2 — 100% automatic system & briefing audio */
  var ESSENTIAL_SYSTEM_CLIPS = (function () {
   var out = [], i;
   var cmdRoles = { 'cmd.preparing': '_cmd_play', 'cmd.paused': '_cmd_pause', 'cmd.resumed': '_cmd_resume', 'cmd.complete': '_cmd_complete' };
@@ -337,16 +293,12 @@
    if (!text) continue;
    entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
    if (!entry || !str(entry.b64)) { out.push({ key: k, text: text, why: 'missing' }); continue; }
-   /* Outdated = the stored canonical text no longer matches (week-count
-      drift on the briefing beats, edited guide lines). The hash pins the
-      text/voice/model identity, so a drift means a re-synthesis. */
+   /* Outdated = the stored canonical text no longer matches (week-count */
    if (str(entry.text) !== text) out.push({ key: k, text: text, why: 'outdated' });
   }
   return out;
  }
- /* Runs on Studio unlock and before every Publish & Sync. Never blocks the
-    UI, never fires in the automated gates (allowAutoGen law), and silently
-    reports "no key" when the vault holds no ElevenLabs key yet. */
+ /* Runs on Studio unlock and before every Publish & Sync. Never blocks the */
  function autoEnsureSystemClips(opts, cb) {
   cb = cb || noop;
   opts = opts || {};
@@ -391,20 +343,7 @@
   return out;
  }
 
- /* ══ v0.0.6.m FIX 1 — autoSynthesizeBriefingAndGuide() ══════════════════
-  * THE LAW: the four Project Briefing beats (_intro_male_1..4) and the four
-  * guide steps (_guide_1..4) plus the _cmd_* cues are ONLY ever synthesized
-  * with the creator's real stored API keys on the creator's own unlocked
-  * device — never inside any build sandbox. Step A asks the stored LLM keys
-  * (Groq → OpenRouter → Gemini free cascade) to verify the British phrasing
-  * and produce per-word syllable timing weights (wordWeights), stored on the
-  * clip entries as `ww` and consumed by the karaoke clock. Step B
-  * synthesizes via the real ElevenLabs keys (primary → backup failover,
-  * George voice, eleven_flash_v2_5, stability 0.55 / similarity_boost 0.80 /
-  * style 0.25) and auto-commits the pack to GitHub. Step C fires on unlock,
-  * publish and the explicit Generate button. Step D (before the first
-  * publish, or offline) narrates through the pinned British-male Web Speech
-  * persona — never a fabricated clip. */
+ /* ══ v0.0.6.m FIX 1 — autoSynthesizeBriefingAndGuide() */
  function briefingScriptWeights(lines, cb) {
   cb = cb || noop;
   if (!allowAutoGen()) { cb(null, null); return; }
@@ -421,9 +360,7 @@
    var c = candidates[at];
    at += 1;
    llmRequest(c.p, c.k, [], function (err, rows, rawText) {
-    /* llmRequest indexes rows by word; the weights arrive through the
-       raw-JSON branch — on any failure we fall straight back to the
-       deterministic local weights (char length + punctuation law). */
+    /* llmRequest indexes rows by word; the weights arrive through the */
     var parsed = parseScriptWeights(rawText || '', lines);
     if (parsed) {
      try {
@@ -436,9 +373,7 @@
     cb(null, null);
    }, prompt);
   }
-  /* The LLM pass is a best-effort optimiser: whatever it returns, the
-     deterministic weights always remain a valid fallback, so a failed or
-     absent LLM never blocks the real ElevenLabs synthesis. */
+  /* The LLM pass is a best-effort optimiser: whatever it returns, the */
   try { attempt(); } catch (e) { cb(null, null); }
   return true;
  }
@@ -478,9 +413,8 @@
      cb(err, { stage: 'no_key' });
      return;
     }
-    /* the guide steps + command cues ride the system queue */
-    generateClips({ systemQueue: ESSENTIAL_SYSTEM_CLIPS.map(function (c) { return { key: c.key, text: essentialClipText(c.key), why: 'auto' }; }), regenKeys: guideKeys.concat(['_cmd_play', '_cmd_pause', '_cmd_resume', '_cmd_complete']) }, function (err2, info2) {
-     /* stamp the AI syllable weights onto the intro entries for the karaoke clock */
+    /* the guide steps + command cues ride the system queue (noCommit: the */
+    generateClips({ systemQueue: ESSENTIAL_SYSTEM_CLIPS.map(function (c) { return { key: c.key, text: essentialClipText(c.key), why: 'auto' }; }), regenKeys: guideKeys.concat(['_cmd_play', '_cmd_pause', '_cmd_resume', '_cmd_complete']), noCommit: !!opts.noCommit }, function (err2, info2) {
      if (weights && Array.isArray(weights)) {
       for (var wi = 0; wi < 4; wi++) {
        var entry = isObj(ST.voicePack.clips['_intro_male_' + (wi + 1)]) ? ST.voicePack.clips['_intro_male_' + (wi + 1)] : null;
@@ -536,24 +470,32 @@
     else { lastEnd = e; }
    }
    if (sawWord) out.push([Math.round(curStart * 1000), Math.round(lastEnd * 1000)]);
-   /* The alignment must cover the SAME word count as the spoken sentence —
-      a mismatch means the parser must not guess (null falls back to ww). */
+   /* The alignment must cover the SAME word count as the spoken sentence — */
    var words = str(text).split(/\s+/).filter(function (w) { return !!w; });
-   if (!out.length || out.length !== words.length) return null;
-   return out;
+   if (!out.length || !words.length) return null;
+   if (out.length === words.length) return out;
+   /* v0.0.6.r Pillar 2 — the NEVER-NULL PROPORTIONAL MAP: a mismatched
+      count (normalized_alignment expanded "($0)" / "100%" into spoken
+      words, or a hyphenated token split) must never kill the karaoke with
+      null. The words.length words are re-mapped proportionally across the
+      measured [startMs, endMs] span, weighted by word character length, so
+      the parser always returns a valid words.length array of pairs. */
+   var totalStart = out[0][0], totalEnd = out[out.length - 1][1];
+   var span = Math.max(0, totalEnd - totalStart);
+   var weights = [], totalChars = 0, wi;
+   for (wi = 0; wi < words.length; wi++) { weights[wi] = Math.max(1, words[wi].length); totalChars += weights[wi]; }
+   var mapped = [], cursor = totalStart;
+   for (wi = 0; wi < words.length; wi++) {
+    var wDur = span > 0 ? Math.round(span * (weights[wi] / totalChars)) : 0;
+    var wStart = cursor;
+    var wEnd = (wi === words.length - 1) ? totalEnd : Math.min(totalEnd, wStart + wDur);
+    mapped.push([wStart, Math.max(wStart, wEnd)]);
+    cursor = mapped[wi][1];
+   }
+   return mapped;
   } catch (e) { return null; }
  }
 
- /* ══ v0.0.6.n FIX 2 — the Direct Vault-to-Briefing Live Synthesis Bridge ═
-  * ensureBriefingAndGuideVoices(): the one entry point every trigger calls.
-  * Law: ONLY on the creator's own unlocked device with real stored keys —
-  * never in any automated gate/lab (allowAutoGen). Checks the four Project
-  * Overview beats (_intro_male_1..4) AND the four guide steps against the
-  * LIVE BRIEFING_SENTENCES (the weekly {W} counter included), synthesizes
-  * the delta through the real ElevenLabs keys (primary → backup failover),
-  * injects the fresh clips into the live session (SDP.Speech.injectClips),
-  * primes the sdp-audio-clips CacheStorage with their playable URLs and
-  * queues the GitHub commit — the unbreakable Studio ↔ Briefing pipeline. */
  var BRIDGE_FLAG = 'sdp.studio.vaultUnlocked';
  var bridgeBusy = false;
  function vaultSessionActive() {
@@ -562,8 +504,7 @@
  function markVaultSession() {
   try { if (global.sessionStorage) global.sessionStorage.setItem(BRIDGE_FLAG, '1'); } catch (e) {}
  }
- /* The live status surface: #studioBriefingVoiceBar sits at the top of the
-    Lecturer Studio and narrates every phase of the bridge. */
+ /* The live status surface: #studioBriefingVoiceBar sits at the top of the */
  function paintBriefingVoiceBar(state, detail) {
   var bar = byId('studioBriefingVoiceBar');
   if (!bar) return false;
@@ -585,18 +526,7 @@
   return true;
  }
  function briefingVoiceDelta() {
-  /* v0.0.6.q Pillar 1 — the PROVENANCE & WEEKLY AUTO-REGENERATION LAW. In
-     v0.0.6.p this check only compared text, so the four repo-preloaded
-     sandbox-baked beats (whose text already matched) looked "current" and
-     the creator's real ElevenLabs API key was NEVER called. Now a briefing
-     beat _intro_male_1..4 is flagged for live synthesis whenever ANY of:
-     · the clip is missing or has no audio;
-     · the text drifted (an edited beat or the weekly {W} counter bump —
-       the automatic once-a-week refresh);
-     · the clip is still the repository preload (liveEleven !== true — it
-       has not yet been replaced by the creator's real key);
-     · a new week started since the last live synthesis (weekStamp drift);
-     · the selected briefing male voice changed (voiceId drift). */
+  /* v0.0.6.q Pillar 1 — the PROVENANCE & WEEKLY AUTO-REGENERATION LAW. In */
   var out = { intro: [], guide: [], total: 0 };
   var steps = introSteps(), i, entry, k, wantVoice;
   try { wantVoice = chosenBriefingVoiceId(); } catch (eV) { wantVoice = INTRO_VOICE.id; }
@@ -605,8 +535,17 @@
    entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
    if (!entry || !str(entry.b64) || str(entry.text) !== steps[i].text ||
        entry.liveEleven !== true ||
-       Number(entry.weekStamp || 0) !== Number(currentWeeksSinceStart()) ||
-       (wantVoice && str(entry.voiceId) !== wantVoice)) out.intro.push(k);
+       Number(entry.weekStamp || 0) !== Number(currentWeeksSinceStart())) { out.intro.push(k); continue; }
+   /* v0.0.6.r CLONED-VOICE PROTECTION: a live beat recorded THIS week with
+      matching text is NEVER flagged for voiceId drift by a passive unlock /
+      briefing-open / publish check on a secondary browser whose custom voice
+      ID was never saved there — that is exactly what overwrote the creator's
+      Cloned Voice with default George in v0.0.6.q. Drift counts only when
+      the creator explicitly changed the selector this session
+      (voiceSelectionDirty) or the chosen voice is a real custom/non-default
+      persona that genuinely differs from the recorded clip. */
+   if (wantVoice && str(entry.voiceId) !== wantVoice &&
+       (ST.voiceSelectionDirty === true || wantVoice !== INTRO_VOICE.id)) out.intro.push(k);
   }
   for (i = 0; i < GUIDE_KEYS.length; i++) {
    k = GUIDE_KEYS[i];
@@ -617,9 +556,7 @@
   return out;
  }
  function primeClipCache(entries) {
-  /* Best-effort CacheStorage prime: the playable blob URL of each fresh
-     clip is PUT into sdp-audio-clips so the very next briefing replay is
-     served from the live cache, never a stale older-version entry. */
+  /* Best-effort CacheStorage prime: the playable blob URL of each fresh */
   try {
    if (!global.caches || !global.caches.open) return false;
    var SPEECH = global.SDP && global.SDP.Speech ? global.SDP.Speech : null;
@@ -628,7 +565,7 @@
     Object.keys(entries).forEach(function (k) {
      chain = chain.then(function () {
       var url = '';
-      try { if (SPEECH && SPEECH.playableUrlFor) url = SPEECH.playableUrlFor(entries[k]); } catch (e1) {}
+      try { if (SPEECH && SPEECH.playableUrl && entries[k] && entries[k].b64) url = SPEECH.playableUrl('data:audio/mpeg;base64,' + entries[k].b64); } catch (e1) {}
       if (!url) return null;
       return cache.put(new Request(url, { cache: 'reload' }), new Response(entries[k].b64 ? ('data:audio/mpeg;base64,' + entries[k].b64) : '', { headers: { 'Content-Type': 'audio/mpeg' } })).catch(function () {});
      });
@@ -643,6 +580,10 @@
   var source = str(opts.source || 'manual');
   if (!ST.unlocked && !vaultSessionActive()) { cb(new Error('locked'), null); return false; }
   if (!allowAutoGen()) { cb(new Error('gates'), null); return false; }
+  /* v0.0.6.r: a key/token typed into the fields this session is merged into
+     ST.secrets BEFORE resolveElevenKey()/ghToken checks, so the bridge never
+     aborts with no_key/no_token while the key sits un-merged in the input. */
+  try { mergeSecretInputs(); } catch (eMS) {}
   if (!trimmedKey(str(resolveElevenKey()))) {
    if (source === 'unlock' || source === 'button' || source === 'briefing-open' || source === 'publish') paintBriefingVoiceBar('nokey');
    cb(new Error('no_key'), { stage: 'no_key' });
@@ -662,7 +603,11 @@
    }
    bridgeBusy = true;
    paintBriefingVoiceBar('checking');
-   autoSynthesizeBriefingAndGuide({ source: source, noCommit: !!opts.noCommit, force: !!opts.force || delta.intro.length > 0 }, function (err, info) {
+   /* v0.0.6.r: the batch runs with noCommit — the ONE commitVoicePack() in
+      this callback owns the atomic elevenlabs-audio.json + version.json
+      publish and the local cache prime, so the ✓ bar paints only after both
+      really completed (or after the no_token local-cache fallback). */
+   autoSynthesizeBriefingAndGuide({ source: source, noCommit: true, force: !!opts.force || delta.intro.length > 0 }, function (err, info) {
     bridgeBusy = false;
     if (err && str(err.message) === 'no_key') {
      paintBriefingVoiceBar('nokey');
@@ -675,8 +620,7 @@
      return;
     }
     var made = info && info.made ? info.made : 0;
-    /* Live-session injection + cache prime: the fresh beats are playable
-       on the VERY NEXT briefing open, without any reload. */
+    /* Live-session injection + cache prime: the fresh beats are playable */
     try {
      var fresh = {};
      var ks = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'].concat(GUIDE_KEYS);
@@ -686,14 +630,21 @@
      if (global.SDP && SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(fresh);
      primeClipCache(fresh);
     } catch (e1) {}
-    paintBriefingVoiceBar('ok');
-    cb(null, { made: made, stage: 'done' });
+    commitVoicePack(function (commitErr) {
+     if (commitErr && str(commitErr.message) === 'no_token') {
+      paintBriefingVoiceBar('ok', '· Saved in browser cache (add GitHub token in Step 2 to publish to all devices)');
+     } else if (commitErr) {
+      paintBriefingVoiceBar('ok', '· Saved in browser cache (GitHub commit failed · ' + quotaError(commitErr) + ')');
+     } else {
+      paintBriefingVoiceBar('ok');
+     }
+     cb(null, { made: made, stage: 'done', commit: commitErr ? str(commitErr.message) : 'ok' });
+    });
    });
   });
   return true;
  }
 
- /* ══ v0.0.6.m Pillar 2 — pool storage, health and rotation ═════════════ */
  function poolDefaultProvider(slotIndex) {
   var i = Number(slotIndex);
   if (!(i >= 0) || i >= POOL_DEFAULT_PROVIDERS.length) return 'groq';
@@ -753,13 +704,7 @@
   }
   return out;
  }
- /* ══ v0.0.6.m: the 4× Groq rotation engine ══════════════════════════════
-  * The four Groq slots (1 → 2 → 3 → 4) auto-rotate whenever any key hits
-  * HTTP 429 (rate limit) or quota exhaustion, at $0 cost for the IPA /
-  * Sinhala / lexical / pronunciation-verification work. Groq slots are
-  * tried in order before the other LLM providers, so the free tier always
-  * carries the load and a paid/free-tier Gemini or OpenRouter key is only
-  * a graceful extra. */
+ /* ══ v0.0.6.m: the 4× Groq rotation engine */
  function groqKeyPool() {
   var out = [], pool = keyPoolEntries(), i;
   for (i = 0; i < pool.length; i++) {
@@ -768,11 +713,7 @@
   return out;
  }
  function llmCandidates(preferred) {
-  /* The chosen provider + key first, then the two Groq slots in order
-     (free-tier IPA / Sinhala / lexical engine leads), then the OpenRouter
-     free-model slots, then any remaining LLM slots — the exact
-     v0.0.6.m $0 cascade: Groq #1 → Groq #2 → OpenRouter #1 → OpenRouter #2,
-     with the free dictionary APIs as the final no-key fallback. */
+  /* The chosen provider + key first, then the two Groq slots in order */
   var out = [], seen = {};
   var first = { p: str(preferred && preferred.p), k: str(preferred && preferred.k) };
   if (first.k && LLM_ENDPOINTS[first.p]) { out.push(first); seen[first.k] = 1; }
@@ -904,6 +845,12 @@
   pendingClip: null,
   lastPublish: null,
   generating: false,
+  /* v0.0.6.r Pillar 1: the explicitly-changed briefing voice marker (set by
+     the selector / custom-ID handlers) + the discovered /v1/voices account
+     list, so briefingVoiceDelta() only overwrites a live Cloned Voice after
+     a real in-session selection change and mount() re-renders keep both. */
+  voiceSelectionDirty: false,
+  fetchedVoices: [],
    /* Memory-only, never persisted, never… */
   pin: '',
   recording: false,
@@ -1138,6 +1085,10 @@
   if (isObj(remote)) for (var k in remote) if (Object.prototype.hasOwnProperty.call(remote, k) && base[k] === undefined) base[k] = remote[k];
   base.voiceId = activeVoiceId;
   base.voiceName = activeVoiceName;
+  /* v0.0.6.r Pillar 1: the pack header stamps the CHOSEN briefing voice so
+     every browser can see which executive/cloned persona baked the beats. */
+  base.briefingVoiceId = chosenBriefingVoiceId();
+  base.briefingVoiceName = chosenBriefingVoiceName();
   base.modelId = VOICE_MODEL;
   base.voiceModel = VOICE_MODEL;
   base.persona = VOICE_PERSONA;
@@ -1308,9 +1259,7 @@
    loadVoicePack(function () {
     paintPackDashboard();
     paintClipTable();
-    /* v0.0.6.m Pillar 2: the moment the studio opens, the essential
-       system clips are auto-checked (and the missing delta synthesized
-       when an ElevenLabs key is configured). */
+    /* v0.0.6.m Pillar 2: the moment the studio opens, the essential */
     autoEnsureSystemClips({ source: 'unlock', quiet: true }, noop);
     /* v0.0.6.n FIX 2 — Trigger 1 (Instant on PIN Unlock): the creator
        unlocked the vault — the device-local session cache of the active keys
@@ -1675,9 +1624,7 @@
   return p === 'free_dict' || p === 'pollinations_free';
  }
  /* ══ Card 1 — rebuilt for */
- /* v0.0.6.m: the five pool slots — a provider select + a masked key input.
-    Defaults ship the creator's exact architecture: Slots 1-4 = Groq free
-    tier (auto-rotation on 429), Slot 5 = ElevenLabs backup voice key. */
+ /* v0.0.6.m: the five pool slots — a provider select + a masked key input. */
  function keyPoolMarkup() {
   var pool = keyPoolEntries(), html = '<div id="studioKeyPool" class="kp-grid">', i, j;
   for (i = 0; i < KEY_POOL_SLOTS; i++) {
@@ -1778,7 +1725,6 @@
    '</section>';
  }
  /* v0.0.6.a Track 6: live "N / 30 Words Recognized" pill + spring CTA. */
- /* ══ v0.0.6.c (F1): true per-word delta recognition ═══════════════════ */
  function committedWords() {
   var out = [];
   try { out = sync() && sync().words ? sync().words() : []; } catch (e) { out = []; }
@@ -1970,32 +1916,40 @@
   return securityBarMarkup() +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
-   /* v0.0.6.n FIX 2 — Trigger 3: the dedicated 1-click bridge control and
-      its live status bar sit at the VERY TOP of the Lecturer Studio: force
-      regenerate + preview the 4 Project Overview beats and 4 guide steps
-      with the stored keys anytime, and watch the GitHub & live-cache sync.
-      v0.0.6.q Pillar 1 — the EXECUTIVE MALE VOICE SELECTOR: the curated
-      high-professional personas (Daniel / George / Brian / Callum) plus a
-      Custom / Cloned Voice ID paste field and the 🔄 Fetch My Cloned Voices
-      helper (GET /v1/voices with the stored key) sit directly above the
-      Generate button. */
+   /* v0.0.6.n FIX 2 — Trigger 3: the dedicated 1-click bridge control and */
    '<section id="studioCardBriefingVoices" class="studio-card studio-card-briefing-voices">' +
    '<h4 class="studio-h4"><span class="studio-step-tag">STUDIO ↔ BRIEFING BRIDGE</span>Project Overview &amp; Guide Voices</h4>' +
    '<div class="studio-voice-row">' +
    '<label class="lbl" for="studioBriefingVoiceSelect">Executive Male Voice</label>' +
    '<select id="studioBriefingVoiceSelect" class="input studio-voice-select" aria-label="Executive Male Voice">' +
    (function () {
-     var out = '', i, k, p;
+     var out = '', i, k, p, seen = {}, fv = [];
+     var custom = briefingCustomVoiceId();
+     var wantSel = custom ? ('id:' + custom) : briefingVoiceKey();
      for (i = 0; i < BRIEFING_VOICE_ORDER.length; i++) {
        k = BRIEFING_VOICE_ORDER[i];
        p = BRIEFING_VOICE_CATALOG[k];
        if (!p) continue;
-       out += '<option value="' + k + '"' + (k === briefingVoiceKey() ? ' selected' : '') + '>' + esc(p.name) + ' — ' + esc(p.persona) + '</option>';
+       out += '<option value="' + k + '"' + (k === wantSel ? ' selected' : '') + '>' + esc(p.name) + ' — ' + esc(p.persona) + '</option>';
      }
+     /* v0.0.6.r PERSISTENCE LAW: the fetched account voices and the saved
+        custom/cloned pick are re-rendered with the right option marked
+        selected, so a mount() re-render never wipes the creator's Cloned
+        Voice back to the default catalog persona. */
+     try {
+       fv = Array.isArray(ST.fetchedVoices) ? ST.fetchedVoices : (isObj(ST.secrets) && Array.isArray(ST.secrets.fetchedVoices) ? ST.secrets.fetchedVoices : []);
+     } catch (eFV) { fv = []; }
+     for (i = 0; i < fv.length; i++) {
+       if (!isObj(fv[i]) || !str(fv[i].voice_id) || seen[str(fv[i].voice_id)]) continue;
+       seen[str(fv[i].voice_id)] = 1;
+       out += '<option value="id:' + esc(str(fv[i].voice_id)) + '"' + (('id:' + str(fv[i].voice_id)) === wantSel ? ' selected' : '') + '>' +
+        esc(str(fv[i].name) || 'Account Voice') + ' — ' + ((str(fv[i].category) === 'cloned') ? 'My Cloned Voice' : 'Account Voice') + ' · ' + esc(str(fv[i].voice_id)) + '</option>';
+     }
+     if (custom && !seen[custom]) out += '<option value="id:' + esc(custom) + '" selected>My Cloned Voice · ' + esc(custom) + '</option>';
      return out;
    })() +
    '</select>' +
-   '<input id="studioBriefingCustomVoiceId" class="input studio-voice-custom" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Or paste Cloned ElevenLabs Voice ID…">' +
+   '<input id="studioBriefingCustomVoiceId" class="input studio-voice-custom" type="text" value="' + esc(briefingCustomVoiceId()) + '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Or paste Cloned ElevenLabs Voice ID…">' +
    btn('btnFetchClonedVoices', '🔄 Fetch My Cloned Voices', 'btn-ghost') +
    '</div>' +
    '<div class="chip-row studio-bridge-row">' +
@@ -2025,7 +1979,6 @@
    '</div>';
  }
 
- /* ══ D2/D18 (v0.0.2.a): the honest 34-clip dashboard ═════════════════════ */
  function clipCount() {
   var clips = isObj(ST.voicePack.clips) ? ST.voicePack.clips : {};
   var n = 0, k;
@@ -2387,14 +2340,13 @@
   } else if (id === 'studioPin' || id === 'setupPin') {
    paintPinDots();
   } else if (id === 'studioBriefingCustomVoiceId') {
-   /* v0.0.6.q Pillar 1: the pasted Custom / Cloned Voice ID is trimmed and
-      stashed live; an invalid paste is ignored (the catalog persona keeps
-      the selection until a well-formed ID arrives). */
+   /* v0.0.6.q Pillar 1: the pasted Custom / Cloned Voice ID is trimmed and */
    var pastedId = str(target.value || '').replace(/\s+/g, '');
    if (/^[A-Za-z0-9]{16,32}$/.test(pastedId)) {
     if (!isObj(ST.secrets)) ST.secrets = {};
     ST.secrets.briefingCustomVoiceId = pastedId;
     ST.secrets.briefingVoiceKey = 'custom';
+    ST.voiceSelectionDirty = true;
     try {
      var vlt2 = vault();
      if (vlt2 && typeof vlt2.stash === 'function') vlt2.stash(ST.secrets);
@@ -2440,10 +2392,7 @@
    paintFreeNoKey();
    return true;
   }
-  /* v0.0.6.q Pillar 1 — the Executive Male Voice selector: the chosen
-     persona persists in the unlocked settings (and a "id:<voiceId>" option
-     discovered by 🔄 Fetch My Cloned Voices feeds the custom paste field),
-     so the very next Generate / unlock re-synthesizes the beats with it. */
+  /* v0.0.6.q Pillar 1 — the Executive Male Voice selector: the chosen */
   if (id === 'studioBriefingVoiceSelect') {
    var vKey = str(target.value);
    if (/^id:([A-Za-z0-9]{16,32})$/.test(vKey)) {
@@ -2455,8 +2404,10 @@
    } else {
     if (isObj(ST.secrets)) ST.secrets.briefingVoiceKey = vKey;
    }
-   /* Best-effort persistence: the same-tab stash + a vault re-seal keep the
-      persona across a reload without requiring a full publish. */
+   /* v0.0.6.r: an explicit selector change marks this session's selection
+     dirty, so briefingVoiceDelta() may re-synthesize over a live clip. */
+   ST.voiceSelectionDirty = true;
+   /* Best-effort persistence: the same-tab stash + a vault re-seal keep the */
    try {
     var vlt = vault();
     if (vlt && typeof vlt.stash === 'function') vlt.stash(ST.secrets);
@@ -2538,9 +2489,7 @@
   },
   btnGenIntroClips: function () {
    withBusy('btnGenIntroClips', function (d) {
-    /* v0.0.6.n: the Advanced-Tools button now routes through the SAME
-       direct bridge (live status bar + live-session injection + cache
-       prime + GitHub sync) as the top-of-studio 1-click control. */
+    /* v0.0.6.n: the Advanced-Tools button now routes through the SAME */
     ensureBriefingAndGuideVoices({ source: 'button', force: true }, function (err, info) {
      d();
      if (err && str(err.message) === 'no_key') return;
@@ -2568,8 +2517,7 @@
    });
   },
   btnPreviewBriefingBeat: function () {
-   /* Plays the committed Beat 1 through the exact briefing tier so the
-      creator hears the chosen executive male voice right inside the Studio. */
+   /* Plays the committed Beat 1 through the exact briefing tier so the */
    try {
     if (global.SDP && SDP.Speech && SDP.Speech.playBriefingStep) {
      SDP.Speech.playBriefingStep(0, (introSteps()[0] || {}).text || '', function (res) {
@@ -2578,10 +2526,7 @@
     }
    } catch (e) { msg(' Preview failed — unlock and generate the voices first.', 'bad'); }
   },
-  /* v0.0.6.q Pillar 1 — 🔄 Fetch My Cloned Voices: queries the creator's
-     ElevenLabs account (GET /v1/voices with the stored key) and populates
-     every professional / cloned voice into the selector dropdown, so the
-     Project Overview can speak with the creator's OWN cloned voice. */
+  /* v0.0.6.q Pillar 1 — 🔄 Fetch My Cloned Voices: queries the creator's */
   btnFetchClonedVoices: function () {
    withBusy('btnFetchClonedVoices', function (d) {
     var key = resolveElevenKey();
@@ -2606,8 +2551,31 @@
         d();
         return;
        }
-       /* keep the curated catalog; append every account voice (clones and
-          professional library voices) that is not already offered. */
+       /* v0.0.6.r: cloned/generated/professional account voices sort FIRST
+          so the creator's own Cloned Voice tops the dropdown. */
+       var rank = function (v) {
+        var c = str(v && v.category);
+        if (c === 'cloned') return 0;
+        if (c === 'generated') return 1;
+        if (c === 'professional') return 2;
+        return 3;
+       };
+       list = list.slice().sort(function (a, b) { return rank(a) - rank(b); });
+       /* v0.0.6.r: the discovered account voices are remembered in
+          ST.fetchedVoices AND ST.secrets.fetchedVoices so mount() re-renders
+          and reloads keep the selector populated without a re-fetch. */
+       var seenIds = {}, saved = Array.isArray(ST.fetchedVoices) ? ST.fetchedVoices.slice() : [], si;
+       for (si = 0; si < saved.length; si++) seenIds[str(saved[si].voice_id)] = 1;
+       for (si = 0; si < list.length; si++) {
+        if (isObj(list[si]) && str(list[si].voice_id) && !seenIds[str(list[si].voice_id)]) {
+         saved.push({ voice_id: str(list[si].voice_id), name: str(list[si].name), category: str(list[si].category) });
+         seenIds[str(list[si].voice_id)] = 1;
+        }
+       }
+       ST.fetchedVoices = saved;
+       if (!isObj(ST.secrets)) ST.secrets = {};
+       ST.secrets.fetchedVoices = saved;
+       /* keep the curated catalog; append every account voice (clones and */
        var have = {}, i, opt, v, added = 0;
        for (i = 0; i < sel.options.length; i++) have[String(sel.options[i].getAttribute('value'))] = 1;
        for (i = 0; i < BRIEFING_VOICE_ORDER.length; i++) {
@@ -2623,6 +2591,35 @@
         sel.appendChild(opt);
         have[str(v.voice_id)] = 1;
         added += 1;
+       }
+       /* v0.0.6.r AUTO-SELECT LAW: when the account holds a cloned (or any
+          non-catalog) voice and the creator has not manually pinned another
+          custom ID, the first one is selected, fed into the custom field and
+          sealed into the vault — one fetch then makes 🎙 Generate & Sync
+          narrate with the creator's OWN cloned voice. */
+       var firstClone = null, ci, ck;
+       for (ci = 0; ci < list.length && !firstClone; ci++) {
+        var cv = list[ci];
+        if (!isObj(cv) || !str(cv.voice_id)) continue;
+        var inCatalog = false;
+        for (ck in BRIEFING_VOICE_CATALOG) {
+         if (Object.prototype.hasOwnProperty.call(BRIEFING_VOICE_CATALOG, ck) && BRIEFING_VOICE_CATALOG[ck].id === str(cv.voice_id)) inCatalog = true;
+        }
+        if (cv.category === 'cloned' || cv.category === 'generated' || !inCatalog) firstClone = cv;
+       }
+       if (firstClone && !briefingCustomVoiceId()) {
+        sel.value = 'id:' + str(firstClone.voice_id);
+        var cust = byId('studioBriefingCustomVoiceId');
+        if (cust) cust.value = str(firstClone.voice_id);
+        ST.secrets.briefingCustomVoiceId = str(firstClone.voice_id);
+        ST.secrets.briefingVoiceKey = 'custom';
+        ST.secrets.briefingVoiceName = str(firstClone.name);
+        ST.voiceSelectionDirty = true;
+        try {
+         var vltF = vault();
+         if (vltF && typeof vltF.stash === 'function') vltF.stash(ST.secrets);
+        } catch (eStashF) {}
+        msg(' Cloned voice "' + str(firstClone.name) + '" selected — press Generate & Sync to narrate with it.', 'ok');
        }
        paintBriefingVoiceBar('idle', '· ' + added + ' account voices added to the selector');
        msg(' ' + added + ' ElevenLabs account voices added — pick one, or paste its ID in the custom field.', 'ok');
@@ -2660,7 +2657,6 @@
    paintDiagSummary();
    msg(' Local diagnostics cleared', 'ok');
   },
-  /* ══ v0.0.6.m Pillar 4: the User Reviews & Session Telemetry vault ══ */
   btnDownloadReviewsZip: function () {
    withBusy('btnDownloadReviewsZip', function (d) {
     buildReviewsZip(function (err, info) {
@@ -3068,7 +3064,6 @@ function transcribeBritishIPA(raw) {
   out += tail;
   /* -es after a sibilant is a separate syllable: boxes -> -ksIz. */
   if (out.length > 2 && out.slice(-2) === 'sz') out = out.slice(0, -2) + 's\u026az';
-  /* stress BEFORE the first syllable onset (Oxford style: /\u02c8st\u028cdent/). */
   for (var v = 0; v < out.length; v++) {
     if (g2pIsVowel(out.charAt(v))) {
       var s0 = v;
@@ -3344,7 +3339,6 @@ function priorIPAFor(w) {
   } catch (e) { finish(e || new Error('network_error')); }
   return true;
  }
- /* (a) lexicon → (b) Google Translate gtx → (c) MyMemory → (d) pollinations. */
  function translateSi(word, cb) {
   cb = cb || noop;
   var w = str(word).toLowerCase();
@@ -3447,8 +3441,7 @@ function priorIPAFor(w) {
   if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
   /* v0.0.6.m: the pronunciation verifier injects its own strict prompt. */
   var prompt = str(promptOverride) || llmPrompt(words), url = ep.url, headers = { 'Content-Type': 'application/json' }, body = null;
-  /* v0.0.6.m: every provider branch names the HTTP status on failure so the
-     caller can rotate Groq slots on 429 / quota exhaustion. */
+  /* v0.0.6.m: every provider branch names the HTTP status on failure so the */
   var statusOf = function (res) {
    return res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
   };
@@ -3458,7 +3451,6 @@ function priorIPAFor(w) {
    cb(err);
   };
   if (provider === 'gemini') {
-   /* v0.0.4.a W2: model cascade — gemini-2.0-flash → gemini-flash-latest → */
    var models = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
    if (str(ST.aiModel) && models.indexOf(str(ST.aiModel)) >= 0) {
     models = [str(ST.aiModel)].concat(models.filter(function (m) { return m !== str(ST.aiModel); }));
@@ -3505,9 +3497,7 @@ function priorIPAFor(w) {
   try {
    global.fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), cache: 'no-store' })
     .then(function (res) {
-     /* v0.0.6.m: a non-2xx OpenAI-compatible answer (Groq 429 rate limit,
-        401/402 key trouble) fails WITH its status so the caller can rotate
-        to the next Groq slot instead of parsing an error body as JSON. */
+     /* v0.0.6.m: a non-2xx OpenAI-compatible answer (Groq 429 rate limit, */
      if (!res || !res.ok) { failWith(statusOf(res)); return null; }
      return res && res.json ? res.json() : null;
     })
@@ -3851,7 +3841,6 @@ function priorIPAFor(w) {
   }, function () { cb(new Error('encrypt_failed')); });
   return true;
  }
- /* #btnOneClickMasterSetup — v0.0.6.a Track 6: the animated All-in-One wizard. */
  function oneClickMasterSetup(cb) {
   cb = cb || noop;
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
@@ -4034,15 +4023,10 @@ function priorIPAFor(w) {
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return; }
   var token = str(ST.secrets.ghToken);
   if (!token) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_token')); return; }
-  /* v0.0.6.m Pillar 2: Publish & Sync first auto-synthesizes any missing
-     or drifted essential system clips (commands / guide / briefing beats),
-     so they ride along in this very GitHub sync — the creator only ever
-     edits the 30 Dictation Words by hand. */
+  /* v0.0.6.m Pillar 2: Publish & Sync first auto-synthesizes any missing */
   autoEnsureSystemClips({ source: 'publish' }, function () {
-    /* v0.0.6.m FIX 1: Publish & Sync also completes any missing briefing/guide audio through the real API before the push. */
     ensureBriefingAndGuideVoices({ source: 'publish' }, noop);
-    /* v0.0.6.n cache-bust law: a publish must also purge any stale
-       briefing/guide clip left in the local audio cache. */
+    /* v0.0.6.n cache-bust law: a publish must also purge any stale */
     try {
       if (global.SDP && SDP.Sync && SDP.Sync.purgeStaleBriefingClips) SDP.Sync.purgeStaleBriefingClips();
     } catch (eP) {}
@@ -4070,10 +4054,7 @@ function priorIPAFor(w) {
 
  /* ══ D-C1..C7: credit-safe Alice */
  function elevenUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + activeVoiceId; }
-/* v0.0.6.q: the Project Briefing clips synthesize with the CHOSEN
-   high-professional executive male voice — the catalog persona or the
-   creator's pasted Custom / Cloned Voice ID (human click only, W5 credit
-   safety). */
+/* v0.0.6.q: the Project Briefing clips synthesize with the CHOSEN */
 function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speech/' + chosenBriefingVoiceId(); }
  function guideSteps() {
   /* R5: the four reusable guide clips. The frozen legacy keys stay readable */
@@ -4174,13 +4155,11 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
  }
  /* D1 (Rule 1A) — the 3-rung */
  function trimmedKey(key) { return str(key).replace(/^\s+|\s+$/g, ''); }
- /* R4 (F5): ONLY an sk_… secret is an API key. The 64-char e1b… value is the */
  function looksLikeElevenKey(key) {
   return /^sk_[A-Za-z0-9_]{20,}$/.test(trimmedKey(key));
  }
  function elevenKeyHint() { return t('studioVerifyHint', 'INVALID KEY — paste the sk_… secret from ElevenLabs'); }
 
- /* ══ R4: the live ElevenLabs key verifier ══════════════════════════════ */
  function paintElVerify(text, state) {
   var node = byId('elVerifyStatus');
   if (!node) return false;
@@ -4230,7 +4209,6 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return true;
  }
 
- /* ══ R7 (F7): the atomic fresh-salt PIN re-seal ═════════════════════════ */
  function isBootstrapPin(pin) { return trimmedKey(pin) === BOOTSTRAP_PIN; }
  function recoveryOpen(cb) {
   cb = cb || noop;
@@ -4470,19 +4448,12 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   else { opts = isObj(a) ? a : {}; cb = typeof b === 'function' ? b : noop; }
   if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
   if (!ST.voicePack.loaded) loadVoicePack(noop);
-  /* v0.0.6.m Pillar 2: the active key comes from the pool (primary field
-     first, then the Slot #5 ElevenLabs backup). A 401/402/429 from the
-     primary mid-batch rotates to the backup key instantly — the batch
-     keeps its progress and the backup's credits carry on until the
-     creator updates the primary key. */
+  /* v0.0.6.m Pillar 2: the active key comes from the pool (primary field */
   poolCursor = 0;
   var apiKey = resolveElevenKey();
   if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
   var introMode = !!opts.intro;
-  /* v0.0.6.q Pillar 1: the Project Briefing clips use the CHOSEN
-     high-professional executive male voice — the Studio catalog persona
-     (Daniel / George / Brian / Callum) or the creator's pasted Custom /
-     Cloned ElevenLabs Voice ID. */
+  /* v0.0.6.q Pillar 1: the Project Briefing clips use the CHOSEN */
   var genVoiceId = introMode ? chosenBriefingVoiceId() : activeVoiceId;
   var genModel = introMode ? INTRO_VOICE.model : VOICE_MODEL;
   var genUrl = introMode ? introVoiceTtsUrl() : elevenUrl();
@@ -4492,10 +4463,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    msg(str(words.length) + ' words parsed, first 30 used', '');
    toast(str(words.length) + ' words parsed, first 30 used');
   }
-  /* v0.0.6.m: intro queues can be filtered to a delta (autoEnsureSystemClips
-     regenerates ONLY the drifted beats), and a literal systemQueue carries
-     the essential command/guide clips. regenKeys lets the immutable static
-     vault re-synthesize a clip whose canonical text drifted. */
+  /* v0.0.6.m: intro queues can be filtered to a delta (autoEnsureSystemClips */
   var regenKeys = Array.isArray(opts.regenKeys) ? opts.regenKeys : null;
   var queue;
   if (introMode) {
@@ -4553,10 +4521,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash */
    var itemHash = clipContentHash(item.text, genVoiceId, genModel);
    var existing = ST.voicePack.clips[item.key];
-   /* v0.0.6.m Pillar 2: immutable static system audio (commands, numbers,
-      guides, intro beats) — EXCEPT when autoEnsureSystemClips flagged the
-      clip as drifted (regenKeys): the Oct-22 weekly counter bumps the
-      Beat 1 sentence every week and the committed clip must follow. */
+   /* v0.0.6.m Pillar 2: immutable static system audio (commands, numbers, */
    if (!force && clipExists(item.key) && (!introMode || (isObj(existing) && existing.liveEleven === true && Number(existing.weekStamp || 0) === Number(currentWeeksSinceStart())))) {
     if (isStaticClipKey(item.key) && !(regenKeys && regenKeys.indexOf(item.key) >= 0)) { skipped += 1; next(); return; }
     var storedHash = isObj(existing) ? str(existing.hash) : '';
@@ -4567,9 +4532,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    var rotationsThisItem = 0;
    requestClip(item, apiKey, function (err, entry) {
     if (err) {
-     /* v0.0.6.m Pillar 2: key-level failures rotate to the next pool slot
-        (primary field → Slot #5 backup ElevenLabs key) MID-BATCH without
-        losing progress; the backup's credits carry the rest of the run. */
+     /* v0.0.6.m Pillar 2: key-level failures rotate to the next pool slot */
      var st = Number((err && err.status) || 0);
      if ((st === 401 || st === 402 || st === 429) && rotationsThisItem < elevenKeyPool().length - 1) {
       var rotated = rotateElevenKey('http_' + st);
@@ -4628,25 +4591,26 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        /* /with-timestamps: base64 audio + alignment in one JSON body. */
        var j = payload.ts;
        var b64ts = str(j.audio_base64 || j.audio || j.b64 || '');
-       var align = isObj(j.normalized_alignment) ? j.normalized_alignment : (isObj(j.alignment) ? j.alignment : null);
+       /* v0.0.6.r Pillar 2: j.alignment (the RAW character alignment over the
+          exact un-normalized input characters) is preferred over
+          j.normalized_alignment, which expands numbers and symbols into
+          spoken words ("($0)" -> "zero dollars", "22" -> "twenty two") and
+          made parseAlignmentToWordTimings() return null on real responses. */
+       var align = isObj(j.alignment) ? j.alignment : (isObj(j.normalized_alignment) ? j.normalized_alignment : null);
        if (!b64ts || !align) {
         /* Malformed timestamped body → seamless standard-endpoint retry. */
         requestClip(item, key, done, attempt + 1);
         return;
        }
        var wt = parseAlignmentToWordTimings(align, item.text);
-       /* v0.0.6.q Pillar 1 — the LIVE-ELEVEN PROVENANCE STAMP: every clip
-          synthesized through the creator's real API key carries liveEleven,
-          the weekStamp, the chosen voice id and the elevenlabs-live
-          provenance, so briefingVoiceDelta() refreshes it automatically each
-          new week (and the moment the selected persona changes). */
+       /* v0.0.6.q Pillar 1 — the LIVE-ELEVEN PROVENANCE STAMP: every clip */
        if (introMode) {
         done(null, {
          b64: b64ts, text: str(item.text), bytes: Math.floor(b64ts.length * 3 / 4),
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
          wt: wt,
-         liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live'
+         liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
         });
         return;
        }
@@ -4665,7 +4629,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
-       liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live'
+       liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
       } : {
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
@@ -4678,7 +4642,6 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return { ok: true, started: queue.length, calls: 0 };
  }
 
- /* ══ v0.0.6.m Pillar 3 — the in-browser .zip diagnostics exporter ═══════ */
  function buildDiagZip(cb) {
   cb = cb || noop;
   var Diag = null;
@@ -4723,7 +4686,6 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return true;
  }
 
- /* ══ v0.0.6.m Pillar 4 — the User Reviews & Session Telemetry feed ═════ */
  function fmtDuration(sec) {
   var s = Math.max(0, Math.round(Number(sec) || 0));
   if (s >= 60) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
@@ -4738,8 +4700,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return '<span class="auth-badge partial">· ' + esc(a) + '</span>';
  }
  var CHIP_LABELS = {
-  /* v0.0.6.m FIX 4: the 9 comprehensive 1-tap chips (identical on the
-     review card and the FAB drawer), plus the two legacy guide keys. */
+  /* v0.0.6.m FIX 4: the 9 comprehensive 1-tap chips (identical on the */
   fast: '⚡ Fast & Smooth',
   voice_ok: '🔊 Voice Clear',
   voice_muted: '🔇 Word Audio Not Playing',
@@ -4916,16 +4877,29 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
 
  /* v0.0.4.b: serialise clips without the duplicate .url data URL on disk. */
  function packClipsForDisk() {
+  /* v0.0.6.r Pillar 1 — the METADATA PRESERVATION law: v0.0.6.q stripped
+     wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName on every commit,
+     so the JSON on GitHub lost the karaoke alignment + live-Eleven stamp and
+     the next reload treated the creator's Cloned Voice beats as un-generated
+     repo preloads (auto re-synthesizing over them with default George). */
   var src = ST.voicePack.clips || {}, out = {}, k;
   for (k in src) {
    if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
    var c = src[k];
    if (!c || typeof c !== 'object') { out[k] = c; continue; }
-   out[k] = {
+   var row = {
     b64: str(c.b64), bytes: Number(c.bytes) || 0, at: Number(c.at) || 0,
     text: str(c.text), hashAlgo: str(c.hashAlgo), hash: str(c.hash),
     voiceId: str(c.voiceId), modelId: str(c.modelId)
    };
+   if (Array.isArray(c.wt) && c.wt.length) row.wt = c.wt;
+   if (Array.isArray(c.ww) && c.ww.length) row.ww = c.ww;
+   if (c.liveEleven === true) row.liveEleven = true;
+   if (Number(c.weekStamp) > 0) row.weekStamp = Number(c.weekStamp);
+   if (str(c.provenance)) row.provenance = str(c.provenance);
+   if (Number(c.durMs) > 0) row.durMs = Number(c.durMs);
+   if (str(c.voiceName)) row.voiceName = str(c.voiceName);
+   out[k] = row;
   }
   return out;
  }
@@ -5009,26 +4983,62 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
  /* Commit the freshly paid-for clips so */
  /* v0.0.4.b: sequential publish mutex — concurrent calls queue, never race */
  var packPublishQueue = [], packPublishBusy = false;
+ /* v0.0.6.r Pillar 1 — INSTANT LOCAL PERSISTENCE: the freshly synthesized
+    briefing/guide pack is written into THIS browser's caches and localStorage
+    before (and regardless of) any GitHub latency, so the generated Cloned
+    Voice survives reloads even with no token. */
+ function primeLocalVoicePackCache(packObj, rev) {
+  try {
+   if (!global.caches || !global.caches.open || !isObj(packObj)) return false;
+   var keys = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'].concat(GUIDE_KEYS);
+   var clips = {}, i;
+   for (i = 0; i < keys.length; i++) {
+    if (isObj(ST.voicePack.clips[keys[i]]) && str(ST.voicePack.clips[keys[i]].b64)) clips[keys[i]] = ST.voicePack.clips[keys[i]];
+   }
+   var stamp = Number(rev) || Number(packObj.syncRev) || nextSyncRev();
+   var localPack = { syncRev: stamp, briefingVoiceId: str(packObj.briefingVoiceId), briefingVoiceName: str(packObj.briefingVoiceName), weekStamp: currentWeeksSinceStart(), at: Date.now(), clips: clips };
+   var packBody = JSON.stringify(packObj);
+   global.caches.open('sdp-audio-clips').then(function (cache) {
+    return cache.put('./local-briefing-pack.json', new Response(JSON.stringify(localPack), { headers: { 'Content-Type': 'application/json', 'x-sdp-syncrev': String(stamp) } }));
+   }).catch(function () {});
+   global.caches.open('sdp-v' + appVersion() + '-s33-shell').then(function (cache) {
+    return cache.put('./data/elevenlabs-audio.json', new Response(packBody, { headers: { 'Content-Type': 'application/json', 'x-sdp-release': appVersion(), 'x-sdp-syncrev': String(stamp) } }));
+   }).catch(function () {});
+   try {
+    global.localStorage.setItem('sdp.briefing.meta', JSON.stringify({ syncRev: stamp, voiceId: str(packObj.briefingVoiceId), voiceName: str(packObj.briefingVoiceName), weekStamp: currentWeeksSinceStart(), at: Date.now() }));
+   } catch (eL) {}
+   return true;
+  } catch (e) { return false; }
+ }
  function commitVoicePack(cb) {
   cb = cb || noop;
+  /* v0.0.6.r: any key/token sitting in the input fields is merged into
+     ST.secrets BEFORE the token check, so a pasted GitHub token commits on
+     the very same click instead of silently aborting with no_token. */
+  try { mergeSecretInputs(); } catch (eM) {}
   packPublishQueue.push(cb);
   if (packPublishBusy) return true;
   packPublishBusy = true;
+  /* ONE monotonic rev stamps BOTH files; the pack is live in this browser */
+  var rev = nextSyncRev();
+  var packObj = voicePackPayload(rev);
+  try {
+   if (global.SDP && SDP.Speech) {
+    if (SDP.Speech.applyManifest) SDP.Speech.applyManifest(packObj);
+    if (SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips);
+   }
+  } catch (eA) {}
+  primeLocalVoicePackCache(packObj, rev);
   function done(err, info) {
    var list = packPublishQueue.slice();
    packPublishQueue = [];
    packPublishBusy = false;
-   if (!err) {
-    try {
-     if (global.SDP && global.SDP.Speech) {
-      if (global.SDP.Speech.injectClips) global.SDP.Speech.injectClips(ST.voicePack.clips);
-      if (global.SDP.Speech.reloadManifest) global.SDP.Speech.reloadManifest(true);
-     }
-    } catch (e) {}
-   }
+   /* v0.0.6.r CRITICAL LAW: no forced manifest reload is issued after a
+      commit — the GitHub Pages CDN/Fastly still serves the pre-commit file
+      for minutes and would overwrite the fresh pack with the stale one. */
    for (var i = 0; i < list.length; i++) { try { list[i](err, info); } catch (e2) {} }
   }
-  var token = str(ST.secrets.ghToken);
+  var token = str(ST.secrets.ghToken) || fieldValue('ghTokenInput');
   if (!token || !sync() || !sync().publishFilesSequential) {
    packPublishBusy = false;
    var waiting = packPublishQueue.slice();
@@ -5036,11 +5046,19 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    for (var j = 0; j < waiting.length; j++) { try { waiting[j](new Error('no_token')); } catch (e3) {} }
    return false;
   }
-  var files = [{
-   path: 'data/elevenlabs-audio.json',
-   content: JSON.stringify(voicePackPayload(), null, 2),
-   message: 'Alice voice pack ' + appVersion()
-  }];
+  /* v0.0.6.r ATOMIC DUAL-FILE COMMIT: data/elevenlabs-audio.json AND
+     data/version.json (the same monotonic syncRev) publish in one sequential
+     batch, so every other browser sees the pointer move and re-pulls the
+     pack the moment it advances. */
+  var liveVer = sync() && sync().version ? (sync().version() || {}) : {};
+  var sessNo = str(liveVer.session || '8') || '8';
+  var sessTitle = str(liveVer.title || '') || ('Session ' + sessNo);
+  var verObj = buildVersionPayload(sessNo, sessTitle, rev);
+  verObj.payloadFiles = ['data/elevenlabs-audio.json', 'data/version.json'];
+  var files = [
+   { path: 'data/elevenlabs-audio.json', content: JSON.stringify(packObj, null, 2), message: 'Briefing & Alice voice pack ' + appVersion() },
+   { path: 'data/version.json', content: JSON.stringify(verObj, null, 2), message: 'Bump syncRev for voice pack ' + appVersion() }
+  ];
   sync().publishFilesSequential(files, token, noop, done);
   return true;
  }
@@ -5071,7 +5089,6 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return false;
  }
 
- /* ══ v0.0.6.m Pillar 2 — AI British Pronunciation Pre-Verifier ══════════ */
  function britishizeIpa(raw) {
   var ipa = str(raw).replace(/^\s+|\s+$/g, '').replace(/^\/+|\/+$/g, '');
   if (!ipa) return '';
@@ -5094,9 +5111,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   cb = cb || noop;
   var w = str(word && word.w ? word.w : word);
   if (!w) { cb(new Error('no_word')); return false; }
-  /* v0.0.6.m provider cascade: the chosen provider + key first, then the
-     four Groq slots in order (free tier leads), then every other LLM slot.
-     A 429 / quota-exhausted key rotates to the NEXT Groq slot instantly. */
+  /* v0.0.6.m provider cascade: the chosen provider + key first, then the */
   var candidates = llmCandidates({ p: aiProviderName(), k: str(ST.secrets.aiKey) || fieldValue('studioAiKey') });
   var at = 0;
   function attemptOne() {

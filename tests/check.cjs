@@ -51,8 +51,8 @@ const BUDGET = {
   'assets/css/sdp-ui.css': 136000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data/sdp-data-sync.js': 119000, /* v0.0.6.q: +Pillar-1 cache-first fetchJSON (fresh/boot split) */
-  'data/sdp-audio-speech.js': 80000, /* v0.0.6.o: +version-busted manifest fetch */
+  'data/sdp-data-sync.js': 121000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
+  'data/sdp-audio-speech.js': 82000, /* v0.0.6.r: +restoreLocalBriefingPack local-pack merge (Pillar 1) */
   'data/sdp-dictation-engine.js': 78000,
   'data/sdp-ui-views.js': 257000, /* v0.0.6.q: +beat1Done completion gate lock (252000 in v0.0.6.p) */
   /* v0.0.6.m: the studio gained the reviews/telemetry drawer and
@@ -75,7 +75,7 @@ const BUDGET = {
   'data/elevenlabs-audio.json': 4600000,
   'data.html': 34000,
   'data/index.html': 34000,
-  'sw.js': 16000, /* v0.0.6.q: +staleWhileRevalidateDataJson (Pillar 1) */
+  'sw.js': 17000, /* v0.0.6.r: +SWR background revalidation + voice-pack syncrev overwrite guard */
   'manifest.webmanifest': 4000,
   'docs/ARCHITECTURE_MAP.md': 56000,
   'docs/UI_COMPONENT_GUIDE.md': 52000,
@@ -273,10 +273,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.m ships ver 27 / schema 26 / settingsRev 42
-    const ok = v.ver === 31 && v.appVersion === '0.0.6.q' && v.version === '0.0.6.q' &&
-      v.schema === 31 && v.settingsRev === 47 && String(v.session) === '8';
-    record('version.json carries the v0.0.6.q schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1794800000000', Number(v.syncRev) === 1794800000000, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 32 && v.appVersion === '0.0.6.r' && v.version === '0.0.6.r' &&
+      v.schema === 32 && v.settingsRev === 48 && String(v.session) === '8';
+    record('version.json carries the v0.0.6.r schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1794900000000', Number(v.syncRev) === 1794900000000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -296,8 +296,8 @@ function pending(p) {
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
-    record('config.json carries v0.0.6.q version fields',
-      c.ver === 31 && c.appVersion === '0.0.6.q' && c.version === '0.0.6.q' && c.schema === 31 && c.settingsRev === 47,
+    record('config.json carries v0.0.6.r version fields',
+      c.ver === 32 && c.appVersion === '0.0.6.r' && c.version === '0.0.6.r' && c.schema === 32 && c.settingsRev === 48,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -445,7 +445,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.q boot target', html.indexOf("'0.0.6.q'") > 0 || html.indexOf('"0.0.6.q"') > 0);
+  record('index.html declares the v0.0.6.r boot target', html.indexOf("'0.0.6.r'") > 0 || html.indexOf('"0.0.6.r"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -530,9 +530,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.q target', /var TARGET = '0.0.6.q'/.test(html));
-    record('service worker pins the v0.0.6.q s31 shell caches',
-      /SW_VERSION = 'sdp-v0.0.6.q-s32'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.q-s32-shell'/.test(sw));
+    record('index.html boots at the v0.0.6.r target', /var TARGET = '0.0.6.r'/.test(html));
+    record('service worker pins the v0.0.6.r s33 shell caches',
+      /SW_VERSION = 'sdp-v0.0.6.r-s33'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.r-s33-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -552,28 +552,28 @@ function pending(p) {
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.q',
-      /"start_url":"\.\/\?v=0.0.6.q/.test(man) &&
-      (man.match(/v=0.0.6.q/g) || []).length >= 3, (man.match(/v=0.0.6.q/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.6.r',
+      /"start_url":"\.\/\?v=0.0.6.r/.test(man) &&
+      (man.match(/v=0.0.6.r/g) || []).length >= 3, (man.match(/v=0.0.6.r/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.q';
+    var app = '0.0.6.r';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 31;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 32;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 31,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 31
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 32,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 32
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.q / ver 31',
+    record('D15 all seven versioned surfaces agree on 0.0.6.r / ver 32',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.q header',
-      pack.version === '0.0.6.q' && pack.appVersion === '0.0.6.q' && pack.ver === 31 && pack.schema === 31 &&
-      pack.settingsRev === 47 && Number(pack.syncRev) === 1794800000000 &&
+    record('voice pack carries the v0.0.6.r header',
+      pack.version === '0.0.6.r' && pack.appVersion === '0.0.6.r' && pack.ver === 32 && pack.schema === 32 &&
+      pack.settingsRev === 48 && Number(pack.syncRev) === 1794900000000 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.settingsRev, pack.syncRev]));
     /* v0.0.6.q PILLAR 2 law: the shipped pack carries EXACTLY the 135
@@ -622,7 +622,7 @@ function pending(p) {
           if (e.text === want && e.hash === wantHash) pinned += 1;
           else bad.push(key + (e.text === want ? ':hash' : ':text'));
         }
-        record('LB4c every George beat pins the exact live v0.0.6.q sentence + sha1 (the zero cut-off law accepts all 4)',
+        record('LB4c every George beat pins the exact live v0.0.6.r sentence + sha1 (the zero cut-off law accepts all 4)',
           pinned === 4, bad.join(', ') + ' pinned=' + pinned);
       })();
     })();
@@ -707,7 +707,7 @@ function pending(p) {
     record('A6c the floating Beta stamp and Beta pill are gone for good',
       !/id="sdpBetaStamp"/.test(html) && !/id="sdpBetaPill"/.test(html) &&
       !/\.beta-stamp/.test(css) && !/\.beta-pill/.test(css) &&
-      /BETA_SUBVERSION = '0\.0\.6\.q\.beta'/.test(views) &&
+      /BETA_SUBVERSION = '0\.0\.6\.r\.beta'/.test(views) &&
       /function betaActive/.test(views) && /function applyBetaChannel/.test(views));
   })();
 
@@ -752,19 +752,19 @@ function pending(p) {
       !/!briefingSeen\(\) && !SDP\.Data\.guideSeen\(\)/.test(views));
     record('CB6 the relocated Project Briefing button replays the briefing anytime',
       html.indexOf('id="btnCreatorNote"') > 0 && /openBriefing\(\{ replay: true \}\)/.test(views));
-    record('CB7 v0.0.6.q executive script: critical-thinking testbed + never-for-money social mission (Beat 1), non-IT A/Ls + 2-month open-source database mastery + RDP tools (Beat 2), strict privacy + 100% E2EE AES-GCM feedback chat (Beat 3), low-mobile-data engine + right-side Start Dictation handover (Beat 4)',
+    record('CB7 v0.0.6.r ultra-crisp executive script: zero-cost open-source origin + Oct-22 start + Hansana + AI agents (Beat 1), critical-thinking testbed + never-for-money mission + A/L-free 2-month database mastery + RDP/lab/flagship tools (Beat 2), strict privacy + 100% E2EE AES-GCM (Beat 3), low-mobile-data engine + right-side Start Dictation handover (Beat 4)',
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
         var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
         var beat1 = /Welcome to Smart Dictation[\s\S]*?zero-cost \(\$0\)[\s\S]*?started on October 22 \(\{W\} weeks ago\) by Hansana and powered by autonomous AI agents on his own system/.test(body);
-        var beat2 = /test how far critical thinking and problem-solving skills can go[\s\S]*?positive mindset[\s\S]*?our society in Sri Lanka for free[\s\S]*?never seek money or profit[\s\S]*?did not take IT for A\/Ls[\s\S]*?within two months[\s\S]*?world's largest open-source databases[\s\S]*?Remote Desktop PC \(RDP\) project, dedicated lab environment, and upcoming flagship IT project[\s\S]*?Sri Lanka's IT field/.test(body);
+        var beat2 = /Built to test critical thinking and problem-solving skills[\s\S]*?positive mindset[\s\S]*?our society in Sri Lanka for free[\s\S]*?never for money or profit[\s\S]*?open-source databases[\s\S]*?within two months[\s\S]*?without A\/L IT[\s\S]*?Remote Desktop PC \(RDP\) project, lab environment, and upcoming flagship IT project[\s\S]*?Sri Lanka's IT field/.test(body);
         var beat3 = /strict privacy protection at its core[\s\S]*?no personal data is ever shared[\s\S]*?no unnecessary data is collected[\s\S]*?session review, feedback chat, and diagnostic report is one hundred percent end-to-end encrypted \(AES-GCM\)/.test(body);
         var beat4 = /run smoothly even on low mobile data[\s\S]*?Lecturer Mode[\s\S]*?Tap Start Dictation on the right[\s\S]*?step-by-step guide[\s\S]*?Word #1!/.test(body);
         return !/Z\.ai|Arena\.ai|Gemini|ChatGPT|Claude|prompt engineering/i.test(body) &&
           !/limited formal IT training|limited IT/i.test(body) &&
           !/RDB/.test(body) && /RDP/.test(body) &&
           beat1 && beat2 && beat3 && beat4 &&
-          body.indexOf('never seek money or profit') < body.indexOf('A/Ls') &&
+          body.indexOf('never for money or profit') < body.indexOf('A/L') &&
           body.indexOf('{W}') < body.indexOf('your privacy is completely safe') &&
           !/21-year-old|21yo|වයස 21/i.test(html + views + speech + studio);
       })());
@@ -834,7 +834,7 @@ function pending(p) {
       /function briefingTimeSlices/.test(views) && /PUNCT_PAUSE_MS/.test(views) &&
       /paintBriefingClockAt/.test(views));
     record('LB5 the Latest Weekly Update badge names the release (relocated to Settings › About in v0.0.6.q)',
-      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.q\)/.test(html) &&
+      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.r\)/.test(html) &&
       !/#briefingModal[\s\S]{0,900}briefingUpdateBadge/.test(html));
     /* ══ v0.0.6.q PILLAR 1 — the LOW-MOBILE-DATA cache-first voice pack ══ */
     record('P1a the boot fetch law: fetchJSON splits cache-first boot reads (?v=<release>, cache:default) from fresh pointer reads (no-store + tick + 2500ms)',
@@ -844,15 +844,15 @@ function pending(p) {
       /fetchJSON\('\.\/data\/version\.json', function \(e, d\) \{ settle\('version', e, d\); \}, \{ fresh: true \}\)/.test(sync) &&
       /fetchJSON\('\.\/data\/session\.json', function \(e, d\) \{ settle\('session', e, d\); \}\)/.test(sync) &&
       /\{ fresh: true \}\);[\s\S]{0,400}elevenlabs-audio/.test(speech + sync) === false || true);
-    record('P1b the manifest boot fetch is cache-first: ./data/elevenlabs-audio.json?v=0.0.6.q with NO tick and cache:default (a weak 2G link is never asked to re-download the 3MB pack)',
-      /elevenlabs-audio\.json\?v=0\.0\.6\.q' \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(speech) &&
+    record('P1b the manifest boot fetch is cache-first: ./data/elevenlabs-audio.json?v=0.0.6.r with NO tick and cache:default (a weak 2G link is never asked to re-download the 3MB pack)',
+      /elevenlabs-audio\.json\?v=0\.0\.6\.r' \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(speech) &&
       /cache: fresh \? 'no-store' : 'default'/.test(speech) &&
       /\{ fresh: force === true \}/.test(speech) &&
-      !/elevenlabs-audio\.json\?v=0\.0\.6\.q&t=/.test(speech));
+      !/elevenlabs-audio\.json\?v=0\.0\.6\.r&t=/.test(speech));
     var swText1 = readText('sw.js');
-    record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s31 shell (instant <30ms cache hit, zero mobile data on an unchanged release)',
-      /SW_VERSION = 'sdp-v0\.0\.6\.q-s32'/.test(swText1) &&
-      /var SW_RELEASE = '0\.0\.6\.q';/.test(swText1) &&
+    record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s33 shell (instant <30ms cache hit, then a non-blocking background revalidation on an unchanged release)',
+      /SW_VERSION = 'sdp-v0\.0\.6\.r-s33'/.test(swText1) &&
+      /var SW_RELEASE = '0\.0\.6\.r';/.test(swText1) &&
       /function staleWhileRevalidateDataJson/.test(swText1) &&
       /x-sdp-release/.test(swText1) &&
       /isPointer = \/\\\/data\\\/version\\\.json\$\/i\.test\(url\.pathname\)/.test(swText1) &&
@@ -902,6 +902,44 @@ function pending(p) {
         } catch (ePack) { okPack = false; }
         return okCat && okSettings && okDelta && okStamp && okNoConfirm && okPack;
       })());
+    /* ══ v0.0.6.r PILLAR 1+2 — the CLONED-VOICE PERSISTENCE + DARK-LYRICS LAWS ══ */
+    record('P1g the v0.0.6.r cloned-voice persistence & dark-lyrics laws: packClipsForDisk() preserves wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName, commitVoicePack() publishes data/elevenlabs-audio.json + data/version.json atomically under ONE monotonic syncRev, primes the local pack cache (local-briefing-pack.json + the s33 SHELL_CACHE + sdp.briefing.meta) and never calls reloadManifest(true) after a commit, requestClip() prefers j.alignment over j.normalized_alignment, parseAlignmentToWordTimings() never returns null on a non-empty alignment (proportional map), and .b-line.on paints true dark-lyrics contrast (#94A3B8 unspoken → #0F172A spoken)',
+      (function () {
+        var okPack = /if \(Array\.isArray\(c\.wt\) && c\.wt\.length\) row\.wt = c\.wt;/.test(studio) &&
+          /if \(Array\.isArray\(c\.ww\) && c\.ww\.length\) row\.ww = c\.ww;/.test(studio) &&
+          /if \(c\.liveEleven === true\) row\.liveEleven = true;/.test(studio) &&
+          /if \(Number\(c\.weekStamp\) > 0\) row\.weekStamp = Number\(c\.weekStamp\);/.test(studio) &&
+          /if \(str\(c\.provenance\)\) row\.provenance = str\(c\.provenance\);/.test(studio) &&
+          /if \(Number\(c\.durMs\) > 0\) row\.durMs = Number\(c\.durMs\);/.test(studio) &&
+          /if \(str\(c\.voiceName\)\) row\.voiceName = str\(c\.voiceName\);/.test(studio) &&
+          /base\.briefingVoiceId = chosenBriefingVoiceId\(\);/.test(studio) &&
+          /base\.briefingVoiceName = chosenBriefingVoiceName\(\);/.test(studio);
+        var commitAt = studio.indexOf('function commitVoicePack');
+        var commitBlock = commitAt >= 0 ? studio.slice(commitAt, commitAt + 4200) : '';
+        var okCommit = /var rev = nextSyncRev\(\);/.test(commitBlock) &&
+          /var packObj = voicePackPayload\(rev\);/.test(commitBlock) &&
+          /verObj\.payloadFiles = \['data\/elevenlabs-audio\.json', 'data\/version\.json'\];/.test(commitBlock) &&
+          /path: 'data\/elevenlabs-audio\.json', content: JSON\.stringify\(packObj, null, 2\)/.test(commitBlock) &&
+          /path: 'data\/version\.json', content: JSON\.stringify\(verObj, null, 2\)/.test(commitBlock) &&
+          /primeLocalVoicePackCache\(packObj, rev\);/.test(commitBlock) &&
+          /str\(ST\.secrets\.ghToken\) \|\| fieldValue\('ghTokenInput'\)/.test(commitBlock) &&
+          !/reloadManifest\(true\)/.test(commitBlock) &&
+          /'\.\/local-briefing-pack\.json'/.test(studio) &&
+          /'sdp-v' \+ appVersion\(\) \+ '-s33-shell'/.test(studio) &&
+          /localStorage\.setItem\('sdp\.briefing\.meta'/.test(studio) &&
+          /function primeLocalVoicePackCache/.test(studio);
+        var okAlign = /var align = isObj\(j\.alignment\) \? j\.alignment : \(isObj\(j\.normalized_alignment\) \? j\.normalized_alignment : null\);/.test(studio) &&
+          /if \(out\.length === words\.length\) return out;/.test(studio) &&
+          /var totalStart = out\[0\]\[0\], totalEnd = out\[out\.length - 1\]\[1\];/.test(studio) &&
+          !/if \(!out\.length \|\| out\.length !== words\.length\) return null;/.test(studio) &&
+          /voiceName: chosenBriefingVoiceName\(\)/.test(studio);
+        var okCss = /\.b-line\.on \.b-word:not\(\.is-spoken\) \{/.test(css) &&
+          /\.b-line\.on \.b-word:not\(\.is-spoken\) \{\s*\n\s*color: #94A3B8;/.test(css) &&
+          /\.b-word\.is-spoken,\s*\n\s*\.b-line\.on \.b-word\.is-spoken \{\s*\n\s*color: #0F172A;/.test(css) &&
+          /\.b-word\.is-current,/.test(css) &&
+          /#0369A1/.test(css) && /#E0F2FE/.test(css);
+        return okPack && okCommit && okAlign && okCss;
+      })());
     /* ══ v0.0.6.q PILLAR 2 — the anti-7-second minimum-dwell law ══ */
     record('P2a a paragraph may NEVER advance in under 1.8s: the minimum-dwell law paces every beat over its natural duration even when audio is muted or TTS fails',
       /function briefingEstimateDurMs/.test(views) &&
@@ -946,23 +984,23 @@ function pending(p) {
       /else if \(!briefingState\.beat1Done\) \{/.test(views) &&
       /* closeBriefing also honours the Paragraph-1 lock */
       /if \(briefingState\.gateLeft > 0 \|\| !briefingState\.beat1Done\) return false;/.test(views) &&
-      /* the briefing beats play at a crisp broadcast cadence (1.08) */
-      /rate: 1\.08/.test(speech));
-    record('P2d the tightened Beat-1 script speaks COMPLETELY in ~10–12 s: a crisp 33–36 word executive opening (never the 79-word / 39 s v0.0.6.p slab)',
+      /* the briefing beats play at a crisp broadcast cadence (1.12) */
+      /rate: 1\.12/.test(speech));
+    record('P2d the ultra-crisp Beat-1 script speaks COMPLETELY right as the 10-second gate matures: a tightened 26–36 word executive opening (~8.5–9.5 s of wall time at the crisp 1.12× cadence — never the 213-word / 64.3 s v0.0.6.q slab)',
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
         var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
         var beats = body.match(/"([\s\S]*?)"/g) || [];
         var beat1 = (beats[0] || '').replace(/^"|"$/g, '').replace('{W}', '2');
         var words = beat1.split(/\s+/).filter(Boolean).length;
-        /* 33..36 words at the natural ~175 wpm broadcast cadence = 10.3–12.3 s;
-           the shipped preload measures 11.5 s (durMs 11546). */
+        /* 26..36 words at the crisp broadcast cadence ≈ 8.5–10.5 s of media
+           time; the shipped v0.0.6.r preload measures 10031 ms (durMs 10031). */
         var durOk = false;
         try {
           var e1 = pack.clips['_intro_male_1'];
-          durOk = !!e1 && Number(e1.durMs) >= 10000 && Number(e1.durMs) <= 12500;
+          durOk = !!e1 && Number(e1.durMs) >= 7500 && Number(e1.durMs) <= 12500;
         } catch (eDur) { durOk = false; }
-        return /^Welcome/.test(beat1) && /system\.$/.test(beat1) && words >= 33 && words <= 36 && durOk;
+        return /^Welcome/.test(beat1) && /system\.$/.test(beat1) && words >= 26 && words <= 36 && durOk;
       })());
     /* ══ v0.0.6.q PILLAR 3 — Exit LEFT / highlighted Start Dictation RIGHT ══ */
     record('P3a the briefing footer ships Exit (#btnBriefingSkip) on the LEFT and the highlighted ▶ Start Dictation → (#btnBriefingContinue) on the RIGHT (DOM order + class)',

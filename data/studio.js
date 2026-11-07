@@ -39,6 +39,12 @@
  /* v0.0.4.a: auto-generation runs in the real app only — never inside the */
  function allowAutoGen() {
   if (global.__SDP_ALLOW_AUTOGEN === true) return true;
+  /* v0.0.6.n lab law: a cross-world bridge flag (localStorage) authorizes the
+     creator-device bridge from automation contexts where the isolated-world
+     window property is invisible to the main-world closure. */
+  try {
+    if (global.localStorage && global.localStorage.getItem('sdp.lab.allowAutoGen') === '1') return true;
+  } catch (eL) {}
   return !global.__SDP_NO_LIVE__;
  }
  function countExistingClips() { return clipCount(); }
@@ -400,7 +406,7 @@
   for (var i = 0; i < lines.length && i < 4; i++) steps.push({ key: '_guide_' + (i + 1), text: str(GUIDE_CLIP_TEXTS[i] || '') });
   var weights = null;
   var run = function () {
-   generateClips({ intro: true, keys: ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'], regenKeys: ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'], noCommit: !!opts.noCommit }, function (err, info) {
+   generateClips({ intro: true, keys: ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'], regenKeys: ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'], noCommit: !!opts.noCommit, force: !!opts.force }, function (err, info) {
     if (err && str(err.message) === 'no_key') {
      msg('Briefing voices: add the ElevenLabs key (Step 1) and they auto-synthesize on the next unlock or Publish — until then the app narrates with the pinned British-male device voice.', 'warn');
      cb(err, { stage: 'no_key' });
@@ -429,6 +435,180 @@
   briefingScriptWeights(lines, function (e, w) {
    weights = w;
    run();
+  });
+  return true;
+ }
+
+ /* ══ v0.0.6.n RECOMMENDATION 1 — the /with-timestamps alignment parser ══
+  * ElevenLabs responds with alignment.characters plus
+  * character_start_times_seconds / character_end_times_seconds. This walks
+  * the character stream, splits on whitespace boundaries and returns one
+  * [startMs, endMs] pair PER WORD in utterance order — the exact `wt` array
+  * stored on the clip entry and consumed by the karaoke clock. A trailing
+  * punctuation character keeps its word's window (no zero-width words). */
+ function parseAlignmentToWordTimings(alignment, text) {
+  var out = [];
+  try {
+   if (!isObj(alignment)) return null;
+   var chars = alignment.characters;
+   var starts = alignment.character_start_times_seconds;
+   var ends = alignment.character_end_times_seconds;
+   if (typeof chars !== 'string' || !Array.isArray(starts) || !Array.isArray(ends)) return null;
+   var n = Math.min(chars.length, starts.length, ends.length);
+   if (!n) return null;
+   var i, ch, s, e, curStart = -1, lastEnd = -1, sawWord = false;
+   for (i = 0; i < n; i++) {
+    ch = chars.charAt(i);
+    s = Number(starts[i]);
+    e = Number(ends[i]);
+    if (!(s >= 0) || !(e >= s)) continue;
+    if (/\s/.test(ch)) {
+     if (sawWord) { out.push([Math.round(curStart * 1000), Math.round(lastEnd * 1000)]); sawWord = false; curStart = -1; }
+     continue;
+    }
+    if (!sawWord) { sawWord = true; curStart = s; lastEnd = e; }
+    else { lastEnd = e; }
+   }
+   if (sawWord) out.push([Math.round(curStart * 1000), Math.round(lastEnd * 1000)]);
+   /* The alignment must cover the SAME word count as the spoken sentence —
+      a mismatch means the parser must not guess (null falls back to ww). */
+   var words = str(text).split(/\s+/).filter(function (w) { return !!w; });
+   if (!out.length || out.length !== words.length) return null;
+   return out;
+  } catch (e) { return null; }
+ }
+
+ /* ══ v0.0.6.n FIX 2 — the Direct Vault-to-Briefing Live Synthesis Bridge ═
+  * ensureBriefingAndGuideVoices(): the one entry point every trigger calls.
+  * Law: ONLY on the creator's own unlocked device with real stored keys —
+  * never in any automated gate/lab (allowAutoGen). Checks the four Project
+  * Overview beats (_intro_male_1..4) AND the four guide steps against the
+  * LIVE BRIEFING_SENTENCES (the weekly {W} counter included), synthesizes
+  * the delta through the real ElevenLabs keys (primary → backup failover),
+  * injects the fresh clips into the live session (SDP.Speech.injectClips),
+  * primes the sdp-audio-clips CacheStorage with their playable URLs and
+  * queues the GitHub commit — the unbreakable Studio ↔ Briefing pipeline. */
+ var BRIDGE_FLAG = 'sdp.studio.vaultUnlocked';
+ var bridgeBusy = false;
+ function vaultSessionActive() {
+  try { return global.sessionStorage && global.sessionStorage.getItem(BRIDGE_FLAG) === '1'; } catch (e) { return false; }
+ }
+ function markVaultSession() {
+  try { if (global.sessionStorage) global.sessionStorage.setItem(BRIDGE_FLAG, '1'); } catch (e) {}
+ }
+ /* The live status surface: #studioBriefingVoiceBar sits at the top of the
+    Lecturer Studio and narrates every phase of the bridge. */
+ function paintBriefingVoiceBar(state, detail) {
+  var bar = byId('studioBriefingVoiceBar');
+  if (!bar) return false;
+  var lines = {
+   idle: '🎙 Project Overview & Guide voices are checked automatically on unlock — or press Generate below.',
+   checking: '🎙 Checking Project Overview & Guide Voices… Synthesizing with ElevenLabs (George British Male) + Groq/Gemini Timing…',
+   ok: '✓ Project Overview (4/4) & Guide (4/4) Voices Synced to GitHub & Live Cache!',
+   noop: '✓ Project Overview & Guide voices already up to date (live weekly counter checked).',
+   nokey: '⚠ Add the ElevenLabs key (Step 1) — the briefing narrates with the pinned British-male device voice until then.',
+   busy: '🎙 Bridge already running — one moment…',
+   error: '✗ Briefing voice bridge failed — check the key pool and retry with the Generate button.'
+  };
+  var s = lines[state] ? state : 'idle';
+  bar.setAttribute('data-state', s);
+  bar.textContent = lines[s] + (detail ? ' ' + str(detail) : '');
+  try {
+   if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('briefing_voice_bridge', { state: s, detail: str(detail || '') });
+  } catch (e0) {}
+  return true;
+ }
+ function briefingVoiceDelta() {
+  /* The exact drift check: text equality against the LIVE sentences, so a
+     weekly {W} bump or an edited beat means a re-synthesis. */
+  var out = { intro: [], guide: [], total: 0 };
+  var steps = introSteps(), i, entry, k;
+  for (i = 0; i < steps.length; i++) {
+   k = steps[i].key;
+   entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
+   if (!entry || !str(entry.b64) || str(entry.text) !== steps[i].text) out.intro.push(k);
+  }
+  for (i = 0; i < GUIDE_KEYS.length; i++) {
+   k = GUIDE_KEYS[i];
+   entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
+   if (!entry || !str(entry.b64)) out.guide.push(k);
+  }
+  out.total = out.intro.length + out.guide.length;
+  return out;
+ }
+ function primeClipCache(entries) {
+  /* Best-effort CacheStorage prime: the playable blob URL of each fresh
+     clip is PUT into sdp-audio-clips so the very next briefing replay is
+     served from the live cache, never a stale older-version entry. */
+  try {
+   if (!global.caches || !global.caches.open) return false;
+   var SPEECH = global.SDP && global.SDP.Speech ? global.SDP.Speech : null;
+   global.caches.open('sdp-audio-clips').then(function (cache) {
+    var chain = Promise.resolve();
+    Object.keys(entries).forEach(function (k) {
+     chain = chain.then(function () {
+      var url = '';
+      try { if (SPEECH && SPEECH.playableUrlFor) url = SPEECH.playableUrlFor(entries[k]); } catch (e1) {}
+      if (!url) return null;
+      return cache.put(new Request(url, { cache: 'reload' }), new Response(entries[k].b64 ? ('data:audio/mpeg;base64,' + entries[k].b64) : '', { headers: { 'Content-Type': 'audio/mpeg' } })).catch(function () {});
+     });
+    });
+   }).catch(function () {});
+   return true;
+  } catch (e) { return false; }
+ }
+ function ensureBriefingAndGuideVoices(opts, cb) {
+  cb = cb || noop;
+  opts = opts || {};
+  var source = str(opts.source || 'manual');
+  if (!ST.unlocked && !vaultSessionActive()) { cb(new Error('locked'), null); return false; }
+  if (!allowAutoGen()) { cb(new Error('gates'), null); return false; }
+  if (!trimmedKey(str(resolveElevenKey()))) {
+   if (source === 'unlock' || source === 'button' || source === 'briefing-open') paintBriefingVoiceBar('nokey');
+   cb(new Error('no_key'), { stage: 'no_key' });
+   return false;
+  }
+  if (bridgeBusy) {
+   paintBriefingVoiceBar('busy');
+   cb(new Error('busy'), { stage: 'busy' });
+   return false;
+  }
+  loadVoicePack(function () {
+   var delta = briefingVoiceDelta();
+   if (!delta.total && !opts.force) {
+    if (source === 'unlock' || source === 'button') paintBriefingVoiceBar('noop');
+    cb(null, { made: 0, stage: 'noop' });
+    return;
+   }
+   bridgeBusy = true;
+   paintBriefingVoiceBar('checking');
+   autoSynthesizeBriefingAndGuide({ source: source, noCommit: !!opts.noCommit, force: !!opts.force }, function (err, info) {
+    bridgeBusy = false;
+    if (err && str(err.message) === 'no_key') {
+     paintBriefingVoiceBar('nokey');
+     cb(err, { stage: 'no_key' });
+     return;
+    }
+    if (err) {
+     paintBriefingVoiceBar('error', err.message);
+     cb(err, { stage: 'error' });
+     return;
+    }
+    var made = info && info.made ? info.made : 0;
+    /* Live-session injection + cache prime: the fresh beats are playable
+       on the VERY NEXT briefing open, without any reload. */
+    try {
+     var fresh = {};
+     var ks = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'].concat(GUIDE_KEYS);
+     for (var i = 0; i < ks.length; i++) {
+      if (isObj(ST.voicePack.clips[ks[i]]) && str(ST.voicePack.clips[ks[i]].b64)) fresh[ks[i]] = ST.voicePack.clips[ks[i]];
+     }
+     if (global.SDP && SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(fresh);
+     primeClipCache(fresh);
+    } catch (e1) {}
+    paintBriefingVoiceBar('ok');
+    cb(null, { made: made, stage: 'done' });
+   });
   });
   return true;
  }
@@ -1052,13 +1232,14 @@
        system clips are auto-checked (and the missing delta synthesized
        when an ElevenLabs key is configured). */
     autoEnsureSystemClips({ source: 'unlock', quiet: true }, noop);
-    /* v0.0.6.m FIX 1 Step C: the creator unlocked the vault — if the
-       briefing/guide beats are missing entirely, the full real-API
-       orchestrator (Step A weights + Step B ElevenLabs + auto-commit) runs
-       immediately so every student device gets the real British male voice. */
-    if (!isObj(ST.voicePack.clips['_intro_male_1']) || !str(ST.voicePack.clips['_intro_male_1'] ? ST.voicePack.clips['_intro_male_1'].b64 : '')) {
-      autoSynthesizeBriefingAndGuide({ source: 'unlock', noCommit: false }, noop);
-    }
+    /* v0.0.6.n FIX 2 — Trigger 1 (Instant on PIN Unlock): the creator
+       unlocked the vault — the device-local session cache of the active keys
+       is stamped and the direct Studio ↔ Briefing bridge runs IMMEDIATELY
+       with the live status bar (#studioBriefingVoiceBar), so the Project
+       Overview beats + guide steps are synthesized with the real keys,
+       injected into the live session, cached, and synced to GitHub. */
+    markVaultSession();
+    ensureBriefingAndGuideVoices({ source: 'unlock' }, noop);
    });
    cb(null, ST.secrets);
   }
@@ -1127,13 +1308,14 @@
      paintClipTable();
      /* v0.0.6.m Pillar 2: unlock auto-checks the essential system clips. */
      autoEnsureSystemClips({ source: 'unlock', quiet: true }, noop);
-    /* v0.0.6.m FIX 1 Step C: the creator unlocked the vault — if the
-       briefing/guide beats are missing entirely, the full real-API
-       orchestrator (Step A weights + Step B ElevenLabs + auto-commit) runs
-       immediately so every student device gets the real British male voice. */
-    if (!isObj(ST.voicePack.clips['_intro_male_1']) || !str(ST.voicePack.clips['_intro_male_1'] ? ST.voicePack.clips['_intro_male_1'].b64 : '')) {
-      autoSynthesizeBriefingAndGuide({ source: 'unlock', noCommit: false }, noop);
-    }
+    /* v0.0.6.n FIX 2 — Trigger 1 (Instant on PIN Unlock): the creator
+       unlocked the vault — the device-local session cache of the active keys
+       is stamped and the direct Studio ↔ Briefing bridge runs IMMEDIATELY
+       with the live status bar (#studioBriefingVoiceBar), so the Project
+       Overview beats + guide steps are synthesized with the real keys,
+       injected into the live session, cached, and synced to GitHub. */
+    markVaultSession();
+    ensureBriefingAndGuideVoices({ source: 'unlock' }, noop);
     });
     /* SYNC-07 completion: a local */
     autoPublishVault(envelope);
@@ -1708,6 +1890,18 @@
   return securityBarMarkup() +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
+   /* v0.0.6.n FIX 2 — Trigger 3: the dedicated 1-click bridge control and
+      its live status bar sit at the VERY TOP of the Lecturer Studio: force
+      regenerate + preview the 4 Project Overview beats and 4 guide steps
+      with the stored keys anytime, and watch the GitHub & live-cache sync. */
+   '<section id="studioCardBriefingVoices" class="studio-card studio-card-briefing-voices">' +
+   '<h4 class="studio-h4"><span class="studio-step-tag">STUDIO ↔ BRIEFING BRIDGE</span>Project Overview &amp; Guide Voices</h4>' +
+   '<div class="chip-row studio-bridge-row">' +
+   btn('btnStudioBriefingVoices', '🎙 Generate &amp; Sync Project Overview + Guide Voices Now', 'btn-primary') +
+   btn('btnPreviewBriefingBeat', '▶ Preview Beat 1', 'btn-ghost') +
+   '</div>' +
+   '<p id="studioBriefingVoiceBar" class="studio-briefing-voice-bar" role="status" aria-live="polite" data-state="idle">🎙 Project Overview &amp; Guide voices are checked automatically on unlock — or press Generate below.</p>' +
+   '</section>' +
    /* R7 (F7): words first — editing vocabulary is the daily job. Card order */
    wordsCardMarkup() +
    '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
@@ -2203,20 +2397,54 @@
   },
   btnGenIntroClips: function () {
    withBusy('btnGenIntroClips', function (d) {
-    /* v0.0.6.m FIX 1: the explicit Generate button runs the FULL
-       orchestrator — Step A (Groq/Gemini/OpenRouter syllable weights) then
-       Step B (real ElevenLabs George synthesis + auto-commit to GitHub) for
-       the 4 briefing beats, the 4 guide steps and the _cmd_* cues. The
-       backup ElevenLabs key takes over the moment the primary credits run
-       out; a missing key leaves the pinned British-male Web Speech tier in
-       place (never a fabricated clip). */
-    autoSynthesizeBriefingAndGuide({ source: 'button' }, function (err, info) {
+    /* v0.0.6.n: the Advanced-Tools button now routes through the SAME
+       direct bridge (live status bar + live-session injection + cache
+       prime + GitHub sync) as the top-of-studio 1-click control. */
+    ensureBriefingAndGuideVoices({ source: 'button' }, function (err, info) {
      d();
      if (err && str(err.message) === 'no_key') return;
      if (err) { msg(' Project Briefing voice failed · ' + quotaError(err), 'bad'); return; }
      msg(' Project Briefing & Guide voices ready · ' + (info ? info.made : 0) + ' new · ' + INTRO_VOICE.name, 'ok');
     });
    });
+  },
+  btnStudioBriefingVoices: function () {
+   /* v0.0.6.n FIX 2 — Trigger 3: the 1-tap control at the top of the
+      Lecturer Studio. force:true regenerates the beats even when the
+      weekly drift check says they are current. */
+   withBusy('btnStudioBriefingVoices', function (d) {
+    var run = function (force) {
+     ensureBriefingAndGuideVoices({ source: 'button', force: force }, function (err, info) {
+      d();
+      if (err && str(err.message) === 'no_key') return;
+      if (err && str(err.message) === 'busy') return;
+      if (err) { msg(' Bridge failed · ' + quotaError(err), 'bad'); return; }
+      msg(' Project Overview & Guide voices synced (GitHub + live cache) · ' + ((info && info.made) || 0) + ' new', 'ok');
+     });
+    };
+    var delta = { total: 0 };
+    try { delta = briefingVoiceDelta(); } catch (e0) {}
+    if (!delta.total) {
+     /* Up to date — a forced regenerate still honors the 1-tap intent. */
+     try {
+      if (global.SDP && SDP.Views && global.confirm && global.confirm('Project Overview & Guide voices are already up to date.\\n\\nForce a full regeneration with the stored ElevenLabs keys now?')) { run(true); return; }
+     } catch (e1) {}
+     paintBriefingVoiceBar('noop');
+     return;
+    }
+    run(false);
+   });
+  },
+  btnPreviewBriefingBeat: function () {
+   /* Plays the committed Beat 1 through the exact briefing tier so the
+      creator hears the real George voice right inside the Studio. */
+   try {
+    if (global.SDP && SDP.Speech && SDP.Speech.playBriefingStep) {
+     SDP.Speech.playBriefingStep(0, (introSteps()[0] || {}).text || '', function (res) {
+      paintBriefingVoiceBar(res && res.autoplayBlocked ? 'idle' : 'ok', '· Beat 1 preview');
+     }, {});
+    }
+   } catch (e) { msg(' Preview failed — unlock and generate the voices first.', 'bad'); }
   },
   btnDownloadDiagZip: function () {
    withBusy('btnDownloadDiagZip', function (d) {
@@ -3618,7 +3846,12 @@ function priorIPAFor(w) {
      edits the 30 Dictation Words by hand. */
   autoEnsureSystemClips({ source: 'publish' }, function () {
     /* v0.0.6.m FIX 1: Publish & Sync also completes any missing briefing/guide audio through the real API before the push. */
-    autoSynthesizeBriefingAndGuide({ source: 'publish' }, noop);
+    ensureBriefingAndGuideVoices({ source: 'publish' }, noop);
+    /* v0.0.6.n cache-bust law: a publish must also purge any stale
+       briefing/guide clip left in the local audio cache. */
+    try {
+      if (global.SDP && SDP.Sync && SDP.Sync.purgeStaleBriefingClips) SDP.Sync.purgeStaleBriefingClips();
+    } catch (eP) {}
    var payloads = buildPublishPayloads(currentWords(), {});
    /* D19: refuse a broken payload */
    var problems = publishChecklist(payloads, { requireVault: false });
@@ -4179,8 +4412,20 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       British male (stability 0.55 / similarity_boost 0.80 / style 0.25). */
    var vs = attempt === 1 ? { stability: 0.5, similarity_boost: 0.75 } : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
    if (introMode) vs = { stability: 0.55, similarity_boost: 0.80, style: 0.25 };
+   /* v0.0.6.n RECOMMENDATION 1: the briefing/guide beats FIRST attempt
+      ElevenLabs' timestamped endpoint — the response carries the exact
+      character alignment (characters / character_start_times_seconds /
+      character_end_times_seconds), parsed into per-word [startMs, endMs]
+      boundaries (wt) for the frame-accurate karaoke clock. Any failure
+      falls back seamlessly to the standard endpoint. */
+   var url = genUrl;
+   var wantTs = false;
+   if (introMode) {
+     url = genUrl + '/with-timestamps';
+     wantTs = true;
+   }
    try {
-    global.fetch(genUrl, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' }, body: JSON.stringify({ text: item.text, model_id: genModel, voice_settings: vs }) })
+    global.fetch(url, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: wantTs ? 'application/json' : 'audio/mpeg' }, body: JSON.stringify({ text: item.text, model_id: genModel, voice_settings: vs }) })
      .then(function (res) {
       var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
       if (!res || !res.ok) {
@@ -4188,14 +4433,34 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        if (st === 429 && attempt < 1) { global.setTimeout(function () { requestClip(item, key, done, attempt + 1); }, 5000); return null; }
        throw withStatus(new Error('tts_failed'), st || 0);
       }
+      if (wantTs) return res.json ? res.json().then(function (j) { return { ts: j }; }) : null;
       return res.arrayBuffer ? res.arrayBuffer() : null;
-     }).then(function (buffer) {
-      if (buffer === null) return;
-      if (!buffer) throw new Error('empty_audio');
-      var b64 = arrayBufferToBase64(buffer);
+     }).then(function (payload) {
+      if (payload === null) return;
+      if (payload && payload.ts) {
+       /* /with-timestamps: base64 audio + alignment in one JSON body. */
+       var j = payload.ts;
+       var b64ts = str(j.audio_base64 || j.audio || j.b64 || '');
+       var align = isObj(j.normalized_alignment) ? j.normalized_alignment : (isObj(j.alignment) ? j.alignment : null);
+       if (!b64ts || !align) {
+        /* Malformed timestamped body → seamless standard-endpoint retry. */
+        requestClip(item, key, done, attempt + 1);
+        return;
+       }
+       var wt = parseAlignmentToWordTimings(align, item.text);
+       done(null, {
+        b64: b64ts, text: str(item.text), bytes: Math.floor(b64ts.length * 3 / 4),
+        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
+        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
+        wt: wt
+       });
+       return;
+      }
+      if (!payload) throw new Error('empty_audio');
+      var b64 = arrayBufferToBase64(payload);
       if (!b64) throw new Error('encode_failed');
       done(null, {
-       b64: b64, text: str(item.text), bytes: buffer.byteLength,
+       b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel)
       });
@@ -4985,6 +5250,7 @@ function setStudioWords(list, source) {
   setup: setup,
   lock: lock,
   isUnlocked: isUnlocked,
+  allowAutoGen: allowAutoGen,
   /* v0.0.6.d (D2): the five-field re-enrichment rule, exposed for the */
   __mergeEnrichRecordForGate: mergeEnrichRecord,
   guessPartOfSpeech: guessPartOfSpeech,
@@ -5031,6 +5297,12 @@ function setStudioWords(list, source) {
   /* v0.0.6.m FIX 1: the real-API briefing/guide orchestrator. */
   autoSynthesizeBriefingAndGuide: autoSynthesizeBriefingAndGuide,
   briefingScriptWeights: briefingScriptWeights,
+  /* v0.0.6.n FIX 2: the direct Studio ↔ Briefing bridge surface. */
+  ensureBriefingAndGuideVoices: ensureBriefingAndGuideVoices,
+  parseAlignmentToWordTimings: parseAlignmentToWordTimings,
+  briefingVoiceDelta: briefingVoiceDelta,
+  vaultSessionActive: vaultSessionActive,
+  paintBriefingVoiceBar: paintBriefingVoiceBar,
   missingSystemClips: missingSystemClips,
   essentialSystemClipKeys: function () { return ESSENTIAL_SYSTEM_CLIPS.slice(); },
   paintReviewsDrawer: paintReviewsDrawer,

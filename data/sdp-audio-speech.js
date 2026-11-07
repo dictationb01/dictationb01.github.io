@@ -847,7 +847,10 @@
     }
     if (typeof global.fetch !== 'function') { state.manifestRequested = false; bindManifestRetry(); cb(new Error('no_fetch')); return; }
     try {
-      global.fetch('./data/elevenlabs-audio.json?t=' + nowMs(), { cache: 'no-store' })
+      /* v0.0.6.n cache-bust law: the pack fetch carries the release version
+         AND the tick with cache:'no-store' — a stale cached manifest from an
+         earlier release can never be served after the s29 SW takes over. */
+      global.fetch('./data/elevenlabs-audio.json?v=0.0.6.n&t=' + nowMs(), { cache: 'no-store' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { cb(null, applyManifest(data)); }, function () {
           state.manifestRequested = false;

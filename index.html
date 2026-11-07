@@ -9,7 +9,7 @@
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player v0.0.6.m — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player v0.0.6.n — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -535,7 +535,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">v0.0.6.m</span>
+      <span id="sdpVerPill">v0.0.6.n</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -544,8 +544,12 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.m</span></li>
-      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-06</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.n</span></li>
+      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-07</span></li>
+      <!-- v0.0.6.n Pillar 1: the weekly release note lives HERE in About —
+         changelog information — so it takes 0px away from the spacious
+         #briefingLyrics reading stage. The DOM id contract is preserved. -->
+      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (v0.0.6.n) — Spacious Project Overview reading stage · Studio ↔ Briefing multi-API voice bridge (ElevenLabs /with-timestamps + Groq + Gemini + OpenRouter) · stale-audio cache purge · continuous lyrics progress</li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -640,7 +644,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <button id="btnGuideSpotClose" type="button" class="btn btn-primary">Close spotlight</button>
 </div>
 
-<!-- v0.0.6.m Pillar 1: the PROJECT-FIRST executive briefing — a dynamic
+<!-- v0.0.6.n Pillar 1: the PROJECT-FIRST executive briefing — a dynamic
    Oct-22 weekly counter (auto-bumping week label), the 100% E2EE privacy
    law inside Beat 2, word-by-word karaoke flow inside every beat, real
    committed British-male intro clips (_intro_male_1..4) and the fresh-Chrome
@@ -649,25 +653,29 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    countdown finishes. -->
 <div id="briefingModal" class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle" aria-hidden="true" hidden>
  <div class="modal-card briefing-card">
+  <!-- v0.0.6.n Pillar 1: a sleek MINIMAL 2-line header — the eyebrow row and
+     the bulky purple #briefingUpdateBadge left the modal (the release note
+     now lives in Settings › About) so #briefingLyrics gets the breathing
+     room the creator demanded on 390x844 phones. -->
   <div class="modal-head briefing-head">
-   <div>
-    <p id="briefingEyebrow" class="briefing-eyebrow" data-i18n="briefingEyebrow">OPEN-SOURCE PROJECT BRIEFING · AUTOMATED SYSTEM</p>
+   <div class="briefing-head-txt">
     <h2 id="briefingTitle" data-i18n="briefingTitle">Smart Dictation · Project Overview</h2>
-    <p id="briefingPersona" class="briefing-persona">Automated Open-Source Web System · Started 2 Weeks Ago · $0 Cost</p>
+    <p id="briefingPersona" class="briefing-persona">Started 2 Weeks Ago (Oct 22) · $0 Open-Source System</p>
    </div>
    <span id="briefingBeatBadge" class="briefing-beat" aria-hidden="true">♪ synced</span>
   </div>
-  <p id="briefingUpdateBadge" class="briefing-update-badge" role="status">📦 Latest Weekly Update (v0.0.6.m) — Real API-driven briefing &amp; guide voices · frame-accurate lyrics flow · version-stamped briefing on every device · mic-release audio fix · 9-tap feedback with full UI/cache snapshot</p>
   <div id="briefingLyrics" class="briefing-lyrics" aria-live="polite"></div>
   <div class="briefing-progress" aria-hidden="true"><div id="briefingBar"></div></div>
   <button id="briefingTapPill" class="briefing-tap-pill" type="button" hidden>🔊 Tap Anywhere to Start Voice Briefing</button>
+  <!-- v0.0.6.n: the countdown is screen-reader-only — the visible seconds
+     live INSIDE the Continue button label, never in a bulky yellow box. -->
   <p id="briefingCount" class="briefing-count" role="status" aria-live="polite">Please listen / read (10s)…</p>
   <p class="briefing-links">
-   <a href="https://github.com/dictationb1/dictationb1.github.io" target="_blank" rel="noopener" data-i18n="briefingLinkCode">Inspect Open-Source Code on GitHub ↗</a>
-   <a href="https://github.com/dictationb1" target="_blank" rel="noopener" data-i18n="briefingLinkProfile">Explore Hansana's GitHub &amp; RDB Project ↗</a>
+   <a href="https://github.com/dictationb1/dictationb1.github.io" target="_blank" rel="noopener" data-i18n="briefingLinkCode">Code on GitHub ↗</a>
+   <a href="https://github.com/dictationb1" target="_blank" rel="noopener" data-i18n="briefingLinkProfile">Hansana's GitHub &amp; RDB ↗</a>
   </p>
   <div class="modal-foot briefing-foot">
-   <button id="btnBriefingContinue" type="button" class="btn btn-go" disabled data-i18n="briefingContinue">Continue to Smart Dictation →</button>
+   <button id="btnBriefingContinue" type="button" class="btn btn-go" disabled data-i18n="briefingContinue">Continue (10s)…</button>
    <button id="btnBriefingSkip" type="button" class="btn btn-ghost" disabled data-i18n="briefingSkip">Skip &amp; Enter App</button>
   </div>
  </div>
@@ -720,7 +728,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.m';
+ var TARGET = '0.0.6.n';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

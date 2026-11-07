@@ -21,6 +21,78 @@
   }
   function sync() { return SDP.Sync || null; }
 
+  /* v0.0.6.o ZERO CUT-OFF LAW: the text pin for a briefing clip. The studio
+     stamps each clip with 'sha1:<hex>' over text|voiceId|modelId; the speech
+     layer recomputes the same pin so a clip recorded for an OLD sentence
+     (different ending, different duration) is refused before it can ever
+     clip the final words of the current paragraph. Pure ES5, byte-for-byte
+     the SAME algorithm as studio.js sha1Hex()/clipContentHash() so both
+     sides always agree on the pin. */
+  function utf8BytesOf(text) {
+    var out = [], s = str(text), i, c, c2, cp;
+    for (i = 0; i < s.length; i++) {
+      c = s.charCodeAt(i);
+      if (c < 0x80) { out.push(c); continue; }
+      if (c < 0x800) { out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); continue; }
+      if (c >= 0xD800 && c <= 0xDBFF && i + 1 < s.length) {
+        c2 = s.charCodeAt(i + 1);
+        if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
+          i += 1;
+          cp = 0x10000 + ((c - 0xD800) << 10) + (c2 - 0xDC00);
+          out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
+          continue;
+        }
+      }
+      out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));
+    }
+    return out;
+  }
+  function hex8Of(n) {
+    var v = (n >>> 0).toString(16);
+    while (v.length < 8) v = '0' + v;
+    return v;
+  }
+  function sha1HexOf(text) {
+    function rl(n, c) { return (n << c) | (n >>> (32 - c)); }
+    function ad(x, y) { var l = (x & 0xFFFF) + (y & 0xFFFF); return (((x >> 16) + (y >> 16) + (l >> 16)) << 16) | (l & 0xFFFF); }
+    var bytes = utf8BytesOf(text);
+    var len = bytes.length, i, j, x;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    var hi = Math.floor(len / 536870912);
+    var lo = (len * 8) >>> 0;
+    bytes.push((hi >>> 24) & 0xFF, (hi >>> 16) & 0xFF, (hi >>> 8) & 0xFF, hi & 0xFF);
+    bytes.push((lo >>> 24) & 0xFF, (lo >>> 16) & 0xFF, (lo >>> 8) & 0xFF, lo & 0xFF);
+    var h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0;
+    var w = [], a, b, c, d, e, f, k, tmp;
+    for (i = 0; i < bytes.length; i += 64) {
+      for (j = 0; j < 16; j++) {
+        w[j] = (bytes[i + j * 4] << 24) | (bytes[i + j * 4 + 1] << 16) |
+          (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3];
+      }
+      for (j = 16; j < 80; j++) {
+        x = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+        w[j] = (x << 1) | (x >>> 31);
+      }
+      a = h0; b = h1; c = h2; d = h3; e = h4;
+      for (j = 0; j < 80; j++) {
+        if (j < 20) { f = (b & c) | ((~b) & d); k = 0x5A827999; }
+        else if (j < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1; }
+        else if (j < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; }
+        else { f = b ^ c ^ d; k = 0xCA62C1D6; }
+        tmp = ad(ad(rl(a, 5), ad(ad(f, e), k)), w[j]);
+        e = d; d = c; c = rl(b, 30); b = a; a = tmp;
+      }
+      h0 = ad(h0, a); h1 = ad(h1, b); h2 = ad(h2, c); h3 = ad(h3, d); h4 = ad(h4, e);
+    }
+    return hex8Of(h0) + hex8Of(h1) + hex8Of(h2) + hex8Of(h3) + hex8Of(h4);
+  }
+  function clipTextHash(text, voiceId, modelId) {
+    try {
+      return 'sha1:' + sha1HexOf(str(text) + '|' + str(voiceId || '') + '|' + str(modelId || ''));
+    } catch (e) { return ''; }
+  }
+
   /* ══ utterance text normaliser ═════════════════════════════════════════ */
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 — say() normalises first */
   function normalizeInput(input) {
@@ -51,6 +123,14 @@
     activeUtter: null,
     activeQueue: null,
     activeIndex: 0,
+    /* v0.0.6.o ZERO CUT-OFF LAW: EVERY live utterance is pinned in this
+       module-scope array until its onend fires. Chrome's GC can collect a
+       speak()ing utterance whose only reference was a single variable —
+       onend then never fires and the guard timer clips the final 2-3 words
+       of the sentence. An array holds every one, and it is emptied only from
+       onend/onerror, so the British-male briefing persona survives garbage
+       collection through the last word of each paragraph. */
+    activeUtterances: [],
     /* VOX-06: every concurrent selectProfessorVoice() caller waits here. */
     voiceWaiters: [],
     voiceResolved: false,
@@ -382,6 +462,28 @@
 
   /* ══ SDP.Speech.say — one utterance per array entry, never per character ══ */
   /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 say() normaliser */
+  /* v0.0.6.o ZERO CUT-OFF LAW: the GC-pinning array. Every live utterance
+     stays reachable from module scope until onend/onerror fires, so Chrome
+     can never collect it mid-sentence (the v0.0.6.n bug that clipped the
+     last 2-3 words of long briefing paragraphs). Bounded at 8: a stale
+     entry (a swallowed onend on a cancelled queue) is released by shift. */
+  function pinUtterance(u) {
+    if (!u) return;
+    if (!state.activeUtterances) state.activeUtterances = [];
+    for (var i = 0; i < state.activeUtterances.length; i++) {
+      if (state.activeUtterances[i] === u) return;
+    }
+    state.activeUtterances.push(u);
+    if (state.activeUtterances.length > 8) state.activeUtterances.shift();
+  }
+  function unpinUtterance(u) {
+    if (!u || !state.activeUtterances || !state.activeUtterances.length) return;
+    var out = [];
+    for (var i = 0; i < state.activeUtterances.length; i++) {
+      if (state.activeUtterances[i] !== u) out.push(state.activeUtterances[i]);
+    }
+    state.activeUtterances = out;
+  }
   function say(input, opts, cb) {
     if (typeof opts === 'function') { cb = opts; opts = {}; }
     opts = opts || {};
@@ -483,11 +585,26 @@
             if (advanced || myId !== state.queueId) return;
             /* VOX-02: onend is the primary driver. The guard only fires when a
                platform silently swallows onend, and it extends exactly once
-               while the engine still reports speech in flight. */
-            if (synth && (synth.speaking || synth.pending) && !guardExtended) {
-              guardExtended = true;
-              armGuard(1800);
-              return;
+               while the engine still reports speech in flight.
+               v0.0.6.o ZERO CUT-OFF LAW: for the briefing persona (and any
+               pinned utterance still in flight) the guard keeps re-arming
+               while the engine genuinely reports speaking/pending — a long
+               British-male paragraph is never clipped at its final words. */
+            if (synth && (synth.speaking || synth.pending)) {
+              if (state.activeUtterances && state.activeUtterances.length && !guardExtended) {
+                guardExtended = true;
+                armGuard(2200);
+                return;
+              }
+              if (state.activeUtterances && state.activeUtterances.length) {
+                armGuard(1800);
+                return;
+              }
+              if (!guardExtended) {
+                guardExtended = true;
+                armGuard(1800);
+                return;
+              }
             }
             advanced = true;
             state.activeUtter = null;
@@ -528,8 +645,10 @@
           if (state.guardTimer === guard) state.guardTimer = null;
           if (wordWatch) global.clearTimeout(wordWatch);
           if (state.wordWatchTimer === wordWatch) state.wordWatchTimer = null;
-          /* VOX-01: release the module-scope reference only when done. */
+          /* VOX-01: release the module-scope reference only when done.
+             v0.0.6.o: unpin from the GC-safe array too (bounded below). */
           if (state.activeUtter === utter) state.activeUtter = null;
+          unpinUtterance(utter);
           next();
         };
         utter.onerror = function () {
@@ -540,12 +659,16 @@
           if (wordWatch) global.clearTimeout(wordWatch);
           if (state.wordWatchTimer === wordWatch) state.wordWatchTimer = null;
           if (state.activeUtter === utter) state.activeUtter = null;
+          unpinUtterance(utter);
           next();
         };
-        /* VOX-01: keep the utterance (and its queue) reachable until it ends. */
+        /* VOX-01: keep the utterance (and its queue) reachable until it ends.
+           v0.0.6.o: pin EVERY live utterance in the module-scope array — the
+           single activeUtter reference was GC-fragile on long sentences. */
         state.activeUtter = utter;
         state.activeQueue = queue;
         state.activeIndex = at - 1;
+        pinUtterance(utter);
         state.speaking = true;
         state.utterStarted = false;
         startKeepAlive();
@@ -703,8 +826,22 @@
         });
       }
     } catch (e) { finish(false); return; }
-    /* Bounded: a broken URL must hand over to the next tier quickly. */
-    timer = global.setTimeout(function () { finish(false); }, Number(opts.timeoutMs) || 12000);
+    /* Bounded: a broken URL must hand over to the next tier quickly.
+       v0.0.6.o ZERO CUT-OFF LAW: while the element is GENUINELY playing
+       (!paused, !ended, currentTime > 0) the deadline keeps moving — the
+       ONLY legitimate finish is the element's real 'ended' event, so the
+       last words of a paragraph can never be clipped by a hard timeout. */
+    var deadlineMs = Number(opts.timeoutMs) || 12000;
+    timer = global.setTimeout(function deadline() {
+      if (done) return;
+      if (!el.paused && !el.ended && Number(el.currentTime) > 0) {
+        /* Real playback in flight: re-arm +1500ms and keep re-arming while
+           the element still speaks (a genuine 'ended' clears this timer). */
+        timer = global.setTimeout(deadline, 1500);
+        return;
+      }
+      finish(false);
+    }, deadlineMs);
     state.urlTimer = timer;
   }
 
@@ -850,7 +987,7 @@
       /* v0.0.6.n cache-bust law: the pack fetch carries the release version
          AND the tick with cache:'no-store' — a stale cached manifest from an
          earlier release can never be served after the s29 SW takes over. */
-      global.fetch('./data/elevenlabs-audio.json?v=0.0.6.n&t=' + nowMs(), { cache: 'no-store' })
+      global.fetch('./data/elevenlabs-audio.json?v=0.0.6.o&t=' + nowMs(), { cache: 'no-store' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) { cb(null, applyManifest(data)); }, function () {
           state.manifestRequested = false;
@@ -1077,6 +1214,24 @@
     if (!clips) return '';
     var n = Number(idx);
     var entry = clips['_intro_male_' + (n + 1)] || clips['intro.en.' + n] || null;
+    /* v0.0.6.o ZERO CUT-OFF LAW: a cached _intro_male_* clip may only play
+       when its stored text is EXACTLY the current sentence — a stale clip
+       recorded for an older script (different sentence endings / shorter
+       duration) is what cut off the end of each paragraph in v0.0.6.n. The
+       sha1 hash pins text|voiceId|modelId, so BOTH the text and the hash
+       must match before the clip is trusted. */
+    var want = null;
+    try {
+      if (global.SDP && SDP.Views && typeof SDP.Views.briefingSentences === 'function') {
+        var lines = SDP.Views.briefingSentences();
+        want = str(lines[n]);
+      }
+    } catch (eV) { want = null; }
+    if (entry && want && str(entry.text) !== want) return '';
+    if (entry && want) {
+      var wantHash = clipTextHash(want, entry.voiceId, entry.modelId);
+      if (str(entry.hash) && wantHash && str(entry.hash) !== wantHash) return '';
+    }
     return entryUrl(entry);
   }
   function playBriefingStep(stepIdx, stepText, cb, hooks) {
@@ -1109,7 +1264,12 @@
     }
     /* Tier 2: a brand-new Chrome session often has ZERO speechSynthesis
        voices and blocks speak() until the first gesture — that exact state
-       resolves autoplayBlocked (the tap pill), never a silent skip. */
+       resolves autoplayBlocked (the tap pill), never a silent skip.
+       v0.0.6.o ZERO CUT-OFF LAW: the briefing completion callback fires
+       only from the utterance's real onend (the utterance is pinned in the
+       GC-safe array); if the engine reports speaking/pending while the
+       guard timer fires, the guard keeps waiting — the final words of the
+       paragraph are never clipped and never skipped early. */
     var synth = global.speechSynthesis;
     var voiceCount = 0;
     try { if (synth && synth.getVoices) voiceCount = synth.getVoices().length; } catch (e0) {}
@@ -1416,6 +1576,9 @@
     loadManifest: loadManifest,
     reloadManifest: reloadManifest,
     injectClips: injectClips,
+    /* v0.0.6.o: the welcome stage primes THIS element inside the Continue
+       click gesture (muted=false, volume=1.0) so autoplay is unlocked. */
+    sharedAudioElement: function () { return sharedAudio(); },
     sharedAudio: sharedAudio,
     lastTier: function () { return state.lastTier; },
     lastTierName: lastTierName,

@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.n';
+    return '0.0.6.o';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -2915,7 +2915,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.n.beta';
+  var BETA_SUBVERSION = '0.0.6.o.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2926,12 +2926,18 @@
   }
   var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
-     committed clip text and the spoken sentence stay in drift-check sync. */
+     committed clip text and the spoken sentence stay in drift-check sync.
+     v0.0.6.o Pillar 2 — the creator's exact executive script: autonomous AI
+     agents hosted on his own system UPFRONT (Beat 1), practical IT knowledge
+     + critical thinking and problem-solving (never "limited formal IT
+     training"), the 100% E2EE privacy law with the feedback request, and the
+     open-source ecosystem with the RDP (Remote Desktop PC) project, dedicated
+     lab environment and flagship IT project. */
   var BRIEFING_SENTENCES = [
-    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system started on October 22 ({W} weeks ago) to make English dictation effortless and lag-free on any device.",
-    "Your privacy is one hundred percent protected: no personal data is ever shared, no unnecessary data is collected, and all session diagnostics and reviews are end-to-end encrypted.",
-    "Lecturers update classroom words anytime through the automated Lecturer Mode — and because I built this using critical thinking with limited formal IT training, please share a quick voice or text review after your session if you spot anything to improve.",
-    "Created by Hansana after A/L Combined Maths, Physics, and Chemistry — powered by autonomous AI agents on my own system alongside my GitHub RDB project and flagship IT project. Enjoy your session!"
+    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web system started on October 22 ({W} weeks ago), architected by Hansana and powered by autonomous AI agents hosted on his own system.",
+    "Engineered by combining practical IT knowledge with critical thinking and problem-solving skills, this platform runs automatically and lag-free on any phone or computer while allowing lecturers to update classroom word lists anytime through Lecturer Mode.",
+    "Your privacy is one hundred percent protected: no personal data is ever shared, no unnecessary data is collected, and every session review is end-to-end encrypted — so please share your quick feedback after each session to help improve the system.",
+    "You can inspect every line of code on GitHub alongside Hansana's Remote Desktop PC (RDP) project, dedicated lab environment, and upcoming flagship IT project — enjoy your dictation session!"
   ];
   function briefingSentence(i) {
     var n = Number(i);
@@ -3273,6 +3279,76 @@
     briefingNarrate(idx, briefingState.epoch);
     return true;
   }
+  /* ── v0.0.6.o Pillar 1 — the TWO-STAGE CINEMATIC ENTRY ──────────────────
+   * Stage 1 (#welcomeStage): the animated "Welcome to Smart Dictation Web
+   * App" splash. Stage 2 (#briefingStage): the Project Overview. The
+   * Continue click is the ONE gesture that unlocks autoplay: audio is primed
+   * inside the synchronous click handler, so Paragraph 1 starts speaking
+   * from Word 1 the moment the 320ms transition lands — the beat can never
+   * be skipped by a NotAllowedError race. */
+  function welcomePrimeAudioInGesture() {
+    /* Inside the click gesture: unmute + full volume + a silent resume of
+       speechSynthesis so Chrome/Safari consider the session user-activated
+       BEFORE Paragraph 1 calls play(). */
+    try {
+      var el = byId('sdpSharedAudio');
+      if (!el && SDP.Speech && SDP.Speech.sharedAudioElement) el = SDP.Speech.sharedAudioElement();
+      if (el) {
+        el.muted = false;
+        el.volume = 1.0;
+        try { el.play().then(function () { try { el.pause(); } catch (e1) {} }, function () {}); } catch (e0) {}
+      }
+    } catch (e) {}
+    try {
+      if (global.speechSynthesis) {
+        try { global.speechSynthesis.resume(); } catch (e1) {}
+        try { global.speechSynthesis.getVoices(); } catch (e2) {}
+      }
+    } catch (e) {}
+  }
+  function welcomeStageVisible() {
+    var w = byId('welcomeStage');
+    return !!(w && w.hidden === false);
+  }
+  function welcomeShowStage() {
+    var w = byId('welcomeStage'), b = byId('briefingStage');
+    if (!w || !b) return false;
+    if (w.classList) { w.classList.remove('is-leaving'); w.classList.remove('is-entering'); }
+    if (b.classList) b.classList.remove('is-entering');
+    w.hidden = false;
+    b.hidden = true;
+    return true;
+  }
+  function welcomeContinueToOverview() {
+    var w = byId('welcomeStage'), b = byId('briefingStage');
+    if (!w || !b || w.hidden) return false;
+    /* THE LAW: the audio unlock happens INSIDE this synchronous click
+       handler, before any transition timer, so the browser counts a real
+       user gesture for every later play()/speak(). */
+    welcomePrimeAudioInGesture();
+    briefingState.gestureArmed = true;
+    briefingState.waitGesture = false;
+    if (w.classList) w.classList.add('is-leaving');
+    var epoch = briefingState.epoch;
+    global.setTimeout(function () {
+      w.hidden = true;
+      if (w.classList) w.classList.remove('is-leaving');
+      b.hidden = false;
+      if (b.classList) b.classList.add('is-entering');
+      global.setTimeout(function () { if (b.classList) b.classList.remove('is-entering'); }, 360);
+      /* Stage 2 opens at the very top and narration starts STRICTLY at
+         Paragraph 1, Word 1 (idx === 0) — epoch-locked so no stale callback
+         from the welcome stage can ever skip Paragraph 1. */
+      briefingResetStageTop();
+      briefingState.idx = -1;
+      global.setTimeout(function () {
+        if (!briefingState.open || epoch !== briefingState.epoch) return;
+        briefingNarrate(0, epoch);
+      }, 90);
+    }, 320);
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('welcome_continue', { ver: APP_VERSION }); } catch (e) {}
+    return true;
+  }
   function briefingNarrate(idx, epoch) {
     if (!briefingState.open || epoch !== briefingState.epoch) return;
     if (idx >= BRIEFING_SENTENCES.length) { briefingFinishNarration(epoch); return; }
@@ -3282,15 +3358,42 @@
     resetBriefingWords(idx);
     var text = briefingSentence(idx);
     var advanced = false;
+    /* v0.0.6.o Pillar 3 — THE ZERO CUT-OFF LAW: the fallback guard may only
+       advance the beat when NOTHING is genuinely still speaking. While the
+       shared <audio> element is playing (paused === false, ended === false,
+       currentTime > 0) the guard is re-armed, because the ONLY legitimate
+       finish of a beat is the element's real 'ended' event (or the Web
+       Speech onend). The final words of a paragraph can never be clipped. */
+    var audioStillSpeaking = function () {
+      try {
+        var el = byId('sdpSharedAudio');
+        if (!el) return false;
+        if (el.paused || el.ended) return false;
+        return (Number(el.currentTime) > 0);
+      } catch (e) { return false; }
+    };
     var next = function () {
       if (advanced || epoch !== briefingState.epoch) return;
       advanced = true;
-      global.setTimeout(function () { briefingNarrate(idx + 1, epoch); }, 240);
+      /* Hold the final word highlighted (wordIdx = last) through a natural
+         320ms inter-paragraph breathing pause after 'ended' fires, so the
+         user SEES the last word spoken cleanly before the next paragraph. */
+      global.setTimeout(function () { briefingNarrate(idx + 1, epoch); }, 320);
     };
     /* The speech layer always calls back (clip, device voice or watchdog);
-       the parallel estimate timer is only a last-resort stall guard. */
+       the parallel estimate timer is only a last-resort stall guard — and it
+       stands down whenever real audio/utterance playback is in flight. */
     var guardMs = 2200 + (text.length * 95);
-    var guard = global.setTimeout(next, guardMs);
+    var guard = global.setTimeout(function runner() {
+      if (advanced || epoch !== briefingState.epoch) return;
+      if (audioStillSpeaking()) {
+        /* Real playback in flight: push the guard back 800ms and keep
+           pushing while the element is still speaking. Never cut it off. */
+        guard = global.setTimeout(runner, 800);
+        return;
+      }
+      next();
+    }, guardMs);
     var realNext = function () { global.clearTimeout(guard); next(); };
     var flowStarted = false;
     var startFlow = function (durSec) {
@@ -3425,6 +3528,19 @@
        the CSS smooth-scroll behaviour and re-asserts on the next frame, so
        no late focus/reflow can nudge the stage off zero. */
     briefingResetStageTop();
+    /* v0.0.6.o Pillar 1 — the TWO-STAGE law: a brand-new visitor (or any
+       device whose briefingSeen stamp is older than this release) first
+       meets the cinematic Welcome stage; the Continue click unlocks audio
+       inside the gesture and hands over to the Overview. A replay (the
+       Project Briefing button, beta channel) skips the welcome and goes
+       straight to the Overview — audio was already unlocked earlier in
+       that session's lifetime. */
+    if (opts.welcome) welcomeShowStage();
+    else {
+      var wStage = byId('welcomeStage'), bStage = byId('briefingStage');
+      if (wStage) wStage.hidden = true;
+      if (bStage) bStage.hidden = false;
+    }
     if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_open', { replay: !!opts.replay, beta: betaActive(), weeks: weeksSinceStart() }); } catch (e) {}
@@ -3443,7 +3559,13 @@
       }
     } catch (eBridge) {}
     var epoch = briefingState.epoch;
-    global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
+    /* v0.0.6.o: on the two-stage path the narration start is owned by
+       #btnWelcomeContinue (welcomeContinueToOverview), which fires it at
+       idx = 0 inside the click-gesture-unlocked epoch. Only the direct
+       (replay / beta) path narrates from here. */
+    if (!opts.welcome) {
+      global.setTimeout(function () { briefingNarrate(0, epoch); }, 350);
+    }
     return true;
   }
   function closeBriefing(viaButton) {
@@ -3933,6 +4055,9 @@
       bModal.addEventListener('pointerdown', function () { briefingGestureUnlock(); });
       bModal.addEventListener('click', function () { briefingGestureUnlock(); });
     }
+    /* v0.0.6.o Pillar 1 — the two-stage welcome: the Continue click unlocks
+       audio INSIDE the gesture and hands over to the Project Overview. */
+    on('btnWelcomeContinue', 'click', function () { welcomeContinueToOverview(); });
     paintFeedbackFab();
     return true;
   }
@@ -3971,8 +4096,12 @@
     paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
     /* v0.0.6.m Pillar 1: a brand-new visitor gets the Project Briefing first;
        the student guide follows the moment the briefing closes. Returning
-       students (any guide_seen stamp) are never interrupted again. */
-    if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true });
+       students (any guide_seen stamp) are never interrupted again.
+       v0.0.6.o: the boot path always opens the CINEMATIC WELCOME stage —
+       because briefingSeen() only matches THIS release, every existing
+       phone/PC and every brand-new visitor meets the animated splash and
+       unlocks audio through the Continue gesture. */
+    if (!briefingSeen() && !SDP.Data.guideSeen()) openBriefing({ fromBoot: true, welcome: true });
     else if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
     showToast();
     try { SDP.Sync.registerSW(); } catch (e) {}
@@ -4120,6 +4249,13 @@
     onBriefingBoundary: onBriefingBoundary,
     /* v0.0.6.n: the exact /with-timestamps word boundaries for the lab. */
     briefingWordTimings: briefingWordTimings,
+    /* v0.0.6.o: the live karaoke clock mode ('estimate' until the first real
+       onTick/onBoundary, then 'clock') so the lab can wait for the documented
+       estimate→clock handoff instead of guessing with a fixed sleep. */
+    briefingFlowMode: function () { var f = briefingFlowState(); return f && f.active ? f.mode : ''; },
+    /* v0.0.6.o: the two-stage cinematic welcome surface for the lab. */
+    welcomeStageVisible: welcomeStageVisible,
+    welcomeContinueToOverview: welcomeContinueToOverview,
     releaseFeedbackAudioLocks: releaseFeedbackAudioLocks,
     reviewVoiceActive: function () { return !!(reviewState.listening || reviewState.rec || reviewState.recog || reviewState.recStream); },
     betaSubversion: function () { return BETA_SUBVERSION; },

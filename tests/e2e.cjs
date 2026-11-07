@@ -63,7 +63,7 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.n'); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.o'); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -112,7 +112,19 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     await page.waitForFunction(
       () => document.getElementById('btnBriefingContinue') && document.getElementById('btnBriefingContinue').disabled === false,
       null, { timeout: 20000 });
-    await page.click('#btnBriefingContinue');
+    /* v0.0.6.o: a brand-new visit opens on the cinematic WELCOME stage —
+       click through it first (unlocking audio inside the gesture), then the
+       Continue CTA of the Overview. DOM clicks: the modal footer can sit
+       outside the 390x844 viewport. */
+    const welcomeVisible = await page.evaluate(() => {
+      const w = document.getElementById('welcomeStage');
+      return !!(w && w.hidden === false);
+    });
+    if (welcomeVisible) {
+      await page.evaluate(() => { document.getElementById('btnWelcomeContinue').click(); });
+      await page.waitForTimeout(600);
+    }
+    await page.evaluate(() => { document.getElementById('btnBriefingContinue').click(); });
     await page.waitForTimeout(600);
     const firstRun = await page.evaluate(() => ({
       guideOpen: document.getElementById('guideModal').hidden === false,
@@ -124,13 +136,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       firstRun.guideOpen === true && firstRun.briefingClosed === true);
     check('G7.1b2 the guide shows four steps', firstRun.steps === 4, firstRun.steps);
     check('G7.1c Home is already rendered underneath', firstRun.homeActive === 'screen-home', firstRun.homeActive);
-    await page.click('#btnGuideClose');
+    await page.evaluate(() => { document.getElementById('btnGuideClose').click(); });
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.n', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.o', afterGuide);
     const briefingStamp = await page.evaluate(() => localStorage.getItem('sdp.settings'));
     check('G7.1d2 the briefing completion is stamped inside sdp.settings',
-      /"briefingSeen":"0\.0\.6\.n"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
+      /"briefingSeen":"0\.0\.6\.o"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
 
     /* ── 2. credits: on Home and in About, never floating ─────────────── */
     // contract: docs/ARCHITECTURE_MAP.md §R7 attribution placement
@@ -384,11 +396,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.6\.n\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.6\.o\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.n', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.o', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

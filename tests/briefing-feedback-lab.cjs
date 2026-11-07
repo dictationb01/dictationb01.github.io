@@ -849,10 +849,22 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     /* ══ Exit ── */
     const fails = results.filter((r) => r.status === 'FAIL');
     if (fails.length) exitCode = 1;
+    /* CI observability: surface every failed check as a GitHub Actions
+       annotation so the failing assertion is readable from the check-run
+       API even when the raw job log blob is unreachable. */
+    if (process.env.GITHUB_ACTIONS && fails.length) {
+      fails.forEach(function (f) {
+        const msg = (f.test + ' — ' + (f.detail || 'failed')).replace(/\r?\n/g, ' ').slice(0, 600);
+        console.log('::error title=Lab check failed::' + msg);
+      });
+    }
     console.log(JSON.stringify(results, null, 2));
     console.log('\nLab briefing-feedback-lab.cjs — ' + (results.length - fails.length) + ' PASS / ' + fails.length + ' FAIL');
   } catch (e) {
     console.error('LAB FATAL', e);
+    if (process.env.GITHUB_ACTIONS) {
+      console.log('::error title=Lab fatal::' + String(e && e.stack || e).replace(/\r?\n/g, ' ').slice(0, 600));
+    }
     exitCode = 1;
   } finally {
     try { await browser.close(); } catch (e) {}

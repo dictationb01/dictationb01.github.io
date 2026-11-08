@@ -14,6 +14,7 @@ release; each assertion block cites its contract as `// contract: docs/...`.
 | G6 | `upgrade-browser.cjs` | Chromium upgrade v60 → 0.0.1.a: stale cache purge, preserved caches, single boot reload, offline shell |
 | G7 | `e2e.cjs` | Chromium student journeys: guide → Paper run → 24/30 self-check → retry missed, Typing run, legacy migration, Practice + Settings order |
 | G8 | `live-lab.cjs` | Chromium two-device sync: Studio publish on A lands on B without touching B's progress |
+| G13 | `arena-pre-pr-verify.cjs` | Mandatory pre-PR Arena.ai gate: cold-browser Beat-1 race (x2 fresh contexts, 1200 ms delayed pack), 131-clip unified SoniaNeural pack audit, cross-tab eleven-tier audio, git hygiene |
 | G9 | `audit-v42.cjs` | Audio priority chain, beat state text, one-utterance `Speech.say`, same-element `<audio>` replay |
 
 Run them all:

@@ -51,14 +51,14 @@ const BUDGET = {
   'assets/css/sdp-ui.css': 136000,
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
-  'data/sdp-data-sync.js': 121000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
-  'data/sdp-audio-speech.js': 82000, /* v0.0.6.r: +restoreLocalBriefingPack local-pack merge (Pillar 1) */
+  'data/sdp-data-sync.js': 150000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
+  'data/sdp-audio-speech.js': 86000, /* v0.0.6.r: +restoreLocalBriefingPack local-pack merge (Pillar 1) */
   'data/sdp-dictation-engine.js': 78000,
-  'data/sdp-ui-views.js': 262000, /* v0.0.6.s: +allBeatsDone full-briefing gate lock + authentic first-person script */
+  'data/sdp-ui-views.js': 266000, /* v0.0.6.t: +allBeatsDone full-briefing gate lock + authentic first-person script */
   /* v0.0.6.m: the studio gained the reviews/telemetry drawer and
      autoEnsureSystemClips; the ceiling moved with it, in lockstep with
      audit-v42.cjs. */
-  'data/studio.js': 271000, /* v0.0.6.s: G9.3a lockstep — identical to audit-v42.cjs and the monolith threshold */
+  'data/studio.js': 281000, /* v0.0.6.t: G9.3a lockstep — identical to audit-v42.cjs and the monolith threshold */
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
@@ -72,15 +72,15 @@ const BUDGET = {
      (_intro_male_1..4) baked in by the v0.0.6.q release so every student
      device hears the briefing on Wi-Fi OR weak mobile data — the ceiling
      stays 4.6 MB in lockstep. */
-  'data/elevenlabs-audio.json': 4900000, /* v0.0.6.s: the 49/75/84/74-word authentic first-person beats */
+  'data/elevenlabs-audio.json': 4900000, /* v0.0.6.t: the 49/75/84/74-word authentic first-person beats */
   'data.html': 34000,
   'data/index.html': 34000,
-  'sw.js': 17500, /* v0.0.6.s: +SWR release-change revalidation guard + syncrev stamp */
+  'sw.js': 17500, /* v0.0.6.t: +SWR release-change revalidation guard + syncrev stamp */
   'manifest.webmanifest': 4000,
   'docs/ARCHITECTURE_MAP.md': 56000,
   'docs/UI_COMPONENT_GUIDE.md': 52000,
   'docs/SYNC_AND_DATA_CONTRACT.md': 52000,
-  'docs/CHANGELOG_LEDGER.md': 112000,
+  'docs/CHANGELOG_LEDGER.md': 120000,
   'docs/DAILY_UPGRADE_PROMPT_TEMPLATE.md': 26000
 };
 /* contract: docs/ARCHITECTURE_MAP.md §H1 — preserved read-only payloads are
@@ -273,10 +273,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.m ships ver 27 / schema 26 / settingsRev 42
-    const ok = v.ver === 33 && v.appVersion === '0.0.6.s' && v.version === '0.0.6.s' &&
-      v.schema === 33 && v.settingsRev === 49 && String(v.session) === '8';
-    record('version.json carries the v0.0.6.s schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1795000000000', Number(v.syncRev) === 1795000000000, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 34 && v.appVersion === '0.0.6.t' && v.version === '0.0.6.t' &&
+      v.schema === 34 && v.settingsRev === 50 && String(v.session) === '8';
+    record('version.json carries the v0.0.6.t schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1796000000000', Number(v.syncRev) === 1796000000000, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -296,8 +296,8 @@ function pending(p) {
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
-    record('config.json carries v0.0.6.s version fields',
-      c.ver === 33 && c.appVersion === '0.0.6.s' && c.version === '0.0.6.s' && c.schema === 33 && c.settingsRev === 49,
+    record('config.json carries v0.0.6.t version fields',
+      c.ver === 34 && c.appVersion === '0.0.6.t' && c.version === '0.0.6.t' && c.schema === 34 && c.settingsRev === 50,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -445,7 +445,7 @@ function pending(p) {
   record('index.html loads the six modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.s boot target', html.indexOf("'0.0.6.s'") > 0 || html.indexOf('"0.0.6.s"') > 0);
+  record('index.html declares the v0.0.6.t boot target', html.indexOf("'0.0.6.t'") > 0 || html.indexOf('"0.0.6.t"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -530,9 +530,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.s target', /var TARGET = '0.0.6.s'/.test(html));
-    record('service worker pins the v0.0.6.s s34 shell caches',
-      /SW_VERSION = 'sdp-v0.0.6.s-s34'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.s-s34-shell'/.test(sw));
+    record('index.html boots at the v0.0.6.t target', /var TARGET = '0.0.6.t'/.test(html));
+    record('service worker pins the v0.0.6.t s34 shell caches',
+      /SW_VERSION = 'sdp-v0.0.6.t-s34'/.test(sw) && /SHELL_CACHE = 'sdp-v0.0.6.t-s34-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -548,32 +548,32 @@ function pending(p) {
     record('settings ship offline clip download (btnDownloadClips)', /id="btnDownloadClips"/.test(html));
     if (exists('data/version.json')) {
       var v = JSON.parse(readText('data/version.json'));
-      record('version.json pins buildDate 2026-11-07', v.buildDate === '2026-11-07');
+      record('version.json pins buildDate 2026-11-08', v.buildDate === '2026-11-08');
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.s',
-      /"start_url":"\.\/\?v=0.0.6.s/.test(man) &&
-      (man.match(/v=0.0.6.s/g) || []).length >= 3, (man.match(/v=0.0.6.s/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.6.t',
+      /"start_url":"\.\/\?v=0.0.6.t/.test(man) &&
+      (man.match(/v=0.0.6.t/g) || []).length >= 3, (man.match(/v=0.0.6.t/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.s';
+    var app = '0.0.6.t';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 33;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 34;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 33,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 33
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 34,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 34
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.s / ver 33',
+    record('D15 all seven versioned surfaces agree on 0.0.6.t / ver 34',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.s header',
-      pack.version === '0.0.6.s' && pack.appVersion === '0.0.6.s' && pack.ver === 33 && pack.schema === 33 &&
-      pack.settingsRev === 49 && Number(pack.syncRev) === 1795000000000 &&
+    record('voice pack carries the v0.0.6.t header',
+      pack.version === '0.0.6.t' && pack.appVersion === '0.0.6.t' && pack.ver === 34 && pack.schema === 34 &&
+      pack.settingsRev === 50 && Number(pack.syncRev) === 1796000000001 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.settingsRev, pack.syncRev]));
     /* v0.0.6.q PILLAR 2 law: the shipped pack carries EXACTLY the 135
@@ -622,7 +622,7 @@ function pending(p) {
           if (e.text === want && e.hash === wantHash) pinned += 1;
           else bad.push(key + (e.text === want ? ':hash' : ':text'));
         }
-        record('LB4c every George beat pins the exact live v0.0.6.s sentence + sha1 (the zero cut-off law accepts all 4)',
+        record('LB4c every George beat pins the exact live v0.0.6.t sentence + sha1 (the zero cut-off law accepts all 4)',
           pinned === 4, bad.join(', ') + ' pinned=' + pinned);
       })();
     })();
@@ -707,7 +707,7 @@ function pending(p) {
     record('A6c the floating Beta stamp and Beta pill are gone for good',
       !/id="sdpBetaStamp"/.test(html) && !/id="sdpBetaPill"/.test(html) &&
       !/\.beta-stamp/.test(css) && !/\.beta-pill/.test(css) &&
-      /BETA_SUBVERSION = '0\.0\.6\.s\.beta'/.test(views) &&
+      /BETA_SUBVERSION = '0\.0\.6\.t\.beta'/.test(views) &&
       /function betaActive/.test(views) && /function applyBetaChannel/.test(views));
   })();
 
@@ -752,7 +752,7 @@ function pending(p) {
       !/!briefingSeen\(\) && !SDP\.Data\.guideSeen\(\)/.test(views));
     record('CB6 the relocated Project Briefing button replays the briefing anytime',
       html.indexOf('id="btnCreatorNote"') > 0 && /openBriefing\(\{ replay: true \}\)/.test(views));
-    record('CB7 v0.0.6.s authentic first-person creator overview: Beat 1 is Hansana himself ("I, Hansana" + "on my own system" + critical-thinking testbed), Beat 2 carries the free-for-Sri-Lanka social mission + never-for-money vow, Beat 3 states the TRUE A/L fact (completed A/Ls, IT not taken as a subject, 2-month open-source database stabilization + RDP/lab/flagship tools), Beat 4 keeps strict privacy + 100% E2EE AES-GCM + low-mobile-data + Lecturer Mode + right-side Start Dictation handover — and neither "on his own system" nor "without A/L" can ever return',
+    record('CB7 v0.0.6.t authentic first-person creator overview: Beat 1 is Hansana himself ("I, Hansana" + "on my own system" + critical-thinking testbed), Beat 2 carries the free-for-Sri-Lanka social mission + never-for-money vow, Beat 3 states the TRUE A/L fact (completed A/Ls, IT not taken as a subject, 2-month open-source database stabilization + RDP/lab/flagship tools), Beat 4 keeps strict privacy + 100% E2EE AES-GCM + low-mobile-data + Lecturer Mode + right-side Start Dictation handover — and neither "on his own system" nor "without A/L" can ever return',
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
         var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
@@ -835,7 +835,7 @@ function pending(p) {
       /function briefingTimeSlices/.test(views) && /PUNCT_PAUSE_MS/.test(views) &&
       /paintBriefingClockAt/.test(views));
     record('LB5 the Latest Weekly Update badge names the release (relocated to Settings › About in v0.0.6.q)',
-      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.s\)/.test(html) &&
+      html.indexOf('id="briefingUpdateBadge"') > 0 && /Latest Weekly Update \(0\.0\.6\.t\)/.test(html) &&
       !/#briefingModal[\s\S]{0,900}briefingUpdateBadge/.test(html));
     /* ══ v0.0.6.q PILLAR 1 — the LOW-MOBILE-DATA cache-first voice pack ══ */
     record('P1a the boot fetch law: fetchJSON splits cache-first boot reads (?v=<release>, cache:default) from fresh pointer reads (no-store + tick + 2500ms)',
@@ -845,15 +845,15 @@ function pending(p) {
       /fetchJSON\('\.\/data\/version\.json', function \(e, d\) \{ settle\('version', e, d\); \}, \{ fresh: true \}\)/.test(sync) &&
       /fetchJSON\('\.\/data\/session\.json', function \(e, d\) \{ settle\('session', e, d\); \}\)/.test(sync) &&
       /\{ fresh: true \}\);[\s\S]{0,400}elevenlabs-audio/.test(speech + sync) === false || true);
-    record('P1b the manifest boot fetch is cache-first: ./data/elevenlabs-audio.json?v=0.0.6.s with NO tick and cache:default (a weak 2G link is never asked to re-download the pack)',
-      /elevenlabs-audio\.json\?v=0\.0\.6\.s' \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(speech) &&
+    record('P1b the manifest boot fetch is cache-first: ./data/elevenlabs-audio.json?v=0.0.6.t with NO tick and cache:default (a weak 2G link is never asked to re-download the pack)',
+      /elevenlabs-audio\.json\?v=0\.0\.6\.t' \+ \(fresh \? '&t=' \+ nowMs\(\) : ''\)/.test(speech) &&
       /cache: fresh \? 'no-store' : 'default'/.test(speech) &&
       /\{ fresh: force === true \}/.test(speech) &&
-      !/elevenlabs-audio\.json\?v=0\.0\.6\.s&t=/.test(speech));
+      !/elevenlabs-audio\.json\?v=0\.0\.6\.t&t=/.test(speech));
     var swText1 = readText('sw.js');
     record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s34 shell (instant <30ms cache hit, then a non-blocking background revalidation on an unchanged release)',
-      /SW_VERSION = 'sdp-v0\.0\.6\.s-s34'/.test(swText1) &&
-      /var SW_RELEASE = '0\.0\.6\.s';/.test(swText1) &&
+      /SW_VERSION = 'sdp-v0\.0\.6\.t-s34'/.test(swText1) &&
+      /var SW_RELEASE = '0\.0\.6\.t';/.test(swText1) &&
       /function staleWhileRevalidateDataJson/.test(swText1) &&
       /x-sdp-release/.test(swText1) &&
       /isPointer = \/\\\/data\\\/version\\\.json\$\/i\.test\(url\.pathname\)/.test(swText1) &&
@@ -904,7 +904,7 @@ function pending(p) {
         return okCat && okSettings && okDelta && okStamp && okNoConfirm && okPack;
       })());
     /* ══ v0.0.6.r PILLAR 1+2 — the CLONED-VOICE PERSISTENCE + DARK-LYRICS LAWS ══ */
-    record('P1g the v0.0.6.s cloned-voice persistence & dark-lyrics laws: packClipsForDisk() preserves wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName, commitVoicePack() publishes data/elevenlabs-audio.json + data/version.json atomically under ONE monotonic syncRev, primes the local pack cache (local-briefing-pack.json + the s33 SHELL_CACHE + sdp.briefing.meta) and never calls reloadManifest(true) after a commit, requestClip() prefers j.alignment over j.normalized_alignment, parseAlignmentToWordTimings() never returns null on a non-empty alignment (proportional map), and .b-line.on paints true dark-lyrics contrast (#94A3B8 unspoken → #0F172A spoken)',
+    record('P1g the v0.0.6.t cloned-voice persistence & dark-lyrics laws: packClipsForDisk() preserves wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName, commitVoicePack() publishes data/elevenlabs-audio.json + data/version.json atomically under ONE monotonic syncRev, primes the local pack cache (local-briefing-pack.json + the s33 SHELL_CACHE + sdp.briefing.meta) and never calls reloadManifest(true) after a commit, requestClip() prefers j.alignment over j.normalized_alignment, parseAlignmentToWordTimings() never returns null on a non-empty alignment (proportional map), and .b-line.on paints true dark-lyrics contrast (#94A3B8 unspoken → #0F172A spoken)',
       (function () {
         var okPack = /if \(Array\.isArray\(c\.wt\) && c\.wt\.length\) row\.wt = c\.wt;/.test(studio) &&
           /if \(Array\.isArray\(c\.ww\) && c\.ww\.length\) row\.ww = c\.ww;/.test(studio) &&
@@ -941,6 +941,38 @@ function pending(p) {
           /#0369A1/.test(css) && /#E0F2FE/.test(css);
         return okPack && okCommit && okAlign && okCss;
       })());
+    /* ══ v0.0.6.t PILLARS 1+3B+4 — the MANUAL-PLAY / 1MB-WALL / RP-LEXICON REGRESSION ══ */
+    record('P1h the v0.0.6.t manual-play + large-pack sync + British RP laws: playWord() NEVER refuses an explicit user play (allowWhenPaused / manualPlay) on the 30 Words (#screen-dict), Practice (#screen-practice) and testVoice() surfaces while the engine stays pause-gated for background beats (G10.7d), Sync.getFileSha() carries the parent-directory /contents/data fallback for files over GitHub\u2019s 1 MB wall, and CAMBRIDGE_B1_RP_LEXICON + RP_TTS_OVERRIDES ship the British RP /@d\u02c8v\u025c\u02d0.t\u026as.m@nt/ ad-ver-tiss-ment for "advertisement"',
+      /* Pillar 1: the manual-play law */
+      /var manual = !!\(opts && \(opts\.allowWhenPaused === true \|\| opts\.manualPlay === true\)\);/.test(speech) &&
+      /function Refuse\(\) \{\s*if \(manual\) return false;/.test(speech) &&
+      /allowWhenPaused: manual/.test(speech) &&
+      /if \(!manual && SDP\.Engine && SDP\.Engine\.isPaused && SDP\.Engine\.isPaused\(\)\) return;/.test(speech) &&
+      /playWord\(first, \{ volume: conf\.volume, allowWhenPaused: true, manualPlay: true \}/.test(speech) &&
+      /say\(\['Professor voice ready \u00b7 ' \+ spoken\], \{ lang: 'en-GB', rate: 0\.92, pitch: 1\.03, volume: conf\.volume, allowWhenPaused: true \}/.test(speech) &&
+      /SDP\.Speech\.playWord\(word, \{ allowWhenPaused: true, manualPlay: true \}, noop\)/.test(views) &&
+      /* Pillar 3B: the 1 MB wall fallback + the Git Data API large-blob path */
+      /var tooLarge = status === 403 \|\| status === 422 \|\| \(data && Array\.isArray\(data\.errors\)\);/.test(sync) &&
+      /Sync\.getFileShaViaDir\(path, token, cb\); return;/.test(sync) &&
+      /getFileShaViaDir: function \(path, token, cb\)/.test(sync) &&
+      /commitViaGitDataApi: function \(path, base64Content, message, token, cb\)/.test(sync) &&
+      /\(status === 413 \|\| status === 422 \|\| status === 502\) && !flags\.gitDataApi/.test(sync) &&
+      /* Pillar 3C: the 25 s mobile-data budgets for the voice pack */
+      /if \(\/elevenlabs-audio\\\.json\/i\.test\(url\)\) budgetMs = 25000;/.test(sync) &&
+      /\/elevenlabs-audio\\\.json\/i\.test\(path\) \? 25000 : 5000\)/.test(sync) &&
+      /* Pillar 4: the Cambridge B1 British RP lexicon + the RP TTS overrides */
+      /var CAMBRIDGE_B1_RP_LEXICON = \{/.test(sync) &&
+      sync.indexOf('"advertisement": { p: "/\u0259d\u02c8v\u025c\u02d0.t\u026as.m\u0259nt/"') > 0 &&
+      sync.indexOf('ttsHint: "ad-ver-tiss-ment"') > 0 &&
+      /var RP_TTS_OVERRIDES = \{/.test(studio) &&
+      studio.indexOf("'advertisement': 'ad-ver-tiss-ment'") > 0 &&
+      studio.indexOf("'schedule': 'shed-yool'") > 0 &&
+      /* buildQueue speaks ttsText while stamping the canonical spelling */
+      /ttsText: str\(w\.ttsHint \|\| RP_TTS_OVERRIDES\[text\.toLowerCase\(\)\] \|\| text\)/.test(studio) &&
+      /text: str\(item\.ttsText \|\| item\.text\), model_id: model/.test(studio) &&
+      /* hydrateClips: fresh b64 always refreshes the data URL + the bare alias */
+      /if \(canBlobUrl\(\) && v && isObj\(v\) && v\.b64\) v\.url = 'data:audio\/mpeg;base64,' \+ v\.b64;/.test(speech) &&
+      /if \(\/\^words\\\.\/\.test\(n\)\) \{/.test(speech));
     /* ══ v0.0.6.q PILLAR 2 — the anti-7-second minimum-dwell law ══ */
     record('P2a a paragraph may NEVER advance in under 1.8s: the minimum-dwell law paces every beat over its natural duration even when audio is muted or TTS fails',
       /function briefingEstimateDurMs/.test(views) &&
@@ -961,11 +993,11 @@ function pending(p) {
         }
         return ok === 4;
       })());
-    /* ══ v0.0.6.q PILLAR 2 — the PARAGRAPH-1 COMPLETION GATE LOCK ══ */
-    record('P2c the HARD FULL-BRIEFING (all 4 paragraphs) completion gate law: the 10s gate timer starts ONLY inside welcomeContinueToOverview() (never on #welcomeStage), and #btnBriefingSkip + #btnBriefingContinue stay disabled until gateLeft <= 0 AND beat1Done === true AND allBeatsDone === true (latched inside briefingFinishNarration after the final word of Paragraph 4)',
+    /* ┠ v0.0.6.t PILLAR 2 — the PARAGRAPH-1 COMPLETION GATE ┠ */
+    record('P2c the PARAGRAPH-1 COMPLETION GATE LAW: the 10s gate timer starts ONLY inside welcomeContinueToOverview() (never on #welcomeStage), and #btnBriefingSkip (Exit) + #btnBriefingContinue (▶ Start Dictation →) unlock the instant gateLeft <= 0 AND beat1Done === true (latched inside next() when Paragraph 1 finishes its final word), while Paragraphs 2–4 keep narrating — allBeatsDone is telemetry-only (briefingFinishNarration)',
       /var briefingState = \{[^}]*beat1Done: false[^}]*allBeatsDone: false[^}]*\};/.test(views) &&
       /function briefingCheckGateUnlock/.test(views) &&
-      /if \(briefingState\.gateLeft > 0 \|\| !briefingState\.beat1Done \|\| !briefingState\.allBeatsDone\) \{/.test(views) &&
+      /if \(briefingState\.gateLeft > 0 \|\| !briefingState\.beat1Done\) \{/.test(views) &&
       /* Rule A: the ONLY gateTimer setInterval lives inside welcomeContinueToOverview (openBriefing must NOT arm it) */
       (function () {
         var at = views.indexOf('function openBriefing');
@@ -975,29 +1007,28 @@ function pending(p) {
         return /briefingState\.gateTimer = global\.setInterval\(briefingTickGate, 1000\);/.test(wBlock) &&
           !/briefingState\.gateTimer = global\.setInterval\(briefingTickGate, 1000\);/.test(block);
       })() &&
-      /* Rule B: beat1Done latches when Beat 1 finishes its final word (inside next() at idx === 0) — v0.0.6.s only repaints the label, the buttons stay locked until allBeatsDone */
-      /if \(idx === 0\) \{\s*briefingState\.beat1Done = true;\s*paintBriefingCtaLabel\(\);/.test(views) &&
-      /* allBeatsDone latches ONLY inside briefingFinishNarration (after Paragraph 4's final word) */
+      /* Rule B: the instant Beat 1 (idx === 0) finishes its final word, beat1Done latches AND briefingCheckGateUnlock() runs directly — the buttons unlock right as Paragraph 1 completes */
+      /if \(idx === 0\) \{\s*briefingState\.beat1Done = true;\s*briefingCheckGateUnlock\(\);/.test(views) &&
+      /* allBeatsDone latches ONLY inside briefingFinishNarration (telemetry-only after Paragraph 4's final word) */
       /function briefingFinishNarration\(epoch\) \{[\s\S]*?briefingState\.beat1Done = true;\s*\n\s*briefingState\.allBeatsDone = true;\s*\n\s*briefingCheckGateUnlock\(\);/.test(views) &&
-      /* the 95s whole-briefing safety ceiling so a dead browser can never trap a student */
-      /\}, 95000\);/.test(views) &&
-      /* forward seeks are refused while the briefing is locked */
-      /if \(!briefingState\.allBeatsDone && Number\(idx\) > briefingState\.idx\) return false;/.test(views) &&
-      /* the CTA label states: countdown, finishing-Paragraph-1, Paragraph N of 4, unlocked */
+      /* the 25s beat1 safety ceiling so a dead browser can never trap a student behind the Paragraph-1 gate */
+      /\}, 25000\);/.test(views) &&
+      /* forward seeks are refused ONLY while Paragraph 1 is still locked */
+      /if \(!briefingState\.beat1Done && Number\(idx\) > briefingState\.idx\) return false;/.test(views) &&
+      /* the CTA label states: countdown, finishing-Paragraph-1, then the unlocked ▶ Start Dictation → */
       /briefingContinueBeat1: 'Start Dictation \(finishing Paragraph 1…\)'/.
       test(views) &&
-      /briefingContinueAll: 'Start Dictation \(Paragraph \{p\} of 4…\)'/.test(views) &&
+      /briefingContinue', '▶ Start Dictation →'/.test(views) &&
       /else if \(!briefingState\.beat1Done\) \{/.test(views) &&
-      /else if \(!briefingState\.allBeatsDone\) \{/.test(views) &&
-      /* closeBriefing + openBriefing honour the FULL-briefing lock */
-      /if \(briefingState\.gateLeft > 0 \|\| !briefingState\.beat1Done \|\| !briefingState\.allBeatsDone\) return false;/.test(views) &&
+      /* closeBriefing + openBriefing honour the Paragraph-1 lock */
+      /if \(briefingState\.gateLeft > 0 \|\| !briefingState\.beat1Done\) return false;/.test(views) &&
       /briefingState\.beat1Done = false;\s*\n\s*briefingState\.allBeatsDone = false;/.test(views) &&
       /* the live flag is exported for the lab */
       /briefingAllBeatsDone: briefingAllBeatsDone/.test(views) &&
       /function briefingAllBeatsDone\(\) \{ return !!briefingState\.allBeatsDone; \}/.test(views) &&
       /* the briefing beats play at a crisp broadcast cadence (1.12) */
       /rate: 1\.12/.test(speech));
-    record('P2d the authentic first-person Beat 1 (49 words, "I, Hansana … on my own system … critical thinking and problem-solving skills can go") speaks COMPLETELY in ~11–18.5 s of wall time at the crisp 1.12× cadence — the full-briefing lock holds until Paragraph 4 ends',
+    record('P2d the authentic first-person Beat 1 (49 words, "I, Hansana … on my own system … critical thinking and problem-solving skills can go") speaks COMPLETELY in ~11–18.5 s of wall time at the crisp 1.12× cadence — and the Paragraph-1 unlock fires the moment it ends',
       (function () {
         var m = /var BRIEFING_SENTENCES = \[([\s\S]*?)\];/.exec(views);
         var body = m ? m[1].replace(/",\s*\n\s*\+\s*"/g, '",\n"').replace(/"\s*\n\s*\+\s*"/g, '') : '';
@@ -1005,7 +1036,7 @@ function pending(p) {
         var beat1 = (beats[0] || '').replace(/^"|"$/g, '').replace('{W}', '2');
         var words = beat1.split(/\s+/).filter(Boolean).length;
         /* 45..55 words at the crisp broadcast cadence ≈ 11–18.5 s of media
-           time; the shipped v0.0.6.s preload measures 17084 ms (durMs 17084). */
+           time; the shipped v0.0.6.t preload measures 17215 ms (durMs 17215). */
         var durOk = false;
         try {
           var e1 = pack.clips['_intro_male_1'];
@@ -1013,7 +1044,6 @@ function pending(p) {
         } catch (eDur) { durOk = false; }
         return /^Welcome/.test(beat1) && /skills can go\.$/.test(beat1) && words >= 45 && words <= 55 && durOk;
       })());
-    /* ══ v0.0.6.q PILLAR 3 — Exit LEFT / highlighted Start Dictation RIGHT ══ */
     record('P3a the briefing footer ships Exit (#btnBriefingSkip) on the LEFT and the highlighted ▶ Start Dictation → (#btnBriefingContinue) on the RIGHT (DOM order + class)',
       (function () {
         var foot = /<div class="modal-foot briefing-foot">([\s\S]*?)<\/div>/.exec(html);

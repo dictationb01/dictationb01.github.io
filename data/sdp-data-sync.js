@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.s';
-  SDP.build = '2026-11-07';
-  SDP.ver = 33;
+  SDP.version = '0.0.6.t';
+  SDP.build = '2026-11-08';
+  SDP.ver = 34;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.s';
-  var SCHEMA = 33;
-  var SETTINGS_REV = 49;
+  var APP_VERSION = '0.0.6.t';
+  var SCHEMA = 34;
+  var SETTINGS_REV = 50;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1368,10 +1368,212 @@
     /* A hung network must never freeze the boot. contract: docs/ARCHITECTURE_MAP.md §R6
        Fresh pointer reads (version.json) get the tight 2500 ms mobile-data
        budget; cache-first boot reads keep the classic 6 s window because the
-       SW cache answers long before it ever fires. */
-    global.setTimeout(function () { finish(new Error('timeout')); }, fresh ? 2500 : 6000);
+       SW cache answers long before it ever fires.
+       v0.0.6.t PILLAR 3C: the multi-megabyte data/elevenlabs-audio.json gets
+       a 25 s budget on BOTH legs — a fresh Cloned-Voice pack download on weak
+       mobile data was aborted mid-flight by the old 2.5 s / 5 s walls, so
+       other devices never received the creator's new briefing voice. */
+    var budgetMs = fresh ? 2500 : 6000;
+    if (/elevenlabs-audio\.json/i.test(url)) budgetMs = 25000;
+    global.setTimeout(function () { finish(new Error('timeout')); }, budgetMs);
   }
 
+  /* v0.0.6.t PILLAR 4B — the CAMBRIDGE B1 BRITISH RP LEXICON. The shipped
+     data/session.json is SHA-256 locked (931037f7…), so its broken US IPA,
+     wrong meanings and template sentences are corrected HERE, at runtime,
+     keyed by the lower-cased word. Each entry carries p/pos/m/s (the clean
+     Cambridge B1 British values), the optional ttsHint RP respelling, and a
+     `d` pin of the EXACT shipped session.json defaults: a field is only
+     replaced while the runtime value still equals its shipped default, so
+     any custom Lecturer edit in Studio is 100% preserved. */
+  var CAMBRIDGE_B1_RP_LEXICON = {
+    "entertainment": { p: "/ˌen.təˈteɪn.mənt/", pos: "noun.",
+      m: "Shows, films, music, or performances that give people pleasure and enjoyment.",
+      s: "There is plenty of live entertainment in the city centre every weekend.",
+      d: { p: "/ˈɛn.tɚˈteɪn.mənt/", pos: "noun.",
+        m: "An activity designed to give pleasure, enjoyment, diversion, amusement, or relaxation to an audience, no matter whether the audience participates passively as in watching opera or a movie, or actively as in games.",
+        s: "We saw a entertainment near the station." } },
+    "media": { p: "/ˈmiː.di.ə/", pos: "noun.",
+      m: "Television, radio, newspapers, and the internet as ways of sharing news and information.",
+      s: "The event was widely reported across social media and television.",
+      d: { p: "/ˈmiːdɪə/", pos: "noun.",
+        m: "The middle layer of the wall of a blood vessel or lymph vessel which is composed of connective and muscular tissue.",
+        s: "We saw a media near the station." } },
+    "action": { p: "/ˈæk.ʃən/", pos: "noun.",
+      m: "Exciting physical events in a story, film, or play.",
+      s: "My brother loves watching exciting action films at the cinema.",
+      d: { p: "/ˈæk.ʃən/", pos: "noun.",
+        m: "Something done so as to accomplish a purpose.",
+        s: "Knead bread with a rocking action." } },
+    "actress": { p: "/ˈæk.trəs/", pos: "noun.",
+      m: "A woman who performs a character on stage, on television, or in films.",
+      s: "The young actress won an award for her performance in the play.",
+      d: { p: "/ˈak.tɹəs/", pos: "noun.",
+        m: "A female who performs on the stage or in films.",
+        s: "We saw a actress near the station." } },
+    "admission": { p: "/ədˈmɪʃ.ən/", pos: "noun.",
+      m: "The money that you pay to enter a museum, concert, or theatre.",
+      s: "Museum admission is free for school students on Fridays.",
+      d: { p: "/ædˈmɪʃ.ən/", pos: "noun.",
+        m: "The act or practice of admitting.",
+        s: "I request admission for two adults" } },
+    "adventure": { p: "/ədˈven.tʃə/", pos: "noun.",
+      m: "An unusual, exciting, and sometimes daring experience or journey.",
+      s: "The children read an exciting adventure story about exploring an island.",
+      d: { p: "/ˈædventɜː/", pos: "n.",
+        m: "A adventure.",
+        s: "We saw a adventure near the station." } },
+    "advertisement": { p: "/ədˈvɜː.tɪs.mənt/", pos: "noun.",
+      m: "A notice, picture, or short film telling people about a product, job, or service.",
+      s: "We saw an advertisement for the summer music festival in the newspaper.", ttsHint: "ad-ver-tiss-ment",
+      d: { p: "/ədˈvɜːtɪsmənt/", pos: "noun.",
+        m: "A commercial solicitation designed to sell some commodity, service or similar.",
+        s: "Companies try to sell their products using advertisements in form of placards, television spots and print publications." } },
+    "audience": { p: "/ˈɔː.di.əns/", pos: "noun.",
+      m: "The group of people gathered together in one place to watch or listen to a play, film, or concert.",
+      s: "The audience clapped loudly at the end of the concert.",
+      d: { p: "/ˈɔːdi.əns/", pos: "noun.",
+        m: "A group of people within hearing; specifically, a large gathering of people listening to or watching a performance, speech, etc.",
+        s: "We joined the audience just as the lights went down." } },
+    "bestseller": { p: "/ˌbestˈsel.ə/", pos: "noun.",
+      m: "A new book or other product that has bought by a very large number of people.",
+      s: "Her latest detective novel quickly became an international bestseller.",
+      d: { p: "/ˈbestselə/", pos: "noun.",
+        m: "A book or other product that has sold in large numbers.",
+        s: "We saw a bestseller near the station." } },
+    "cartoon": { p: "/kɑːˈtuːn/", pos: "noun.",
+      m: "An animated film or a humorous drawing in a newspaper or magazine.",
+      s: "My little sister watches her favourite cartoon every Saturday morning.",
+      d: { p: "/kɑːˈtuːn/", pos: "noun.",
+        m: "A humorous drawing, often with a caption, or a strip of such drawings.",
+        s: "We saw a cartoon near the station." } },
+    "celebrity": { p: "/səˈleb.rə.ti/", pos: "noun.",
+      m: "A famous person, especially in entertainment, television, or sport.",
+      s: "A well-known television celebrity opened the new school library.",
+      d: { p: "/sɪˈlɛbɹɪti/", pos: "noun.",
+        m: "A rite or ceremony.",
+        s: "We saw a celebrity near the station." } },
+    "channel": { p: "/ˈtʃæn.əl/", pos: "noun.",
+      m: "A television station and the programmes that it broadcasts.",
+      s: "Which television channel is showing the wildlife documentary tonight?",
+      d: { p: "/ˈtʃænəl/", pos: "noun.",
+        m: "The physical confine of a river or slough, consisting of a bed and banks.",
+        s: "The water coming out of the waterwheel created a standing wave in the channel." } },
+    "circus": { p: "/ˈsɜː.kəs/", pos: "noun.",
+      m: "A travelling show with acrobats, clowns, and performers, usually held in a large tent.",
+      s: "The circus will be performing in our town next week.",
+      d: { p: "/ˈsɜːkəs/", pos: "noun.",
+        m: "A traveling company of performers that may include acrobats, clowns, trained animals, and other novelty acts, that gives shows usually in a circular tent.",
+        s: "The circus will be in town next week." } },
+    "classical music": { p: "/ˌklæs.ɪ.kəl ˈmjuː.zɪk/", pos: "noun.",
+      m: "Serious traditional music written by composers such as Mozart and Beethoven.",
+      s: "Listening to classical music helps me concentrate while studying.",
+      d: { p: "/ˈklæsɪkæl ˈmʌsɪk/", pos: "noun.",
+        m: "Music of the classical period; the music of Mozart, Haydn, etc; the musical period before the romantic.",
+        s: "The story was very classical music to read." } },
+    "comedy": { p: "/ˈkɒm.ə.di/", pos: "noun.",
+      m: "A play, film, or television programme that is intended to make people laugh.",
+      s: "We watched a very funny British comedy at the theatre last night.",
+      d: { p: "/ˈkɒmədi/", pos: "noun.",
+        m: "A choric song of celebration or revel, especially in Ancient Greece.",
+        s: "Why would you be watching comedy when there are kids starving right now?" } },
+    "competition": { p: "/ˌkɒm.pəˈtɪʃ.ən/", pos: "noun.",
+      m: "An organized event in which people try to win a prize by being the best.",
+      s: "She entered the school singing competition and won first prize.",
+      d: { p: "/ˌkɒmpəˈtɪʃən/", pos: "noun.",
+        m: "The action of competing.",
+        s: "The competition for this job is strong." } },
+    "concert": { p: "/ˈkɒn.sət/", pos: "noun.",
+      m: "A live performance of music by one or more musicians or singers.",
+      s: "We bought tickets for the Friday evening orchestra concert.",
+      d: { p: "/ˈkɒnsət/", pos: "noun.",
+        m: "Agreement in a design or plan; union formed by mutual communication of opinions and views; accordance in a scheme; harmony; simultaneous action.",
+        s: "I'm going to the rock concert on Friday." } },
+    "disco": { p: "/ˈdɪs.kəʊ/", pos: "noun.",
+      m: "A party or club where people dance to recorded pop music.",
+      s: "The school organized a disco in the main hall at the end of term.",
+      d: { p: "/ˈdɪskəʊ/", pos: "noun.",
+        m: "A genre of dance music that was popular in the 1970s, characterized by elements of soul music with a strong Latin-American beat and often accompanied by pulsating lights.",
+        s: "We saw a disco near the station." } },
+    "display": { p: "/dɪˈspleɪ/", pos: "noun.",
+      m: "A public arrangement of things or a show for people to look at and enjoy.",
+      s: "Everyone gathered in the park to watch the colourful gymnastics display.",
+      d: { p: "/ˈdɪspleɪ/", pos: "adj.",
+        m: "Having the quality of being display.",
+        s: "The story was very display to read." } },
+    "documentary": { p: "/ˌdɒk.jəˈmen.tər.i/", pos: "noun.",
+      m: "A film or television programme that gives real facts about a subject.",
+      s: "We watched an interesting documentary about ocean wildlife.",
+      d: { p: "/ˌdɒk.jəˈmɛn.tɹi/", pos: "noun.",
+        m: "A film, TV program, publication etc. which presents a social, political, scientific or historical subject in a factual or informative manner.",
+        s: "The story was very documentary to read." } },
+    "drawing": { p: "/ˈdrɔː.ɪŋ/", pos: "noun.",
+      m: "A picture made with a pencil, pen, or crayon rather than paint.",
+      s: "She showed the art teacher a detailed pencil drawing of the old station.",
+      d: { p: "/ˈdɹɔ.(w)ɪŋ(ɡ)/", pos: "verb.",
+        m: "To move or develop something.",
+        s: "She had to draw upon her experience to solve the problem." } },
+    "exhibition": { p: "/ˌek.sɪˈbɪʃ.ən/", pos: "noun.",
+      m: "A public display of paintings, photographs, or other objects of interest.",
+      s: "Our class visited a photography exhibition at the national gallery.",
+      d: { p: "/ˈekshɪbɪʃn/", pos: "n.",
+        m: "A exhibition.",
+        s: "We saw a exhibition near the station." } },
+    "festival": { p: "/ˈfes.tɪ.vəl/", pos: "noun.",
+      m: "A special day or period with public concerts, plays, and celebrations.",
+      s: "Thousands of visitors came to the annual summer music festival.",
+      d: { p: "/ˈfɛstəvəl/", pos: "noun.",
+        m: "An event or community gathering, usually staged by a local community, which centers on some theme, sometimes on some unique aspect of the community.",
+        s: "The story was very festival to read." } },
+    "film maker": { p: "/ˈfɪlm ˌmeɪ.kə/", pos: "noun.",
+      m: "A person who directs or produces films for the cinema or television.",
+      s: "The young film maker won a prize for his short documentary.",
+      d: { p: "/ˈfɪlm ˈmækə/", pos: "n.",
+        m: "A film maker.",
+        s: "We saw a film maker near the station." } },
+    "fireworks": { p: "/ˈfaɪə.wɜːks/", pos: "noun.",
+      m: "Small containers that explode with bright colours and loud noises in the night sky.",
+      s: "Bright fireworks lit up the harbour at midnight.",
+      d: { p: "/ˈfaɪ̯.ə.wɜːks/", pos: "noun.",
+        m: "A device using gunpowder and other chemicals which, when lit, emits a combination of coloured flames, sparks, whistles or bangs, and sometimes made to rocket high into the sky before exploding, used for entertainment or celebration.",
+        s: "Commercial firework displays are commonly launched from boats or other vessels" } },
+    "folk music": { p: "/ˈfəʊk ˌmjuː.zɪk/", pos: "noun.",
+      m: "Traditional music from a particular country or region passed down through generations.",
+      s: "The band played traditional Sri Lankan and British folk music.",
+      d: { p: "/ˈfɒlk ˈmʌsɪk/", pos: "noun.",
+        m: "Any genre of music originating from the ethnic community of a specific region, often passed down through oral tradition, without recorded songwriters and possessing a clear purpose or social function.",
+        s: "The story was very folk music to read." } },
+    "guitarist": { p: "/ɡɪˈtɑː.rɪst/", pos: "noun.",
+      m: "A musician who plays the guitar.",
+      s: "The lead guitarist played a wonderful solo during the concert.",
+      d: { p: "/ˈɡʌɪtɑːɪst/", pos: "noun.",
+        m: "Someone who plays a guitar.",
+        s: "We saw a guitarist near the station." } },
+    "headphones": { p: "/ˈhed.fəʊnz/", pos: "noun.",
+      m: "A pair of small speakers worn over the ears to listen to audio privately.",
+      s: "Please wear your headphones during the dictation practice session.",
+      d: { p: "/ˈhiːdfɒnz/", pos: "noun.",
+        m: "A pair of speakers worn over or in the ears so only the wearer can hear the sound.",
+        s: "We saw a headphones near the station." } },
+    "hero": { p: "/ˈhɪə.rəʊ/", pos: "noun.",
+      m: "A person who is admired for doing something very brave or good, or the main male character in a story.",
+      s: "The brave firefighter was praised as a local hero.",
+      d: { p: "/ˈhɛɹ.oʊ/", pos: "noun.",
+        m: "Somebody who possesses great bravery and carries out extraordinary or noble deeds.",
+        s: "Let's discuss how to play if the hero has KK, and there's an ace on board." } },
+    "heroine": { p: "/ˈher.əʊ.ɪn/", pos: "noun.",
+      m: "A woman who is admired for bravery, or the main female character in a book or film.",
+      s: "The heroine of the novel solved the mystery with courage and intelligence.",
+      d: { p: "/ˈhɛɹoʊɪn/", pos: "noun.",
+        m: "A female hero.",
+        s: "We saw a heroine near the station." } },
+  };
+  /* v0.0.6.t PILLAR 4B — runtime Cambridge B1 British RP normalization.
+     data/session.json stays byte-identical on disk (SHA-256 locked); the
+     lexicon above repairs the shipped US IPA / broken meaning / template
+     sentence fields ONLY while they still equal their shipped defaults, and
+     any US/AU .mp3 dictionary fallback URL is rewritten to the British
+     (type=1) Youdao dictionary voice so the fallback tier is 100% UK. */
   function normalizeWord(raw, index) {
     var w = isObj(raw) ? raw : {};
     var word = {
@@ -1384,8 +1586,21 @@
       s: trim(w.s),
       audio: trim(w.audio),
       clipUrl: trim(w.clipUrl),
-      clip: trim(w.clip)
+      clip: trim(w.clip),
+      ttsHint: trim(w.ttsHint)
     };
+    var lexKey = str(word.w).trim().toLowerCase();
+    var L = CAMBRIDGE_B1_RP_LEXICON[lexKey];
+    if (L && isObj(L.d)) {
+      if (str(L.d.p) === str(w.p || '')) word.p = str(L.p);
+      if (str(L.d.pos) === str(w.pos || '')) word.pos = str(L.pos);
+      if (str(L.d.m) === str(w.m || '')) word.m = str(L.m);
+      if (str(L.d.s) === str(w.s || '')) word.s = str(L.s);
+      if (!word.ttsHint && str(L.ttsHint)) word.ttsHint = str(L.ttsHint);
+    }
+    if (word.audio && /-(us|au)\.mp3($|\?)/i.test(word.audio) && word.w) {
+      word.audio = 'https://dict.youdao.com/dictvoice?type=1&audio=' + encodeURIComponent(word.w);
+    }
     if (!word.audio && word.w) {
       word.audio = 'https://dict.youdao.com/dictvoice?type=1&audio=' + encodeURIComponent(word.w);
     }
@@ -2016,8 +2231,50 @@
           function () { return { status: status, data: null }; });
       }).then(function (out) {
         var data = out && out.data;
-        cb(null, data && data.sha ? data.sha : '', Number(out && out.status) || 0, isObj(data) ? str(data.message) : '');
+        var status = Number(out && out.status) || 0;
+        if (data && data.sha) { cb(null, data.sha, status, isObj(data) ? str(data.message) : ''); return; }
+        /* v0.0.6.t PILLAR 3B — GitHub's GET /contents/<file> endpoint has a
+           HARD 1 MB (1,048,576-byte) response limit: data/elevenlabs-audio.json
+           is multi-megabyte, so the direct GET returns HTTP 403 with
+           errors[0].code === "too_large" and data.sha === undefined. The
+           parent-directory listing has NO per-file size limit (entries carry
+           { name, path, sha, size } for files up to 100 MB), so it resolves
+           the sha for ANY oversized file. */
+        var tooLarge = status === 403 || status === 422 || (data && Array.isArray(data.errors));
+        if (tooLarge) { Sync.getFileShaViaDir(path, token, cb); return; }
+        cb(null, '', status, isObj(data) ? str(data.message) : '');
       }).catch(function (e) { cb(e || new Error('sha_failed'), '', 0, ''); });
+    },
+    /* PILLAR 3B fallback leg: GET /repos/{owner}/{repo}/contents/<dir> and
+       match the wanted file inside the directory array. */
+    getFileShaViaDir: function (path, token, cb) {
+      cb = cb || noop;
+      var cleanPath = str(path).replace(/^\/+/, '');
+      var slash = cleanPath.lastIndexOf('/');
+      var dir = slash > 0 ? cleanPath.slice(0, slash) : '';
+      var fileName = slash > 0 ? cleanPath.slice(slash + 1) : cleanPath;
+      if (!dir || typeof global.fetch !== 'function') { cb(null, '', 0, ''); return; }
+      global.fetch(Sync.contentsUrl(dir) + '?ref=main&t=' + nowMs(), {
+        cache: 'no-store',
+        headers: { Authorization: 'Bearer ' + str(token), Accept: 'application/vnd.github+json' }
+      }).then(function (res) {
+        var status = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
+        if (!res || typeof res.json !== 'function') return { status: status, data: null };
+        return res.json().then(function (data) { return { status: status, data: data }; },
+          function () { return { status: status, data: null }; });
+      }).then(function (out) {
+        var data = out && out.data;
+        if (data && Array.isArray(data)) {
+          for (var i = 0; i < data.length; i++) {
+            var entry = data[i];
+            if (isObj(entry) && (str(entry.path) === cleanPath || str(entry.name) === fileName) && entry.sha) {
+              cb(null, str(entry.sha), 200, '');
+              return;
+            }
+          }
+        }
+        cb(null, '', Number(out && out.status) || 0, isObj(data) ? str(data.message) : '');
+      }).catch(function (e) { cb(e || new Error('sha_dir_failed'), '', 0, ''); });
     },
     commitFile: function (path, text, message, token, cb) {
       cb = cb || noop;
@@ -2084,12 +2341,75 @@
       else if (s === 403) text = 'GitHub token lacks write access (403)';
       else if (s === 404) text = 'Repository or path not found (404)';
       else if (s === 409) text = 'Concurrent edit conflict (409)';
+      else if (s === 413) text = 'Payload too large for the Contents API (413)';
       else if (s === 422) text = 'Payload rejected (422)';
       else if (s >= 500) text = 'GitHub server error (' + s + ')';
       else text = 'Network problem — check your internet and try again';
       var note = str(ghMsg);
       if (note && text.indexOf(note) < 0) text += ' · ' + note;
       return text;
+    },
+
+    /* v0.0.6.t PILLAR 3B — the Git Data API large-blob commit path. The
+       Contents API PUT /contents/<file> rejects multi-megabyte JSON bodies
+       (HTTP 413 payload-too-large, 422 or 502 even WITH a valid sha), which
+       is exactly what broke every Cloned-Voice publish of the ~3.5 MB
+       data/elevenlabs-audio.json on v0.0.6.s. The Git Data API has no such
+       wall: POST /git/blobs (base64) -> GET /git/refs/heads/main ->
+       GET /git/commits/<head> -> POST /git/trees (base_tree + new blob) ->
+       POST /git/commits -> PATCH /git/refs/heads/main. */
+    commitViaGitDataApi: function (path, base64Content, message, token, cb) {
+      cb = cb || noop;
+      if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return; }
+      if (!token) { cb(new Error('no_token')); return; }
+      var repo = Sync.repo();
+      var api = 'https://api.github.com/repos/' + repo.owner + '/' + repo.name;
+      var headers = { Authorization: 'Bearer ' + str(token), Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' };
+      function gh(method, url, body) {
+        return global.fetch(url, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined })
+          .then(function (res) {
+            return res.json().then(function (data) { return { ok: !!res.ok, status: Number(res.status) || 0, data: data }; },
+              function () { return { ok: false, status: Number(res.status) || 0, data: null }; });
+          });
+      }
+      var blobSha = '', headSha = '', baseTreeSha = '';
+      gh('POST', api + '/git/blobs', { content: str(base64Content), encoding: 'base64' })
+        .then(function (out) {
+          if (!out.ok || !(out.data && out.data.sha)) throw Object.assign(new Error('blob_failed'), { status: out.status });
+          blobSha = str(out.data.sha);
+          return gh('GET', api + '/git/refs/heads/main');
+        })
+        .then(function (out) {
+          if (!out.ok || !(out.data && out.data.object && out.data.object.sha)) throw Object.assign(new Error('ref_failed'), { status: out.status });
+          headSha = str(out.data.object.sha);
+          return gh('GET', api + '/git/commits/' + headSha);
+        })
+        .then(function (out) {
+          if (!out.ok || !(out.data && out.data.tree && out.data.tree.sha)) throw Object.assign(new Error('commit_failed'), { status: out.status });
+          baseTreeSha = str(out.data.tree.sha);
+          return gh('POST', api + '/git/trees', {
+            base_tree: baseTreeSha,
+            tree: [{ path: str(path).replace(/^\/+/, ''), mode: '100644', type: 'blob', sha: blobSha }]
+          });
+        })
+        .then(function (out) {
+          if (!out.ok || !(out.data && out.data.sha)) throw Object.assign(new Error('tree_failed'), { status: out.status });
+          return gh('POST', api + '/git/commits', {
+            message: str(message || ('Smart Dictation publish ' + APP_VERSION)),
+            tree: str(out.data.sha),
+            parents: [headSha],
+            committer: { name: 'Smart Dictation Studio', email: 'studio@users.noreply.github.com' }
+          });
+        })
+        .then(function (out) {
+          if (!out.ok || !(out.data && out.data.sha)) throw Object.assign(new Error('commit_failed'), { status: out.status });
+          return gh('PATCH', api + '/git/refs/heads/main', { sha: str(out.data.sha), force: false });
+        })
+        .then(function (out) {
+          if (!out.ok) throw Object.assign(new Error('ref_update_failed'), { status: out.status });
+          cb(null, { via: 'git-data-api', path: str(path) });
+        })
+        .catch(function (e) { cb(e || new Error('git_data_api_failed')); });
     },
 
     publishFilesSequential: function (files, token, onFileStatus, cb, opts) {
@@ -2192,6 +2512,28 @@
                 }, retryDelayMs);
                 return;
               }
+              /* v0.0.6.t PILLAR 3B: a multi-megabyte payload (the voice pack)
+                 that the Contents API rejects with 413 / 422 / 502 even with
+                 a valid sha is committed through the Git Data API instead —
+                 blobs -> refs -> commits -> trees -> commits -> PATCH ref —
+                 so Cloned-Voice packs reach GitHub 100% reliably. */
+              if ((status === 413 || status === 422 || status === 502) && !flags.gitDataApi) {
+                var b64body = '';
+                try { b64body = b64encode(utf8Encode(str(file.content))); } catch (eB64) { b64body = ''; }
+                if (b64body) {
+                  Sync.commitViaGitDataApi(file.path, b64body, file.message, token, function (gErr) {
+                    if (!gErr) {
+                      published += 1;
+                      onFileStatus(file.path, true, null);
+                      step();
+                      return;
+                    }
+                    failFile(file, status, ghMsg + ' · git-data-api: ' + str(gErr.message));
+                    step();
+                  });
+                  return;
+                }
+              }
               if (status === 0 && (getStatus === 401 || getStatus === 403)) status = Number(getStatus) || 0;
               failFile(file, status, ghMsg || (status === 0 ? str(getMsg) : ''));
               step();
@@ -2224,7 +2566,9 @@
           .then(function (data) { if (data) finish(null, data); else finish(new Error('raw_unavailable')); },
             function () { finish(new Error('raw_failed')); });
       } catch (e) { finish(new Error('raw_failed')); return false; }
-      global.setTimeout(function () { finish(new Error('raw_timeout')); }, 5000);
+      /* v0.0.6.t PILLAR 3C: the raw-CDN leg of a fresh voice-pack download
+         needs the same 25 s budget on mobile data (version.json keeps 5 s). */
+      global.setTimeout(function () { finish(new Error('raw_timeout')); }, /elevenlabs-audio\.json/i.test(path) ? 25000 : 5000);
       return true;
     },
 

@@ -1,4 +1,4 @@
-# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.3
+# SYNC_AND_DATA_CONTRACT — Smart Dictation Player v0.0.6.t
 
 Everything that touches bytes on a student's phone, or a byte on GitHub, is
 specified here. If code and this document disagree, the document wins and the

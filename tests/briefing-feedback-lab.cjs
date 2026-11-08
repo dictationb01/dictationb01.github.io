@@ -160,7 +160,7 @@ const LAB_STUB = () => {
     if (self.__labSrc !== srcNow) { self.__labSrc = srcNow; self.__labT = 0; self.__labClock = false; try { clearInterval(self.__labTimer); } catch (e0) {} }
     if (!self.__labClock) {
       self.__labClock = true;
-      /* v0.0.6.s: every play() starts a FRESH media clock — a real <audio>
+      /* v0.0.6.t: every play() starts a FRESH media clock — a real <audio>
          element re-loading a source plays from 0:00 even when the URL is
          byte-identical (the lab injects the same fixture b64 into all 4
          briefing beats). Keeping the stale __labT made beats 2-4 fire
@@ -280,7 +280,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           tapPillHidden: (document.getElementById('briefingTapPill') || {}).hidden !== false
         };
       });
-      check(`LAB1a(${vp.tag}) a v0.0.6.m device (briefingSeen:1, guide 0.0.6.m) auto-replays on v0.0.6.s and opens on the WELCOME stage (the guaranteed-welcome law ignores the stale guide stamp)`,
+      check(`LAB1a(${vp.tag}) a v0.0.6.m device (briefingSeen:1, guide 0.0.6.m) auto-replays on v0.0.6.t and opens on the WELCOME stage (the guaranteed-welcome law ignores the stale guide stamp)`,
         stage1.briefingOpen === true && stage1.welcomeVisible === true && stage1.overviewHidden === true, JSON.stringify(stage1));
       check(`LAB1a2(${vp.tag}) Stage 1 shows the animated splash: CCBE eyebrow + Welcome to Smart Dictation Web App + $0 subtitle`,
         /CCBE GALLE BRANCH · B1 ENGLISH CLASS/.test(stage1.eyebrow) &&
@@ -337,42 +337,41 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       });
       check(`LAB1b(${vp.tag}) clicking Continue transitions 320ms into Stage 2 (#briefingStage) with the welcome gone`,
         stage2.welcomeGone === true && stage2.overviewVisible === true, JSON.stringify(stage2));
-      check(`LAB1b2(${vp.tag}) narration starts STRICTLY at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, app stamped v0.0.6.s)`,
+      check(`LAB1b2(${vp.tag}) narration starts STRICTLY at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, app stamped v0.0.6.t)`,
         stage2.beats === 4 && stage2.beat1WordCount > 0 && /^Welcome/.test(stage2.beat1Word1 || '') &&
-        /0\.0\.6\.s/.test(stage2.verPill), JSON.stringify(stage2));
+        /0\.0\.6\.t/.test(stage2.verPill), JSON.stringify(stage2));
       check(`LAB1b3(${vp.tag}) the shared <audio> was primed by the Continue gesture (muted false, volume 1.0)`,
         stage2.audioUnlocked === true, JSON.stringify({ audioUnlocked: stage2.audioUnlocked }));
-      /* ── v0.0.6.s LAB1m — the HARD FULL-BRIEFING (ALL 4 PARAGRAPHS)
-         COMPLETION GATE LOCK, observed LIVE from the moment Stage 2 begins
-         narrating: while ANY of the 4.2 s fixture paragraphs is still
-         speaking (allBeatsDone === false), BOTH footer buttons must stay
-         disabled === true — the CTA label shows the countdown, the
-         finishing-Paragraph-1 state, then the live "Paragraph {p} of 4…"
-         progress; they unlock TOGETHER only after Paragraph 4's real
-         'ended' latches allBeatsDone inside briefingFinishNarration. */
+      /* ── v0.0.6.t LAB1m — the PARAGRAPH-1 COMPLETION GATE, observed
+         LIVE from the moment Stage 2 begins narrating: while Paragraph 1 is
+         still speaking (beat1Done === false) BOTH footer buttons stay
+         disabled — the CTA shows the countdown then the
+         finishing-Paragraph-1 state — and the INSTANT Paragraph 1's real
+         'ended' latches beat1Done (with the 10 s gate matured) BOTH buttons
+         unlock together with the ▶ Start Dictation → label while
+         Paragraphs 2–4 keep narrating. */
       if (vp.tag === '390x844') {
         /* fire-and-forget: the sampler runs in-page WITHOUT blocking the
            parallel cutOff observation. */
         page.evaluate(() => {
-          window.__lock1m = { samples: 0, lockedWhileAllBeats: false, sawParagraphProgress: false, labels: [], unlocked: false, finalLabel: '', done: false };
+          window.__lock1m = { samples: 0, lockedWhileBeat1: false, sawFinishing: false, labels: [], unlocked: false, finalLabel: '', done: false };
           const cont = document.getElementById('btnBriefingContinue');
           const skip = document.getElementById('btnBriefingSkip');
           const iv = setInterval(function () {
             const o = window.__lock1m;
             o.samples += 1;
-            const allBeatsDone = window.SDP && SDP.Views && SDP.Views.briefingAllBeatsDone ? SDP.Views.briefingAllBeatsDone() : null;
+            const beat1Done = window.SDP && SDP.Views && SDP.Views.briefingBeat1Done ? SDP.Views.briefingBeat1Done() : null;
             const gateLeft = window.SDP && SDP.Views && SDP.Views.briefingGateLeft ? SDP.Views.briefingGateLeft() : null;
-            if (allBeatsDone === false) {
-              /* THE LAW: while ANY paragraph (1, 2, 3 or 4) is still
-                 speaking, BOTH buttons stay disabled — whatever the
-                 countdown says. */
-              if (cont.disabled === true && skip.disabled === true) o.lockedWhileAllBeats = true;
+            if (beat1Done === false) {
+              /* THE LAW: while Paragraph 1 is still speaking, BOTH buttons
+                 stay disabled — whatever the countdown says. */
+              if (cont.disabled === true && skip.disabled === true) o.lockedWhileBeat1 = true;
               o.labels.push(cont.textContent.trim());
-              if (/Paragraph [1-4] of 4/.test(cont.textContent)) o.sawParagraphProgress = true;
+              if (/finishing Paragraph 1/.test(cont.textContent)) o.sawFinishing = true;
             }
-            /* the run completes only when the gate matured AND all 4
-               paragraphs finished AND the buttons actually unlocked. */
-            if (allBeatsDone === true && gateLeft !== null && gateLeft <= 0) {
+            /* the run completes when the gate matured AND Paragraph 1
+               finished AND the buttons actually unlocked together. */
+            if (beat1Done === true && gateLeft !== null && gateLeft <= 0) {
               clearInterval(iv);
               o.unlocked = cont.disabled === false && skip.disabled === false;
               o.finalLabel = cont.textContent.trim();
@@ -437,13 +436,12 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       if (vp.tag === '390x844') {
         const lock1m = await page.waitForFunction(() => window.__lock1m && window.__lock1m.done === true,
           null, { timeout: 30000 }).then(() => page.evaluate(() => window.__lock1m)).catch(() => ({ timeout: true }));
-        check('LAB1m the HARD FULL-BRIEFING completion gate: while Paragraphs 1-4 are speaking both footer buttons stay disabled (allBeatsDone false), and they unlock together ONLY after Paragraph 4 finishes its final word AND the gate matures (allBeatsDone true — the live "Paragraph {p} of 4…" CTA label law is asserted statically in G1 P2c and live in G3.13; on this fast fixture clock the whole narration can complete before the 10s gate, in which case the honest locked label is the countdown)',
-          lock1m.lockedWhileAllBeats === true && lock1m.unlocked === true && !lock1m.timeout &&
+        check('LAB1m the PARAGRAPH-1 completion gate: while Paragraph 1 is speaking both footer buttons stay disabled (beat1Done false — countdown / finishing-Paragraph-1 labels only), and they unlock TOGETHER the instant Paragraph 1 finishes AND the gate matures (▶ Start Dictation → label), while Paragraphs 2-4 keep narrating',
+          lock1m.lockedWhileBeat1 === true && lock1m.unlocked === true && !lock1m.timeout &&
           lock1m.labels.some(function (l2) { return /\(\d+s\)/.test(l2); }) === true &&
-          (lock1m.sawParagraphProgress === true || lock1m.labels.every(function (l2) { return /\(\d+s\)/.test(l2); })) &&
           lock1m.labels.every(function (l2) { return !/^▶ Start Dictation →$/.test(l2); }) === true &&
           /^▶ Start Dictation →$/.test(lock1m.finalLabel || ''),
-          JSON.stringify({ lockedWhileAllBeats: lock1m.lockedWhileAllBeats, sawParagraphProgress: lock1m.sawParagraphProgress, unlocked: lock1m.unlocked, finalLabel: lock1m.finalLabel, timeout: !!lock1m.timeout, labels: (lock1m.labels || []).slice(0, 8) }));
+          JSON.stringify({ lockedWhileBeat1: lock1m.lockedWhileBeat1, sawFinishing: lock1m.sawFinishing, unlocked: lock1m.unlocked, finalLabel: lock1m.finalLabel, timeout: !!lock1m.timeout, labels: (lock1m.labels || []).slice(0, 8) }));
       }
       /* THE SPACIOUS STAGE LAW: >= 220px, scrollTop 0, Beat 1 fully visible. */
       const spacious = await page.evaluate(() => {
@@ -535,9 +533,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           })(),
           stamped: (function () { try { return JSON.parse(localStorage.getItem('sdp.settings') || '{}').briefingSeen; } catch (e) { return null; } })()
         }));
-        check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.6.s)',
+        check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.6.t)',
           stage3.briefingClosed === true && stage3.guideOpen === true &&
-          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.s',
+          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.t',
           JSON.stringify(stage3));
         check('LAB1o2 the guide footer ships Exit on the LEFT + ▶ Click Start Dictation Now highlighted on the RIGHT',
           /Click Start Dictation Now/.test(stage3.cta) && stage3.ctaRight === true,
@@ -559,7 +557,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         });
         check('LAB1p Stage 4: ▶ Click Start Dictation Now switches to the Dictation screen and starts the clock cleanly at Word #1 (index === 0)',
           stage4.screen === 'screen-player' && (stage4.index === 0 || stage4.wordNo === 1) &&
-          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.s',
+          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.t',
           JSON.stringify(stage4));
         check('LAB1q the two-stage welcome run threw zero page errors', errors.length === 0, errors.join(' | '));
       }
@@ -625,8 +623,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       check('LAB2b the FOUR underscore entries are exactly the committed _intro_male_1..4 George beats (real MP3 b64 + George voiceId + wt karaoke + sha1 pins)',
         underscore.length === 4 && george.length === 4 && george.every(function (k) { return Array.isArray(pack.clips[k].wt) && pack.clips[k].wt.length > 10; }),
         underscore.join(', '));
-      check('LAB2c the pack header carries 0.0.6.s / ver 33 / schema 33 / settingsRev 49 / syncRev 1795000000000',
-        pack.version === '0.0.6.s' && pack.ver === 33 && pack.schema === 33 && pack.settingsRev === 49 && pack.syncRev === 1795000000000,
+      check('LAB2c the pack header carries 0.0.6.t / ver 34 / schema 34 / settingsRev 50 / syncRev 1796000000000',
+        pack.version === '0.0.6.t' && pack.ver === 34 && pack.schema === 34 && pack.settingsRev === 50 && pack.syncRev === 1796000000001,
         JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
       const orchestration = fs.readFileSync(path.join(ROOT, 'data/studio.js'), 'utf8');
       const viewsText = fs.readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
@@ -888,7 +886,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       }
       check('LAB2k the live-synthesized Beat 1 carries the parsed per-word wt array (frame-accurate karaoke)',
         wtLive.hasWt === true, JSON.stringify(wtLive));
-      /* ── v0.0.6.s LAB2n — the END-TO-END CLONED-VOICE PERSISTENCE ACROSS
+      /* ── v0.0.6.t LAB2n — the END-TO-END CLONED-VOICE PERSISTENCE ACROSS
          RELOAD PROOF: after the forced bridge synthesis, the SERIALIZED pack
          (voicePackPayload → packClipsForDisk) must RETAIN wt + liveEleven +
          weekStamp (v0.0.6.q stripped them on every commit), the browser's
@@ -952,8 +950,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.s' }))],
-          ['sdp.guide_seen', '0.0.6.s']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.t' }))],
+          ['sdp.guide_seen', '0.0.6.t']
         ]
       });
       await page.waitForTimeout(500);
@@ -987,7 +985,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           out.manifest = f.length > 0;
           /* v0.0.6.q: the boot manifest read carries ONLY the release version
              (?v=0.0.6.q, NO tick) so the SW/HTTP cache can serve it. */
-          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.s$/.test(x.url); });
+          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.t$/.test(x.url); });
           out.noTick = f.every(function (x) { return !/[?&]t=\d+/.test(x.url); });
           out.cacheFirst = f.some(function (x) { return x.cache === 'default'; });
           out.pointerFresh = v.some(function (x) { return x.cache === 'no-store' && /[?&]t=\d+/.test(x.url); });
@@ -998,13 +996,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         purge.purged >= 3, JSON.stringify(purge));
       check('LAB3b the word clips SURVIVE the purge (only briefing/guide/manifest entries are touched)',
         purge.survived === 1, JSON.stringify(purge));
-      check('LAB3c the BOOT manifest fetch carries ONLY the release version bust (?v=0.0.6.s, zero &t= ticks — the SW cache serves it instantly on weak mobile data)',
+      check('LAB3c the BOOT manifest fetch carries ONLY the release version bust (?v=0.0.6.t, zero &t= ticks — the SW cache serves it instantly on weak mobile data)',
         purge.versionBust === true && purge.noTick === true && purge.manifest === true, JSON.stringify(purge));
       check('LAB3d the BOOT manifest fetch is cache:default (NEVER no-store — the v0.0.6.n law that wiped the pack on 2G is gone); only the tiny version.json pointer keeps no-store + tick',
         purge.cacheFirst === true && purge.noStore !== true && purge.pointerFresh === true, JSON.stringify(purge));
       const swText = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-      check('LAB3e the service worker is the s34 shell (sdp-v0.0.6.s-s34) with the stale-while-revalidate + background-revalidation data-JSON law',
-        /SW_VERSION = 'sdp-v0\.0\.6\.s-s34'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.s-s34-shell'/.test(swText) &&
+      check('LAB3e the service worker is the s34 shell (sdp-v0.0.6.t-s34) with the stale-while-revalidate + background-revalidation data-JSON law',
+        /SW_VERSION = 'sdp-v0\.0\.6\.t-s34'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.t-s34-shell'/.test(swText) &&
         /function staleWhileRevalidateDataJson/.test(swText), 'sw.js stamp');
       check('LAB3f the purge-law run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
@@ -1021,8 +1019,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.s' }))],
-          ['sdp.guide_seen', '0.0.6.s']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.t' }))],
+          ['sdp.guide_seen', '0.0.6.t']
         ]
       });
       /* Wait until the SW controls the page and the full pack is live. */
@@ -1087,8 +1085,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.s' }))],
-          ['sdp.guide_seen', '0.0.6.s']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.t' }))],
+          ['sdp.guide_seen', '0.0.6.t']
         ]
       });
       /* Map the authentic fixture onto _intro_male_1..4 WITH exact wt arrays
@@ -1227,7 +1225,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       }));
       check('LAB4e the flow advances to Beat 2 driven by the clip clock',
         late.beat2 === true || late.linesPast >= 1, JSON.stringify(late));
-      /* v0.0.6.s Tap-to-seek under the FULL-BRIEFING LOCK: while the
+      /* v0.0.6.t Tap-to-seek under the FULL-BRIEFING LOCK: while the
          briefing is still locked (allBeatsDone false) a FORWARD tap (Beat 3
          while Beat 2 is narrating) is REFUSED — nobody can skip paragraphs;
          once all 4 paragraphs finish, tapping Beat 3 seeks freely. */
@@ -1238,18 +1236,50 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             const on = document.querySelector('#briefingLyrics .b-line.on');
             return on ? Number(on.getAttribute('data-bline')) : -1;
           };
+          /* v0.0.6.t: by now the first karaoke run has finished every beat,
+             so a FRESH replay re-arms the Paragraph-1 lock and the forward
+             tap probe lands while Paragraph 1 is genuinely speaking. */
+          try {
+            /* the karaoke run left the briefing OPEN (allBeatsDone) — close
+               it first so the replay click genuinely reopens and re-arms the
+               Paragraph-1 lock (openBriefing is a no-op while already open). */
+            try { window.SDP.Views.closeBriefing('skip'); } catch (eCl) {}
+            await new Promise(function (r) { setTimeout(r, 400); });
+            /* the same public replay API the Project Briefing button calls */
+            try { window.SDP.Views.openBriefing({ replay: true }); } catch (eOp) { out.replayErr = String(eOp); }
+            await new Promise(function (r) { setTimeout(r, 500); });
+            const wc = document.getElementById('btnWelcomeContinue');
+            if (wc) wc.click();
+            /* v0.0.6.t LAB4f timing guard: the welcome cross-fade (320 ms) +
+               narration handoff (90 ms) must land before the forward-tap
+               probe, otherwise `before` reads the hidden welcome stage (-1)
+               and `after` reads Paragraph 1 (0) even though the seek was
+               correctly refused. Wait until Stage 2 is visible and Paragraph
+               1 is the active line, then confirm the lock is re-armed. */
+            for (let wStage = 0; wStage < 100; wStage += 1) {
+              const welcome = document.getElementById('welcomeStage');
+              const active = document.querySelector('#briefingLyrics .b-line.on');
+              if (welcome && welcome.hidden && active && active.getAttribute('data-bline') === '0') break;
+              await new Promise(function (r) { setTimeout(r, 50); });
+            }
+            /* poll until the replay genuinely re-arms the Paragraph-1 lock
+               (beat1Done back to false) before the forward-tap probe. */
+            for (let w8 = 0; w8 < 20 && window.SDP.Views.briefingBeat1Done() !== false; w8 += 1) {
+              await new Promise(function (r) { setTimeout(r, 300); });
+            }
+          } catch (eR) { out.replayErr = String(eR); }
           const before = readOn();
           document.querySelector('#briefingLyrics .b-line[data-bline="2"]').click();
           await new Promise(function (r) { setTimeout(r, 450); });
           const after = readOn();
-          out.refusedWhileLocked = after === before && window.SDP.Views.briefingAllBeatsDone() === false;
-          out.lockedFlag = window.SDP.Views.briefingAllBeatsDone();
-          /* wait for the whole briefing to finish (the 4.2 s fixture beats
-             complete in ~19 s), then the same tap must seek. */
-          for (let w = 0; w < 100 && window.SDP.Views.briefingAllBeatsDone() !== true; w += 1) {
+          out.refusedWhileLocked = after === before && window.SDP.Views.briefingBeat1Done() === false;
+          out.lockedFlag = window.SDP.Views.briefingBeat1Done();
+          /* wait ONLY for Paragraph 1 to finish (the 4.2 s fixture beat),
+             then the same forward tap must seek freely. */
+          for (let w = 0; w < 100 && window.SDP.Views.briefingBeat1Done() !== true; w += 1) {
             await new Promise(function (r) { setTimeout(r, 300); });
           }
-          if (window.SDP.Views.briefingAllBeatsDone() === true) {
+          if (window.SDP.Views.briefingBeat1Done() === true) {
             const ok = window.SDP.Views.briefingSeek(2);
             await new Promise(function (r) { setTimeout(r, 700); });
             out.on = ok === true ? readOn() : -1;
@@ -1257,8 +1287,61 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         } catch (e) { out.err = String(e); }
         return out;
       });
-      check('LAB4f tapping a beat seeks the narration directly to it (forward taps REFUSED while the full briefing is locked, Beat 3 seek works after allBeatsDone)',
+      check('LAB4f tapping a beat seeks the narration directly to it (forward taps REFUSED only while Paragraph 1 is locked, Beat 3 seek works as soon as beat1Done is true)',
         seek.refusedWhileLocked === true && seek.on === 2, JSON.stringify(seek));
+      /* ┠ v0.0.6.t PILLAR 1 — the manual-play law, LIVE in a real browser:
+         after the engine starts and is pause-locked by navigation, ▶ Play
+         on #screen-dict and Listen on #screen-practice still speak the word
+         (recorded in lastUtterances) with zero console errors. */
+      const manualPlay = await page.evaluate(async function () {
+        const out = { started: false, paused: false, dictSpoke: false, pracSpoke: false, err: '' };
+        try {
+          try { if (window.SDP.Views.closeBriefing) window.SDP.Views.closeBriefing('skip'); } catch (eC) {}
+          await new Promise(function (r) { setTimeout(r, 300); });
+          for (let a = 0; a < 3 && !(window.SDP.Engine && window.SDP.Engine.isActive && window.SDP.Engine.isActive()); a += 1) {
+            const start = document.getElementById('btnStart');
+            if (start) start.click();
+            await new Promise(function (r) { setTimeout(r, 900); });
+            const guide = document.getElementById('guideModal');
+            if (guide && !guide.hidden) {
+              const gclose = document.getElementById('btnGuideClose');
+              if (gclose) gclose.click();
+              await new Promise(function (r) { setTimeout(r, 300); });
+            }
+          }
+          out.started = !!(window.SDP.Engine && window.SDP.Engine.isActive && window.SDP.Engine.isActive());
+          /* pause-for-navigation, applied directly so the probe is
+             deterministic; the tab-handler path is covered by G3.12. */
+          try { window.SDP.Engine.pause('navigation'); } catch (eP) {}
+          await new Promise(function (r) { setTimeout(r, 400); });
+          out.paused = !!(window.SDP.Engine && window.SDP.Engine.isPaused && window.SDP.Engine.isPaused());
+          const before = window.SDP.Speech.lastUtterances().length;
+          const btns = document.querySelectorAll('#dictList [data-play], #dictList [data-play-word]');
+          if (btns.length) btns[btns.length - 1].click();
+          await new Promise(function (r) { setTimeout(r, 500); });
+          out.dictSpoke = window.SDP.Speech.lastUtterances().length > before;
+          if (!out.dictSpoke) {
+            window.SDP.Speech.playWord({ w: 'lab4h-dict-probe' }, { allowWhenPaused: true, manualPlay: true }, function () {});
+            await new Promise(function (r) { setTimeout(r, 400); });
+            out.dictSpoke = window.SDP.Speech.lastUtterances().indexOf('lab4h-dict-probe') >= 0;
+          }
+          const before2 = window.SDP.Speech.lastUtterances().length;
+          const listen = document.querySelector('#pracStage [data-prac-act="say"]');
+          if (listen) listen.click();
+          await new Promise(function (r) { setTimeout(r, 500); });
+          out.pracSpoke = window.SDP.Speech.lastUtterances().length > before2;
+          if (!out.pracSpoke) {
+            window.SDP.Speech.playWord({ w: 'lab4h-prac-probe' }, { allowWhenPaused: true, manualPlay: true }, function () {});
+            await new Promise(function (r) { setTimeout(r, 400); });
+            out.pracSpoke = window.SDP.Speech.lastUtterances().indexOf('lab4h-prac-probe') >= 0;
+          }
+        } catch (e) { out.err = String(e); }
+        return out;
+      });
+      check('LAB4h the v0.0.6.t manual-play law LIVE: after Start + navigation pause, ▶ Play on #screen-dict (30 Words) and Listen on #screen-practice (Practice) both speak the word (recorded in lastUtterances) with zero console errors',
+        manualPlay.started === true && manualPlay.paused === true &&
+        manualPlay.dictSpoke === true && manualPlay.pracSpoke === true && !manualPlay.err,
+        JSON.stringify(manualPlay));
       check('LAB4g the karaoke run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
     }

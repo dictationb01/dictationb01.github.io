@@ -923,13 +923,25 @@
     for (k in map) if (Object.prototype.hasOwnProperty.call(map, k)) keys.push(k);
     for (var i = 0; i < keys.length; i++) {
       var srcKey = keys[i], v = map[srcKey];
-      if (canBlobUrl() && v && isObj(v) && !v.url && v.b64) v.url = 'data:audio/mpeg;base64,' + v.b64;
+      /* v0.0.6.t PILLAR 4D: ALWAYS recompute the in-memory data URL when the
+         entry carries a b64 — a re-synthesized clip must never keep playing
+         its previous audio through a stale v.url left from an older b64. */
+      if (canBlobUrl() && v && isObj(v) && v.b64) v.url = 'data:audio/mpeg;base64,' + v.b64;
       var n = normKey(srcKey);
       if (!n) continue;
       var bare = n.replace(/^words\./, '');
       if (n !== srcKey && !map[n]) map[n] = v;
-      if (bare && !map[bare]) map[bare] = v;
-      if (bare && !map['words.' + bare]) map['words.' + bare] = v;
+      if (/^words\./.test(n)) {
+        /* v0.0.6.t PILLAR 4D: a words.<w> entry ALWAYS refreshes its bare
+           alias — the old !map[bare] guard kept the boot-populated clip
+           alive after injectClips() delivered a re-synthesized word, so the
+           Lecturer kept hearing the exact same mispronunciation. */
+        if (bare) map[bare] = v;
+        if (bare) map['words.' + bare] = v;
+      } else {
+        if (bare && !map[bare]) map[bare] = v;
+        if (bare && !map['words.' + bare]) map['words.' + bare] = v;
+      }
     }
     return map;
   }
@@ -1023,7 +1035,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.s' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.t' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1457,11 +1469,15 @@
         if (state.lastUtterances.length > 25) state.lastUtterances.shift();
       }
     }
-    /* R1 (a)(b)(c)(d): no word may be produced by a paused engine, by a dead
-       epoch, or into a screen the student cannot see. This single gate is the
-       one law; the per-tier checks below are only belt and braces. */
+    /* v0.0.6.t PILLAR 1: an EXPLICIT user play (a tap on ▶ Play / Listen on
+       the 30 Words screen, the Practice screen, or the Settings voice test)
+       passes allowWhenPaused / manualPlay and is NEVER refused — the engine's
+       pause-for-navigation lock must not mute a deliberate human action.
+       Background engine beats (no flags) stay 100% gated below. */
+    var manual = !!(opts && (opts.allowWhenPaused === true || opts.manualPlay === true));
     if (Refuse()) { cb(null); return false; }
     function Refuse() {
+      if (manual) return false;
       if (SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return true;
       var active = false;
       try { active = !!(SDP.Engine && SDP.Engine.isActive && SDP.Engine.isActive()); } catch (e) { active = false; }
@@ -1483,7 +1499,10 @@
         /* E2 professor cadence. D10: the utterance carries the word's real
            human British recording as its 800 ms watchdog fallback, so even
            the TTS tier can never leave a word silent. */
-        say([str(word && word.w ? word.w : word)], { rate: 0.92, pitch: 1.03, volume: opts.volume, fallbackAudioUrl: str(word && word.audio) }, function () {
+        /* v0.0.6.t PILLAR 1: the TTS fallback carries allowWhenPaused when the
+           play was a deliberate user tap, so a paused engine can no longer
+           silently kill the deferred speak() (the v0.0.6.s dead-button bug). */
+        say([str(word && word.w ? word.w : word)], { rate: 0.92, pitch: 1.03, volume: opts.volume, fallbackAudioUrl: str(word && word.audio), allowWhenPaused: manual }, function () {
           if (myGen !== gen || settled || state.speechEpoch !== wEpoch) return;
           settled = true;
           cb(null);
@@ -1546,7 +1565,8 @@
            the pause flag and the current screen are all re-checked FIRST. */
         if (settled || opts.tiers || !state.manifest) return;
         if (state.speechEpoch !== wEpoch) return;
-        if (SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
+        /* v0.0.6.t PILLAR 1: a manual tap survives the manifest restart too. */
+        if (!manual && SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
         if (Refuse()) return;
         gen += 1;
         at = 0;
@@ -1566,10 +1586,13 @@
     var wordsList = [];
     try { wordsList = sync() && sync().words ? sync().words() : []; } catch (e) { wordsList = []; }
     var first = wordsList && wordsList.length ? wordsList[0] : { w: 'confident', audio: '' };
-    playWord(first, { volume: conf.volume }, function () {
+    /* v0.0.6.t PILLAR 1: the Settings voice test is a deliberate human tap —
+       it plays even while the engine is paused-for-navigation, and its spoken
+       verdict line carries allowWhenPaused for the same reason. */
+    playWord(first, { volume: conf.volume, allowWhenPaused: true, manualPlay: true }, function () {
       var tier = lastTierName();
       var spoken = str(first && first.w) || 'confident';
-      say(['Professor voice ready · ' + spoken], { lang: 'en-GB', rate: 0.92, pitch: 1.03, volume: conf.volume }, function () {
+      say(['Professor voice ready · ' + spoken], { lang: 'en-GB', rate: 0.92, pitch: 1.03, volume: conf.volume, allowWhenPaused: true }, function () {
         cb(null, { tier: tier, word: spoken });
       });
     });

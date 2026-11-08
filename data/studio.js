@@ -107,6 +107,21 @@
   custom: { id: '', name: 'Custom / Cloned Voice ID…', persona: 'A Custom or Cloned voice from the creator\'s ElevenLabs account (/v1/voices)' }
  };
  var BRIEFING_VOICE_ORDER = ['daniel', 'george', 'brian', 'callum', 'custom'];
+ /* v0.0.6.t PILLAR 4C — RP_TTS_OVERRIDES: UK/US heterophones mapped to
+    British RP phonetic respellings for TTS engines. buildQueue() and
+    resynthWmRow() speak the respelling (item.ttsText) so a bare
+    "advertisement" can never come back from ElevenLabs as American
+    "ad-ver-TIZE-ment" again, while the stored clip keeps stamping the
+    canonical spelling + clipContentHash(canonical spelling). */
+ var RP_TTS_OVERRIDES = {
+  'advertisement': 'ad-ver-tiss-ment',
+  'schedule': 'shed-yool',
+  'privacy': 'priv-uh-see',
+  'vitamin': 'vit-uh-min',
+  'tomato': 'tuh-mah-toe',
+  'leisure': 'lezh-uh',
+  'lieutenant': 'lef-ten-uhnt'
+ };
  /* v0.0.6.q: the high-professional broadcast voice settings; the legacy */
  var INTRO_VOICE_SETTINGS = { stability: 0.50, similarity_boost: 0.85, style: 0.32, use_speaker_boost: true };
  var INTRO_VOICE_SETTINGS_LEGACY = { stability: 0.55, similarity_boost: 0.80, style: 0.25 };
@@ -409,7 +424,9 @@
  function autoSynthesizeBriefingAndGuide(opts, cb) {
   cb = cb || noop;
   opts = opts || {};
-  if (!ST.unlocked) { cb(new Error('locked'), null); return false; }
+  /* v0.0.6.t PILLAR 3D: an unlocked-vault session bridge (Trigger 2,
+     briefing-open) runs even when the Studio surface itself is locked again. */
+  if (!ST.unlocked && !vaultSessionActive()) { cb(new Error('locked'), null); return false; }
   if (!allowAutoGen()) { cb(new Error('gates'), null); return false; }
   var steps = introSteps();
   var guideKeys = GUIDE_KEYS.slice();
@@ -650,6 +667,15 @@
      primeClipCache(fresh);
     } catch (e1) {}
     commitVoicePack(function (commitErr) {
+     /* v0.0.6.t PILLAR 3D — the HONEST BAR law: when a real delta was due
+        (force or delta.total > 0) but NOTHING was synthesized (made === 0,
+        or the batch stopped on ST.lastFailedClip), the bar paints the exact
+        failure — never a fake green ✓ "Voices Synced" over an empty batch. */
+     if ((opts.force || delta.total > 0) && (made === 0 || ST.lastFailedClip)) {
+      paintBriefingVoiceBar('error', ST.lastFailedClip ? (ST.lastFailedClip.key + ' · ' + ST.lastFailedClip.reason) : '0 clips synthesized');
+      cb(null, { made: made, stage: 'done', failed: ST.lastFailedClip ? ST.lastFailedClip.key : 'none', commit: commitErr ? str(commitErr.message) : 'ok' });
+      return;
+     }
      if (commitErr && str(commitErr.message) === 'no_token') {
       paintBriefingVoiceBar('ok', '· Saved in browser cache (add GitHub token in Step 2 to publish to all devices)');
      } else if (commitErr) {
@@ -1274,7 +1300,9 @@
    ST.message = ''; ST.messageState = '';
    mount();
    paintLecturerBar();
-   loadVoicePack(noop);
+   /* v0.0.6.t PILLAR 3F: the redundant fire-and-forget loadVoicePack(noop)
+      is GONE — it raced the real loadVoicePack() below with a second
+      concurrent fetchFreshDataJson('data/elevenlabs-audio.json'). */
    loadVoicePack(function () {
     paintPackDashboard();
     paintClipTable();
@@ -1354,8 +1382,8 @@
     mount();
     /* D4: #lecturerSyncBar appears */
     paintLecturerBar();
-    /* SYNC-11: the committed clips must load */
-    loadVoicePack(noop);
+    /* SYNC-11: the committed clips must load (v0.0.6.t PILLAR 3F: ONE load,
+       never two concurrent pack fetches on unlock). */
     loadVoicePack(function () {
      paintPackDashboard();
      paintClipTable();
@@ -2618,22 +2646,34 @@
         have[str(v.voice_id)] = 1;
         added += 1;
        }
-       /* v0.0.6.r AUTO-SELECT LAW: when the account holds a cloned (or any
-          non-catalog) voice and the creator has not manually pinned another
-          custom ID, the first one is selected, fed into the custom field and
-          sealed into the vault — one fetch then makes 🎙 Generate & Sync
-          narrate with the creator's OWN cloned voice. */
+       /* v0.0.6.r AUTO-SELECT LAW → v0.0.6.t PILLAR 3E: pass 1 looks
+          STRICTLY for a genuine Cloned / Professional / Generated voice (a
+          premade account voice is never auto-picked); only when none exists
+          does pass 2 accept any non-catalog, non-premade voice. When one is
+          found it is ALWAYS selected — even over an older custom ID sitting
+          in the field — sealed into the vault and synthesized immediately:
+          one 🔄 Fetch click = selected + synced, no second manual click. */
        var firstClone = null, ci, ck;
+       var isCloneCat = function (cv) { return cv.category === 'cloned' || cv.category === 'professional' || cv.category === 'generated'; };
+       var inCatalogOf = function (vid) {
+        for (ck in BRIEFING_VOICE_CATALOG) {
+         if (Object.prototype.hasOwnProperty.call(BRIEFING_VOICE_CATALOG, ck) && BRIEFING_VOICE_CATALOG[ck].id === str(vid)) return true;
+        }
+        return false;
+       };
        for (ci = 0; ci < list.length && !firstClone; ci++) {
         var cv = list[ci];
         if (!isObj(cv) || !str(cv.voice_id)) continue;
-        var inCatalog = false;
-        for (ck in BRIEFING_VOICE_CATALOG) {
-         if (Object.prototype.hasOwnProperty.call(BRIEFING_VOICE_CATALOG, ck) && BRIEFING_VOICE_CATALOG[ck].id === str(cv.voice_id)) inCatalog = true;
-        }
-        if (cv.category === 'cloned' || cv.category === 'generated' || !inCatalog) firstClone = cv;
+        if (isCloneCat(cv)) firstClone = cv;
        }
-       if (firstClone && !briefingCustomVoiceId()) {
+       if (!firstClone) {
+        for (ci = 0; ci < list.length && !firstClone; ci++) {
+         var cv2 = list[ci];
+         if (!isObj(cv2) || !str(cv2.voice_id)) continue;
+         if (cv2.category !== 'premade' && !inCatalogOf(cv2.voice_id)) firstClone = cv2;
+        }
+       }
+       if (firstClone) {
         sel.value = 'id:' + str(firstClone.voice_id);
         var cust = byId('studioBriefingCustomVoiceId');
         if (cust) cust.value = str(firstClone.voice_id);
@@ -2645,7 +2685,10 @@
          var vltF = vault();
          if (vltF && typeof vltF.stash === 'function') vltF.stash(ST.secrets);
         } catch (eStashF) {}
-        msg(' Cloned voice "' + str(firstClone.name) + '" selected — press Generate & Sync to narrate with it.', 'ok');
+        try { if (ST.unlocked && str(ST.pin || '')) sealVaultNow(noop); } catch (eSealF) {}
+        msg(' Cloned voice "' + str(firstClone.name) + '" selected — synthesizing & syncing now…', 'ok');
+        /* v0.0.6.t PILLAR 3E: the fetch click IS the generate click. */
+        ensureBriefingAndGuideVoices({ source: 'button', force: true }, noop);
        }
        paintBriefingVoiceBar('idle', '· ' + added + ' account voices added to the selector');
        msg(' ' + added + ' ElevenLabs account voices added — pick one, or paste its ID in the custom field.', 'ok');
@@ -4420,6 +4463,25 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    if (err || !result || !result.ok) { ST.voicePack.loaded = true; cb(err || new Error('pack_failed')); return; }
    var pack = result.json;
    if (isObj(pack) && isObj(pack.clips)) ST.voicePack.clips = pack.clips;
+   /* v0.0.6.t PILLAR 3F — the LIVE-CLIP PRESERVATION law: the repo pack is
+      the FLOOR, never the ceiling. A Cloned-Voice beat already playing on
+      THIS device (liveEleven === true in the live SDP.Speech manifest, or
+      stamped by ./local-briefing-pack.json / sdp.briefing.meta) is newer
+      than the repo entry when its .at is >= the pack's, and must NEVER be
+      overwritten by a stale repo-preload — that is how the creator's
+      Cloned Voice kept reverting to the old system voice on every unlock. */
+   try {
+    var liveMan = null;
+    if (global.SDP && SDP.Speech && SDP.Speech.clipManifest) liveMan = SDP.Speech.clipManifest();
+    var liveKeys = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4', '_guide_1', '_guide_2', '_guide_3', '_guide_4', 'guide.en.0', 'guide.en.1', 'guide.en.2', 'guide.en.3'];
+    for (var lk = 0; lk < liveKeys.length; lk++) {
+     var kName = liveKeys[lk];
+     var liveEntry = liveMan && liveMan.clips && isObj(liveMan.clips[kName]) ? liveMan.clips[kName] : null;
+     if (!liveEntry || liveEntry.liveEleven !== true || !str(liveEntry.b64)) continue;
+     var packEntry = ST.voicePack.clips[kName];
+     if (Number(liveEntry.at || 0) >= Number((packEntry && packEntry.at) || 0)) ST.voicePack.clips[kName] = liveEntry;
+    }
+   } catch (eLive) {}
    /* v0.0.4.b: the shipped pack is b64-only; drop any legacy .url in memory. */
    if (isObj(ST.voicePack.clips)) {
     for (var ck in ST.voicePack.clips) {
@@ -4448,8 +4510,12 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    var w = list[i] || {};
    var text = str(w.w);
    if (!text) continue;
-   /* R5: the new key is words.<w>; the bare legacy key stays readable. */
-   queue.push({ key: 'words.' + text.toLowerCase(), legacyKey: text.toLowerCase(), text: text });
+   /* R5: the new key is words.<w>; the bare legacy key stays readable.
+      v0.0.6.t PILLAR 4C: ttsText carries the RP phonetic respelling
+      (Lecturer ttsHint > RP_TTS_OVERRIDES > the bare word) that is SPOKEN
+      to the TTS engine, while text stays the canonical spelling for the
+      clip key, item.text and clipContentHash(). */
+   queue.push({ key: 'words.' + text.toLowerCase(), legacyKey: text.toLowerCase(), text: text, ttsText: str(w.ttsHint || RP_TTS_OVERRIDES[text.toLowerCase()] || text) });
    if (singleTest) return queue; /* 1-Word Test: ~8 chars, ~1 credit unit */
   }
   if (singleTest) return queue;
@@ -4475,7 +4541,9 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   if (typeof a === 'function') cb = a;
   else if (Array.isArray(a)) { opts = { words: a }; cb = typeof b === 'function' ? b : noop; }
   else { opts = isObj(a) ? a : {}; cb = typeof b === 'function' ? b : noop; }
-  if (!ST.unlocked) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
+  /* v0.0.6.t PILLAR 3D: vault-session bridges (unlock-trigger ensure /
+     briefing-open) keep synthesizing after the Studio surface re-locks. */
+  if (!ST.unlocked && !vaultSessionActive()) { cb(new Error('locked')); return { ok: false, reason: 'locked' }; }
   if (!ST.voicePack.loaded) loadVoicePack(noop);
   /* v0.0.6.m Pillar 2: the active key comes from the pool (primary field */
   poolCursor = 0;
@@ -4561,9 +4629,11 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    var rotationsThisItem = 0;
    requestClip(item, apiKey, function (err, entry) {
     if (err) {
-     /* v0.0.6.m Pillar 2: key-level failures rotate to the next pool slot */
+     /* v0.0.6.m Pillar 2: key-level failures rotate to the next pool slot
+        (v0.0.6.t PILLAR 3D: 400/403/422 also rotate — a key rejected by the
+        TTS endpoint is as dead as an over-quota key for this batch). */
      var st = Number((err && err.status) || 0);
-     if ((st === 401 || st === 402 || st === 429) && rotationsThisItem < elevenKeyPool().length - 1) {
+     if ((st === 400 || st === 401 || st === 402 || st === 403 || st === 422 || st === 429) && rotationsThisItem < elevenKeyPool().length - 1) {
       var rotated = rotateElevenKey('http_' + st);
       if (rotated) {
        rotationsThisItem += 1;
@@ -4596,20 +4666,40 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    }, 0);
   }
   function requestClip(item, key, done, attempt) {
-   /* D13: on 422, retry with minimal… */
-   /* v0.0.6.q Pillar 1: broadcast male voice_settings (0.50/0.85/0.32 + boost). */
-   var vs = attempt === 1 ? { stability: 0.5, similarity_boost: 0.75 } : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
-   if (introMode) vs = { stability: INTRO_VOICE_SETTINGS.stability, similarity_boost: INTRO_VOICE_SETTINGS.similarity_boost, style: INTRO_VOICE_SETTINGS.style, use_speaker_boost: true };
+   /* v0.0.6.t PILLAR 3D — the Cloned-Voice-safe 3-attempt ladder:
+      attempt 0: the full broadcast settings — /with-timestamps for intro
+                 beats (word-level wt karaoke) with eleven_flash_v2_5;
+      attempt 1: the standard endpoint (?output_format=mp3_44100_128) with
+                 MINIMAL Cloned-Voice-safe settings { stability: 0.55,
+                 similarity_boost: 0.80 } — NO style, NO use_speaker_boost —
+                 because eleven_flash_v2_5 and Cloned Voices routinely reject
+                 style / use_speaker_boost / /with-timestamps with 400/422;
+      attempt 2: the standard endpoint with model eleven_multilingual_v2
+                 (Instant and Professional Cloned Voices are often bound to
+                 it) and the same minimal settings.
+      v0.0.6.t PILLAR 4: the POST body speaks item.ttsText (the RP phonetic
+      respelling) when present, while the stored clip keeps stamping the
+      canonical item.text + clipContentHash(item.text, ...) so hash checks
+      and clipFromManifest still match the exact word spelling. */
+   var vs;
+   if (attempt === 0) {
+    vs = { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
+    if (introMode) vs = { stability: INTRO_VOICE_SETTINGS.stability, similarity_boost: INTRO_VOICE_SETTINGS.similarity_boost, style: INTRO_VOICE_SETTINGS.style, use_speaker_boost: true };
+   } else {
+    vs = { stability: 0.55, similarity_boost: 0.80 };
+   }
+   var model = attempt >= 2 ? 'eleven_multilingual_v2' : genModel;
    /* v0.0.6.q: /with-timestamps first, fallback to standard mp3_44100_128. */
-   var url = introMode ? (genUrl + (attempt ? '?output_format=mp3_44100_128' : '/with-timestamps?output_format=mp3_44100_128')) : genUrl;
-   var wantTs = !!(introMode && !attempt);
+   var url = introMode && attempt === 0 ? (genUrl + '/with-timestamps?output_format=mp3_44100_128')
+    : (introMode ? (genUrl + '?output_format=mp3_44100_128') : genUrl);
+   var wantTs = !!(introMode && attempt === 0);
    try {
-    global.fetch(url, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: wantTs ? 'application/json' : 'audio/mpeg' }, body: JSON.stringify({ text: item.text, model_id: genModel, voice_settings: vs }) })
+    global.fetch(url, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: wantTs ? 'application/json' : 'audio/mpeg' }, body: JSON.stringify({ text: str(item.ttsText || item.text), model_id: model, voice_settings: vs }) })
      .then(function (res) {
       var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
       if (!res || !res.ok) {
-       if (st === 422 && attempt < 1) { requestClip(item, key, done, 1); return null; } /* D13 */
        if (st === 429 && attempt < 1) { global.setTimeout(function () { requestClip(item, key, done, attempt + 1); }, 5000); return null; }
+       if ((st === 400 || st === 403 || st === 422 || st >= 500) && attempt < 2) { requestClip(item, key, done, attempt + 1); return null; } /* v0.0.6.t PILLAR 3D */
        throw withStatus(new Error('tts_failed'), st || 0);
       }
       if (wantTs) return res.json ? res.json().then(function (j) { return { ts: j }; }) : null;
@@ -4912,8 +5002,21 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
      the next reload treated the creator's Cloned Voice beats as un-generated
      repo preloads (auto re-synthesizing over them with default George). */
   var src = ST.voicePack.clips || {}, out = {}, k;
+  /* v0.0.6.t PILLAR 3F/4D — the CANONICAL-KEY law: hydrateClips() adds
+     in-memory playback aliases (bare word keys + words.num.N-style system
+     aliases). v0.0.6.s committed those aliases to GitHub, bloating the pack
+     to 270 entries / 20.7 MB. Only canonical keys are ever written to disk:
+     words.<word>, num.N, cmd.*, guide.en.N, _guide_N, _intro_male_N. */
+  var SYS_KEY_RE = /^(num\.\d+|cmd\.[a-z]+|guide\.en\.\d|_guide_\d|_intro_male_[1-4])$/;
   for (k in src) {
    if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
+   var kk = str(k);
+   /* Drop hydration aliases — order matters: a words.<system-key> alias
+      goes first, so the CANONICAL num.1 / cmd.* / _intro_male_* keys are
+      never mistaken for bare aliases of their own words.* aliases; then a
+      bare word key that also exists as words.<k>. */
+   if (/^words\./.test(kk) && SYS_KEY_RE.test(kk.slice(6))) continue;
+   if (!/^words\./.test(kk) && !SYS_KEY_RE.test(kk) && isObj(src['words.' + kk])) continue;
    var c = src[k];
    if (!c || typeof c !== 'object') { out[k] = c; continue; }
    var row = {
@@ -5208,13 +5311,32 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   if (!list.length || isNaN(idx) || !list[idx]) return false;
   var w = list[idx];
   var key = 'words.' + str(w.w).toLowerCase();
-  /* Drop just this one stale clip so the delta queue rebuilds exactly it; */
-  if (isObj(ST.voicePack.clips)) delete ST.voicePack.clips[key];
-  msg(' Re-synthesizing 1 word: ' + esc(str(w.w)) + '…', '');
+  /* v0.0.6.t PILLAR 4C: default the Lecturer's ttsHint to the RP respelling
+     so a bare "advertisement" is never re-synthesized with the same American
+     stress pattern that made the old clip wrong. */
+  if (!str(w.ttsHint)) {
+   w.ttsHint = RP_TTS_OVERRIDES[str(w.w).toLowerCase()] || w.ttsHint || '';
+   if (str(w.ttsHint)) {
+    list[idx] = w;
+    ST.words = list;
+    ST.dirty = true;
+    var ed = byId('studioWords');
+    if (ed) ed.value = wordsToText(list);
+   }
+  }
+  /* Drop BOTH the canonical and the bare key so the delta queue rebuilds
+     exactly this word and no stale alias survives the re-synthesis. */
+  if (isObj(ST.voicePack.clips)) { delete ST.voicePack.clips[key]; delete ST.voicePack.clips[str(w.w).toLowerCase()]; }
+  msg(' Re-synthesizing 1 word: ' + esc(str(w.w)) + (str(w.ttsHint) ? ' [' + esc(str(w.ttsHint)) + ']' : '') + '…', '');
   generateClips({ words: [w], keys: [key], force: true }, function (err) {
    if (err) { msg(' Re-synthesis failed · ' + quotaError(err), 'bad'); return; }
-   try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('word_resynthesized', { word: str(w.w) }); } catch (e) {}
+   /* v0.0.6.t PILLAR 4D: inject the fresh clip into the LIVE speech layer
+     immediately (the bare alias is recomputed by hydrateClips) and preview
+     it, so the Lecturer hears the new British RP clip right away. */
+   try { if (global.SDP && SDP.Speech && SDP.Speech.injectClips) SDP.Speech.injectClips(ST.voicePack.clips); } catch (eInj) {}
+   try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('word_resynthesized', { word: str(w.w), ttsHint: str(w.ttsHint) }); } catch (e) {}
    msg(' ' + esc(str(w.w)) + ' re-synthesized · 1 word · the other 29 clips untouched', 'ok');
+   previewWmRow(idx);
   });
   return true;
  }

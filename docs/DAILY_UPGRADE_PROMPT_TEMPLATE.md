@@ -390,73 +390,38 @@ Hard gates: 12 gates 0 FAIL — G1 109, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52
 G9 47, G10 38, G11 74, G12 94 = 650 assertions.
 ```
 
-## v0.0.6.q (ver 31) — SHA-256 verification stamp — 2026-11-07
+## v0.0.6.s (ver 33) — SHA-256 verification stamp — 2026-11-07
 
-Unpacked from `sdp_v0.0.6.q_pro_male_voice_beat1_lock_release_pack.zip`, then Post-Audit
-Fixes A–D applied to `data/studio.js` (267840 B → 267569 B; cap 268000 B, headroom 431 B).
-Target: appVersion 0.0.6.q, ver 31, schema 31, settingsRev 47, syncRev 1794800000000,
-SW_VERSION `sdp-v0.0.6.q-s32`. The four `LOCK-OK` rows are the read-only classroom
-payloads pinned by PRESERVED_SHA in `tests/check.cjs`.
-
-```
-index.html                                     59759 B  616732b07ed4251455a48a7cff769bb2f192a697ad54af326ead726b5dc90a5d
-data.html                                      29847 B  a768355c5af45641edbdfcff14072827cccbe816e02fe6f745cbd318e7e61f05
-data/index.html                                29847 B  a768355c5af45641edbdfcff14072827cccbe816e02fe6f745cbd318e7e61f05
-sw.js                                          14640 B  a098f8514b1f883dd76320b577921cc016f7b0dfb247b07067edbf15460b6641
-manifest.webmanifest                            1743 B  431046b1009ca2f7fc141f13d4dd98d9fb31586a6eba855598a7a6c82b057d69
-assets/css/sdp-ui.css                         134475 B  0892b765aa9c1ccb174917bf154f111066e2f629a1a816e25752a9c729613bb1
-data/sdp-data-sync.js                         117111 B  deba9aad93cb956dad8947074deac551f4ef3221d11ae23740c9a5d08699e52e
-data/sdp-audio-speech.js                       79044 B  f8aa63a1ee47a8207c2595bb060988c3772dd56ecc393da3df4a24fb7d11b9be
-data/sdp-dictation-engine.js                   68990 B  4fdad11617c5f845ee32abb74b1faf9e69c74f7385062a661d98ab64f34ebd86
-data/sdp-ui-views.js                          256696 B  d6aea450411660ad17357bd505081b834e05975f8df5c85503bae037b1abfd84
-data/studio.js                                267569 B  bafd7d140e3b7158e345e4d532a299df1850d4cb0be4ee7856410187150a3cb4
-data/data-meter.js                             22850 B  f4f800440b0e58525afb616ff68b277cada273cbb5c567776d1fd2fffd1ac3fe
-data/sdp-morphe-hooks.js                        6738 B  e0c4f4ab625dbf3787f760e2194e3ceef733a58b2932e6efbbd17ab8b87805ec
-data/version.json                                428 B  a8ee84ab5bcbec9cb65f0e514dd0339095df809ddb2f64ca589a0fdc346262c9
-data/config.json                               38827 B  8c1de4d84d0f9508b99bc8c81503315259e109a638a647ff28e1e8061f17a35e
-data/session.json                              62427 B  931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1  LOCK-OK
-data/gas-source.txt                            13764 B  591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  LOCK-OK
-data/elevenlabs-audio.json                   4239630 B  3836e6beae559cf95158a3577dff5bcdfc79f00476edbbec355fdb1973c24f78
-assets/fonts/NotoSansSinhala-Regular.woff2     48520 B  23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  LOCK-OK
-assets/fonts/NotoSansSinhala-Bold.woff2        48748 B  bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  LOCK-OK
-```
-
-Hard gates: 12 gates + Lab, 0 FAIL — G1 189, G2 14, G3 134, G4 8, G5 107, G6 15, G7 58,
-G8 39, G9 47, G10 38, G11 74, G12 103, Lab 84 = 910 assertions.
-
-## v0.0.6.r (ver 32) — SHA-256 verification stamp — 2026-11-07
-
-Built in the release tree: Cloned-Voice Persistence Across Reloads & Browsers +
-True Dark-Lyrics Word-by-Word Karaoke Sync + the Ultra-Crisp ~10–14 s Briefing.
-appVersion 0.0.6.r, ver 32, schema 32, settingsRev 48, syncRev 1794900000000,
-SW_VERSION `sdp-v0.0.6.r-s33`, studio.js 267226 B (cap 268000 B). LOCK-OK rows
-are the read-only classroom payloads pinned by PRESERVED_SHA in tests/check.cjs.
-Post-Audit Patch 1 trimmed `docs/CHANGELOG_LEDGER.md` 112122 B → 111050 B (cap
-112000 B); Post-Audit Patch 2 guards `staleWhileRevalidateDataJson()` with
-`voicePackOverwriteAllowed()` and stamps `x-sdp-syncrev` (sw.js 16240 B → 16387 B).
+Built in the release tree: Hard Full-Briefing (All 4 Paragraphs) Completion Gate Lock +
+the 100% Authentic First-Person Creator Overview (zero false claims) + canonical text on
+every system clip (no unlock synthesis race) + the SWR release-change overwrite guard.
+appVersion 0.0.6.s, ver 33, schema 33, settingsRev 49, syncRev 1795000000000,
+SW_VERSION `sdp-v0.0.6.s-s34`, studio.js 269035 B (cap 271000 B) — post-audit packedSystemClip patch,
+elevenlabs-audio.json 4765314 B (cap 4900000 B).
+LOCK-OK rows are the read-only classroom payloads pinned by PRESERVED_SHA in tests/check.cjs.
 
 ```
-index.html                                       59737B  81224c01e7ccbeab6d9b8b02e84c8751c6ae4ae3acdb416a6b57a8ec30a1d136
-data.html                                        29847B  915f80d979f0232f420312e77f3a1e64a6fa57dc5e67d0a9277eeb18f3bc20a8
-data/index.html                                  29847B  915f80d979f0232f420312e77f3a1e64a6fa57dc5e67d0a9277eeb18f3bc20a8
-sw.js                                            16387B  7f69f3d29b9338edb6dd86d6cc240bc85d00f60bd8db1fb7b06639886230e388
-manifest.webmanifest                              1743B  ef7e1bd70b8a2754b6242d71e1c4cb5bd49f08054ddb44d69007fb91bc2c75ae
-assets/css/sdp-ui.css                           135328B  0a81337b89987e677c79e5cfedad6e2daefb16c083c28332d911a3f481602cba
-data/sdp-data-sync.js                           119893B  86a529c11c2d636d7a65221c5f26705404e0a03c3a2a8906e108ebe685d6000e
-data/sdp-audio-speech.js                         81288B  66623e77dc35315b7ce32930d34be8804345bc02fba6602951b8caa0410049ad
-data/sdp-dictation-engine.js                     68990B  4fdad11617c5f845ee32abb74b1faf9e69c74f7385062a661d98ab64f34ebd86
-data/sdp-ui-views.js                            256963B  ca1a4fce395983fa18e578b42596ae6c0a625809bb90fe5d51bd2808519e23a2
-data/studio.js                                  267226B  49638760c97c75fc9c1e1d72eb228249e3f87aa13b7ad7b1f5ed8bcbd21dbe95
-data/data-meter.js                               22850B  3b5b60168f108d643d10ba62fe1db0fd0cd8d5cb4ba800a0430eeedd4bf77a20
-data/sdp-morphe-hooks.js                          6738B  e0c4f4ab625dbf3787f760e2194e3ceef733a58b2932e6efbbd17ab8b87805ec
-data/version.json                                  428B  4f4de6b6f6fbaf30a67efebb940f87958028d889e1bf2a17454ed8f6571de544
-data/config.json                                 38828B  e8bc6ae93f0f7c1f86b28d610a584287c6052509f0b66fd0cce98774ed420b3e
-data/session.json                                62427B  931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1  LOCK-OK
-data/gas-source.txt                              13764B  591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  LOCK-OK
-data/elevenlabs-audio.json                     3963211B  7c90d36fc2d0f32ad74692c76835e85d28bb3b2343e4a49978a5412d67cfc54c
-assets/fonts/NotoSansSinhala-Regular.woff2       48520B  23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  LOCK-OK
-assets/fonts/NotoSansSinhala-Bold.woff2          48748B  bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  LOCK-OK
+index.html                                    59713 B  3cd4deda8c344e72645fe0858bac403942d9f1d04c19f0548db667c24b13b680
+data.html                                     29847 B  d373e07d0fcd7d864516fc5d5f3acc6151848425ea5fc88f4968c2c964b9781b
+data/index.html                               29847 B  d373e07d0fcd7d864516fc5d5f3acc6151848425ea5fc88f4968c2c964b9781b
+sw.js                                         16921 B  bc5d5cdcea2880675352b7787c75c7eb2e7334ecaed40d408815dc4c8208d10f
+manifest.webmanifest                           1743 B  43382d0e8ada27a7dda3131124e234dcab27085d8a50c4a2dcb455fd94eaa2c8
+assets/css/sdp-ui.css                        135328 B  0a81337b89987e677c79e5cfedad6e2daefb16c083c28332d911a3f481602cba
+data/sdp-data-sync.js                        119893 B  6bf1d7e1a252ac6359fd9237dbc702c26f9b0c4f4cc34ff3157e2a586ef816bb
+data/sdp-audio-speech.js                      81288 B  f570efcf8658e311e28f0a98ab7f9041614ae750f895fcc2a3958b0abde05658
+data/sdp-dictation-engine.js                  68990 B  4fdad11617c5f845ee32abb74b1faf9e69c74f7385062a661d98ab64f34ebd86
+data/sdp-ui-views.js                         261245 B  34211e8e69fd5a309a279fb5d08b613932a1cab29a7840208a53c1be584d24b9
+data/studio.js                               269035 B  29dd5c5c5cdac733a79313ebeb679aa6fc72d788f0e3b6fc3b2c9bc8fa768679
+data/data-meter.js                            22850 B  60381c6255825b4f3b1ccb2d963c0b16596d689476c136ebf42053ecd314e9bf
+data/sdp-morphe-hooks.js                       6738 B  e0c4f4ab625dbf3787f760e2194e3ceef733a58b2932e6efbbd17ab8b87805ec
+data/version.json                               379 B  81714e0ed50474c2ba0afaee483b4566a0eccb450bb6be998ce79425675f2934
+data/config.json                              38828 B  fb403378b513db3dcdd54241d409bca9284ddee63f5ef360b44d3bee7524bdd6
+data/session.json                             62427 B  931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1  LOCK-OK
+data/gas-source.txt                           13764 B  591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e  LOCK-OK
+data/elevenlabs-audio.json                  4765314 B  f9e595126998ffae917284c9215b3378d4f784a713e0e7765e741b2b5b2d952e
+assets/fonts/NotoSansSinhala-Regular.woff2    48520 B  23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280  LOCK-OK
+assets/fonts/NotoSansSinhala-Bold.woff2       48748 B  bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e  LOCK-OK
 ```
 
-Hard gates: 13 commands, 0 FAIL — G1 190, G2 14, G3 134, G4 8, G5 107, G6 15,
-G7 58, G8 39, G9 47, G10 38, G11 74, G12 103, Lab 86 = 913 assertions.
+Hard gates: 13 commands, 0 FAIL — G1 190, G2 14, G3 137, G4 8, G5 107, G6 15,
+G7 58, G8 39, G9 47, G10 38, G11 74, G12 103, Lab 86 = 916 assertions.

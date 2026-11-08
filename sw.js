@@ -21,9 +21,9 @@
  * masked by a stale cache. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.6.r-s33';
-var SHELL_CACHE = 'sdp-v0.0.6.r-s33-shell';
-var SW_RELEASE = '0.0.6.r';
+var SW_VERSION = 'sdp-v0.0.6.s-s34';
+var SHELL_CACHE = 'sdp-v0.0.6.s-s34-shell';
+var SW_RELEASE = '0.0.6.s';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
@@ -211,10 +211,18 @@ function staleWhileRevalidateDataJson(request, url) {
       if (hit) {
         /* A new release shipped: serve the stale body NOW (the zero-drop
            law — the app boots on the old pack instantly) and revalidate the
-           cache quietly behind it. */
+           cache quietly behind it — v0.0.6.s: the fresh body is stamped with
+           its syncRev through cachePutRelease AND guarded by
+           voicePackOverwriteAllowed so even this leg can never let a lagging
+           CDN overwrite a newer locally synthesized Cloned Voice pack. */
         fetch(new Request(cleanUrl, { cache: 'reload' })).then(function (res) {
-          if (res && res.ok) return cachePutRelease(cache, cleanUrl, res, want);
-          return false;
+          if (!res || !res.ok) return false;
+          return voicePackOverwriteAllowed(cache, cleanUrl, res).then(function (allowed) {
+            if (!allowed) return false;
+            return res.clone().json().then(function (j) {
+              return cachePutRelease(cache, cleanUrl, res, want, j && j.syncRev);
+            }).catch(function () { return false; });
+          });
         }).catch(function () {});
         return hit;
       }

@@ -1035,7 +1035,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.t' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.u' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1325,13 +1325,50 @@
     }
     return entryUrl(entry);
   }
+  /* v0.0.6.u Fix 1C helper: can the REAL briefing clip for beat <idx> play
+     right now (manifest loaded, entry present, text + hash pin intact)?
+     The Paragraph-1 hard guard in briefingNarrate polls this to hand the
+     genuine _intro_male_1 clip one more chance the moment a cold-browser
+     manifest finally lands. */
+  function briefingClipReady(idx) {
+    return !!briefingClipUrl(idx);
+  }
+  /* v0.0.6.u Fix 5A: pre-warm the Paragraph-1 clip's Blob URL while the user
+     is still reading the Welcome splash — loadManifest() runs in the
+     background and playableUrl(briefingClipUrl(0)) decodes _intro_male_1's
+     base64 into the memoized Blob, so the Continue click starts Paragraph 1
+     with 0 ms decode latency (playBriefingStep is served the ready URL). */
+  function preWarmBriefing(idx) {
+    try {
+      loadManifest(function () {
+        var clip = briefingClipUrl(idx);
+        if (clip) playableUrl(clip);
+      });
+    } catch (e0) {}
+    return true;
+  }
   function playBriefingStep(stepIdx, stepText, cb, hooks) {
     cb = cb || noop;
     hooks = isObj(hooks) ? hooks : {};
     var text = str(stepText);
     if (!text) { cb(null); return true; }
-    var clip = briefingClipUrl(stepIdx);
-    if (clip) {
+    function tier2Play() {
+      /* Tier 2: a brand-new Chrome session often has ZERO speechSynthesis
+       voices and blocks speak() until the first gesture — that exact state
+       resolves autoplayBlocked (the tap pill), never a silent skip.
+       v0.0.6.o ZERO CUT-OFF LAW: the briefing completion callback fires
+       only from the utterance's real onend (the utterance is pinned in the
+       GC-safe array); if the engine reports speaking/pending while the
+       guard timer fires, the guard keeps waiting — the final words of the
+       paragraph are never clipped and never skipped early. */
+      var synth = global.speechSynthesis;
+      var voiceCount = 0;
+      try { if (synth && synth.getVoices) voiceCount = synth.getVoices().length; } catch (e0) {}
+      if (synth && voiceCount === 0) { cb({ autoplayBlocked: true, tier: 'device', noVoices: true }); return false; }
+      say([text], { persona: 'male', rate: 0.97, onBoundary: function (ci) { if (typeof hooks.onBoundary === 'function') { try { hooks.onBoundary(ci); } catch (e4) {} } } }, function () { cb(null); });
+      return false;
+    }
+    function clipPlay(clip) {
       var bEpoch = state.speechEpoch;
       state.speaking = true;
       /* v0.0.6.r Pillar 3: the tightened ultra-crisp executive script plays
@@ -1357,20 +1394,43 @@
       });
       return true;
     }
-    /* Tier 2: a brand-new Chrome session often has ZERO speechSynthesis
-       voices and blocks speak() until the first gesture — that exact state
-       resolves autoplayBlocked (the tap pill), never a silent skip.
-       v0.0.6.o ZERO CUT-OFF LAW: the briefing completion callback fires
-       only from the utterance's real onend (the utterance is pinned in the
-       GC-safe array); if the engine reports speaking/pending while the
-       guard timer fires, the guard keeps waiting — the final words of the
-       paragraph are never clipped and never skipped early. */
-    var synth = global.speechSynthesis;
-    var voiceCount = 0;
-    try { if (synth && synth.getVoices) voiceCount = synth.getVoices().length; } catch (e0) {}
-    if (synth && voiceCount === 0) { cb({ autoplayBlocked: true, tier: 'device', noVoices: true }); return false; }
-    say([text], { persona: 'male', rate: 0.97, onBoundary: function (ci) { if (typeof hooks.onBoundary === 'function') { try { hooks.onBoundary(ci); } catch (e4) {} } } }, function () { cb(null); });
-    return false;
+    var clip = briefingClipUrl(stepIdx);
+    if (clip) return clipPlay(clip);
+    /* v0.0.6.u Fix 1B — the COLD-BROWSER MANIFEST WAIT LAW. On a brand-new
+       browser the 3.8 MB data/elevenlabs-audio.json is often STILL
+       DOWNLOADING when briefingNarrate(0) fires 410 ms after the Continue
+       click; briefingClipUrl(0) returned '' and this function fell straight
+       to Tier 2, whose utterance then failed (recent cancel(), zero voices)
+       and advanced narration to Paragraph 2 — which played its MP3 once the
+       manifest landed. THE FIX: when the manifest is not yet in memory,
+       NEVER fall back at once — loadManifest() is kicked and the beat waits
+       (bounded 8000 ms, cold-network budget) for the pack to arrive, then
+       plays the REAL _intro_male_1 from Word 1. Only a dead fetch after the
+       full budget falls to Tier 2. */
+    if (!state.manifest) {
+      var coldEpoch = state.speechEpoch;
+      var coldDone = false, coldWaited = 0;
+      var coldPoll = null, coldBail = null;
+      var finishCold = function () {
+        if (coldDone) return;
+        coldDone = true;
+        if (coldPoll) { global.clearInterval(coldPoll); coldPoll = null; }
+        if (coldBail) { global.clearTimeout(coldBail); coldBail = null; }
+        if (state.speechEpoch !== coldEpoch) { cb(null); return; }
+        var late = briefingClipUrl(stepIdx);
+        if (late) clipPlay(late); else tier2Play();
+      };
+      coldBail = global.setTimeout(finishCold, 8000);
+      coldPoll = global.setInterval(function () {
+        if (coldDone) { global.clearInterval(coldPoll); coldPoll = null; return; }
+        coldWaited += 120;
+        if (state.manifest) { finishCold(); return; }
+        if (coldWaited >= 8000) finishCold();
+      }, 120);
+      loadManifest(noop);
+      return true;
+    }
+    return tier2Play();
   }
 
   /* ══ R3: spoken button cues (`cmd.*` and `num.<n>`) ══════════════════════
@@ -1549,30 +1609,61 @@
         attempt();
       });
     }
-    /* D10 correction: never WAIT for the manifest — the d behaviour started
-       playing at once, and a hanging manifest fetch must never mute a word.
-       The chain starts immediately; if the manifest lands during the very
-       first word and nothing has succeeded yet, the ladder is restarted once
-       (stale tier results are dropped by the generation counter). */
+    /* v0.0.6.u Fix 2 — the COLD-MANIFEST WAIT LAW. On a brand-new browser
+       the very first ▶ Play / Listen tap used to fall straight through to
+       the device's robotic speechSynthesis, because resolveTiers() ran
+       while the 3.8 MB pack was still downloading (clipFromManifest()
+       returned '' and the eleven tier simply did not exist). THE LAW: when
+       no explicit tier list was passed and the manifest is not yet in
+       memory, the ladder WAITS — bounded 2500 ms — for loadManifest() to
+       land before the tiers are resolved, so the first word a student ever
+       taps still plays the real unified British female voice clip. The
+       kick is cheap (a no-op callback when a fetch is already in flight)
+       and a genuinely dead fetch still resolves through the tts tier after
+       the bounded wait. The R1 Path A restart below stays as the second
+       chance for a pack that lands mid-word. */
     function run() {
+      if (ladderStarted) return;
+      ladderStarted = true;
       tiers = opts.tiers || resolveTiers(word);
       attempt();
     }
-    if (!opts.tiers && !state.manifest && !state.manifestRequested) {
-      loadManifest(function () {
-        /* R1 Path A (F1): the manifest restart was the loudest leak — a slow
-           fetch landed seconds after Pause and replayed the word. The epoch,
-           the pause flag and the current screen are all re-checked FIRST. */
-        if (settled || opts.tiers || !state.manifest) return;
-        if (state.speechEpoch !== wEpoch) return;
-        /* v0.0.6.t PILLAR 1: a manual tap survives the manifest restart too. */
-        if (!manual && SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
-        if (Refuse()) return;
-        gen += 1;
-        at = 0;
-        tiers = resolveTiers(word);
-        attempt();
-      });
+    var ladderStarted = false;
+    if (!opts.tiers && !state.manifest) {
+      var pwStarted = false;
+      var pwWaitStart = nowMs();
+      var pwPoll = null;
+      var pwKick = function () {
+        if (pwStarted) return;
+        pwStarted = true;
+        loadManifest(function () {
+          /* R1 Path A (F1): the manifest restart was the loudest leak — a
+             slow fetch landed seconds after Pause and replayed the word.
+             The epoch, the pause flag and the current screen are all
+             re-checked FIRST. The poll path owns the FIRST start; this
+             restart only fires for a pack that lands after the bounded
+             wait already fell through (ladderStarted, not settled). */
+          if (settled || opts.tiers || !state.manifest) return;
+          if (!ladderStarted) return;
+          if (state.speechEpoch !== wEpoch) return;
+          /* v0.0.6.t PILLAR 1: a manual tap survives the restart too. */
+          if (!manual && SDP.Engine && SDP.Engine.isPaused && SDP.Engine.isPaused()) return;
+          if (Refuse()) return;
+          gen += 1;
+          at = 0;
+          tiers = resolveTiers(word);
+          attempt();
+        });
+      };
+      pwPoll = global.setInterval(function () {
+        if (settled || opts.tiers) { global.clearInterval(pwPoll); pwPoll = null; return; }
+        if (state.manifest || nowMs() - pwWaitStart >= 2500) {
+          global.clearInterval(pwPoll); pwPoll = null;
+          run();
+        }
+      }, 100);
+      pwKick();
+      return;
     }
     run();
   }
@@ -1671,6 +1762,9 @@
     pickMaleVoice: pickMaleVoice,
     maleVoiceName: maleVoiceName,
     playBriefingStep: playBriefingStep,
+    briefingClipReady: briefingClipReady,
+    preWarmBriefing: preWarmBriefing,
+    lastTierId: function () { return str(state.lastTier); },
     briefingClipUrl: briefingClipUrl,
     clipCount: function () {
       return (state.manifest && isObj(state.manifest.clips)) ? Object.keys(state.manifest.clips).length : 0;

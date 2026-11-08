@@ -112,7 +112,13 @@
     resynthWmRow() speak the respelling (item.ttsText) so a bare
     "advertisement" can never come back from ElevenLabs as American
     "ad-ver-TIZE-ment" again, while the stored clip keeps stamping the
-    canonical spelling + clipContentHash(canonical spelling). */
+    canonical spelling + clipContentHash(canonical spelling).
+    v0.0.6.u: expanded to the FULL Cambridge B1 heterophone set — every
+    common UK/US stress or vowel split a B1 class meets (herb, garage,
+    vase, laboratory, dynasty, patriot, mobile, fragile, missile, hostile,
+    fertile, versatile, anti, semi, multi, aluminium, yoghurt, clerk,
+    derby, z, controversy, migraine, renaissance) plus the Session 9
+    Entertainment & Media terms whose old clips carried the wrong stress. */
  var RP_TTS_OVERRIDES = {
   'advertisement': 'ad-ver-tiss-ment',
   'schedule': 'shed-yool',
@@ -120,7 +126,37 @@
   'vitamin': 'vit-uh-min',
   'tomato': 'tuh-mah-toe',
   'leisure': 'lezh-uh',
-  'lieutenant': 'lef-ten-uhnt'
+  'lieutenant': 'lef-ten-uhnt',
+  'herb': 'hurb',
+  'garage': 'garr-arzh',
+  'vase': 'vahz',
+  'laboratory': 'luh-bor-uh-tree',
+  'dynasty': 'din-uh-stee',
+  'patriot': 'pat-ree-uht',
+  'mobile': 'moh-bile',
+  'fragile': 'fraj-ile',
+  'missile': 'miss-ile',
+  'hostile': 'host-ile',
+  'fertile': 'fert-ile',
+  'versatile': 'vers-uh-tile',
+  'anti': 'an-tee',
+  'semi': 'sem-ee',
+  'multi': 'mult-ee',
+  'aluminium': 'al-yuh-min-ee-um',
+  'yoghurt': 'yog-uht',
+  'clerk': 'clahk',
+  'derby': 'dah-bee',
+  'z': 'zed',
+  'controversy': 'kon-truh-ver-see',
+  'migraine': 'mee-grayn',
+  'renaissance': 'ruh-nay-suhns',
+  'entertainment': 'en-tuh-tayn-muhnt',
+  'drawing': 'draw-ing',
+  'headphones': 'hed-fohnz',
+  'classical music': 'klass-ih-kul myoo-zik',
+  'folk music': 'fohk myoo-zik',
+  'film maker': 'film may-kuh',
+  'exhibition': 'ek-sib-ish-uhn'
  };
  /* v0.0.6.q: the high-professional broadcast voice settings; the legacy */
  var INTRO_VOICE_SETTINGS = { stability: 0.50, similarity_boost: 0.85, style: 0.32, use_speaker_boost: true };
@@ -3293,6 +3329,11 @@ function priorIPAFor(w) {
    s: sIn || (stalePrior ? b1Example(str(word), base.pos) : base.s),
    audio: str(prior && prior.audio) || base.audio,
    exampleSi: str(p.exampleSi) || base.exampleSi,
+   /* v0.0.6.u Step A: every enriched word carries its British RP phonetic
+      respelling as ttsHint (Lecturer hint > RP_TTS_OVERRIDES > prior hint),
+      so the publish pipeline's clip synthesis always SPEAKS the RP
+      respelling while stamping the canonical spelling. */
+   ttsHint: str(p.ttsHint) || RP_TTS_OVERRIDES[str(word).toLowerCase()] || str(prior && prior.ttsHint) || '',
    enrichSource: str(p.enrichSource) || str(prior && prior.enrichSource) || base.enrichSource
   };
   return out;

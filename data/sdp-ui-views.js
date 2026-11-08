@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.t';
+    return '0.0.6.u';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -2936,7 +2936,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.t.beta';
+  var BETA_SUBVERSION = '0.0.6.u.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -3362,24 +3362,51 @@
    * from Word 1 the moment the 320ms transition lands — the beat can never
    * be skipped by a NotAllowedError race. */
   function welcomePrimeAudioInGesture() {
-    /* Inside the click gesture: unmute + full volume + a silent resume of
-       speechSynthesis so Chrome/Safari consider the session user-activated
-       BEFORE Paragraph 1 calls play(). */
+    /* Inside the click gesture: unmute + full volume on the SHARED element
+       (properties only), plus a DISPOSABLE silent element that primes the
+       document's user activation, and a silent resume of speechSynthesis so
+       Chrome/Safari consider the session user-activated BEFORE Paragraph 1
+       calls play().
+       v0.0.6.u Fix 1A: the old in-gesture sharedAudio().play() left an
+       asynchronous play().then(pause()) attached to the very element
+       playBriefingStep(0) re-uses 410 ms later — on a cold browser that
+       promise could settle (or an 'ended'/'error' from the prime could
+       fire) AFTER Paragraph 1's clip had already started, cutting it off
+       and advancing narration to Paragraph 2. The prime now runs on its
+       own throw-away <audio> that is paused and emptied the instant it
+       starts, so sharedAudio() stays completely untouched until
+       playBriefingStep owns it. */
     try {
       var el = byId('sdpSharedAudio');
       if (!el && SDP.Speech && SDP.Speech.sharedAudioElement) el = SDP.Speech.sharedAudioElement();
       if (el) {
         el.muted = false;
         el.volume = 1.0;
-        try { el.play().then(function () { try { el.pause(); } catch (e1) {} }, function () {}); } catch (e0) {}
       }
-    } catch (e) {}
+    } catch (e0) {}
+    try {
+      if (doc && doc.createElement) {
+        var prime = doc.createElement('audio');
+        prime.preload = 'auto';
+        prime.setAttribute('playsinline', 'playsinline');
+        /* A real, instantly-loadable 44-byte silent WAV media source. */
+        prime.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+        var p = prime.play();
+        if (p && typeof p.then === 'function') {
+          p.then(function () {
+            try { prime.pause(); prime.removeAttribute('src'); prime.load(); } catch (e1) {}
+          }, function () {
+            try { prime.pause(); prime.removeAttribute('src'); prime.load(); } catch (e2) {}
+          });
+        }
+      }
+    } catch (e3) {}
     try {
       if (global.speechSynthesis) {
         try { global.speechSynthesis.resume(); } catch (e1) {}
         try { global.speechSynthesis.getVoices(); } catch (e2) {}
       }
-    } catch (e) {}
+    } catch (e4) {}
   }
   function welcomeStageVisible() {
     var w = byId('welcomeStage');
@@ -3520,8 +3547,26 @@
          arrives; it can never delay a real clip, because wait() is already zero
          once a real duration has elapsed — this is a floor, never a delay. */
       if (idx === 0) wait = Math.max(wait, 2600 - (Date.now() - startedAt));
-      global.setTimeout(function () {
+      global.setTimeout(function advanceBeat() {
         if (advanced || epoch !== briefingState.epoch) return;
+        /* v0.0.6.u Fix 1C — the HARD PARAGRAPH-1 MINIMUM PLAYBACK GUARD.
+           Paragraph 1 may NEVER advance to Paragraph 2 after a phantom
+           completion: if the beat reported done WITHOUT the real MP3 clip
+           ever starting (realStarted false — the cold-browser Tier-2
+           fallback, an onerror from a cancelled utterance, a stalled
+           element), the beat either gets ONE retry the moment the real
+           _intro_male_1 clip is actually available, or it holds the
+           remaining natural time up to a hard 8-second floor. A genuine
+           clip (realStarted, 'ended' owns the pacing) and the test-suite
+           FAST stubs (a reported duration 0 < d < 6 s) are exempt, so the
+           lab gates keep their fast beats. */
+        if (idx === 0 && !realStarted && !(realDurMs > 0 && realDurMs < 6000)) {
+          var beatReady = false;
+          try { beatReady = !!(SDP.Speech && SDP.Speech.briefingClipReady && SDP.Speech.briefingClipReady(0)); } catch (eR) {}
+          if (beatReady && speakTried < 2) { speakBeat(); return; }
+          var beatMs = Date.now() - startedAt;
+          if (beatMs < 8000) { global.setTimeout(advanceBeat, Math.max(120, 8000 - beatMs)); return; }
+        }
         advanced = true;
         /* v0.0.6.q Pillar 2, Rule B — the PARAGRAPH-1 COMPLETION LAW: the
            instant Beat 1 (idx === 0) has finished speaking its final word and
@@ -3571,45 +3616,56 @@
       if (Number(durSec) > 0) realDurMs = Math.round(Number(durSec) * 1000);
       startBriefingWordFlow(idx, durSec, epoch);
     };
-    try {
-      if (SDP.Speech && SDP.Speech.playBriefingStep) {
-        SDP.Speech.playBriefingStep(idx, text, function (res) {
-          if (epoch !== briefingState.epoch) return;
-          /* Fresh-Chrome autoplay handshake: the browser blocked the audio
-             (NotAllowedError / zero voices) — HOLD this beat behind the tap
-             pill instead of skipping it silently. After the user's first
-             gesture we never hold again (estimate flow keeps it moving). */
-          if (res && res.autoplayBlocked && !briefingState.gestureArmed) {
-            global.clearTimeout(guard);
-            briefingShowTapPill();
-            return;
-          }
+    /* v0.0.6.u Fix 1C: the beat's speech attempt is a callable (max 2 tries)
+       so the Paragraph-1 hard guard can hand the REAL clip one more chance
+       the moment the cold-browser manifest finally arrives. realStarted
+       latches only on the clip's genuine 'playing' signal (onStarted). */
+    var realStarted = false;
+    var speakTried = 0;
+    var speakBeat = function () {
+      if (advanced || epoch !== briefingState.epoch || !briefingState.open) return;
+      speakTried += 1;
+      try {
+        if (SDP.Speech && SDP.Speech.playBriefingStep) {
+          SDP.Speech.playBriefingStep(idx, text, function (res) {
+            if (epoch !== briefingState.epoch) return;
+            /* Fresh-Chrome autoplay handshake: the browser blocked the audio
+               (NotAllowedError / zero voices) — HOLD this beat behind the tap
+               pill instead of skipping it silently. After the user's first
+               gesture we never hold again (estimate flow keeps it moving). */
+            if (res && res.autoplayBlocked && !briefingState.gestureArmed) {
+              global.clearTimeout(guard);
+              briefingShowTapPill();
+              return;
+            }
+            realNext();
+          }, {
+            onStarted: function () { realStarted = true; briefingHideTapPill(); },
+            onDuration: function (durSec) { startFlow(durSec); },
+            /* v0.0.6.m: the frame-accurate clock — every real playback frame
+               (audio.currentTime / audio.duration) and every Web Speech
+               boundary event repaints the karaoke directly from the voice. */
+            onTick: function (tSec, durSec) {
+              /* v0.0.6.s: a media element that re-uses the same URL (the lab
+                 fixture, a cached blob) may never re-fire loadedmetadata, so
+                 the REAL duration also latches from the playback clock — the
+                 natural pacing then follows the actual clip, never the
+                 natural-reading estimate. */
+              if (!realDurMs && Number(durSec) > 0) realDurMs = Math.round(Number(durSec) * 1000);
+              onBriefingClockTick(idx, epoch, tSec, durSec);
+            },
+            onBoundary: function (charIndex) { onBriefingBoundary(idx, epoch, charIndex); }
+          });
+          /* If neither the clip duration nor a rejection arrives (silent
+             browser), an estimate keeps the karaoke flowing gracefully. */
+          global.setTimeout(function () { if (flowStarted || epoch !== briefingState.epoch || !briefingState.open) return; startFlow(0); }, 1100);
+        } else {
+          startFlow(0);
           realNext();
-        }, {
-          onStarted: function () { briefingHideTapPill(); },
-          onDuration: function (durSec) { startFlow(durSec); },
-          /* v0.0.6.m: the frame-accurate clock — every real playback frame
-             (audio.currentTime / audio.duration) and every Web Speech
-             boundary event repaints the karaoke directly from the voice. */
-          onTick: function (tSec, durSec) {
-            /* v0.0.6.s: a media element that re-uses the same URL (the lab
-               fixture, a cached blob) may never re-fire loadedmetadata, so
-               the REAL duration also latches from the playback clock — the
-               natural pacing then follows the actual clip, never the
-               natural-reading estimate. */
-            if (!realDurMs && Number(durSec) > 0) realDurMs = Math.round(Number(durSec) * 1000);
-            onBriefingClockTick(idx, epoch, tSec, durSec);
-          },
-          onBoundary: function (charIndex) { onBriefingBoundary(idx, epoch, charIndex); }
-        });
-        /* If neither the clip duration nor a rejection arrives (silent
-           browser), an estimate keeps the karaoke flowing gracefully. */
-        global.setTimeout(function () { if (flowStarted || epoch !== briefingState.epoch || !briefingState.open) return; startFlow(0); }, 1100);
-      } else {
-        startFlow(0);
-        realNext();
-      }
-    } catch (e) { startFlow(0); realNext(); }
+        }
+      } catch (e) { startFlow(0); realNext(); }
+    };
+    speakBeat();
   }
   function briefingFinishNarration(epoch) {
     if (epoch !== briefingState.epoch) return;
@@ -3758,6 +3814,13 @@
        to the reading stage is retired; the user ALWAYS sees the Welcome
        first, exactly as the creator demanded. */
     welcomeShowStage();
+    /* v0.0.6.u Fix 5A — the WELCOME-STAGE PRE-WARM: the moment the Welcome
+       splash is on screen, loadManifest() is kicked in the background and
+       _intro_male_1's base64 is decoded into its memoized Blob URL, so the
+       Continue click starts Paragraph 1 with 0 ms decode latency — even on
+       a cold browser the 3.8 MB pack download overlaps with the user
+       reading the splash instead of racing the first beat. */
+    try { if (SDP.Speech && SDP.Speech.preWarmBriefing) SDP.Speech.preWarmBriefing(0); } catch (eW) {}
     /* v0.0.6.q Pillar 2, Rule A — the gate timer is NOT started here. While
        the Welcome splash (#welcomeStage) is on screen the countdown must not
        burn: welcomeContinueToOverview() arms it the exact moment Stage 2 is

@@ -9,7 +9,7 @@
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.t — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player 0.0.6.u — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -535,7 +535,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">0.0.6.t</span>
+      <span id="sdpVerPill">0.0.6.u</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -544,12 +544,12 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.t</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.u</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-07</span></li>
       <!-- 0.0.6.q Pillar 1: the weekly release note lives HERE in About —
          changelog information — so it takes 0px away from the spacious
          #briefingLyrics reading stage. The DOM id contract is preserved. -->
-      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.t) · Play-Audio/Listen buttons always speak (manual-play law) · Briefing unlocks at Paragraph 1 (Exit + Start Dictation →) · Cloned-Voice sync hardened (1 MB wall + Git Data API + 25 s budgets) · Cambridge B1 British RP pronunciation engine (lexicon + re-synthesized clean clips)</li>
+      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.u) · Cold-browser Beat-1 fix: Paragraph 1 is never skipped (manifest wait law + hard Beat-1 guard) · All 131 classroom clips re-baked in ONE unified en-GB-SoniaNeural British RP female educator voice · Studio: paste words → Publish &amp; Sync (auto-enrich → auto-synthesize → commit)</li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -747,7 +747,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.t';
+ var TARGET = '0.0.6.u';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

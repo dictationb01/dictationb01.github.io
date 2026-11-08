@@ -83,6 +83,12 @@ jobs:
       - name: Lab Environment - spacious overview, Studio-Briefing bridge, cache purge, karaoke, mic-release, feedback (Step 13b)
         run: node tests/briefing-feedback-lab.cjs
 
+      # v0.0.6.u: the MANDATORY pre-PR Arena gate — cold-browser Beat-1 race
+      # (x2 fresh contexts, delayed 3.8 MB pack), 131-clip unified SoniaNeural
+      # pack audit, cross-tab eleven-tier audio and git hygiene.
+      - name: G13 · mandatory pre-PR Arena verification gate
+        run: node tests/arena-pre-pr-verify.cjs
+
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock
         run: |

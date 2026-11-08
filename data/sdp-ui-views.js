@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.o';
+    return '0.0.6.t';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -1679,7 +1679,9 @@
         if (!node || node === list || !node.getAttribute) return;
         var word = null;
         try { word = SDP.Sync.wordByName(node.getAttribute('data-play') || node.getAttribute('data-play-word')); } catch (e) {}
-        if (word && SDP.Speech) SDP.Speech.playWord(word, {}, noop);
+        /* v0.0.6.t PILLAR 1: the ▶ Play tap on a 30 Words card is a manual
+           play — it speaks even while the engine is pause-locked. */
+        if (word && SDP.Speech && SDP.Speech.playWord) SDP.Speech.playWord(word, { allowWhenPaused: true, manualPlay: true }, noop);
       });
     }
   }
@@ -1756,7 +1758,9 @@
     /* F3: speak a listen-mode card exactly once per card via the spoken flag. */
     if (practice.mode === 'listen' && !practice.answered && !practice.spoken) {
       practice.spoken = true;
-      try { if (SDP.Speech) SDP.Speech.playWord(word, {}, noop); } catch (e) {}
+      /* v0.0.6.t PILLAR 1: a listen-mode card on the Practice screen is a
+         user-driven play — it must speak even while the engine is paused. */
+      try { if (SDP.Speech && SDP.Speech.playWord) SDP.Speech.playWord(word, { allowWhenPaused: true, manualPlay: true }, noop); } catch (e) {}
     }
   }
   function bindPractice() {
@@ -1799,7 +1803,9 @@
           return;
         }
         if (act === 'flip') { practice.flipped = !practice.flipped; practice.spoken = false; renderPractice(); return; }
-        if (act === 'say' && word) { if (SDP.Speech) SDP.Speech.playWord(word, {}, noop); return; }
+        /* v0.0.6.t PILLAR 1: the Listen tap on a Practice card is a manual
+           play — never muted by the engine's pause-for-navigation lock. */
+        if (act === 'say' && word) { if (SDP.Speech && SDP.Speech.playWord) SDP.Speech.playWord(word, { allowWhenPaused: true, manualPlay: true }, noop); return; }
         if (act === 'next') {
           practice.index = (practice.index + 1) % Math.max(1, practice.pool.length);
           practice.answered = ''; practice.flipped = false; practice.spoken = false;
@@ -2930,7 +2936,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.s.beta';
+  var BETA_SUBVERSION = '0.0.6.t.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -3332,17 +3338,18 @@
     if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
     if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
-    /* v0.0.6.s Pillar 2: the dead-browser safety ceiling now covers the
-       WHOLE briefing — 95 s is well after all 4 paragraphs finish even on
-       the natural-reading estimate, so a completely broken audio stack can
-       never trap a student behind the full-briefing lock for ever, while a
-       healthy playback always finishes Paragraph 4's final word first. */
+    /* v0.0.6.t Pillar 2: the dead-browser safety ceiling is 25 s — it force-
+       arms ONLY beat1Done (Paragraph 1 completion) so a headless/broken
+       browser whose audio never fires onended can never trap a student
+       behind the gate, while a healthy playback always finishes Beat 1's
+       final word first (the re-armed beat takes ~11–19 s). Paragraphs 2–4
+       keep narrating afterwards; allBeatsDone stays a telemetry-only latch
+       inside briefingFinishNarration(). */
     briefingState.beat1Guard = global.setTimeout(function () {
-      if (!briefingState.open || briefingState.allBeatsDone) return;
+      if (!briefingState.open || briefingState.beat1Done) return;
       briefingState.beat1Done = true;
-      briefingState.allBeatsDone = true;
       briefingCheckGateUnlock();
-    }, 95000);
+    }, 25000);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     briefingNarrate(idx, briefingState.epoch);
     return true;
@@ -3416,21 +3423,19 @@
          seconds silently burned before the user ever clicked Continue. */
       if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
       briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
-      /* v0.0.6.s Pillar 2 — the 95-second safety ceiling: if browser audio is
-         completely dead or the tab is throttled, beat1Done AND allBeatsDone are
-         force-armed together so a broken environment can never trap a student
-         behind the full-briefing lock for ever. A healthy playback always
-         finishes all 4 paragraphs well inside it (the four beats together are
-         ~55–75 s of speech at the crisp 1.12x cadence, ~90 s even on the
-         natural-reading estimate fallback). */
+      /* v0.0.6.t Pillar 2 — the 25-second safety ceiling: if browser audio is
+         completely dead or the tab is throttled, beat1Done is force-armed so
+         a broken environment can never trap a student behind the Paragraph-1
+         gate for ever. A healthy playback always finishes Beat 1's final word
+         (~11–19 s) well inside it; Paragraphs 2–4 then keep narrating and
+         allBeatsDone latches only in briefingFinishNarration (telemetry). */
       if (briefingState.beat1Guard) global.clearTimeout(briefingState.beat1Guard);
       briefingState.beat1Guard = global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
-        if (briefingState.allBeatsDone) return;
+        if (briefingState.beat1Done) return;
         briefingState.beat1Done = true;
-        briefingState.allBeatsDone = true;
         briefingCheckGateUnlock();
-      }, 95000);
+      }, 25000);
       global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
         briefingNarrate(0, epoch);
@@ -3520,14 +3525,15 @@
         advanced = true;
         /* v0.0.6.q Pillar 2, Rule B — the PARAGRAPH-1 COMPLETION LAW: the
            instant Beat 1 (idx === 0) has finished speaking its final word and
-           the narration advances to Beat 2, beat1Done latches true. v0.0.6.s:
-           the buttons do NOT unlock here anymore — the lock now holds until
-           ALL 4 paragraphs finish (allBeatsDone latches inside
-           briefingFinishNarration); only the live CTA label repaints so the
-           user sees "Paragraph 2 of 4…". */
+           the narration advances to Beat 2, beat1Done latches true. v0.0.6.t:
+           the creator restored the Paragraph-1 unlock — the instant Beat 1
+           completes, briefingCheckGateUnlock() runs so #btnBriefingSkip (Exit)
+           and #btnBriefingContinue (▶ Start Dictation →) unlock the moment
+           gateLeft <= 0 too, while Paragraphs 2–4 keep narrating in order
+           with dark-ink karaoke unless/until the user exits. */
         if (idx === 0) {
           briefingState.beat1Done = true;
-          paintBriefingCtaLabel();
+          briefingCheckGateUnlock();
         } else {
           paintBriefingCtaLabel();
         }
@@ -3612,12 +3618,11 @@
     if (bar) bar.style.width = '100%';
     var i;
     for (i = 0; i < BRIEFING_SENTENCES.length; i++) paintBriefingWordFlow(i, 9999);
-    /* v0.0.6.s Pillar 2 — the HARD FULL-BRIEFING COMPLETION GATE LOCK: this
-       runs the instant Paragraph 4 finishes speaking its very last word.
-       allBeatsDone latches TRUE here (and only here — plus the 95 s
-       dead-browser guard), so #btnBriefingContinue and #btnBriefingSkip can
-       unlock ONLY after the ENTIRE Project Briefing (Paragraph 1 Word 1
-       through Paragraph 4's final word) has completely finished speaking. */
+    /* v0.0.6.t Pillar 2 — the whole-briefing TELEMETRY latch: allBeatsDone
+       turns true the instant Paragraph 4 finishes its very last word. It no
+       longer holds the buttons (the Paragraph-1 unlock owns that); it stays
+       exported via briefingAllBeatsDone() for the lab + diagnostics so the
+       full-completion rate of the Project Briefing can still be measured. */
     briefingState.beat1Done = true;
     briefingState.allBeatsDone = true;
     briefingCheckGateUnlock();
@@ -3664,35 +3669,31 @@
   function paintBriefingCtaLabel() {
     var cont = byId('btnBriefingContinue');
     if (!cont) return false;
-    /* v0.0.6.s Pillar 2: the RIGHT-side CTA carries the live gate state —
+    /* v0.0.6.t Pillar 2: the RIGHT-side CTA carries the live gate state —
        the 10-second countdown while gateLeft > 0, the Paragraph-1 finishing
-       note while the beat is still speaking its final words, the live
-       "Paragraph {p} of 4…" progress while Paragraphs 2–4 narrate, and the
-       glowing ▶ Start Dictation → only once ALL 4 paragraphs have finished
-       (allBeatsDone === true). */
+       note while the beat is still speaking its final words, and the glowing
+       ▶ Start Dictation → the instant gateLeft <= 0 && beat1Done === true
+       (Paragraphs 2–4 keep narrating freely after the unlock). */
     if (briefingState.gateLeft > 0) {
       cont.textContent = t('briefingContinueWait', 'Start Dictation ({n}s)…').replace('{n}', String(briefingState.gateLeft));
     } else if (!briefingState.beat1Done) {
       cont.textContent = t('briefingContinueBeat1', 'Start Dictation (finishing Paragraph 1…)');
-    } else if (!briefingState.allBeatsDone) {
-      var pNo = Math.min(4, Math.max(2, (Number(briefingState.idx) || 0) + 1));
-      cont.textContent = t('briefingContinueAll', 'Start Dictation (Paragraph {p} of 4…)').replace('{p}', String(pNo));
     } else {
       cont.textContent = t('briefingContinue', '▶ Start Dictation →');
     }
     return true;
   }
-  /* v0.0.6.s Pillar 2 — the HARD FULL-BRIEFING (ALL 4 PARAGRAPHS)
-     COMPLETION LOCK. Both #btnBriefingContinue (▶ Start Dictation →) and
-     #btnBriefingSkip (Exit) may unlock ONLY when the 10-second minimum gate
-     has fully elapsed AND Paragraph 1 finished speaking (beat1Done) AND
-     Paragraphs 1–4 have ALL finished in order (allBeatsDone, latched inside
-     briefingFinishNarration right after Paragraph 4's final word). While any
-     paragraph is still speaking — even if the countdown reached zero first —
-     the buttons stay disabled and the label keeps explaining why. */
+  /* v0.0.6.t Pillar 2 — the PARAGRAPH-1 COMPLETION GATE. Both
+     #btnBriefingContinue (▶ Start Dictation →) and #btnBriefingSkip (Exit)
+     unlock as soon as the 10-second minimum gate has fully elapsed
+     (gateLeft <= 0) AND Paragraph 1 has finished speaking its final word
+     (beat1Done, latched inside briefingNarrate's next() at idx === 0).
+     Paragraphs 2–4 continue narrating smoothly in order with dark-ink
+     karaoke highlighting unless/until the user clicks Exit or
+     ▶ Start Dictation →. */
   function briefingCheckGateUnlock() {
     if (!briefingState.open) return false;
-    if (briefingState.gateLeft > 0 || !briefingState.beat1Done || !briefingState.allBeatsDone) {
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) {
       paintBriefingCtaLabel();
       return false;
     }
@@ -3710,17 +3711,17 @@
     opts = opts || {};
     var modal = byId('briefingModal');
     if (!modal) return false;
-    if (briefingState.open) return true;
+    if (briefingState.open && !opts.replay) return true;
     briefingState.open = true;
     briefingState.epoch += 1;
     briefingState.idx = -1;
     briefingState.waitGesture = false;
     /* v0.0.6.q Pillar 2: every open re-arms the Paragraph-1 completion lock —
-       beat1Done is false, the gate countdown is at its full 10 seconds, and
-       v0.0.6.s also re-arms the FULL-BRIEFING lock: allBeatsDone is false,
-       so BOTH footer buttons stay disabled until Stage 2's narration has
-       finished ALL FOUR paragraphs in order AND the minimum-listen gate has
-       matured. */
+       beat1Done is false and the gate countdown is at its full 10 seconds, so
+       BOTH footer buttons stay disabled until Stage 2's narration has
+       finished Paragraph 1's final word AND the minimum-listen gate has
+       matured. allBeatsDone re-arms as the telemetry-only whole-briefing
+       latch (v0.0.6.t: it never holds the buttons). */
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
     briefingState.beat1Done = false;
     briefingState.allBeatsDone = false;
@@ -3785,12 +3786,11 @@
   function closeBriefing(viaButton) {
     var modal = byId('briefingModal');
     if (!modal || !briefingState.open) return false;
-    /* v0.0.6.s Pillar 2: the FULL-BRIEFING completion law — the briefing
-       cannot be dismissed while gated OR before ALL FOUR paragraphs have
-       fully finished speaking (Paragraph 1's last word is no longer enough:
-       the creator demanded the whole Project Briefing be locked until it
-       ends). */
-    if (briefingState.gateLeft > 0 || !briefingState.beat1Done || !briefingState.allBeatsDone) return false;
+    /* v0.0.6.t Pillar 2: the PARAGRAPH-1 completion law — the briefing can be
+       dismissed (Exit / ▶ Start Dictation →) once the minimum gate matured
+       AND Paragraph 1 finished speaking its final word. Paragraphs 2–4 may
+       still be narrating; the user's explicit choice always wins. */
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) return false;
     briefingState.open = false;
     briefingState.waitGesture = false;
     briefingState.epoch += 1;
@@ -3816,21 +3816,22 @@
   }
   function briefingGateLeft() { return briefingState.gateLeft; }
   function briefingBeat1Done() { return !!briefingState.beat1Done; }
-  /* v0.0.6.s Pillar 2: the live full-briefing completion flag for the lab —
-     false until Paragraph 4's final word latches allBeatsDone inside
-     briefingFinishNarration(). */
+  /* v0.0.6.t Pillar 2: the whole-briefing completion flag stays exported for
+     the lab + telemetry — false until Paragraph 4's final word latches
+     allBeatsDone inside briefingFinishNarration(). It never gates the
+     buttons anymore (beat1Done owns the unlock). */
   function briefingAllBeatsDone() { return !!briefingState.allBeatsDone; }
   function briefingSeek(idx) {
     if (!briefingState.open) return false;
     var i = Number(idx);
     if (!(i >= 0) || i >= BRIEFING_SENTENCES.length) return false;
-    /* v0.0.6.s Pillar 2 — the NO-FORWARD-SKIP law: while the full briefing
-       is still locked (allBeatsDone === false) nobody can jump AHEAD of the
-       narration — tapping Paragraph 4 to skip Paragraphs 1–3 is refused.
-       Tapping an already-spoken paragraph (i <= briefingState.idx) always
-       stays allowed, and once allBeatsDone latches true any paragraph
-       0..3 seeks freely. */
-    if (!briefingState.allBeatsDone && Number(idx) > briefingState.idx) return false;
+    /* v0.0.6.t Pillar 2 — the NO-FORWARD-SKIP law: while Paragraph 1 is still
+       locked (beat1Done === false) nobody can jump AHEAD of the narration —
+       tapping Paragraph 4 to skip Paragraphs 1–3 is refused. Tapping an
+       already-spoken paragraph (i <= briefingState.idx) always stays
+       allowed, and once Paragraph 1 completes (beat1Done === true) any
+       paragraph 0..3 seeks freely. */
+    if (!briefingState.beat1Done && Number(idx) > briefingState.idx) return false;
     briefingState.epoch += 1;
     briefingState.waitGesture = false;
     briefingHideTapPill();

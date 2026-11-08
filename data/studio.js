@@ -285,13 +285,26 @@
   for (i = 0; i < steps.length; i++) if (steps[i].key === k) return steps[i].text;
   return '';
  }
+ /* v0.0.6.s Pillar 3 — the GUIDE-KEY ALIAS: the frozen _guide_1..4 vault
+    keys are satisfied by the shipped guide.en.0..3 classroom clips (they
+    are byte-identical twins: same b64, same sha1 pin). Pack lookups that
+    ask for a _guide_N therefore read guide.en.(N-1) when the underscore
+    twin is absent — so a pack that ships only guide.en.* never registers a
+    phantom guide delta. */
+ function packedSystemClip(key) {
+  var k = str(key);
+  var entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
+  if (entry || k.indexOf('_guide_') !== 0) return entry;
+  var twin = 'guide.en.' + (Number(k.slice(7)) - 1);
+  return isObj(ST.voicePack.clips[twin]) ? ST.voicePack.clips[twin] : null;
+ }
  function missingSystemClips() {
   var out = [], i, k, text, entry;
   for (i = 0; i < ESSENTIAL_SYSTEM_CLIPS.length; i++) {
    k = ESSENTIAL_SYSTEM_CLIPS[i].key;
    text = essentialClipText(k);
    if (!text) continue;
-   entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
+   entry = packedSystemClip(k);
    if (!entry || !str(entry.b64)) { out.push({ key: k, text: text, why: 'missing' }); continue; }
    /* Outdated = the stored canonical text no longer matches (week-count */
    if (str(entry.text) !== text) out.push({ key: k, text: text, why: 'outdated' });
@@ -413,8 +426,14 @@
      cb(err, { stage: 'no_key' });
      return;
     }
-    /* the guide steps + command cues ride the system queue (noCommit: the */
-    generateClips({ systemQueue: ESSENTIAL_SYSTEM_CLIPS.map(function (c) { return { key: c.key, text: essentialClipText(c.key), why: 'auto' }; }), regenKeys: guideKeys.concat(['_cmd_play', '_cmd_pause', '_cmd_resume', '_cmd_complete']), noCommit: !!opts.noCommit }, function (err2, info2) {
+    /* the guide steps + command cues ride the system queue (noCommit: the
+       v0.0.6.s RACE LAW: the _intro_male_1..4 beats were JUST synthesized
+       by the intro: true call above, so they are filtered OUT of this
+       second systemQueue batch — two generateClips() batches may never
+       synthesize the same key concurrently. regenKeys carries the REAL
+       clip key names (cmd.*), never the legacy _cmd_* role names, so the
+       static-vault skip check actually matches. */
+    generateClips({ systemQueue: ESSENTIAL_SYSTEM_CLIPS.filter(function (c) { return c.key.indexOf('_intro_male_') !== 0; }).map(function (c) { return { key: c.key, text: essentialClipText(c.key), why: 'auto' }; }), regenKeys: guideKeys.concat(['cmd.preparing', 'cmd.paused', 'cmd.resumed', 'cmd.complete']), noCommit: !!opts.noCommit }, function (err2, info2) {
      if (weights && Array.isArray(weights)) {
       for (var wi = 0; wi < 4; wi++) {
        var entry = isObj(ST.voicePack.clips['_intro_male_' + (wi + 1)]) ? ST.voicePack.clips['_intro_male_' + (wi + 1)] : null;
@@ -549,7 +568,7 @@
   }
   for (i = 0; i < GUIDE_KEYS.length; i++) {
    k = GUIDE_KEYS[i];
-   entry = isObj(ST.voicePack.clips[k]) ? ST.voicePack.clips[k] : null;
+   entry = packedSystemClip(k);
    if (!entry || !str(entry.b64)) out.guide.push(k);
   }
   out.total = out.intro.length + out.guide.length;
@@ -1259,8 +1278,13 @@
    loadVoicePack(function () {
     paintPackDashboard();
     paintClipTable();
-    /* v0.0.6.m Pillar 2: the moment the studio opens, the essential */
-    autoEnsureSystemClips({ source: 'unlock', quiet: true }, noop);
+    /* v0.0.6.s Pillar 3 — the SINGLE UNLOCK ORCHESTRATOR law:
+       autoEnsureSystemClips() NO LONGER runs here. Unlocking fired it AND
+       ensureBriefingAndGuideVoices({ source: 'unlock' }) concurrently, and
+       both launched their own generateClips() batches — two parallel
+       synthesis queues racing the same ElevenLabs keys and the same pack
+       (the v0.0.6.r regen race). ensureBriefingAndGuideVoices() below is
+       now the ONE orchestrator that owns every unlock-time synthesis. */
     /* v0.0.6.n FIX 2 — Trigger 1 (Instant on PIN Unlock): the creator
        unlocked the vault — the device-local session cache of the active keys
        is stamped and the direct Studio ↔ Briefing bridge runs IMMEDIATELY
@@ -1335,8 +1359,10 @@
     loadVoicePack(function () {
      paintPackDashboard();
      paintClipTable();
-     /* v0.0.6.m Pillar 2: unlock auto-checks the essential system clips. */
-     autoEnsureSystemClips({ source: 'unlock', quiet: true }, noop);
+     /* v0.0.6.s Pillar 3 — the SINGLE UNLOCK ORCHESTRATOR law: no parallel
+        autoEnsureSystemClips() on unlock; ensureBriefingAndGuideVoices()
+        below is the one and only unlock-time synthesis orchestrator (the
+        v0.0.6.r regen race never returns). */
     /* v0.0.6.n FIX 2 — Trigger 1 (Instant on PIN Unlock): the creator
        unlocked the vault — the device-local session cache of the active keys
        is stamped and the direct Studio ↔ Briefing bridge runs IMMEDIATELY
@@ -4023,7 +4049,10 @@ function priorIPAFor(w) {
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return; }
   var token = str(ST.secrets.ghToken);
   if (!token) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_token')); return; }
-  /* v0.0.6.m Pillar 2: Publish & Sync first auto-synthesizes any missing */
+  /* v0.0.6.m Pillar 2: Publish & Sync first auto-synthesizes any missing
+     v0.0.6.s: publish keeps the SEQUENTIAL chain — autoEnsureSystemClips
+     runs to completion FIRST (a synchronous delta pass), then the bridge;
+     they are never fired concurrently like the old unlock race. */
   autoEnsureSystemClips({ source: 'publish' }, function () {
     ensureBriefingAndGuideVoices({ source: 'publish' }, noop);
     /* v0.0.6.n cache-bust law: a publish must also purge any stale */
@@ -4407,7 +4436,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   return true;
  }
  function clipExists(key) {
-  var entry = ST.voicePack.clips ? ST.voicePack.clips[key] : null;
+  var entry = packedSystemClip(key);
   if (!entry) return false;
   if (typeof entry === 'string') return !!entry;
   return !!(str(entry.b64) || str(entry.url));
@@ -4520,7 +4549,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    index += 1;
    /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash */
    var itemHash = clipContentHash(item.text, genVoiceId, genModel);
-   var existing = ST.voicePack.clips[item.key];
+   var existing = packedSystemClip(item.key);
    /* v0.0.6.m Pillar 2: immutable static system audio (commands, numbers, */
    if (!force && clipExists(item.key) && (!introMode || (isObj(existing) && existing.liveEleven === true && Number(existing.weekStamp || 0) === Number(currentWeeksSinceStart())))) {
     if (isStaticClipKey(item.key) && !(regenKeys && regenKeys.indexOf(item.key) >= 0)) { skipped += 1; next(); return; }
@@ -5001,7 +5030,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    global.caches.open('sdp-audio-clips').then(function (cache) {
     return cache.put('./local-briefing-pack.json', new Response(JSON.stringify(localPack), { headers: { 'Content-Type': 'application/json', 'x-sdp-syncrev': String(stamp) } }));
    }).catch(function () {});
-   global.caches.open('sdp-v' + appVersion() + '-s33-shell').then(function (cache) {
+   global.caches.open('sdp-v' + appVersion() + '-s34-shell').then(function (cache) {
     return cache.put('./data/elevenlabs-audio.json', new Response(packBody, { headers: { 'Content-Type': 'application/json', 'x-sdp-release': appVersion(), 'x-sdp-syncrev': String(stamp) } }));
    }).catch(function () {});
    try {

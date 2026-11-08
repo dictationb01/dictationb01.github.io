@@ -184,12 +184,12 @@
       },
       {
         "w": "display",
-        "p": "/dɪsˈpleɪ/",
-        "pos": "noun.",
-        "m": "A show or spectacle.",
+        "p": "/ˈdɪspleɪ/",
+        "pos": "adj.",
+        "m": "Having the quality of being display.",
         "si": "ප්රදර්ශනය",
-        "s": "The trapeze artist put on an amazing acrobatic display.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/display-us.mp3"
+        "s": "The story was very display to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
       },
       {
         "w": "documentary",
@@ -211,12 +211,12 @@
       },
       {
         "w": "exhibition",
-        "p": "/ɛksɪˈbɪʃən/",
-        "pos": "noun.",
-        "m": "An instance of exhibiting, or something exhibited.",
+        "p": "/ˈekshɪbɪʃn/",
+        "pos": "n.",
+        "m": "A exhibition.",
         "si": "ප්රදර්ශනය",
-        "s": "There was an art exhibition on in the town hall.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+        "s": "We saw a exhibition near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
       },
       {
         "w": "festival",
@@ -296,7 +296,7 @@
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.6.r",
+      "version": "0.0.6.k",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -466,12 +466,12 @@
         },
         {
           "w": "display",
-          "p": "/dɪsˈpleɪ/",
-          "pos": "noun.",
-          "m": "A show or spectacle.",
+          "p": "/ˈdɪspleɪ/",
+          "pos": "adj.",
+          "m": "Having the quality of being display.",
           "si": "ප්රදර්ශනය",
-          "s": "The trapeze artist put on an amazing acrobatic display.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/display-us.mp3"
+          "s": "The story was very display to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
         },
         {
           "w": "documentary",
@@ -493,12 +493,12 @@
         },
         {
           "w": "exhibition",
-          "p": "/ɛksɪˈbɪʃən/",
-          "pos": "noun.",
-          "m": "An instance of exhibiting, or something exhibited.",
+          "p": "/ˈekshɪbɪʃn/",
+          "pos": "n.",
+          "m": "A exhibition.",
           "si": "ප්රදර්ශනය",
-          "s": "There was an art exhibition on in the town hall.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+          "s": "We saw a exhibition near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
         },
         {
           "w": "festival",
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-07T18:45:22.773Z",
+  "updatedAt": "2026-11-06T12:49:06.317Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 50,
+  "settingsRev": 43,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1794900000002,
+  "syncRev": 1794200000002,
   "words": [
     {
       "w": "entertainment",
@@ -1354,12 +1354,12 @@
     },
     {
       "w": "display",
-      "p": "/dɪsˈpleɪ/",
-      "pos": "noun.",
-      "m": "A show or spectacle.",
+      "p": "/ˈdɪspleɪ/",
+      "pos": "adj.",
+      "m": "Having the quality of being display.",
       "si": "ප්රදර්ශනය",
-      "s": "The trapeze artist put on an amazing acrobatic display.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/display-us.mp3"
+      "s": "The story was very display to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
     },
     {
       "w": "documentary",
@@ -1381,12 +1381,12 @@
     },
     {
       "w": "exhibition",
-      "p": "/ɛksɪˈbɪʃən/",
-      "pos": "noun.",
-      "m": "An instance of exhibiting, or something exhibited.",
+      "p": "/ˈekshɪbɪʃn/",
+      "pos": "n.",
+      "m": "A exhibition.",
       "si": "ප්රදර්ශනය",
-      "s": "There was an art exhibition on in the town hall.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/exhibition-us.mp3"
+      "s": "We saw a exhibition near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
     },
     {
       "w": "festival",

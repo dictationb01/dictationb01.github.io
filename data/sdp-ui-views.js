@@ -332,6 +332,7 @@
     briefingContinue: '▶ Start Dictation →',
     briefingContinueWait: 'Start Dictation ({n}s)…',
     briefingContinueBeat1: 'Start Dictation (finishing Paragraph 1…)',
+    briefingContinueAll: 'Start Dictation (Paragraph {p} of 4…)',
     briefingSkip: 'Exit',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
@@ -677,6 +678,7 @@
     briefingContinue: '▶ Start Dictation →',
     briefingContinueWait: 'Start Dictation ({n}s)…',
     briefingContinueBeat1: 'Start Dictation (පළමු පාරාග්‍රාෆය සම්පූර්ණ වෙමින්…)',
+    briefingContinueAll: 'Start Dictation (පාරාග්‍රාෆය {p} / 4…)',
     briefingSkip: 'ඉවත් වන්න',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
@@ -2928,7 +2930,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.r.beta';
+  var BETA_SUBVERSION = '0.0.6.s.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2943,26 +2945,36 @@
      that now starts ONLY when Stage 2 actually begins narrating (inside
      welcomeContinueToOverview), never on the Welcome splash. Both footer
      buttons stay disabled until beat1Done === true && gateLeft <= 0. */
-  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, beat1Guard: null };
+  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, allBeatsDone: false, beat1Guard: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync.
-     v0.0.6.r Pillar 3 — the ULTRA-CRISP ~10–14 s EXECUTIVE SCRIPT: the four
-     beats were tightened from 213 words / 64.3 s (v0.0.6.q) to a punchy
-     4-beat briefing that completes right around the 10-second gate window
-     while preserving every core message — Beat 1 carries the zero-cost
-     ($0) open-source origin + the October 22 start ({W} weeks ago) +
-     Hansana + the autonomous AI agents and finishes in ~8.5–9.5 s right as
-     the gate matures; Beat 2 compresses the critical-thinking testbed +
-     never-for-money social mission for Sri Lanka + the non-IT A/Ls + the
-     two-month open-source database mastery + the RDP / lab / flagship
-     tools; Beat 3 keeps the strict-privacy + 100% E2EE (AES-GCM) law;
-     Beat 4 closes with the low-mobile-data engine + Lecturer Mode + the
-     right-side Start Dictation → handover to Word #1. */
+     v0.0.6.s Pillar 1 — the 100% AUTHENTIC FIRST-PERSON CREATOR OVERVIEW,
+     in the creator's exact priority order with ZERO false claims: Beat 1 is
+     written by Hansana himself ("I, Hansana", "on my own system" — never
+     third-person); Beat 2 carries the free social mission for Sri Lanka and
+     the never-for-money vow; Beat 3 states the TRUE A/L fact — he COMPLETED
+     his A/Ls but did not take IT as a subject, then stabilized his IT
+     knowledge within two months (never "without A/L"); Beat 4 closes with
+     the strict-privacy / 100% E2EE (AES-GCM) law, the low-mobile-data
+     engine, Lecturer Mode and the right-side Start Dictation handover. */
   var BRIEFING_SENTENCES = [
-    "Welcome to Smart Dictation — a zero-cost ($0), open-source web system started on October 22 ({W} weeks ago) by Hansana and powered by autonomous AI agents on his own system.",
-    "Built to test critical thinking and problem-solving skills with a positive mindset for our society in Sri Lanka for free — never for money or profit — mastering open-source databases within two months without A/L IT to create my Remote Desktop PC (RDP) project, lab environment, and upcoming flagship IT project for Sri Lanka's IT field.",
-    "With strict privacy protection at its core, no personal data is ever shared, no unnecessary data is collected, and every session review, feedback chat, and diagnostic report is one hundred percent end-to-end encrypted (AES-GCM) so your privacy is completely safe.",
-    "Engineered to run smoothly even on low mobile data with live Lecturer Mode updates — Tap Start Dictation on the right for the step-by-step guide and begin from Word #1!"
+    "Welcome to Smart Dictation — a zero-cost ($0), one hundred percent open-source GitHub Pages web app system "
+    + "that I, Hansana, started on October 22 ({W} weeks ago) and developed on my own system using autonomous AI "
+    + "agents to test how far my critical thinking and problem-solving skills can go.",
+    "I did not build this project merely to grow my own IT knowledge — my main goal is to do my utmost to give "
+    + "something genuinely valuable to our society in Sri Lanka completely for free. Because one of the biggest "
+    + "challenges in Sri Lanka is that people rarely reflect on themselves and their own potential, I started this "
+    + "project with a positive mindset, and I will never seek money or profit from this work.",
+    "Although I did not take IT as a subject for my A/Ls, after my A/Ls I researched resources and databases and "
+    + "stabilized my IT knowledge to a strong level within two months. Using several of the world's largest "
+    + "open-source databases, I hope to build open-source tools for Sri Lankan society to strongly support the "
+    + "future of Sri Lanka's IT field — you can check my own tools on GitHub, including my Remote Desktop PC "
+    + "(RDP) project, dedicated lab environment, and upcoming flagship IT project.",
+    "This website is privacy-focused at its core: no personal data is ever shared, no unnecessary data is "
+    + "collected, and every session review, feedback chat, and diagnostic report is one hundred percent "
+    + "end-to-end encrypted (AES-GCM) so your privacy is completely safe. Engineered to run smoothly even on low "
+    + "mobile data with live Lecturer Mode updates, tap Start Dictation on the right to open the step-by-step "
+    + "user guide and begin your dictation session from Word #1!"
   ];
   function briefingSentence(i) {
     var n = Number(i);
@@ -3320,11 +3332,17 @@
     if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
     if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
+    /* v0.0.6.s Pillar 2: the dead-browser safety ceiling now covers the
+       WHOLE briefing — 95 s is well after all 4 paragraphs finish even on
+       the natural-reading estimate, so a completely broken audio stack can
+       never trap a student behind the full-briefing lock for ever, while a
+       healthy playback always finishes Paragraph 4's final word first. */
     briefingState.beat1Guard = global.setTimeout(function () {
-      if (!briefingState.open || briefingState.beat1Done) return;
+      if (!briefingState.open || briefingState.allBeatsDone) return;
       briefingState.beat1Done = true;
+      briefingState.allBeatsDone = true;
       briefingCheckGateUnlock();
-    }, 14000);
+    }, 95000);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     briefingNarrate(idx, briefingState.epoch);
     return true;
@@ -3398,18 +3416,21 @@
          seconds silently burned before the user ever clicked Continue. */
       if (briefingState.gateTimer) global.clearInterval(briefingState.gateTimer);
       briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
-      /* v0.0.6.q Rule B — the 14-second safety ceiling: if browser audio is
-         completely dead or the tab is throttled, beat1Done is force-armed so
-         a broken environment can never trap a student behind the lock for
-         ever. A healthy playback always finishes Paragraph 1 well inside it
-         (the beat itself is ~10–12 s of speech). */
+      /* v0.0.6.s Pillar 2 — the 95-second safety ceiling: if browser audio is
+         completely dead or the tab is throttled, beat1Done AND allBeatsDone are
+         force-armed together so a broken environment can never trap a student
+         behind the full-briefing lock for ever. A healthy playback always
+         finishes all 4 paragraphs well inside it (the four beats together are
+         ~55–75 s of speech at the crisp 1.12x cadence, ~90 s even on the
+         natural-reading estimate fallback). */
       if (briefingState.beat1Guard) global.clearTimeout(briefingState.beat1Guard);
       briefingState.beat1Guard = global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
-        if (briefingState.beat1Done) return;
+        if (briefingState.allBeatsDone) return;
         briefingState.beat1Done = true;
+        briefingState.allBeatsDone = true;
         briefingCheckGateUnlock();
-      }, 14000);
+      }, 95000);
       global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
         briefingNarrate(0, epoch);
@@ -3499,12 +3520,16 @@
         advanced = true;
         /* v0.0.6.q Pillar 2, Rule B — the PARAGRAPH-1 COMPLETION LAW: the
            instant Beat 1 (idx === 0) has finished speaking its final word and
-           the narration advances to Beat 2, beat1Done latches true and the
-           gate is re-checked — the ▶ Start Dictation → button unlocks the
-           exact moment Paragraph 1's last word lands (never before). */
+           the narration advances to Beat 2, beat1Done latches true. v0.0.6.s:
+           the buttons do NOT unlock here anymore — the lock now holds until
+           ALL 4 paragraphs finish (allBeatsDone latches inside
+           briefingFinishNarration); only the live CTA label repaints so the
+           user sees "Paragraph 2 of 4…". */
         if (idx === 0) {
           briefingState.beat1Done = true;
-          briefingCheckGateUnlock();
+          paintBriefingCtaLabel();
+        } else {
+          paintBriefingCtaLabel();
         }
         /* Hold the final word highlighted (wordIdx = last) through a natural
            320ms inter-paragraph breathing pause after 'ended' fires, so the
@@ -3560,7 +3585,15 @@
           /* v0.0.6.m: the frame-accurate clock — every real playback frame
              (audio.currentTime / audio.duration) and every Web Speech
              boundary event repaints the karaoke directly from the voice. */
-          onTick: function (tSec, durSec) { onBriefingClockTick(idx, epoch, tSec, durSec); },
+          onTick: function (tSec, durSec) {
+            /* v0.0.6.s: a media element that re-uses the same URL (the lab
+               fixture, a cached blob) may never re-fire loadedmetadata, so
+               the REAL duration also latches from the playback clock — the
+               natural pacing then follows the actual clip, never the
+               natural-reading estimate. */
+            if (!realDurMs && Number(durSec) > 0) realDurMs = Math.round(Number(durSec) * 1000);
+            onBriefingClockTick(idx, epoch, tSec, durSec);
+          },
           onBoundary: function (charIndex) { onBriefingBoundary(idx, epoch, charIndex); }
         });
         /* If neither the clip duration nor a rejection arrives (silent
@@ -3579,6 +3612,15 @@
     if (bar) bar.style.width = '100%';
     var i;
     for (i = 0; i < BRIEFING_SENTENCES.length; i++) paintBriefingWordFlow(i, 9999);
+    /* v0.0.6.s Pillar 2 — the HARD FULL-BRIEFING COMPLETION GATE LOCK: this
+       runs the instant Paragraph 4 finishes speaking its very last word.
+       allBeatsDone latches TRUE here (and only here — plus the 95 s
+       dead-browser guard), so #btnBriefingContinue and #btnBriefingSkip can
+       unlock ONLY after the ENTIRE Project Briefing (Paragraph 1 Word 1
+       through Paragraph 4's final word) has completely finished speaking. */
+    briefingState.beat1Done = true;
+    briefingState.allBeatsDone = true;
+    briefingCheckGateUnlock();
     briefingResetStageTop();
   }
   /* v0.0.6.n Pillar 1: the hard top-reset — overrides the CSS smooth-scroll,
@@ -3622,29 +3664,35 @@
   function paintBriefingCtaLabel() {
     var cont = byId('btnBriefingContinue');
     if (!cont) return false;
-    /* v0.0.6.q Pillar 2: the RIGHT-side CTA carries the live gate state —
+    /* v0.0.6.s Pillar 2: the RIGHT-side CTA carries the live gate state —
        the 10-second countdown while gateLeft > 0, the Paragraph-1 finishing
-       note while the beat is still speaking its final words, and the glowing
-       ▶ Start Dictation → the instant BOTH conditions are satisfied. */
+       note while the beat is still speaking its final words, the live
+       "Paragraph {p} of 4…" progress while Paragraphs 2–4 narrate, and the
+       glowing ▶ Start Dictation → only once ALL 4 paragraphs have finished
+       (allBeatsDone === true). */
     if (briefingState.gateLeft > 0) {
       cont.textContent = t('briefingContinueWait', 'Start Dictation ({n}s)…').replace('{n}', String(briefingState.gateLeft));
     } else if (!briefingState.beat1Done) {
       cont.textContent = t('briefingContinueBeat1', 'Start Dictation (finishing Paragraph 1…)');
+    } else if (!briefingState.allBeatsDone) {
+      var pNo = Math.min(4, Math.max(2, (Number(briefingState.idx) || 0) + 1));
+      cont.textContent = t('briefingContinueAll', 'Start Dictation (Paragraph {p} of 4…)').replace('{p}', String(pNo));
     } else {
       cont.textContent = t('briefingContinue', '▶ Start Dictation →');
     }
     return true;
   }
-  /* v0.0.6.q Pillar 2, Rule B — the HARD PARAGRAPH-1 COMPLETION LOCK. Both
-     #btnBriefingContinue (▶ Start Dictation →) and #btnBriefingSkip (Exit)
-     may unlock ONLY when the 10-second minimum gate has fully elapsed AND
-     Paragraph 1 has finished speaking all the way to its final word
-     (beat1Done === true). While Paragraph 1 is still speaking — even if the
-     countdown reached zero first — the buttons stay disabled and the label
-     keeps explaining why. */
+  /* v0.0.6.s Pillar 2 — the HARD FULL-BRIEFING (ALL 4 PARAGRAPHS)
+     COMPLETION LOCK. Both #btnBriefingContinue (▶ Start Dictation →) and
+     #btnBriefingSkip (Exit) may unlock ONLY when the 10-second minimum gate
+     has fully elapsed AND Paragraph 1 finished speaking (beat1Done) AND
+     Paragraphs 1–4 have ALL finished in order (allBeatsDone, latched inside
+     briefingFinishNarration right after Paragraph 4's final word). While any
+     paragraph is still speaking — even if the countdown reached zero first —
+     the buttons stay disabled and the label keeps explaining why. */
   function briefingCheckGateUnlock() {
     if (!briefingState.open) return false;
-    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) {
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done || !briefingState.allBeatsDone) {
       paintBriefingCtaLabel();
       return false;
     }
@@ -3669,10 +3717,13 @@
     briefingState.waitGesture = false;
     /* v0.0.6.q Pillar 2: every open re-arms the Paragraph-1 completion lock —
        beat1Done is false, the gate countdown is at its full 10 seconds, and
-       BOTH footer buttons are disabled until Stage 2's narration finishes
-       Paragraph 1 AND the minimum-listen gate matures. */
+       v0.0.6.s also re-arms the FULL-BRIEFING lock: allBeatsDone is false,
+       so BOTH footer buttons stay disabled until Stage 2's narration has
+       finished ALL FOUR paragraphs in order AND the minimum-listen gate has
+       matured. */
     briefingState.gateLeft = Math.max(1, Math.round(BRIEFING_GATE_MS / 1000));
     briefingState.beat1Done = false;
+    briefingState.allBeatsDone = false;
     if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
     if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
     paintBriefingPersona();
@@ -3734,9 +3785,12 @@
   function closeBriefing(viaButton) {
     var modal = byId('briefingModal');
     if (!modal || !briefingState.open) return false;
-    /* The Paragraph-1 completion law: the briefing cannot be dismissed while
-       gated OR before Paragraph 1 has fully finished speaking. */
-    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) return false;
+    /* v0.0.6.s Pillar 2: the FULL-BRIEFING completion law — the briefing
+       cannot be dismissed while gated OR before ALL FOUR paragraphs have
+       fully finished speaking (Paragraph 1's last word is no longer enough:
+       the creator demanded the whole Project Briefing be locked until it
+       ends). */
+    if (briefingState.gateLeft > 0 || !briefingState.beat1Done || !briefingState.allBeatsDone) return false;
     briefingState.open = false;
     briefingState.waitGesture = false;
     briefingState.epoch += 1;
@@ -3762,10 +3816,21 @@
   }
   function briefingGateLeft() { return briefingState.gateLeft; }
   function briefingBeat1Done() { return !!briefingState.beat1Done; }
+  /* v0.0.6.s Pillar 2: the live full-briefing completion flag for the lab —
+     false until Paragraph 4's final word latches allBeatsDone inside
+     briefingFinishNarration(). */
+  function briefingAllBeatsDone() { return !!briefingState.allBeatsDone; }
   function briefingSeek(idx) {
     if (!briefingState.open) return false;
     var i = Number(idx);
     if (!(i >= 0) || i >= BRIEFING_SENTENCES.length) return false;
+    /* v0.0.6.s Pillar 2 — the NO-FORWARD-SKIP law: while the full briefing
+       is still locked (allBeatsDone === false) nobody can jump AHEAD of the
+       narration — tapping Paragraph 4 to skip Paragraphs 1–3 is refused.
+       Tapping an already-spoken paragraph (i <= briefingState.idx) always
+       stays allowed, and once allBeatsDone latches true any paragraph
+       0..3 seeks freely. */
+    if (!briefingState.allBeatsDone && Number(idx) > briefingState.idx) return false;
     briefingState.epoch += 1;
     briefingState.waitGesture = false;
     briefingHideTapPill();
@@ -4418,6 +4483,7 @@
     briefingSeen: briefingSeen,
     briefingGateLeft: briefingGateLeft,
     briefingBeat1Done: briefingBeat1Done,
+    briefingAllBeatsDone: briefingAllBeatsDone,
     briefingSeek: briefingSeek,
     briefingIsOpen: function () { return !!briefingState.open; },
     /* v0.0.6.m: the frame-accurate karaoke clock + mic-release surface. */

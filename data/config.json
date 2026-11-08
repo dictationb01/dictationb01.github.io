@@ -56,8 +56,8 @@
     "defaultsResetV001f": true,
     "appliedSettingsRev": 6
   },
-  "ver": 32,
-  "version": "0.0.6.r",
+  "ver": 33,
+  "version": "0.0.6.s",
   "buildDate": "2026-11-07",
   "credits": {
     "createdBy": "Hansana",
@@ -91,8 +91,8 @@
     "community": "https://ntfy.sh/sdp_dictationb1_comm_v8",
     "inbox": "https://ntfy.sh/sdp_dictationb1_inbox_v8"
   },
-  "appVersion": "0.0.6.r",
-  "settingsRev": 50,
+  "appVersion": "0.0.6.s",
+  "settingsRev": 49,
   "performance": {
     "mode": "paper",
     "lite": {},
@@ -419,7 +419,7 @@
   },
   "updatedAt": "2026-11-07T18:45:22.774Z",
   "updatedAtMs": 1793448000000,
-  "schema": 32,
+  "schema": 33,
   "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
   "sessionTitle": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
   "sessionCode": "Session 8",
@@ -784,7 +784,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1794900000002,
+  "syncRev": 1795000000000,
   "versionFamily": "10.0.0",
   "encVault": "SDP_ENC_V2:YMbDtCh1ge+uosZzQ0oiDkQAWuBVhhPYfJ3wT2BO4uuCYdatL6mAnfgB/gjTkgNyHYrA9bB8kYQwS5/eZRd3isr9TF6ksDnWkq2BLYm36wPuLJKRKhjWsgGtIZHENA/I0h2XphOauId3NKilerhrHajNkp9c2ibFR4w9nWTj0rIh/TWFEF0K5f3ZALU32zqPlr8fdhgwVgUJyZYqgClIOJN9ecRQeXtB+6MFS3Y/kCtRggRGrF/D1EfBXhzxEhqGfmMRszt/n5XvmZOBWOcJCmz5B3hrJd4315HaYiuyi+wx4zsWsQUvNbpbEKvDceqNVepWKcQ+tBtFLkfZAVIyrvd0RSm6YLL8cY4UXkRxYhWeAnm/MpCS/r9SbJcqFebuvYcYfVlhrGoThReJ5252iiaU5QLp2YPT9NXYl5XsH8XFdoNuAzF/mmVTtMU3EGlgOTDa5bUmfjwq1MKM6V/wULNp9alnaftaog2Y5kzFuBkFlYmEGpvfZqgpUnZIuKZtWaurWP4qKUvcqzfuEr64KiuiMPvsO9YtaIZBKculZrsRwuz9bI69vj2W9oqNCsIMtubziG6FFbHr85KDA1Bk+2rLRrxO8NV7jG9/CfTntOL3XLBninUFnnm7Ur7SSRmc5/47KXObGeKGMZ2VvUXj74GIS6QvNYQWiW6Soksh3o5q5FYYiKyOpftC209PB+x7iniQbMS8DzxBz8xhbgndLXgNgyXC53P6w/z0L/hNMnuQb00hBv+ha9uIao7qXhOE/ysSLui80NjiONVvNJMLYxlYtKgolRxLDiGUAmVZJsq5YxglgHmxfT7gugMD3pGv/RHLFZ/Ov2OrwNxdONiqbPe6shtDUci6Tw/1rOE3Ikm1DZqHABZiVHmxh8lkBxuTFjyWc0M/3NSAaatPY8uiWFvxPygwtIiGrSBEweSwM7n1xhq9kx7aMCDLhb7+ZoUqB5F57+Ihy27Caq1Cvrpja0FCOfyeVodSSBD26EmOa3RriRRgPxztI0S6QHATaPD/Diirkc6H59KYYh/dNs/r",
   "classSettings": {

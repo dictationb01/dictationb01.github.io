@@ -1,3 +1,16 @@
+## v0.0.6.s — 2026-11-07 — Hard Full-Briefing (All 4 Paragraphs) Completion Gate Lock, 100% Authentic First-Person Creator Overview (Zero False Claims), Canonical System-Clip Text (No Unlock Synthesis Race) & SWR Overwrite Guard
+
+**Release type:** briefing-integrity + trust release over the live v0.0.6.r main. No classroom-data migration: `data/session.json` (62,427 B, `931037f7…`), `data/gas-source.txt` (13,764 B, `591b9b08…`) and both Sinhala fonts stay byte-identical; the shipped voice pack is exactly the **135 authentic clips** (131 Alice + the 4 re-baked `_intro_male_1..4` George repo-preloads for the new first-person paragraphs).
+
+**Stamp:** `appVersion/version '0.0.6.s'` · `ver 33` · `schema 33` · `settingsRev 49` · `syncRev 1795000000000` · `SW_VERSION 'sdp-v0.0.6.s-s34'` / `SHELL_CACHE 'sdp-v0.0.6.s-s34-shell'` · `TARGET='0.0.6.s'` · `BETA_SUBVERSION '0.0.6.s.beta'` · `buildDate 2026-11-07`.
+
+* **Pillar 1 — the authentic first-person Project Overview (views)**: `BRIEFING_SENTENCES` is replaced by the creator's 4 exact executive paragraphs in his priority order. Beat 1 is written by Hansana himself ("that I, Hansana … developed on my own system using autonomous AI agents to test how far my critical thinking and problem-solving skills can go" — never third-person); Beat 2 carries the free social mission for Sri Lanka and the never-for-money vow; Beat 3 states the TRUE A/L fact — the A/Ls were COMPLETED, IT was just not taken as a subject, then two months of research stabilized his IT knowledge (never "without A/L"); Beat 4 keeps the strict-privacy / 100% E2EE (AES-GCM) law, the low-mobile-data engine, Lecturer Mode and the right-side Start Dictation handover. CB7 now also asserts `!/on his own system|without A\/L/i` so neither false phrase can ever return.
+* **Pillar 2 — the hard full-briefing completion gate lock (views)**: `briefingState` gains `allBeatsDone`; `#btnBriefingContinue`, `#btnBriefingSkip` and `closeBriefing()` stay 100% locked until `gateLeft <= 0` AND `beat1Done` AND `allBeatsDone` (latched ONLY inside `briefingFinishNarration()` after Paragraph 4's final word, plus a 95 s dead-browser guard that force-arms both flags). While locked, `briefingSeek(idx)` refuses forward jumps (`if (!briefingState.allBeatsDone && Number(idx) > briefingState.idx) return false;`) so nobody can tap Paragraph 4 to skip Paragraphs 1–3; the CTA shows the live "Paragraph {p} of 4…" progress; `briefingAllBeatsDone()` joins the public surface.
+* **Pillar 3 — no competing synthesis race + canonical clip text (pack/studio)**: the 6 `cmd.*`, 4 `guide.en.*` and 30 `num.*` clips now carry their canonical `text` (their sha1 pins already matched); `missingSystemClips()`/`briefingVoiceDelta()` read `guide.en.(N-1)` for `_guide_N`; `autoSynthesizeBriefingAndGuide()` filters `_intro_male_1..4` OUT of the second systemQueue batch and passes real key names in `regenKeys`; unlock no longer runs `autoEnsureSystemClips()` concurrently — `ensureBriefingAndGuideVoices({ source: 'unlock' })` is the single orchestrator. The 4 beats are re-baked repo-preloads (George `JBFqnCBsd6RMkjVDRZzb`, MP3 44.1 kHz 128 kbps, wt/ww arrays, 49/75/84/74 words).
+* **Pillar 4 — the SWR overwrite guard (sw.js)**: `cachePutRelease()` stamps `x-sdp-syncrev`, and BOTH `staleWhileRevalidateDataJson()` revalidation legs (same-release background refresh AND release-change refresh) are wrapped in `voicePackOverwriteAllowed()` so a lagging CDN can never overwrite a newer locally synthesized Cloned Voice pack.
+
+Gates: G1 190, G2 14, G3 137, G4 8, G5 107, G6 15, G7 58, G8 39, G9 47, G10 38, G11 74, G12 103 — 12/12 green, plus the Lab Environment (Step 13b) = 0 FAIL.
+
 ## v0.0.6.o — 2026-11-07 — Two-Stage Cinematic Welcome (100% autoplay unlock), Zero Cut-Off Synced Project Overview, Executive RDP Script & Stale George-Beat Purge
 
 **Release type:** onboarding + narration-trust release over the live v0.0.6.n main. No classroom-data migration: `data/session.json` (62,427 B, `931037f7…`), `data/gas-source.txt` (13,764 B, `591b9b08…`) and both Sinhala fonts stay byte-identical, and the shipped voice pack is exactly the **131 authentic Alice classroom clips** — the four retired `_intro_male_1..4` George beats are purged so `ensureBriefingAndGuideVoices()` re-synthesizes the new v0.0.6.o RDP paragraphs on the creator's unlocked device.
@@ -866,76 +879,3 @@ Released under: `Release Smart Dictation Player v0.0.1.g (Scoped-Key Survival, I
 - sdp-ui.css rewritten in place (97,804 -> 57,942 B, 41% headroom): six-step surface ladder per theme (canvas/sunken/card/elevated/interactive/accent-glass), hairline strokes replace card shadows, blur(12px) glass on header/rail/tabbar only; light theme warm alabaster; board theme pure black. Ink/surface pairs pre-verified >= 4.5:1 WCAG AA — fixes 30 invisible word-list controls measured at contrast 1.1 and the Sinhala cockpit chip.
 - Cockpit: beat ring is the single focal point (tabular seconds); tactile transport deck (72px hero key, 56px siblings with micro-captions, 48px quiet row). Home: sapphire hero glow, semantic state pills, calm credits. Word list: two-line card anatomy, state-coloured left rail, circular Alice play button. Studio: calm console rhythm; PIN pad kept at 56px.
 - Zero JS behaviour changes: 6 ES5 modules, 100-clip Alice pack, SDP_ENC_V2 vault, session.json/gas-source/fonts byte locks untouched. Version literal bumped in lockstep across 7 shipped surfaces + 11 gate files; syncRev 1793740000001; 12 gates green.
-
-## v0.0.6.a — Human-First Daylight · Real British IPA & All-in-One Studio (2026-11-04)
-
-**Stamp:** `appVersion/version '0.0.6.a'` · `ver 16` · `schema 16` · `settingsRev 31` · `syncRev 1793750000000` · `SW_VERSION 'sdp-v0.0.6.a-s16'` / `SHELL_CACHE 'sdp-v0.0.6.a-s16-shell'` · `TARGET='0.0.6.a'` · `buildDate 2026-11-04`.
-
-* Light Mode is the mandatory default: `index.html`/`data.html` boot `data-theme="light"`, cloak `#F8FAFC/#0F172A`, `DEFAULT_SETTINGS.theme='light'` (unknown heals to light), `config.json classSettings.theme='light'`, manifest `theme_color/background_color #F8FAFC` (G9.7c re-pinned). Dark and Board stay optional.
-* Real British Phonemic IPA: all 60 `data/session.json` words (30 Session 8 + 30 Session 7) now carry Oxford/Cambridge IPA (important /ɪmˈpɔːtənt/), real `pos`, B1 definitions, Sinhala meanings, B1 sentences; re-pinned at exactly 44,885 B (44885), SHA `b1d178d3…` across check.cjs, audit-v42.cjs, checks.yml, data.html, data/index.html, ARCHITECTURE_MAP.md. The `config.json` Session 7 archive is enriched identically.
-* Studio offline IPA engine: `fallbackEnrich()` never prints the spelling as phonetics — 60-word `BRITISH_IPA_LEXICON` + deterministic transcriber (digraph/suffix tables, first-vowel stress) yields real /…/ with zero keys; `mergeEnrichRecord()` strips `/word/` placeholders.
-* Mobile Word Reveal: `#boardClassBar` is a first-class cockpit control on every viewport (was board-preset or ≥1024px only). Each beat re-arms the hidden reveal (`enterWord`→`resetBoardReveal()`); the word still never leaks (R10/G7.3c). Fake-IPA guard on the board meta line.
-* Dictation Clock: new `#beatPhasePill` (EN+SI) — 🎧 Listening · Repeat 1/2, ✍️ Write the word · 5s, ⏳ Finish writing · 3s pulsing amber — with gate-verbatim `#beatStateText`, ring colors and countdown assertions preserved (G3.4d/e, G5.6a/b/c, G7.3d/g). Ring/bar gained 0.12s linear transitions.
-* All-in-One wizard: new 4 steps — verify vault & keys → auto-enrich 30 words (real IPA) → Alice voice sync under the 0-credit guard (`force:false`, reuse the 100 clips) → atomic publish + broadcast; live "N / 30 Words Recognized ✓" pill (400ms debounce), spring CTA pulse, and a bilingual Problem+Solution+1-Click-Fix card (`#studioErrorAssistant`).
-* Light contrast hardening: glass pills use `--accent-fg #1D4ED8` etc. instead of `--accent-ink`; inputs 1.5px `#CBD5E1` on `#F1F5F9`; cards 1px `#E2E8F0`; badges/chips/step states readable in all three themes (WCAG ≥ 4.5:1).
-* Zero ElevenLabs credits; all 100 Alice clips byte-preserved; `gas-source.txt` + Sinhala fonts untouched; `data.html`/`data/index.html` byte-identical; five-key law intact; every .js parses ES5 (max ≤ 400, avg ≤ 200); 12 gates green (0 FAIL).
-
-
-
-## v0.0.6.f — Complete Human UI Release (Orbital Remote Cockpit)
-
-Released 2026-11-05 · ver 20 / schema 20 / settingsRev 36 / syncRev 1793880000000 ·
-SW caches `sdp-v0.0.6.f-s21` (+ preserved `sdp-audio-clips`, `sdp-youdao-v1`).
-
-* **R1 Orbital TV-remote cockpit** — Prev West / Next East / Play-Pause + Replay
-  on the south arc of the 172px clock dial; the duplicate Smart-Board transport
-  row (#boardClassBar) and its second jump drawer stay in the DOM but are never
-  painted (`display:none !important`); secondary tools (Repeat/Hint/Mode/Check)
-  moved into one quiet pill strip (#cockpitHelpers).
-* **R1 YouTube tap burst** — the ring tap overlay now scales 0.55 → 1.22 and
-  fades 0 → 1 → 0 over 450 ms with a solid high-contrast Play/Pause badge; a
-  paused dial wears a soft amber halo (#ringWrap.is-paused).
-* **R2 Reveal card meanings** — #revealWordCard (North of the dial, inside the
-  first 360×640 viewport) shows the spelling, IPA, part of speech, Sinhala and
-  English meaning; revealing auto-pauses the beat and the card resets on every
-  Prev/Next/Jump.
-* **R3 Zero robotic voice** — sayCue() never falls back to browser
-  speechSynthesis: a cue is either the committed Alice MP3 or silence; the
-  silent path resolves on the NEXT tick so startTicker() cannot clear the cue
-  timer. enterWord()/repeatWord()/resume() call SDP.Speech.stop() first, so
-  rapid transport taps can never stack two voices.
-* **R4 Studio daily-job cards** — comma/semicolon/newline-only word parser
-  (hyphens and spaces never split), the live 30-word chip grid with ⇄ merge and
-  ✕ remove, the non-destructive 31-word amber helper, the ✓ Confirm Edited
-  Words tick, Session No + Topic fields, and STEP 1/2/3 tags on the three cards.
-* **R5 Offline** — the service worker preserves sdp-audio-clips and
-  sdp-youdao-v1 across upgrades (0 KB on repeated sessions); Lecturer Studio is
-  strictly online-only: offline, the whole studio surface is blinded and only
-  #sdpStudioOfflineCard remains.
-* **R6 Beta preview + One-UI capsule** — #sdpBetaPill is always visible as a
-  Preview switcher (?beta / #beta / ?b=1); the update capsule asks mid-session
-  ("New classroom words are ready. Refresh now?") and auto-refreshes when idle
-  with a 1.5 s progress bar; later → the amber stale pill.
-* **R7 Squircle icon system** — color-coded iOS/One-UI squircles on the six
-  tabs and the settings cards; Light default + Dark themes; credits verbatim.
-
-Gates: G1 110, G2 12, G3 102, G4 8, G5 60, G6 15, G7 52, G8 39, G9 47, G10 38,
-G11 74, G12 94 — 12/12 green.
-
-## v0.0.6.r — 2026-11-07 — Permanent Cloned-Voice Persistence + Dark-Lyrics Karaoke + Ultra-Crisp Briefing
-
-| File | Bytes | Δ | Gate |
-| --- | --- | --- | --- |
-| data/studio.js | 267226 | -343 | G1, G9, G12 |
-| data/elevenlabs-audio.json | 3963211 | -276419 | G1, Lab |
-
-Gates: G1 190 · G2 14 · G3 134 · G4 8 · G5 107 · G6 15 · G7 58 · G8 39 ·
-G9 47 · G10 38 · G11 74 · G12 103 · Lab 86 = 913/0. Preservation 4/4.
-
-Pillar 1: packClipsForDisk keeps wt/ww/liveEleven/weekStamp/provenance/durMs/voiceName;
-commitVoicePack publishes the pack + version.json atomically, primes the local pack
-caches, never force-reloads the manifest; loadManifest merges the local pack; boot()
-re-pulls only on a genuine pointer advance; cloned-voice auto-select survives mount();
-briefingVoiceDelta never overwrites a live cloned beat passively. Pillar 2:
-j.alignment preferred; never-null alignment map; dark-lyrics palette. Pillar 3:
-script 213 → 156 words.

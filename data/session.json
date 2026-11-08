@@ -104,8 +104,8 @@
       {
         "w": "actress",
         "p": "/ˈak.tɹəs/",
-        "pos": "noun.",
-        "m": "A female who performs on the stage or in films.",
+        "pos": "n.",
+        "m": "A actress.",
         "si": "නිළිය",
         "s": "We saw a actress near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
@@ -386,8 +386,8 @@
         {
           "w": "actress",
           "p": "/ˈak.tɹəs/",
-          "pos": "noun.",
-          "m": "A female who performs on the stage or in films.",
+          "pos": "n.",
+          "m": "A actress.",
           "si": "නිළිය",
           "s": "We saw a actress near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-08T04:45:25.472Z",
+  "updatedAt": "2026-11-08T04:46:41.262Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 51,
+  "settingsRev": 52,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb1",
   "repoName": "dictationb1.github.io",
-  "syncRev": 1795000000002,
+  "syncRev": 1795000000003,
   "words": [
     {
       "w": "entertainment",
@@ -1274,8 +1274,8 @@
     {
       "w": "actress",
       "p": "/ˈak.tɹəs/",
-      "pos": "noun.",
-      "m": "A female who performs on the stage or in films.",
+      "pos": "n.",
+      "m": "A actress.",
       "si": "නිළිය",
       "s": "We saw a actress near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"

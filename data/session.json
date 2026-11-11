@@ -256,20 +256,20 @@
       },
       {
         "w": "perform",
-        "p": "/ˈpəfɔːm/",
-        "pos": "n.",
-        "m": "A perform.",
+        "p": "/pəˈfɔːm/",
+        "pos": "verb.",
+        "m": "To do something; to execute.",
         "si": "ඉටු කරනවා",
-        "s": "We saw a perform near the station.",
+        "s": "It took him only twenty minutes to perform the task.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
       },
       {
         "w": "performance",
-        "p": "/ˈpəfɔːmænk/",
-        "pos": "n.",
-        "m": "A performance.",
+        "p": "[pə.ˈfɔː.məns]",
+        "pos": "noun.",
+        "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
         "si": "කාර්ය සාධනය",
-        "s": "We saw a performance near the station.",
+        "s": "the performance of an undertaking or a duty",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
       },
       {
@@ -538,20 +538,20 @@
         },
         {
           "w": "perform",
-          "p": "/ˈpəfɔːm/",
-          "pos": "n.",
-          "m": "A perform.",
+          "p": "/pəˈfɔːm/",
+          "pos": "verb.",
+          "m": "To do something; to execute.",
           "si": "ඉටු කරනවා",
-          "s": "We saw a perform near the station.",
+          "s": "It took him only twenty minutes to perform the task.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
         },
         {
           "w": "performance",
-          "p": "/ˈpəfɔːmænk/",
-          "pos": "n.",
-          "m": "A performance.",
+          "p": "[pə.ˈfɔː.məns]",
+          "pos": "noun.",
+          "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
           "si": "කාර්ය සාධනය",
-          "s": "We saw a performance near the station.",
+          "s": "the performance of an undertaking or a duty",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
         },
         {
@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-11T15:56:34.668Z",
+  "updatedAt": "2026-11-11T15:56:55.696Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 55,
@@ -1426,20 +1426,20 @@
     },
     {
       "w": "perform",
-      "p": "/ˈpəfɔːm/",
-      "pos": "n.",
-      "m": "A perform.",
+      "p": "/pəˈfɔːm/",
+      "pos": "verb.",
+      "m": "To do something; to execute.",
       "si": "ඉටු කරනවා",
-      "s": "We saw a perform near the station.",
+      "s": "It took him only twenty minutes to perform the task.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
     },
     {
       "w": "performance",
-      "p": "/ˈpəfɔːmænk/",
-      "pos": "n.",
-      "m": "A performance.",
+      "p": "[pə.ˈfɔː.məns]",
+      "pos": "noun.",
+      "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
       "si": "කාර්ය සාධනය",
-      "s": "We saw a performance near the station.",
+      "s": "the performance of an undertaking or a duty",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
     },
     {

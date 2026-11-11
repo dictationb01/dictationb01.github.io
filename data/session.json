@@ -203,11 +203,11 @@
       {
         "w": "paint",
         "p": "/peɪnt/",
-        "pos": "n.",
-        "m": "A paint.",
+        "pos": "noun.",
+        "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
         "si": "තීන්ත",
-        "s": "We saw a paint near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
+        "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
       },
       {
         "w": "painter",
@@ -221,20 +221,20 @@
       {
         "w": "perform",
         "p": "/pəˈfɔːm/",
-        "pos": "n.",
-        "m": "A perform.",
+        "pos": "verb.",
+        "m": "To do something; to execute.",
         "si": "ඉටු කරනවා",
-        "s": "We saw a perform near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
+        "s": "It took him only twenty minutes to perform the task.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
       },
       {
         "w": "performance",
-        "p": "/ˈpəfɔːmænk/",
-        "pos": "n.",
-        "m": "A performance.",
+        "p": "[pə.ˈfɔː.məns]",
+        "pos": "noun.",
+        "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
         "si": "කාර්ය සාධනය",
-        "s": "We saw a performance near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
+        "s": "the performance of an undertaking or a duty",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
       },
       {
         "w": "performer",
@@ -247,27 +247,27 @@
       },
       {
         "w": "play",
-        "p": "/ˈpleɪ/",
-        "pos": "adj.",
-        "m": "Having the quality of being play.",
+        "p": "/pleɪ/",
+        "pos": "noun.",
+        "m": "Activity for amusement only, especially among the young.",
         "si": "සෙල්ලම් කරනවා",
-        "s": "The story was very play to read.",
+        "s": "Children learn through play.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
       },
       {
         "w": "podcast",
         "p": "/ˈpɒdkæst/",
-        "pos": "n.",
-        "m": "A podcast.",
+        "pos": "noun.",
+        "m": "An audio programme produced on a regular basis, delivered over the Internet in a compressed digital format and designed for playback on computers or portable digital audio players, such as the iPod.",
         "si": "පොඩ්කාස්ට්",
         "s": "We saw a podcast near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
       },
       {
         "w": "poem",
-        "p": "/ˈpɒem/",
-        "pos": "n.",
-        "m": "A poem.",
+        "p": "/ˈpoʊ̯ɪm/",
+        "pos": "noun.",
+        "m": "A literary piece written in verse.",
         "si": "කවිය",
         "s": "We saw a poem near the station.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
@@ -275,17 +275,17 @@
       {
         "w": "pop music",
         "p": "/ˈpɒp ˈmʌsɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being pop music.",
+        "pos": "noun.",
+        "m": "Music intended for or accepted by a wide audience, usually with a commercial basis and distinguished from other genres such as classical music and folk music.",
         "si": "පොප් සංගීතය",
-        "s": "The story was very pop music to read.",
+        "s": "Pop music, despite its commercial focus, includes many artistic gems.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
       },
       {
         "w": "presenter",
-        "p": "/ˈpresentə/",
-        "pos": "n.",
-        "m": "A presenter.",
+        "p": "/pɹɪˈzɛntə(ɹ)/",
+        "pos": "noun.",
+        "m": "Someone who presents a broadcast programme; a compere or master of ceremonies.",
         "si": "ඉදිරිපත් කරන්නා",
         "s": "We saw a presenter near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
@@ -485,11 +485,11 @@
         {
           "w": "paint",
           "p": "/peɪnt/",
-          "pos": "n.",
-          "m": "A paint.",
+          "pos": "noun.",
+          "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
           "si": "තීන්ත",
-          "s": "We saw a paint near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
+          "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
         },
         {
           "w": "painter",
@@ -503,20 +503,20 @@
         {
           "w": "perform",
           "p": "/pəˈfɔːm/",
-          "pos": "n.",
-          "m": "A perform.",
+          "pos": "verb.",
+          "m": "To do something; to execute.",
           "si": "ඉටු කරනවා",
-          "s": "We saw a perform near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
+          "s": "It took him only twenty minutes to perform the task.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
         },
         {
           "w": "performance",
-          "p": "/ˈpəfɔːmænk/",
-          "pos": "n.",
-          "m": "A performance.",
+          "p": "[pə.ˈfɔː.məns]",
+          "pos": "noun.",
+          "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
           "si": "කාර්ය සාධනය",
-          "s": "We saw a performance near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
+          "s": "the performance of an undertaking or a duty",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
         },
         {
           "w": "performer",
@@ -529,27 +529,27 @@
         },
         {
           "w": "play",
-          "p": "/ˈpleɪ/",
-          "pos": "adj.",
-          "m": "Having the quality of being play.",
+          "p": "/pleɪ/",
+          "pos": "noun.",
+          "m": "Activity for amusement only, especially among the young.",
           "si": "සෙල්ලම් කරනවා",
-          "s": "The story was very play to read.",
+          "s": "Children learn through play.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
         },
         {
           "w": "podcast",
           "p": "/ˈpɒdkæst/",
-          "pos": "n.",
-          "m": "A podcast.",
+          "pos": "noun.",
+          "m": "An audio programme produced on a regular basis, delivered over the Internet in a compressed digital format and designed for playback on computers or portable digital audio players, such as the iPod.",
           "si": "පොඩ්කාස්ට්",
           "s": "We saw a podcast near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
         },
         {
           "w": "poem",
-          "p": "/ˈpɒem/",
-          "pos": "n.",
-          "m": "A poem.",
+          "p": "/ˈpoʊ̯ɪm/",
+          "pos": "noun.",
+          "m": "A literary piece written in verse.",
           "si": "කවිය",
           "s": "We saw a poem near the station.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
@@ -557,17 +557,17 @@
         {
           "w": "pop music",
           "p": "/ˈpɒp ˈmʌsɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being pop music.",
+          "pos": "noun.",
+          "m": "Music intended for or accepted by a wide audience, usually with a commercial basis and distinguished from other genres such as classical music and folk music.",
           "si": "පොප් සංගීතය",
-          "s": "The story was very pop music to read.",
+          "s": "Pop music, despite its commercial focus, includes many artistic gems.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
         },
         {
           "w": "presenter",
-          "p": "/ˈpresentə/",
-          "pos": "n.",
-          "m": "A presenter.",
+          "p": "/pɹɪˈzɛntə(ɹ)/",
+          "pos": "noun.",
+          "m": "Someone who presents a broadcast programme; a compere or master of ceremonies.",
           "si": "ඉදිරිපත් කරන්නා",
           "s": "We saw a presenter near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
@@ -876,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-11T16:00:43.178Z",
+  "updatedAt": "2026-11-11T16:01:15.829Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 56,
@@ -1373,11 +1373,11 @@
     {
       "w": "paint",
       "p": "/peɪnt/",
-      "pos": "n.",
-      "m": "A paint.",
+      "pos": "noun.",
+      "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
       "si": "තීන්ත",
-      "s": "We saw a paint near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
+      "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
     },
     {
       "w": "painter",
@@ -1391,20 +1391,20 @@
     {
       "w": "perform",
       "p": "/pəˈfɔːm/",
-      "pos": "n.",
-      "m": "A perform.",
+      "pos": "verb.",
+      "m": "To do something; to execute.",
       "si": "ඉටු කරනවා",
-      "s": "We saw a perform near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
+      "s": "It took him only twenty minutes to perform the task.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
     },
     {
       "w": "performance",
-      "p": "/ˈpəfɔːmænk/",
-      "pos": "n.",
-      "m": "A performance.",
+      "p": "[pə.ˈfɔː.məns]",
+      "pos": "noun.",
+      "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
       "si": "කාර්ය සාධනය",
-      "s": "We saw a performance near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
+      "s": "the performance of an undertaking or a duty",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
     },
     {
       "w": "performer",
@@ -1417,27 +1417,27 @@
     },
     {
       "w": "play",
-      "p": "/ˈpleɪ/",
-      "pos": "adj.",
-      "m": "Having the quality of being play.",
+      "p": "/pleɪ/",
+      "pos": "noun.",
+      "m": "Activity for amusement only, especially among the young.",
       "si": "සෙල්ලම් කරනවා",
-      "s": "The story was very play to read.",
+      "s": "Children learn through play.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
     },
     {
       "w": "podcast",
       "p": "/ˈpɒdkæst/",
-      "pos": "n.",
-      "m": "A podcast.",
+      "pos": "noun.",
+      "m": "An audio programme produced on a regular basis, delivered over the Internet in a compressed digital format and designed for playback on computers or portable digital audio players, such as the iPod.",
       "si": "පොඩ්කාස්ට්",
       "s": "We saw a podcast near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
     },
     {
       "w": "poem",
-      "p": "/ˈpɒem/",
-      "pos": "n.",
-      "m": "A poem.",
+      "p": "/ˈpoʊ̯ɪm/",
+      "pos": "noun.",
+      "m": "A literary piece written in verse.",
       "si": "කවිය",
       "s": "We saw a poem near the station.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
@@ -1445,17 +1445,17 @@
     {
       "w": "pop music",
       "p": "/ˈpɒp ˈmʌsɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being pop music.",
+      "pos": "noun.",
+      "m": "Music intended for or accepted by a wide audience, usually with a commercial basis and distinguished from other genres such as classical music and folk music.",
       "si": "පොප් සංගීතය",
-      "s": "The story was very pop music to read.",
+      "s": "Pop music, despite its commercial focus, includes many artistic gems.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
     },
     {
       "w": "presenter",
-      "p": "/ˈpresentə/",
-      "pos": "n.",
-      "m": "A presenter.",
+      "p": "/pɹɪˈzɛntə(ɹ)/",
+      "pos": "noun.",
+      "m": "Someone who presents a broadcast programme; a compere or master of ceremonies.",
       "si": "ඉදිරිපත් කරන්නා",
       "s": "We saw a presenter near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"

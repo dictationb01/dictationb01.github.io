@@ -75,15 +75,6 @@
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
       },
       {
-        "w": "who writes in it regularly.",
-        "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
-        "pos": "adv.",
-        "m": "In the way described by \"who writes in it regularly.\".",
-        "si": "නිතිපතා එහි ලියන.",
-        "s": "She answered the question who writes in it regularly..",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
-      },
-      {
         "w": "keyboard",
         "p": "/ˈkiːbɔːd/",
         "pos": "noun.",
@@ -93,15 +84,6 @@
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
       },
       {
-        "w": "computer etc.",
-        "p": "/ˈkɒmpʌtə ˈetk/",
-        "pos": "n.",
-        "m": "A computer etc..",
-        "si": "පරිගණකය ආදිය",
-        "s": "We saw a computer etc. near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
-      },
-      {
         "w": "laugh",
         "p": "/laːf/",
         "pos": "noun.",
@@ -109,24 +91,6 @@
         "si": "හිනා වෙනවා",
         "s": "His deep laughs boomed through the room.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
-      },
-      {
-        "w": "the sound heard in laughing",
-        "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
-        "pos": "v.",
-        "m": "To the sound heard in laughing (something).",
-        "si": "සිනහවෙන් ඇසුණු ශබ්දය",
-        "s": "They the sound heard in laughing together every weekend.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
-      },
-      {
-        "w": "laughter.",
-        "p": "/ˈlɔːɡhtə/",
-        "pos": "n.",
-        "m": "A laughter..",
-        "si": "සිනහව.",
-        "s": "We saw a laughter. near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
       },
       {
         "w": "listen to",
@@ -239,38 +203,38 @@
       {
         "w": "paint",
         "p": "/peɪnt/",
-        "pos": "noun.",
-        "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+        "pos": "n.",
+        "m": "A paint.",
         "si": "තීන්ත",
-        "s": "The Nimrods are strong on the outside, but not very good in the paint.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
+        "s": "We saw a paint near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
       },
       {
         "w": "painter",
         "p": "/ˈpeɪntə/",
-        "pos": "noun.",
-        "m": "An artist who paints pictures.",
+        "pos": "n.",
+        "m": "A painter.",
         "si": "චිත්ර ශිල්පියා",
         "s": "We saw a painter near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=painter"
       },
       {
         "w": "perform",
         "p": "/pəˈfɔːm/",
-        "pos": "verb.",
-        "m": "To do something; to execute.",
+        "pos": "n.",
+        "m": "A perform.",
         "si": "ඉටු කරනවා",
-        "s": "It took him only twenty minutes to perform the task.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
+        "s": "We saw a perform near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
       },
       {
         "w": "performance",
-        "p": "[pə.ˈfɔː.məns]",
-        "pos": "noun.",
-        "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+        "p": "/ˈpəfɔːmænk/",
+        "pos": "n.",
+        "m": "A performance.",
         "si": "කාර්ය සාධනය",
-        "s": "the performance of an undertaking or a duty",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+        "s": "We saw a performance near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
       },
       {
         "w": "performer",
@@ -289,6 +253,42 @@
         "si": "සෙල්ලම් කරනවා",
         "s": "The story was very play to read.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
+      },
+      {
+        "w": "podcast",
+        "p": "/ˈpɒdkæst/",
+        "pos": "n.",
+        "m": "A podcast.",
+        "si": "පොඩ්කාස්ට්",
+        "s": "We saw a podcast near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+      },
+      {
+        "w": "poem",
+        "p": "/ˈpɒem/",
+        "pos": "n.",
+        "m": "A poem.",
+        "si": "කවිය",
+        "s": "We saw a poem near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
+      },
+      {
+        "w": "pop music",
+        "p": "/ˈpɒp ˈmʌsɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being pop music.",
+        "si": "පොප් සංගීතය",
+        "s": "The story was very pop music to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
+      },
+      {
+        "w": "presenter",
+        "p": "/ˈpresentə/",
+        "pos": "n.",
+        "m": "A presenter.",
+        "si": "ඉදිරිපත් කරන්නා",
+        "s": "We saw a presenter near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
       }
     ]
   },
@@ -357,15 +357,6 @@
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
         },
         {
-          "w": "who writes in it regularly.",
-          "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
-          "pos": "adv.",
-          "m": "In the way described by \"who writes in it regularly.\".",
-          "si": "නිතිපතා එහි ලියන.",
-          "s": "She answered the question who writes in it regularly..",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
-        },
-        {
           "w": "keyboard",
           "p": "/ˈkiːbɔːd/",
           "pos": "noun.",
@@ -375,15 +366,6 @@
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
         },
         {
-          "w": "computer etc.",
-          "p": "/ˈkɒmpʌtə ˈetk/",
-          "pos": "n.",
-          "m": "A computer etc..",
-          "si": "පරිගණකය ආදිය",
-          "s": "We saw a computer etc. near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
-        },
-        {
           "w": "laugh",
           "p": "/laːf/",
           "pos": "noun.",
@@ -391,24 +373,6 @@
           "si": "හිනා වෙනවා",
           "s": "His deep laughs boomed through the room.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
-        },
-        {
-          "w": "the sound heard in laughing",
-          "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
-          "pos": "v.",
-          "m": "To the sound heard in laughing (something).",
-          "si": "සිනහවෙන් ඇසුණු ශබ්දය",
-          "s": "They the sound heard in laughing together every weekend.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
-        },
-        {
-          "w": "laughter.",
-          "p": "/ˈlɔːɡhtə/",
-          "pos": "n.",
-          "m": "A laughter..",
-          "si": "සිනහව.",
-          "s": "We saw a laughter. near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
         },
         {
           "w": "listen to",
@@ -521,38 +485,38 @@
         {
           "w": "paint",
           "p": "/peɪnt/",
-          "pos": "noun.",
-          "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+          "pos": "n.",
+          "m": "A paint.",
           "si": "තීන්ත",
-          "s": "The Nimrods are strong on the outside, but not very good in the paint.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
+          "s": "We saw a paint near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
         },
         {
           "w": "painter",
           "p": "/ˈpeɪntə/",
-          "pos": "noun.",
-          "m": "An artist who paints pictures.",
+          "pos": "n.",
+          "m": "A painter.",
           "si": "චිත්ර ශිල්පියා",
           "s": "We saw a painter near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=painter"
         },
         {
           "w": "perform",
           "p": "/pəˈfɔːm/",
-          "pos": "verb.",
-          "m": "To do something; to execute.",
+          "pos": "n.",
+          "m": "A perform.",
           "si": "ඉටු කරනවා",
-          "s": "It took him only twenty minutes to perform the task.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
+          "s": "We saw a perform near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
         },
         {
           "w": "performance",
-          "p": "[pə.ˈfɔː.məns]",
-          "pos": "noun.",
-          "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+          "p": "/ˈpəfɔːmænk/",
+          "pos": "n.",
+          "m": "A performance.",
           "si": "කාර්ය සාධනය",
-          "s": "the performance of an undertaking or a duty",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+          "s": "We saw a performance near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
         },
         {
           "w": "performer",
@@ -571,6 +535,42 @@
           "si": "සෙල්ලම් කරනවා",
           "s": "The story was very play to read.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
+        },
+        {
+          "w": "podcast",
+          "p": "/ˈpɒdkæst/",
+          "pos": "n.",
+          "m": "A podcast.",
+          "si": "පොඩ්කාස්ට්",
+          "s": "We saw a podcast near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+        },
+        {
+          "w": "poem",
+          "p": "/ˈpɒem/",
+          "pos": "n.",
+          "m": "A poem.",
+          "si": "කවිය",
+          "s": "We saw a poem near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
+        },
+        {
+          "w": "pop music",
+          "p": "/ˈpɒp ˈmʌsɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being pop music.",
+          "si": "පොප් සංගීතය",
+          "s": "The story was very pop music to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
+        },
+        {
+          "w": "presenter",
+          "p": "/ˈpresentə/",
+          "pos": "n.",
+          "m": "A presenter.",
+          "si": "ඉදිරිපත් කරන්නා",
+          "s": "We saw a presenter near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
         }
       ]
     },
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-11T15:56:55.696Z",
+  "updatedAt": "2026-11-11T16:00:43.178Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 55,
+  "settingsRev": 56,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000004,
+  "syncRev": 1797000000005,
   "words": [
     {
       "w": "horror",
@@ -1245,15 +1245,6 @@
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
     },
     {
-      "w": "who writes in it regularly.",
-      "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
-      "pos": "adv.",
-      "m": "In the way described by \"who writes in it regularly.\".",
-      "si": "නිතිපතා එහි ලියන.",
-      "s": "She answered the question who writes in it regularly..",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
-    },
-    {
       "w": "keyboard",
       "p": "/ˈkiːbɔːd/",
       "pos": "noun.",
@@ -1263,15 +1254,6 @@
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
     },
     {
-      "w": "computer etc.",
-      "p": "/ˈkɒmpʌtə ˈetk/",
-      "pos": "n.",
-      "m": "A computer etc..",
-      "si": "පරිගණකය ආදිය",
-      "s": "We saw a computer etc. near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
-    },
-    {
       "w": "laugh",
       "p": "/laːf/",
       "pos": "noun.",
@@ -1279,24 +1261,6 @@
       "si": "හිනා වෙනවා",
       "s": "His deep laughs boomed through the room.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
-    },
-    {
-      "w": "the sound heard in laughing",
-      "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
-      "pos": "v.",
-      "m": "To the sound heard in laughing (something).",
-      "si": "සිනහවෙන් ඇසුණු ශබ්දය",
-      "s": "They the sound heard in laughing together every weekend.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
-    },
-    {
-      "w": "laughter.",
-      "p": "/ˈlɔːɡhtə/",
-      "pos": "n.",
-      "m": "A laughter..",
-      "si": "සිනහව.",
-      "s": "We saw a laughter. near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
     },
     {
       "w": "listen to",
@@ -1409,38 +1373,38 @@
     {
       "w": "paint",
       "p": "/peɪnt/",
-      "pos": "noun.",
-      "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+      "pos": "n.",
+      "m": "A paint.",
       "si": "තීන්ත",
-      "s": "The Nimrods are strong on the outside, but not very good in the paint.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
+      "s": "We saw a paint near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=paint"
     },
     {
       "w": "painter",
       "p": "/ˈpeɪntə/",
-      "pos": "noun.",
-      "m": "An artist who paints pictures.",
+      "pos": "n.",
+      "m": "A painter.",
       "si": "චිත්ර ශිල්පියා",
       "s": "We saw a painter near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=painter"
     },
     {
       "w": "perform",
       "p": "/pəˈfɔːm/",
-      "pos": "verb.",
-      "m": "To do something; to execute.",
+      "pos": "n.",
+      "m": "A perform.",
       "si": "ඉටු කරනවා",
-      "s": "It took him only twenty minutes to perform the task.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
+      "s": "We saw a perform near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=perform"
     },
     {
       "w": "performance",
-      "p": "[pə.ˈfɔː.məns]",
-      "pos": "noun.",
-      "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+      "p": "/ˈpəfɔːmænk/",
+      "pos": "n.",
+      "m": "A performance.",
       "si": "කාර්ය සාධනය",
-      "s": "the performance of an undertaking or a duty",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+      "s": "We saw a performance near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performance"
     },
     {
       "w": "performer",
@@ -1459,6 +1423,42 @@
       "si": "සෙල්ලම් කරනවා",
       "s": "The story was very play to read.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
+    },
+    {
+      "w": "podcast",
+      "p": "/ˈpɒdkæst/",
+      "pos": "n.",
+      "m": "A podcast.",
+      "si": "පොඩ්කාස්ට්",
+      "s": "We saw a podcast near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+    },
+    {
+      "w": "poem",
+      "p": "/ˈpɒem/",
+      "pos": "n.",
+      "m": "A poem.",
+      "si": "කවිය",
+      "s": "We saw a poem near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/poem-uk.mp3"
+    },
+    {
+      "w": "pop music",
+      "p": "/ˈpɒp ˈmʌsɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being pop music.",
+      "si": "පොප් සංගීතය",
+      "s": "The story was very pop music to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=pop%20music"
+    },
+    {
+      "w": "presenter",
+      "p": "/ˈpresentə/",
+      "pos": "n.",
+      "m": "A presenter.",
+      "si": "ඉදිරිපත් කරන්නා",
+      "s": "We saw a presenter near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
     }
   ],
   "versionFamily": "9.0.0"

@@ -2,11 +2,11 @@
   "ok": true,
   "ver": 61,
   "session": {
-    "no": "8",
+    "no": "12",
     "day": "Thursday",
     "date": "2026-10-29",
     "display": "SESSION 8 · 29/10/2026 ● CCBE GALLE BRANCH",
-    "title": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
+    "title": "Session 12 -  Entertainment and Media",
     "listId": "list_session_8_feelings",
     "classInfo": "CCBE Galle Branch • TUE/THU/IPET015 • Ms. Sumodya Sewmini (Lecturer in Charge)",
     "branch": "CCBE Galle Branch",
@@ -21,274 +21,274 @@
     "wallpaperVideo": false,
     "words": [
       {
-        "w": "entertainment",
-        "p": "/ˌen.təˈteɪn.mənt/",
+        "w": "horror",
+        "p": "/ˈhɔɹɚ/",
         "pos": "noun.",
-        "m": "Shows, films, music, or performances that give people pleasure and enjoyment.",
-        "si": "විනෝදාස්වාදය",
-        "s": "There is plenty of live entertainment in the city centre every weekend.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=entertainment"
+        "m": "An intense distressing emotion of fear or repugnance.",
+        "si": "භීෂණය",
+        "s": "I saw many horrors during the war.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
       },
       {
-        "w": "media",
-        "p": "/ˈmiː.di.ə/",
+        "w": "instrument",
+        "p": "/ˈɪnstɹəmənt/",
         "pos": "noun.",
-        "m": "Television, radio, newspapers, and the internet as ways of sharing news and information.",
-        "si": "මාධ්ය",
-        "s": "The event was widely reported across social media and television.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
+        "m": "A device used to produce music.",
+        "si": "උපකරණය",
+        "s": "The violinist was a master of her instrument.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
       },
       {
-        "w": "action",
-        "p": "/ˈæk.ʃən/",
+        "w": "interval",
+        "p": "/ˈɪntəvəl/",
         "pos": "noun.",
-        "m": "Exciting physical events in a story, film, or play.",
-        "si": "ක්රියාව",
-        "s": "My brother loves watching exciting action films at the cinema.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=action"
+        "m": "A distance in space.",
+        "si": "පරතරය",
+        "s": "the interval between contractions during childbirth",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
       },
       {
-        "w": "actress",
-        "p": "/ˈæk.trəs/",
+        "w": "interview",
+        "p": "/ˈɪntəvjuː/",
         "pos": "noun.",
-        "m": "A woman who performs a character on stage, on television, or in films.",
-        "si": "නිළිය",
-        "s": "The young actress won an award for her performance in the play.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
+        "m": "An official face-to-face meeting of monarchs or other important figures.",
+        "si": "සම්මුඛ පරීක්ෂණය",
+        "s": "The reporter gave the witness an interview.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
       },
       {
-        "w": "admission",
-        "p": "/ədˈmɪʃ.ən/",
-        "pos": "noun.",
-        "m": "The money that you pay to enter a museum, concert, or theatre.",
-        "si": "ඇතුළත් කිරීම",
-        "s": "Museum admission is free for school students on Fridays.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
+        "w": "jazz music",
+        "p": "/ˈdʒæz ˈmʌsɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being jazz music.",
+        "si": "ජෑස් සංගීතය",
+        "s": "The story was very jazz music to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
       },
       {
-        "w": "adventure",
-        "p": "/ədˈven.tʃə/",
+        "w": "journalist",
+        "p": "/ˈdʒɜːnəlɪst/",
         "pos": "noun.",
-        "m": "An unusual, exciting, and sometimes daring experience or journey.",
-        "si": "ත්රාසජනක",
-        "s": "The children read an exciting adventure story about exploring an island.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
+        "m": "The keeper of a personal journal, who writes in it regularly.",
+        "si": "මාධ්යවේදී",
+        "s": "We saw a journalist near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
       },
       {
-        "w": "advertisement",
-        "p": "/ədˈvɜː.tɪs.mənt/",
-        "pos": "noun.",
-        "m": "A notice, picture, or short film telling people about a product, job, or service.",
-        "si": "වෙළඳ දැන්වීම",
-        "s": "We saw an advertisement for the summer music festival in the newspaper.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+        "w": "who writes in it regularly.",
+        "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
+        "pos": "adv.",
+        "m": "In the way described by \"who writes in it regularly.\".",
+        "si": "නිතිපතා එහි ලියන.",
+        "s": "She answered the question who writes in it regularly..",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
       },
       {
-        "w": "audience",
-        "p": "/ˈɔː.di.əns/",
+        "w": "keyboard",
+        "p": "/ˈkiːbɔːd/",
         "pos": "noun.",
-        "m": "The group of people gathered together in one place to watch or listen to a play, film, or concert.",
-        "si": "ප්රේක්ෂක",
-        "s": "The audience clapped loudly at the end of the concert.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
+        "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+        "si": "යතුරු පුවරුව",
+        "s": "We saw a keyboard near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
       },
       {
-        "w": "bestseller",
-        "p": "/ˌbestˈsel.ə/",
-        "pos": "noun.",
-        "m": "A new book or other product that has bought by a very large number of people.",
-        "si": "වැඩියෙන් අලෙවි වන",
-        "s": "Her latest detective novel quickly became an international bestseller.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
+        "w": "computer etc.",
+        "p": "/ˈkɒmpʌtə ˈetk/",
+        "pos": "n.",
+        "m": "A computer etc..",
+        "si": "පරිගණකය ආදිය",
+        "s": "We saw a computer etc. near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
       },
       {
-        "w": "cartoon",
-        "p": "/kɑːˈtuːn/",
+        "w": "laugh",
+        "p": "/laːf/",
         "pos": "noun.",
-        "m": "An animated film or a humorous drawing in a newspaper or magazine.",
-        "si": "කාටූන්",
-        "s": "My little sister watches her favourite cartoon every Saturday morning.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+        "m": "An expression of mirth particular to the human species; the sound heard in laughing; laughter.",
+        "si": "හිනා වෙනවා",
+        "s": "His deep laughs boomed through the room.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
       },
       {
-        "w": "celebrity",
-        "p": "/səˈleb.rə.ti/",
-        "pos": "noun.",
-        "m": "A famous person, especially in entertainment, television, or sport.",
-        "si": "කීර්තිමත්",
-        "s": "A well-known television celebrity opened the new school library.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
+        "w": "the sound heard in laughing",
+        "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
+        "pos": "v.",
+        "m": "To the sound heard in laughing (something).",
+        "si": "සිනහවෙන් ඇසුණු ශබ්දය",
+        "s": "They the sound heard in laughing together every weekend.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
       },
       {
-        "w": "channel",
-        "p": "/ˈtʃæn.əl/",
-        "pos": "noun.",
-        "m": "A television station and the programmes that it broadcasts.",
-        "si": "නාලිකාව",
-        "s": "Which television channel is showing the wildlife documentary tonight?",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+        "w": "laughter.",
+        "p": "/ˈlɔːɡhtə/",
+        "pos": "n.",
+        "m": "A laughter..",
+        "si": "සිනහව.",
+        "s": "We saw a laughter. near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
       },
       {
-        "w": "circus",
-        "p": "/ˈsɜː.kəs/",
-        "pos": "noun.",
-        "m": "A travelling show with acrobats, clowns, and performers, usually held in a large tent.",
-        "si": "සර්කස්",
-        "s": "The circus will be performing in our town next week.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+        "w": "listen to",
+        "p": "/ˈlɪsten ˈtɒ/",
+        "pos": "n.",
+        "m": "A listen to.",
+        "si": "සවන් දෙන්න",
+        "s": "We saw a listen to near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=listen%20to"
       },
       {
-        "w": "classical music",
-        "p": "/ˌklæs.ɪ.kəl ˈmjuː.zɪk/",
-        "pos": "noun.",
-        "m": "Serious traditional music written by composers such as Mozart and Beethoven.",
-        "si": "සම්භාව්ය සංගීතය",
-        "s": "Listening to classical music helps me concentrate while studying.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
+        "w": "look at",
+        "p": "/ˈluːk ˈæt/",
+        "pos": "n.",
+        "m": "A look at.",
+        "si": "බලන්න",
+        "s": "We saw a look at near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=look%20at"
       },
       {
-        "w": "comedy",
-        "p": "/ˈkɒm.ə.di/",
+        "w": "magazine",
+        "p": "/mæɡəˈziːn/",
         "pos": "noun.",
-        "m": "A play, film, or television programme that is intended to make people laugh.",
-        "si": "විකට",
-        "s": "We watched a very funny British comedy at the theatre last night.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+        "m": "A non-academic periodical publication, generally consisting of sheets of paper folded in half and stapled at the fold.",
+        "si": "සඟරාව",
+        "s": "We saw a magazine near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
       },
       {
-        "w": "competition",
-        "p": "/ˌkɒm.pəˈtɪʃ.ən/",
-        "pos": "noun.",
-        "m": "An organized event in which people try to win a prize by being the best.",
-        "si": "තරඟය",
-        "s": "She entered the school singing competition and won first prize.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+        "w": "magic",
+        "p": "/ˈmæɡɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being magic.",
+        "si": "මායාව",
+        "s": "The story was very magic to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
       },
       {
-        "w": "concert",
-        "p": "/ˈkɒn.sət/",
-        "pos": "noun.",
-        "m": "A live performance of music by one or more musicians or singers.",
-        "si": "ප්රසංගය",
-        "s": "We bought tickets for the Friday evening orchestra concert.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
+        "w": "MP3 player",
+        "p": "/mp ˈpleɪə/",
+        "pos": "n.",
+        "m": "A MP3 player.",
+        "si": "mp3 ප්ලේයරය",
+        "s": "We saw a MP3 player near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=MP3%20player"
       },
       {
-        "w": "disco",
-        "p": "/ˈdɪs.kəʊ/",
+        "w": "museum",
+        "p": "/mjuːˈziːəm/",
         "pos": "noun.",
-        "m": "A party or club where people dance to recorded pop music.",
-        "si": "ඩිස්කෝ",
-        "s": "The school organized a disco in the main hall at the end of term.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
+        "m": "A building or institution dedicated to the acquisition, conservation, study, exhibition, and educational interpretation of objects having scientific, historical, cultural or artistic value.",
+        "si": "කෞතුකාගාරය",
+        "s": "We saw a museum near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-us.mp3"
       },
       {
-        "w": "display",
-        "p": "/dɪˈspleɪ/",
+        "w": "music",
+        "p": "/ˈmjuːzɪk/",
         "pos": "noun.",
-        "m": "A public arrangement of things or a show for people to look at and enjoy.",
-        "si": "ප්රදර්ශනය",
-        "s": "Everyone gathered in the park to watch the colourful gymnastics display.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
+        "m": "A series of sounds organized in time, employing melody, harmony, tempo etc. usually to convey a mood.",
+        "si": "සංගීතය",
+        "s": "I keep listening to this music because it's a masterpiece.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/music-uk.mp3"
       },
       {
-        "w": "documentary",
-        "p": "/ˌdɒk.jəˈmen.tər.i/",
+        "w": "musician",
+        "p": "/mjuˈzɪʃən/",
         "pos": "noun.",
-        "m": "A film or television programme that gives real facts about a subject.",
-        "si": "වාර්තාමය",
-        "s": "We watched an interesting documentary about ocean wildlife.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
+        "m": "A composer, conductor, or performer of music; specifically, a person who sings and/or plays a musical instrument as a hobby, an occupation, or a profession.",
+        "si": "සංගීතඥයා",
+        "s": "We saw a musician near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
       },
       {
-        "w": "drawing",
-        "p": "/ˈdrɔː.ɪŋ/",
+        "w": "news",
+        "p": "/njuːz/",
         "pos": "noun.",
-        "m": "A picture made with a pencil, pen, or crayon rather than paint.",
-        "si": "ඇඳීම",
-        "s": "She showed the art teacher a detailed pencil drawing of the old station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+        "m": "New information of interest.",
+        "si": "පුවත්",
+        "s": "Is there any news about the storm?",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/news.mp3"
       },
       {
-        "w": "exhibition",
-        "p": "/ˌek.sɪˈbɪʃ.ən/",
+        "w": "newspaper",
+        "p": "/ˈnjuːsˌpeɪpə/",
         "pos": "noun.",
-        "m": "A public display of paintings, photographs, or other objects of interest.",
-        "si": "ප්රදර්ශනය",
-        "s": "Our class visited a photography exhibition at the national gallery.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
+        "m": "A publication, usually published daily or weekly and usually printed on cheap, low-quality paper, containing news and other articles.",
+        "si": "පුවත්පත",
+        "s": "We saw a newspaper near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/newspaper-us.mp3"
       },
       {
-        "w": "festival",
-        "p": "/ˈfes.tɪ.vəl/",
+        "w": "opera",
+        "p": "/ˈɒp.əɹ.ə/",
         "pos": "noun.",
-        "m": "A special day or period with public concerts, plays, and celebrations.",
-        "si": "උත්සවය",
-        "s": "Thousands of visitors came to the annual summer music festival.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+        "m": "A theatrical work, combining drama, music, song and sometimes dance.",
+        "si": "ඔපෙරා",
+        "s": "We saw a opera near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/opera-us.mp3"
       },
       {
-        "w": "film maker",
-        "p": "/ˈfɪlm ˌmeɪ.kə/",
+        "w": "orchestra",
+        "p": "/ˈɔːkəstɹə/",
         "pos": "noun.",
-        "m": "A person who directs or produces films for the cinema or television.",
-        "si": "චිත්රපට නිෂ්පාදකයා",
-        "s": "The young film maker won a prize for his short documentary.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+        "m": "A large group of musicians who play together on various instruments, usually including some from strings, woodwind, brass and/or percussion; the instruments played by such a group.",
+        "si": "වාද්‍ය වෘන්දය",
+        "s": "We saw a orchestra near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
       },
       {
-        "w": "fireworks",
-        "p": "/ˈfaɪə.wɜːks/",
+        "w": "paint",
+        "p": "/peɪnt/",
         "pos": "noun.",
-        "m": "Small containers that explode with bright colours and loud noises in the night sky.",
-        "si": "ගිනිකෙළි",
-        "s": "Bright fireworks lit up the harbour at midnight.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+        "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+        "si": "තීන්ත",
+        "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
       },
       {
-        "w": "folk music",
-        "p": "/ˈfəʊk ˌmjuː.zɪk/",
+        "w": "painter",
+        "p": "/ˈpeɪntə/",
         "pos": "noun.",
-        "m": "Traditional music from a particular country or region passed down through generations.",
-        "si": "ජන සංගීතය",
-        "s": "The band played traditional Sri Lankan and British folk music.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+        "m": "An artist who paints pictures.",
+        "si": "චිත්ර ශිල්පියා",
+        "s": "We saw a painter near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
       },
       {
-        "w": "guitarist",
-        "p": "/ɡɪˈtɑː.rɪst/",
-        "pos": "noun.",
-        "m": "A musician who plays the guitar.",
-        "si": "ගිටාර් වාදකයෙක්",
-        "s": "The lead guitarist played a wonderful solo during the concert.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+        "w": "perform",
+        "p": "/pəˈfɔːm/",
+        "pos": "verb.",
+        "m": "To do something; to execute.",
+        "si": "ඉටු කරනවා",
+        "s": "It took him only twenty minutes to perform the task.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
       },
       {
-        "w": "headphones",
-        "p": "/ˈhed.fəʊnz/",
+        "w": "performance",
+        "p": "[pə.ˈfɔː.məns]",
         "pos": "noun.",
-        "m": "A pair of small speakers worn over the ears to listen to audio privately.",
-        "si": "හෙඩ්ෆෝන්",
-        "s": "Please wear your headphones during the dictation practice session.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+        "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+        "si": "කාර්ය සාධනය",
+        "s": "the performance of an undertaking or a duty",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
       },
       {
-        "w": "hero",
-        "p": "/ˈhɪə.rəʊ/",
+        "w": "performer",
+        "p": "/pəˈfɔːmə/",
         "pos": "noun.",
-        "m": "A person who is admired for doing something very brave or good, or the main male character in a story.",
-        "si": "වීරයා",
-        "s": "The brave firefighter was praised as a local hero.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+        "m": "One who performs for, or entertains, an audience.",
+        "si": "රංගන ශිල්පියා",
+        "s": "the performer of an action",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
       },
       {
-        "w": "heroine",
-        "p": "/ˈher.əʊ.ɪn/",
+        "w": "play",
+        "p": "/pleɪ/",
         "pos": "noun.",
-        "m": "A woman who is admired for bravery, or the main female character in a book or film.",
-        "si": "වීරවරියක්",
-        "s": "The heroine of the novel solved the mystery with courage and intelligence.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+        "m": "Activity for amusement only, especially among the young.",
+        "si": "සෙල්ලම් කරනවා",
+        "s": "Children learn through play.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
       }
     ]
   },
@@ -303,274 +303,274 @@
       "active": true,
       "words": [
         {
-          "w": "entertainment",
-          "p": "/ˌen.təˈteɪn.mənt/",
+          "w": "horror",
+          "p": "/ˈhɔɹɚ/",
           "pos": "noun.",
-          "m": "Shows, films, music, or performances that give people pleasure and enjoyment.",
-          "si": "විනෝදාස්වාදය",
-          "s": "There is plenty of live entertainment in the city centre every weekend.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=entertainment"
+          "m": "An intense distressing emotion of fear or repugnance.",
+          "si": "භීෂණය",
+          "s": "I saw many horrors during the war.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
         },
         {
-          "w": "media",
-          "p": "/ˈmiː.di.ə/",
+          "w": "instrument",
+          "p": "/ˈɪnstɹəmənt/",
           "pos": "noun.",
-          "m": "Television, radio, newspapers, and the internet as ways of sharing news and information.",
-          "si": "මාධ්ය",
-          "s": "The event was widely reported across social media and television.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
+          "m": "A device used to produce music.",
+          "si": "උපකරණය",
+          "s": "The violinist was a master of her instrument.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
         },
         {
-          "w": "action",
-          "p": "/ˈæk.ʃən/",
+          "w": "interval",
+          "p": "/ˈɪntəvəl/",
           "pos": "noun.",
-          "m": "Exciting physical events in a story, film, or play.",
-          "si": "ක්රියාව",
-          "s": "My brother loves watching exciting action films at the cinema.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=action"
+          "m": "A distance in space.",
+          "si": "පරතරය",
+          "s": "the interval between contractions during childbirth",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
         },
         {
-          "w": "actress",
-          "p": "/ˈæk.trəs/",
+          "w": "interview",
+          "p": "/ˈɪntəvjuː/",
           "pos": "noun.",
-          "m": "A woman who performs a character on stage, on television, or in films.",
-          "si": "නිළිය",
-          "s": "The young actress won an award for her performance in the play.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
+          "m": "An official face-to-face meeting of monarchs or other important figures.",
+          "si": "සම්මුඛ පරීක්ෂණය",
+          "s": "The reporter gave the witness an interview.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
         },
         {
-          "w": "admission",
-          "p": "/ədˈmɪʃ.ən/",
-          "pos": "noun.",
-          "m": "The money that you pay to enter a museum, concert, or theatre.",
-          "si": "ඇතුළත් කිරීම",
-          "s": "Museum admission is free for school students on Fridays.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
+          "w": "jazz music",
+          "p": "/ˈdʒæz ˈmʌsɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being jazz music.",
+          "si": "ජෑස් සංගීතය",
+          "s": "The story was very jazz music to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
         },
         {
-          "w": "adventure",
-          "p": "/ədˈven.tʃə/",
+          "w": "journalist",
+          "p": "/ˈdʒɜːnəlɪst/",
           "pos": "noun.",
-          "m": "An unusual, exciting, and sometimes daring experience or journey.",
-          "si": "ත්රාසජනක",
-          "s": "The children read an exciting adventure story about exploring an island.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
+          "m": "The keeper of a personal journal, who writes in it regularly.",
+          "si": "මාධ්යවේදී",
+          "s": "We saw a journalist near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
         },
         {
-          "w": "advertisement",
-          "p": "/ədˈvɜː.tɪs.mənt/",
-          "pos": "noun.",
-          "m": "A notice, picture, or short film telling people about a product, job, or service.",
-          "si": "වෙළඳ දැන්වීම",
-          "s": "We saw an advertisement for the summer music festival in the newspaper.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+          "w": "who writes in it regularly.",
+          "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
+          "pos": "adv.",
+          "m": "In the way described by \"who writes in it regularly.\".",
+          "si": "නිතිපතා එහි ලියන.",
+          "s": "She answered the question who writes in it regularly..",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
         },
         {
-          "w": "audience",
-          "p": "/ˈɔː.di.əns/",
+          "w": "keyboard",
+          "p": "/ˈkiːbɔːd/",
           "pos": "noun.",
-          "m": "The group of people gathered together in one place to watch or listen to a play, film, or concert.",
-          "si": "ප්රේක්ෂක",
-          "s": "The audience clapped loudly at the end of the concert.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
+          "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+          "si": "යතුරු පුවරුව",
+          "s": "We saw a keyboard near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
         },
         {
-          "w": "bestseller",
-          "p": "/ˌbestˈsel.ə/",
-          "pos": "noun.",
-          "m": "A new book or other product that has bought by a very large number of people.",
-          "si": "වැඩියෙන් අලෙවි වන",
-          "s": "Her latest detective novel quickly became an international bestseller.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
+          "w": "computer etc.",
+          "p": "/ˈkɒmpʌtə ˈetk/",
+          "pos": "n.",
+          "m": "A computer etc..",
+          "si": "පරිගණකය ආදිය",
+          "s": "We saw a computer etc. near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
         },
         {
-          "w": "cartoon",
-          "p": "/kɑːˈtuːn/",
+          "w": "laugh",
+          "p": "/laːf/",
           "pos": "noun.",
-          "m": "An animated film or a humorous drawing in a newspaper or magazine.",
-          "si": "කාටූන්",
-          "s": "My little sister watches her favourite cartoon every Saturday morning.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+          "m": "An expression of mirth particular to the human species; the sound heard in laughing; laughter.",
+          "si": "හිනා වෙනවා",
+          "s": "His deep laughs boomed through the room.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
         },
         {
-          "w": "celebrity",
-          "p": "/səˈleb.rə.ti/",
-          "pos": "noun.",
-          "m": "A famous person, especially in entertainment, television, or sport.",
-          "si": "කීර්තිමත්",
-          "s": "A well-known television celebrity opened the new school library.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
+          "w": "the sound heard in laughing",
+          "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
+          "pos": "v.",
+          "m": "To the sound heard in laughing (something).",
+          "si": "සිනහවෙන් ඇසුණු ශබ්දය",
+          "s": "They the sound heard in laughing together every weekend.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
         },
         {
-          "w": "channel",
-          "p": "/ˈtʃæn.əl/",
-          "pos": "noun.",
-          "m": "A television station and the programmes that it broadcasts.",
-          "si": "නාලිකාව",
-          "s": "Which television channel is showing the wildlife documentary tonight?",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+          "w": "laughter.",
+          "p": "/ˈlɔːɡhtə/",
+          "pos": "n.",
+          "m": "A laughter..",
+          "si": "සිනහව.",
+          "s": "We saw a laughter. near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
         },
         {
-          "w": "circus",
-          "p": "/ˈsɜː.kəs/",
-          "pos": "noun.",
-          "m": "A travelling show with acrobats, clowns, and performers, usually held in a large tent.",
-          "si": "සර්කස්",
-          "s": "The circus will be performing in our town next week.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+          "w": "listen to",
+          "p": "/ˈlɪsten ˈtɒ/",
+          "pos": "n.",
+          "m": "A listen to.",
+          "si": "සවන් දෙන්න",
+          "s": "We saw a listen to near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=listen%20to"
         },
         {
-          "w": "classical music",
-          "p": "/ˌklæs.ɪ.kəl ˈmjuː.zɪk/",
-          "pos": "noun.",
-          "m": "Serious traditional music written by composers such as Mozart and Beethoven.",
-          "si": "සම්භාව්ය සංගීතය",
-          "s": "Listening to classical music helps me concentrate while studying.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
+          "w": "look at",
+          "p": "/ˈluːk ˈæt/",
+          "pos": "n.",
+          "m": "A look at.",
+          "si": "බලන්න",
+          "s": "We saw a look at near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=look%20at"
         },
         {
-          "w": "comedy",
-          "p": "/ˈkɒm.ə.di/",
+          "w": "magazine",
+          "p": "/mæɡəˈziːn/",
           "pos": "noun.",
-          "m": "A play, film, or television programme that is intended to make people laugh.",
-          "si": "විකට",
-          "s": "We watched a very funny British comedy at the theatre last night.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+          "m": "A non-academic periodical publication, generally consisting of sheets of paper folded in half and stapled at the fold.",
+          "si": "සඟරාව",
+          "s": "We saw a magazine near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
         },
         {
-          "w": "competition",
-          "p": "/ˌkɒm.pəˈtɪʃ.ən/",
-          "pos": "noun.",
-          "m": "An organized event in which people try to win a prize by being the best.",
-          "si": "තරඟය",
-          "s": "She entered the school singing competition and won first prize.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+          "w": "magic",
+          "p": "/ˈmæɡɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being magic.",
+          "si": "මායාව",
+          "s": "The story was very magic to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
         },
         {
-          "w": "concert",
-          "p": "/ˈkɒn.sət/",
-          "pos": "noun.",
-          "m": "A live performance of music by one or more musicians or singers.",
-          "si": "ප්රසංගය",
-          "s": "We bought tickets for the Friday evening orchestra concert.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
+          "w": "MP3 player",
+          "p": "/mp ˈpleɪə/",
+          "pos": "n.",
+          "m": "A MP3 player.",
+          "si": "mp3 ප්ලේයරය",
+          "s": "We saw a MP3 player near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=MP3%20player"
         },
         {
-          "w": "disco",
-          "p": "/ˈdɪs.kəʊ/",
+          "w": "museum",
+          "p": "/mjuːˈziːəm/",
           "pos": "noun.",
-          "m": "A party or club where people dance to recorded pop music.",
-          "si": "ඩිස්කෝ",
-          "s": "The school organized a disco in the main hall at the end of term.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
+          "m": "A building or institution dedicated to the acquisition, conservation, study, exhibition, and educational interpretation of objects having scientific, historical, cultural or artistic value.",
+          "si": "කෞතුකාගාරය",
+          "s": "We saw a museum near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-us.mp3"
         },
         {
-          "w": "display",
-          "p": "/dɪˈspleɪ/",
+          "w": "music",
+          "p": "/ˈmjuːzɪk/",
           "pos": "noun.",
-          "m": "A public arrangement of things or a show for people to look at and enjoy.",
-          "si": "ප්රදර්ශනය",
-          "s": "Everyone gathered in the park to watch the colourful gymnastics display.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
+          "m": "A series of sounds organized in time, employing melody, harmony, tempo etc. usually to convey a mood.",
+          "si": "සංගීතය",
+          "s": "I keep listening to this music because it's a masterpiece.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/music-uk.mp3"
         },
         {
-          "w": "documentary",
-          "p": "/ˌdɒk.jəˈmen.tər.i/",
+          "w": "musician",
+          "p": "/mjuˈzɪʃən/",
           "pos": "noun.",
-          "m": "A film or television programme that gives real facts about a subject.",
-          "si": "වාර්තාමය",
-          "s": "We watched an interesting documentary about ocean wildlife.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
+          "m": "A composer, conductor, or performer of music; specifically, a person who sings and/or plays a musical instrument as a hobby, an occupation, or a profession.",
+          "si": "සංගීතඥයා",
+          "s": "We saw a musician near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
         },
         {
-          "w": "drawing",
-          "p": "/ˈdrɔː.ɪŋ/",
+          "w": "news",
+          "p": "/njuːz/",
           "pos": "noun.",
-          "m": "A picture made with a pencil, pen, or crayon rather than paint.",
-          "si": "ඇඳීම",
-          "s": "She showed the art teacher a detailed pencil drawing of the old station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+          "m": "New information of interest.",
+          "si": "පුවත්",
+          "s": "Is there any news about the storm?",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/news.mp3"
         },
         {
-          "w": "exhibition",
-          "p": "/ˌek.sɪˈbɪʃ.ən/",
+          "w": "newspaper",
+          "p": "/ˈnjuːsˌpeɪpə/",
           "pos": "noun.",
-          "m": "A public display of paintings, photographs, or other objects of interest.",
-          "si": "ප්රදර්ශනය",
-          "s": "Our class visited a photography exhibition at the national gallery.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
+          "m": "A publication, usually published daily or weekly and usually printed on cheap, low-quality paper, containing news and other articles.",
+          "si": "පුවත්පත",
+          "s": "We saw a newspaper near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/newspaper-us.mp3"
         },
         {
-          "w": "festival",
-          "p": "/ˈfes.tɪ.vəl/",
+          "w": "opera",
+          "p": "/ˈɒp.əɹ.ə/",
           "pos": "noun.",
-          "m": "A special day or period with public concerts, plays, and celebrations.",
-          "si": "උත්සවය",
-          "s": "Thousands of visitors came to the annual summer music festival.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+          "m": "A theatrical work, combining drama, music, song and sometimes dance.",
+          "si": "ඔපෙරා",
+          "s": "We saw a opera near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/opera-us.mp3"
         },
         {
-          "w": "film maker",
-          "p": "/ˈfɪlm ˌmeɪ.kə/",
+          "w": "orchestra",
+          "p": "/ˈɔːkəstɹə/",
           "pos": "noun.",
-          "m": "A person who directs or produces films for the cinema or television.",
-          "si": "චිත්රපට නිෂ්පාදකයා",
-          "s": "The young film maker won a prize for his short documentary.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+          "m": "A large group of musicians who play together on various instruments, usually including some from strings, woodwind, brass and/or percussion; the instruments played by such a group.",
+          "si": "වාද්‍ය වෘන්දය",
+          "s": "We saw a orchestra near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
         },
         {
-          "w": "fireworks",
-          "p": "/ˈfaɪə.wɜːks/",
+          "w": "paint",
+          "p": "/peɪnt/",
           "pos": "noun.",
-          "m": "Small containers that explode with bright colours and loud noises in the night sky.",
-          "si": "ගිනිකෙළි",
-          "s": "Bright fireworks lit up the harbour at midnight.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+          "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+          "si": "තීන්ත",
+          "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
         },
         {
-          "w": "folk music",
-          "p": "/ˈfəʊk ˌmjuː.zɪk/",
+          "w": "painter",
+          "p": "/ˈpeɪntə/",
           "pos": "noun.",
-          "m": "Traditional music from a particular country or region passed down through generations.",
-          "si": "ජන සංගීතය",
-          "s": "The band played traditional Sri Lankan and British folk music.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+          "m": "An artist who paints pictures.",
+          "si": "චිත්ර ශිල්පියා",
+          "s": "We saw a painter near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
         },
         {
-          "w": "guitarist",
-          "p": "/ɡɪˈtɑː.rɪst/",
-          "pos": "noun.",
-          "m": "A musician who plays the guitar.",
-          "si": "ගිටාර් වාදකයෙක්",
-          "s": "The lead guitarist played a wonderful solo during the concert.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+          "w": "perform",
+          "p": "/pəˈfɔːm/",
+          "pos": "verb.",
+          "m": "To do something; to execute.",
+          "si": "ඉටු කරනවා",
+          "s": "It took him only twenty minutes to perform the task.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
         },
         {
-          "w": "headphones",
-          "p": "/ˈhed.fəʊnz/",
+          "w": "performance",
+          "p": "[pə.ˈfɔː.məns]",
           "pos": "noun.",
-          "m": "A pair of small speakers worn over the ears to listen to audio privately.",
-          "si": "හෙඩ්ෆෝන්",
-          "s": "Please wear your headphones during the dictation practice session.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+          "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+          "si": "කාර්ය සාධනය",
+          "s": "the performance of an undertaking or a duty",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
         },
         {
-          "w": "hero",
-          "p": "/ˈhɪə.rəʊ/",
+          "w": "performer",
+          "p": "/pəˈfɔːmə/",
           "pos": "noun.",
-          "m": "A person who is admired for doing something very brave or good, or the main male character in a story.",
-          "si": "වීරයා",
-          "s": "The brave firefighter was praised as a local hero.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+          "m": "One who performs for, or entertains, an audience.",
+          "si": "රංගන ශිල්පියා",
+          "s": "the performer of an action",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
         },
         {
-          "w": "heroine",
-          "p": "/ˈher.əʊ.ɪn/",
+          "w": "play",
+          "p": "/pleɪ/",
           "pos": "noun.",
-          "m": "A woman who is admired for bravery, or the main female character in a book or film.",
-          "si": "වීරවරියක්",
-          "s": "The heroine of the novel solved the mystery with courage and intelligence.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+          "m": "Activity for amusement only, especially among the young.",
+          "si": "සෙල්ලම් කරනවා",
+          "s": "Children learn through play.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
         }
       ]
     },
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-09T13:06:38.814Z",
+  "updatedAt": "2026-11-11T15:56:03.354Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 53,
+  "settingsRev": 54,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,277 +1188,277 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000002,
+  "syncRev": 1797000000003,
   "words": [
     {
-      "w": "entertainment",
-      "p": "/ˌen.təˈteɪn.mənt/",
+      "w": "horror",
+      "p": "/ˈhɔɹɚ/",
       "pos": "noun.",
-      "m": "Shows, films, music, or performances that give people pleasure and enjoyment.",
-      "si": "විනෝදාස්වාදය",
-      "s": "There is plenty of live entertainment in the city centre every weekend.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=entertainment"
+      "m": "An intense distressing emotion of fear or repugnance.",
+      "si": "භීෂණය",
+      "s": "I saw many horrors during the war.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
     },
     {
-      "w": "media",
-      "p": "/ˈmiː.di.ə/",
+      "w": "instrument",
+      "p": "/ˈɪnstɹəmənt/",
       "pos": "noun.",
-      "m": "Television, radio, newspapers, and the internet as ways of sharing news and information.",
-      "si": "මාධ්ය",
-      "s": "The event was widely reported across social media and television.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=media"
+      "m": "A device used to produce music.",
+      "si": "උපකරණය",
+      "s": "The violinist was a master of her instrument.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
     },
     {
-      "w": "action",
-      "p": "/ˈæk.ʃən/",
+      "w": "interval",
+      "p": "/ˈɪntəvəl/",
       "pos": "noun.",
-      "m": "Exciting physical events in a story, film, or play.",
-      "si": "ක්රියාව",
-      "s": "My brother loves watching exciting action films at the cinema.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=action"
+      "m": "A distance in space.",
+      "si": "පරතරය",
+      "s": "the interval between contractions during childbirth",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
     },
     {
-      "w": "actress",
-      "p": "/ˈæk.trəs/",
+      "w": "interview",
+      "p": "/ˈɪntəvjuː/",
       "pos": "noun.",
-      "m": "A woman who performs a character on stage, on television, or in films.",
-      "si": "නිළිය",
-      "s": "The young actress won an award for her performance in the play.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=actress"
+      "m": "An official face-to-face meeting of monarchs or other important figures.",
+      "si": "සම්මුඛ පරීක්ෂණය",
+      "s": "The reporter gave the witness an interview.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
     },
     {
-      "w": "admission",
-      "p": "/ədˈmɪʃ.ən/",
-      "pos": "noun.",
-      "m": "The money that you pay to enter a museum, concert, or theatre.",
-      "si": "ඇතුළත් කිරීම",
-      "s": "Museum admission is free for school students on Fridays.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/admission-uk.mp3"
+      "w": "jazz music",
+      "p": "/ˈdʒæz ˈmʌsɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being jazz music.",
+      "si": "ජෑස් සංගීතය",
+      "s": "The story was very jazz music to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
     },
     {
-      "w": "adventure",
-      "p": "/ədˈven.tʃə/",
+      "w": "journalist",
+      "p": "/ˈdʒɜːnəlɪst/",
       "pos": "noun.",
-      "m": "An unusual, exciting, and sometimes daring experience or journey.",
-      "si": "ත්රාසජනක",
-      "s": "The children read an exciting adventure story about exploring an island.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=adventure"
+      "m": "The keeper of a personal journal, who writes in it regularly.",
+      "si": "මාධ්යවේදී",
+      "s": "We saw a journalist near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
     },
     {
-      "w": "advertisement",
-      "p": "/ədˈvɜː.tɪs.mənt/",
-      "pos": "noun.",
-      "m": "A notice, picture, or short film telling people about a product, job, or service.",
-      "si": "වෙළඳ දැන්වීම",
-      "s": "We saw an advertisement for the summer music festival in the newspaper.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=advertisement"
+      "w": "who writes in it regularly.",
+      "p": "/ˈwɒ ˈwrɪtz ˈɪn ˈɪt ˈreɡʌlɑːli/",
+      "pos": "adv.",
+      "m": "In the way described by \"who writes in it regularly.\".",
+      "si": "නිතිපතා එහි ලියන.",
+      "s": "She answered the question who writes in it regularly..",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=who%20writes%20in%20it%20regularly."
     },
     {
-      "w": "audience",
-      "p": "/ˈɔː.di.əns/",
+      "w": "keyboard",
+      "p": "/ˈkiːbɔːd/",
       "pos": "noun.",
-      "m": "The group of people gathered together in one place to watch or listen to a play, film, or concert.",
-      "si": "ප්රේක්ෂක",
-      "s": "The audience clapped loudly at the end of the concert.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/audience-uk.mp3"
+      "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+      "si": "යතුරු පුවරුව",
+      "s": "We saw a keyboard near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
     },
     {
-      "w": "bestseller",
-      "p": "/ˌbestˈsel.ə/",
-      "pos": "noun.",
-      "m": "A new book or other product that has bought by a very large number of people.",
-      "si": "වැඩියෙන් අලෙවි වන",
-      "s": "Her latest detective novel quickly became an international bestseller.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=bestseller"
+      "w": "computer etc.",
+      "p": "/ˈkɒmpʌtə ˈetk/",
+      "pos": "n.",
+      "m": "A computer etc..",
+      "si": "පරිගණකය ආදිය",
+      "s": "We saw a computer etc. near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=computer%20etc."
     },
     {
-      "w": "cartoon",
-      "p": "/kɑːˈtuːn/",
+      "w": "laugh",
+      "p": "/laːf/",
       "pos": "noun.",
-      "m": "An animated film or a humorous drawing in a newspaper or magazine.",
-      "si": "කාටූන්",
-      "s": "My little sister watches her favourite cartoon every Saturday morning.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cartoon"
+      "m": "An expression of mirth particular to the human species; the sound heard in laughing; laughter.",
+      "si": "හිනා වෙනවා",
+      "s": "His deep laughs boomed through the room.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
     },
     {
-      "w": "celebrity",
-      "p": "/səˈleb.rə.ti/",
-      "pos": "noun.",
-      "m": "A famous person, especially in entertainment, television, or sport.",
-      "si": "කීර්තිමත්",
-      "s": "A well-known television celebrity opened the new school library.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=celebrity"
+      "w": "the sound heard in laughing",
+      "p": "/the ˈsaʊnd ˈhiːrd ˈɪn ˈlɔːɡhɪŋ/",
+      "pos": "v.",
+      "m": "To the sound heard in laughing (something).",
+      "si": "සිනහවෙන් ඇසුණු ශබ්දය",
+      "s": "They the sound heard in laughing together every weekend.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=the%20sound%20heard%20in%20laughing"
     },
     {
-      "w": "channel",
-      "p": "/ˈtʃæn.əl/",
-      "pos": "noun.",
-      "m": "A television station and the programmes that it broadcasts.",
-      "si": "නාලිකාව",
-      "s": "Which television channel is showing the wildlife documentary tonight?",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=channel"
+      "w": "laughter.",
+      "p": "/ˈlɔːɡhtə/",
+      "pos": "n.",
+      "m": "A laughter..",
+      "si": "සිනහව.",
+      "s": "We saw a laughter. near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=laughter."
     },
     {
-      "w": "circus",
-      "p": "/ˈsɜː.kəs/",
-      "pos": "noun.",
-      "m": "A travelling show with acrobats, clowns, and performers, usually held in a large tent.",
-      "si": "සර්කස්",
-      "s": "The circus will be performing in our town next week.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=circus"
+      "w": "listen to",
+      "p": "/ˈlɪsten ˈtɒ/",
+      "pos": "n.",
+      "m": "A listen to.",
+      "si": "සවන් දෙන්න",
+      "s": "We saw a listen to near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=listen%20to"
     },
     {
-      "w": "classical music",
-      "p": "/ˌklæs.ɪ.kəl ˈmjuː.zɪk/",
-      "pos": "noun.",
-      "m": "Serious traditional music written by composers such as Mozart and Beethoven.",
-      "si": "සම්භාව්ය සංගීතය",
-      "s": "Listening to classical music helps me concentrate while studying.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=classical%20music"
+      "w": "look at",
+      "p": "/ˈluːk ˈæt/",
+      "pos": "n.",
+      "m": "A look at.",
+      "si": "බලන්න",
+      "s": "We saw a look at near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=look%20at"
     },
     {
-      "w": "comedy",
-      "p": "/ˈkɒm.ə.di/",
+      "w": "magazine",
+      "p": "/mæɡəˈziːn/",
       "pos": "noun.",
-      "m": "A play, film, or television programme that is intended to make people laugh.",
-      "si": "විකට",
-      "s": "We watched a very funny British comedy at the theatre last night.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=comedy"
+      "m": "A non-academic periodical publication, generally consisting of sheets of paper folded in half and stapled at the fold.",
+      "si": "සඟරාව",
+      "s": "We saw a magazine near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
     },
     {
-      "w": "competition",
-      "p": "/ˌkɒm.pəˈtɪʃ.ən/",
-      "pos": "noun.",
-      "m": "An organized event in which people try to win a prize by being the best.",
-      "si": "තරඟය",
-      "s": "She entered the school singing competition and won first prize.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=competition"
+      "w": "magic",
+      "p": "/ˈmæɡɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being magic.",
+      "si": "මායාව",
+      "s": "The story was very magic to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
     },
     {
-      "w": "concert",
-      "p": "/ˈkɒn.sət/",
-      "pos": "noun.",
-      "m": "A live performance of music by one or more musicians or singers.",
-      "si": "ප්රසංගය",
-      "s": "We bought tickets for the Friday evening orchestra concert.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/concert-uk.mp3"
+      "w": "MP3 player",
+      "p": "/mp ˈpleɪə/",
+      "pos": "n.",
+      "m": "A MP3 player.",
+      "si": "mp3 ප්ලේයරය",
+      "s": "We saw a MP3 player near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=MP3%20player"
     },
     {
-      "w": "disco",
-      "p": "/ˈdɪs.kəʊ/",
+      "w": "museum",
+      "p": "/mjuːˈziːəm/",
       "pos": "noun.",
-      "m": "A party or club where people dance to recorded pop music.",
-      "si": "ඩිස්කෝ",
-      "s": "The school organized a disco in the main hall at the end of term.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disco"
+      "m": "A building or institution dedicated to the acquisition, conservation, study, exhibition, and educational interpretation of objects having scientific, historical, cultural or artistic value.",
+      "si": "කෞතුකාගාරය",
+      "s": "We saw a museum near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-us.mp3"
     },
     {
-      "w": "display",
-      "p": "/dɪˈspleɪ/",
+      "w": "music",
+      "p": "/ˈmjuːzɪk/",
       "pos": "noun.",
-      "m": "A public arrangement of things or a show for people to look at and enjoy.",
-      "si": "ප්රදර්ශනය",
-      "s": "Everyone gathered in the park to watch the colourful gymnastics display.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=display"
+      "m": "A series of sounds organized in time, employing melody, harmony, tempo etc. usually to convey a mood.",
+      "si": "සංගීතය",
+      "s": "I keep listening to this music because it's a masterpiece.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/music-uk.mp3"
     },
     {
-      "w": "documentary",
-      "p": "/ˌdɒk.jəˈmen.tər.i/",
+      "w": "musician",
+      "p": "/mjuˈzɪʃən/",
       "pos": "noun.",
-      "m": "A film or television programme that gives real facts about a subject.",
-      "si": "වාර්තාමය",
-      "s": "We watched an interesting documentary about ocean wildlife.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=documentary"
+      "m": "A composer, conductor, or performer of music; specifically, a person who sings and/or plays a musical instrument as a hobby, an occupation, or a profession.",
+      "si": "සංගීතඥයා",
+      "s": "We saw a musician near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
     },
     {
-      "w": "drawing",
-      "p": "/ˈdrɔː.ɪŋ/",
+      "w": "news",
+      "p": "/njuːz/",
       "pos": "noun.",
-      "m": "A picture made with a pencil, pen, or crayon rather than paint.",
-      "si": "ඇඳීම",
-      "s": "She showed the art teacher a detailed pencil drawing of the old station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drawing"
+      "m": "New information of interest.",
+      "si": "පුවත්",
+      "s": "Is there any news about the storm?",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/news.mp3"
     },
     {
-      "w": "exhibition",
-      "p": "/ˌek.sɪˈbɪʃ.ən/",
+      "w": "newspaper",
+      "p": "/ˈnjuːsˌpeɪpə/",
       "pos": "noun.",
-      "m": "A public display of paintings, photographs, or other objects of interest.",
-      "si": "ප්රදර්ශනය",
-      "s": "Our class visited a photography exhibition at the national gallery.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=exhibition"
+      "m": "A publication, usually published daily or weekly and usually printed on cheap, low-quality paper, containing news and other articles.",
+      "si": "පුවත්පත",
+      "s": "We saw a newspaper near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/newspaper-us.mp3"
     },
     {
-      "w": "festival",
-      "p": "/ˈfes.tɪ.vəl/",
+      "w": "opera",
+      "p": "/ˈɒp.əɹ.ə/",
       "pos": "noun.",
-      "m": "A special day or period with public concerts, plays, and celebrations.",
-      "si": "උත්සවය",
-      "s": "Thousands of visitors came to the annual summer music festival.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=festival"
+      "m": "A theatrical work, combining drama, music, song and sometimes dance.",
+      "si": "ඔපෙරා",
+      "s": "We saw a opera near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/opera-us.mp3"
     },
     {
-      "w": "film maker",
-      "p": "/ˈfɪlm ˌmeɪ.kə/",
+      "w": "orchestra",
+      "p": "/ˈɔːkəstɹə/",
       "pos": "noun.",
-      "m": "A person who directs or produces films for the cinema or television.",
-      "si": "චිත්රපට නිෂ්පාදකයා",
-      "s": "The young film maker won a prize for his short documentary.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=film%20maker"
+      "m": "A large group of musicians who play together on various instruments, usually including some from strings, woodwind, brass and/or percussion; the instruments played by such a group.",
+      "si": "වාද්‍ය වෘන්දය",
+      "s": "We saw a orchestra near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
     },
     {
-      "w": "fireworks",
-      "p": "/ˈfaɪə.wɜːks/",
+      "w": "paint",
+      "p": "/peɪnt/",
       "pos": "noun.",
-      "m": "Small containers that explode with bright colours and loud noises in the night sky.",
-      "si": "ගිනිකෙළි",
-      "s": "Bright fireworks lit up the harbour at midnight.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=fireworks"
+      "m": "A substance that is applied as a liquid or paste, and dries into a solid coating that protects or adds color/colour to an object or surface to which it has been applied.",
+      "si": "තීන්ත",
+      "s": "The Nimrods are strong on the outside, but not very good in the paint.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/paint-us.mp3"
     },
     {
-      "w": "folk music",
-      "p": "/ˈfəʊk ˌmjuː.zɪk/",
+      "w": "painter",
+      "p": "/ˈpeɪntə/",
       "pos": "noun.",
-      "m": "Traditional music from a particular country or region passed down through generations.",
-      "si": "ජන සංගීතය",
-      "s": "The band played traditional Sri Lankan and British folk music.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=folk%20music"
+      "m": "An artist who paints pictures.",
+      "si": "චිත්ර ශිල්පියා",
+      "s": "We saw a painter near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
     },
     {
-      "w": "guitarist",
-      "p": "/ɡɪˈtɑː.rɪst/",
-      "pos": "noun.",
-      "m": "A musician who plays the guitar.",
-      "si": "ගිටාර් වාදකයෙක්",
-      "s": "The lead guitarist played a wonderful solo during the concert.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=guitarist"
+      "w": "perform",
+      "p": "/pəˈfɔːm/",
+      "pos": "verb.",
+      "m": "To do something; to execute.",
+      "si": "ඉටු කරනවා",
+      "s": "It took him only twenty minutes to perform the task.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
     },
     {
-      "w": "headphones",
-      "p": "/ˈhed.fəʊnz/",
+      "w": "performance",
+      "p": "[pə.ˈfɔː.məns]",
       "pos": "noun.",
-      "m": "A pair of small speakers worn over the ears to listen to audio privately.",
-      "si": "හෙඩ්ෆෝන්",
-      "s": "Please wear your headphones during the dictation practice session.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=headphones"
+      "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+      "si": "කාර්ය සාධනය",
+      "s": "the performance of an undertaking or a duty",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
     },
     {
-      "w": "hero",
-      "p": "/ˈhɪə.rəʊ/",
+      "w": "performer",
+      "p": "/pəˈfɔːmə/",
       "pos": "noun.",
-      "m": "A person who is admired for doing something very brave or good, or the main male character in a story.",
-      "si": "වීරයා",
-      "s": "The brave firefighter was praised as a local hero.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hero"
+      "m": "One who performs for, or entertains, an audience.",
+      "si": "රංගන ශිල්පියා",
+      "s": "the performer of an action",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
     },
     {
-      "w": "heroine",
-      "p": "/ˈher.əʊ.ɪn/",
+      "w": "play",
+      "p": "/pleɪ/",
       "pos": "noun.",
-      "m": "A woman who is admired for bravery, or the main female character in a book or film.",
-      "si": "වීරවරියක්",
-      "s": "The heroine of the novel solved the mystery with courage and intelligence.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=heroine"
+      "m": "Activity for amusement only, especially among the young.",
+      "si": "සෙල්ලම් කරනවා",
+      "s": "Children learn through play.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
     }
   ],
   "versionFamily": "9.0.0"

@@ -157,12 +157,12 @@
       },
       {
         "w": "magic",
-        "p": "/ˈmæɡɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being magic.",
+        "p": "/ˈmadʒɪk/",
+        "pos": "noun.",
+        "m": "The application of rituals or actions, especially those based on occult knowledge, to subdue or manipulate natural or supernatural beings and forces in order to have some benefit from them",
         "si": "මායාව",
         "s": "The story was very magic to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/magic-us.mp3"
       },
       {
         "w": "MP3 player",
@@ -256,38 +256,38 @@
       },
       {
         "w": "perform",
-        "p": "/pəˈfɔːm/",
-        "pos": "verb.",
-        "m": "To do something; to execute.",
+        "p": "/ˈpəfɔːm/",
+        "pos": "n.",
+        "m": "A perform.",
         "si": "ඉටු කරනවා",
-        "s": "It took him only twenty minutes to perform the task.",
+        "s": "We saw a perform near the station.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
       },
       {
         "w": "performance",
-        "p": "[pə.ˈfɔː.məns]",
-        "pos": "noun.",
-        "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+        "p": "/ˈpəfɔːmænk/",
+        "pos": "n.",
+        "m": "A performance.",
         "si": "කාර්ය සාධනය",
-        "s": "the performance of an undertaking or a duty",
+        "s": "We saw a performance near the station.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
       },
       {
         "w": "performer",
-        "p": "/pəˈfɔːmə/",
-        "pos": "noun.",
-        "m": "One who performs for, or entertains, an audience.",
+        "p": "/ˈpəfɔːmə/",
+        "pos": "n.",
+        "m": "A performer.",
         "si": "රංගන ශිල්පියා",
-        "s": "the performer of an action",
+        "s": "We saw a performer near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
       },
       {
         "w": "play",
-        "p": "/pleɪ/",
-        "pos": "noun.",
-        "m": "Activity for amusement only, especially among the young.",
+        "p": "/ˈpleɪ/",
+        "pos": "adj.",
+        "m": "Having the quality of being play.",
         "si": "සෙල්ලම් කරනවා",
-        "s": "Children learn through play.",
+        "s": "The story was very play to read.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
       }
     ]
@@ -439,12 +439,12 @@
         },
         {
           "w": "magic",
-          "p": "/ˈmæɡɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being magic.",
+          "p": "/ˈmadʒɪk/",
+          "pos": "noun.",
+          "m": "The application of rituals or actions, especially those based on occult knowledge, to subdue or manipulate natural or supernatural beings and forces in order to have some benefit from them",
           "si": "මායාව",
           "s": "The story was very magic to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/magic-us.mp3"
         },
         {
           "w": "MP3 player",
@@ -538,38 +538,38 @@
         },
         {
           "w": "perform",
-          "p": "/pəˈfɔːm/",
-          "pos": "verb.",
-          "m": "To do something; to execute.",
+          "p": "/ˈpəfɔːm/",
+          "pos": "n.",
+          "m": "A perform.",
           "si": "ඉටු කරනවා",
-          "s": "It took him only twenty minutes to perform the task.",
+          "s": "We saw a perform near the station.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
         },
         {
           "w": "performance",
-          "p": "[pə.ˈfɔː.məns]",
-          "pos": "noun.",
-          "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+          "p": "/ˈpəfɔːmænk/",
+          "pos": "n.",
+          "m": "A performance.",
           "si": "කාර්ය සාධනය",
-          "s": "the performance of an undertaking or a duty",
+          "s": "We saw a performance near the station.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
         },
         {
           "w": "performer",
-          "p": "/pəˈfɔːmə/",
-          "pos": "noun.",
-          "m": "One who performs for, or entertains, an audience.",
+          "p": "/ˈpəfɔːmə/",
+          "pos": "n.",
+          "m": "A performer.",
           "si": "රංගන ශිල්පියා",
-          "s": "the performer of an action",
+          "s": "We saw a performer near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
         },
         {
           "w": "play",
-          "p": "/pleɪ/",
-          "pos": "noun.",
-          "m": "Activity for amusement only, especially among the young.",
+          "p": "/ˈpleɪ/",
+          "pos": "adj.",
+          "m": "Having the quality of being play.",
           "si": "සෙල්ලම් කරනවා",
-          "s": "Children learn through play.",
+          "s": "The story was very play to read.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
         }
       ]
@@ -876,10 +876,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-11T15:56:03.354Z",
+  "updatedAt": "2026-11-11T15:56:34.668Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 54,
+  "settingsRev": 55,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,7 +1188,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000003,
+  "syncRev": 1797000000004,
   "words": [
     {
       "w": "horror",
@@ -1327,12 +1327,12 @@
     },
     {
       "w": "magic",
-      "p": "/ˈmæɡɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being magic.",
+      "p": "/ˈmadʒɪk/",
+      "pos": "noun.",
+      "m": "The application of rituals or actions, especially those based on occult knowledge, to subdue or manipulate natural or supernatural beings and forces in order to have some benefit from them",
       "si": "මායාව",
       "s": "The story was very magic to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magic"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/magic-us.mp3"
     },
     {
       "w": "MP3 player",
@@ -1426,38 +1426,38 @@
     },
     {
       "w": "perform",
-      "p": "/pəˈfɔːm/",
-      "pos": "verb.",
-      "m": "To do something; to execute.",
+      "p": "/ˈpəfɔːm/",
+      "pos": "n.",
+      "m": "A perform.",
       "si": "ඉටු කරනවා",
-      "s": "It took him only twenty minutes to perform the task.",
+      "s": "We saw a perform near the station.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/perform-us.mp3"
     },
     {
       "w": "performance",
-      "p": "[pə.ˈfɔː.məns]",
-      "pos": "noun.",
-      "m": "The act of performing; carrying into execution or action; execution; achievement; accomplishment; representation by action.",
+      "p": "/ˈpəfɔːmænk/",
+      "pos": "n.",
+      "m": "A performance.",
       "si": "කාර්ය සාධනය",
-      "s": "the performance of an undertaking or a duty",
+      "s": "We saw a performance near the station.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
     },
     {
       "w": "performer",
-      "p": "/pəˈfɔːmə/",
-      "pos": "noun.",
-      "m": "One who performs for, or entertains, an audience.",
+      "p": "/ˈpəfɔːmə/",
+      "pos": "n.",
+      "m": "A performer.",
       "si": "රංගන ශිල්පියා",
-      "s": "the performer of an action",
+      "s": "We saw a performer near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=performer"
     },
     {
       "w": "play",
-      "p": "/pleɪ/",
-      "pos": "noun.",
-      "m": "Activity for amusement only, especially among the young.",
+      "p": "/ˈpleɪ/",
+      "pos": "adj.",
+      "m": "Having the quality of being play.",
       "si": "සෙල්ලම් කරනවා",
-      "s": "Children learn through play.",
+      "s": "The story was very play to read.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/play-us.mp3"
     }
   ],

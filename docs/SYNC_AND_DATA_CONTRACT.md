@@ -173,7 +173,7 @@ Two paths, both while unlocked:
 1. **GitHub Contents API** — `PUT /repos/{owner}/{repo}/contents/{path}` with
    `{message, content: base64(utf8(text)), branch:'main', sha?}`. `sha` comes
    from a prior `GET`. Owner/repo come from the preserved `config.json`
-   (`dictationb1` / `dictationb1.github.io`).
+  (`dictationb01` / `dictationb01.github.io`).
 2. **GAS relay** — CORS-simple `POST` with `Content-Type: text/plain` body
    `{action, app:'sdp', ver:'0.0.1.d'}` (hard ceiling 600 B). **The PIN is never
    in the body** (W6/D-S9): it is verified inside the Apps Script, which is the
@@ -210,7 +210,7 @@ app-written since v0.0.1.d and is therefore budgeted, not hash-frozen (D-UI11).
 ## R8 — `data/config.json` preserved payload
 
 Must keep, untouched: `credits`, `tts`, `voice`, `live` (ntfy state/community/inbox),
-`repoOwner: "dictationb1"`, `repoName: "dictationb1.github.io"`,
+`repoOwner: "dictationb01"`, `repoName: "dictationb01.github.io"`,
 `encVault: "SDP_ENC_V2:AAA="`, `defaults`, `classInfo`,
 `voiceId: "XB0fDUnXU5powFXDhCwa"`, `voiceName: "Charlotte"`,
 `modelId: "eleven_flash_v2_5"`.
@@ -326,7 +326,7 @@ Personal keys `lang`, `guideAutoPlay`, `volume`, `hints` and the whole
 ### R11.3 The 30 s pointer read (SYNC-05)
 
 `SDP.Sync.startWatch(30000)` polls **only**
-`https://raw.githubusercontent.com/dictationb1/dictationb1.github.io/main/data/version.json?t=…`
+`https://raw.githubusercontent.com/dictationb01/dictationb01.github.io/main/data/version.json?t=…`
 (falling back to `./data/version.json`). A full `checkForUpdates()` — the only
 path that touches `api.github.com` — runs only when `syncRev`, `settingsRev` or
 `appVersion` moved, on `visibilitychange`, on a manual `#syncBadge` tap, or
@@ -367,7 +367,7 @@ precedes low-quality synth. Explicit `custom` keeps the d behaviour.
 ### R13.1 Never-red dual-source version check (D1, D5, D17)
 
 `checkForUpdates(cb)` reads `./data/version.json?t=<ms>` (same-origin, Source 1)
-and, if that fails, `raw.githubusercontent.com/dictationb1/dictationb1.github.io/main/data/version.json`
+and, if that fails, `raw.githubusercontent.com/dictationb01/dictationb01.github.io/main/data/version.json`
 (Source 2). **Either HTTP 200 resolves `cb(null, { ok: true, … })`; the badge
 goes red only when both sources fail.** `api.github.com` is never polled by
 students — it stays token-only Studio access. `cb(err, result)` fires exactly
@@ -417,7 +417,7 @@ fetchFreshDataJson('data/version.json', function (err, result) {
 ```
 
 Both legs start in parallel: same-origin `./<relPath>?t=<ms>` with `cache:'no-store'`
-and a 6 s timeout, and `raw.githubusercontent.com/dictationb1/dictationb1.github.io/main/<relPath>`
+and a 6 s timeout, and `raw.githubusercontent.com/dictationb01/dictationb01.github.io/main/<relPath>`
 with a 5 s timeout. The higher `payload.syncRev` wins; `raw` breaks an exact tie. A
 failed leg can never win, so a Brave-Shields-blocked CDN still delivers the truth.
 

@@ -115,7 +115,7 @@
     "persistentCache": "The current loaded audio element can be replayed; browser caching varies",
     "ntfyPolling": "off until Live Sync is enabled in Community",
     "versionJsonCache": "ETag / 304 friendly (no cache:no-store)",
-    "publicSheet": "https://dictationb1.github.io/data",
+    "publicSheet": "https://dictationb01.github.io/data",
     "estimate": {
       "firstRunWithVideo": "~11.81 MB",
       "firstRunAudioOnly": "~1.25 MB",
@@ -271,7 +271,7 @@
       "./assets/bunny-live-wallpaper.mp4",
       "./assets/wanderingpixels_2025-12-26_7588160805032430870.mp4"
     ],
-    "repoContentsUrl": "https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/assets",
+    "repoContentsUrl": "https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/assets",
     "ghMediaCache": "sdp.gh_assets_v44",
     "ghMediaTtl": 900000,
     "legacyMediaCaches": [
@@ -357,7 +357,7 @@
     "assets/bunny-live-wallpaper": "./assets/bunny-poster.webp",
     "assets/wanderingpixels_2025-12-26_7588160805032430870": "./assets/wanderingpixels-poster.webp"
   },
-  "repoContentsUrl": "https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/assets",
+  "repoContentsUrl": "https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/assets",
   "ghMediaCache": "sdp.gh_assets_v44",
   "ghMediaTtl": 900000,
   "activeMediaType": "static",
@@ -773,7 +773,7 @@
     "syncPull": "v54: UniversalSync.pullAll() runs on boot, on visibilitychange, when Lecturer Mode unlocks and from the Sync Now button, cache-busting every JSON read and applying the highest syncRev.",
     "keysRelay": "v55: the keys travel on a dedicated CORS-SIMPLE relay - https://ntfy.sh/dictationb1_sdp_keys_v55 - a < 600 byte JSON POST ({ syncRev, vaultCiphertext, sessionTitle, sessionDate }) with ZERO custom headers, so ntfy never answers an OPTIONS preflight and never converts the body into an attachment (the 4,096-byte trap that silently broke v54 on real devices).",
     "wordsRelay": "v55: the compact word array ({ w, p, d, m, s }) travels on https://ntfy.sh/dictationb1_sdp_words_v55 chunked under 3,500 bytes per POST, again with zero custom headers.",
-    "instantGithubRead": "v55: UniversalSync.pullAll() reads https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/data/*.json?ref=main (0.05 s after the commit, 5,000 req/h with the token) so a second device never waits 60-90 s for the GitHub Pages CDN to rebuild.",
+    "instantGithubRead": "v55: UniversalSync.pullAll() reads https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/data/*.json?ref=main (0.05 s after the commit, 5,000 req/h with the token) so a second device never waits 60-90 s for the GitHub Pages CDN to rebuild.",
     "preEditWarning": "v55: Lecturer Mode opens with #adminSyncWarningCard - an amber \"Action Required Before Editing\" banner and a bilingual (English / Sinhala) 3-step setup guide with the pre-filled github.com/settings/tokens/new?...&scopes=repo link, turning emerald-green once both keys are encrypted and synced.",
     "crossDeviceVoice": "v55: ElevenVault.playOrFetchOnce() replays every permanent clip for 0 credits and, when a clip is missing on a new device, generates it exactly once with the PIN-decrypted key, stores it in IndexedDB, and commits data/elevenlabs-audio.json so no second device ever pays again."
   },
@@ -782,8 +782,8 @@
   "creditLock": "student playback replays saved clips only",
   "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
-  "repoOwner": "dictationb1",
-  "repoName": "dictationb1.github.io",
+  "repoOwner": "dictationb01",
+  "repoName": "dictationb01.github.io",
   "syncRev": 1797000000002,
   "versionFamily": "10.0.0",
   "encVault": "SDP_ENC_V2:YMbDtCh1ge+uosZzQ0oiDkQAWuBVhhPYfJ3wT2BO4uuCYdatL6mAnfgB/gjTkgNyHYrA9bB8kYQwS5/eZRd3isr9TF6ksDnWkq2BLYm36wPuLJKRKhjWsgGtIZHENA/I0h2XphOauId3NKilerhrHajNkp9c2ibFR4w9nWTj0rIh/TWFEF0K5f3ZALU32zqPlr8fdhgwVgUJyZYqgClIOJN9ecRQeXtB+6MFS3Y/kCtRggRGrF/D1EfBXhzxEhqGfmMRszt/n5XvmZOBWOcJCmz5B3hrJd4315HaYiuyi+wx4zsWsQUvNbpbEKvDceqNVepWKcQ+tBtFLkfZAVIyrvd0RSm6YLL8cY4UXkRxYhWeAnm/MpCS/r9SbJcqFebuvYcYfVlhrGoThReJ5252iiaU5QLp2YPT9NXYl5XsH8XFdoNuAzF/mmVTtMU3EGlgOTDa5bUmfjwq1MKM6V/wULNp9alnaftaog2Y5kzFuBkFlYmEGpvfZqgpUnZIuKZtWaurWP4qKUvcqzfuEr64KiuiMPvsO9YtaIZBKculZrsRwuz9bI69vj2W9oqNCsIMtubziG6FFbHr85KDA1Bk+2rLRrxO8NV7jG9/CfTntOL3XLBninUFnnm7Ur7SSRmc5/47KXObGeKGMZ2VvUXj74GIS6QvNYQWiW6Soksh3o5q5FYYiKyOpftC209PB+x7iniQbMS8DzxBz8xhbgndLXgNgyXC53P6w/z0L/hNMnuQb00hBv+ha9uIao7qXhOE/ysSLui80NjiONVvNJMLYxlYtKgolRxLDiGUAmVZJsq5YxglgHmxfT7gugMD3pGv/RHLFZ/Ov2OrwNxdONiqbPe6shtDUci6Tw/1rOE3Ikm1DZqHABZiVHmxh8lkBxuTFjyWc0M/3NSAaatPY8uiWFvxPygwtIiGrSBEweSwM7n1xhq9kx7aMCDLhb7+ZoUqB5F57+Ihy27Caq1Cvrpja0FCOfyeVodSSBD26EmOa3RriRRgPxztI0S6QHATaPD/Diirkc6H59KYYh/dNs/r",

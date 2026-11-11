@@ -3,7 +3,7 @@
 /* G13 — tests/arena-pre-pr-verify.cjs — the v0.0.6.u MANDATORY PRE-PR GATE.
  *
  * Arena.ai MUST run this single ruthless real-browser diagnostic BEFORE
- * opening or updating any Pull Request on dictationb1/dictationb1.github.io
+ * opening or updating any Pull Request on dictationb01/dictationb01.github.io
  * and fix every FAIL before the PR exists:
  *
  *   node tests/arena-pre-pr-verify.cjs

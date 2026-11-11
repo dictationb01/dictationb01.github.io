@@ -228,7 +228,7 @@ async function newPage(browser, origin, opts) {
   await ctx.route('**/*', (route) => {
     const url = route.request().url();
     if (url.startsWith(origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
-    if (/raw\.githubusercontent\.com\/dictationb1\/dictationb1\.github\.io\/main\/data\/elevenlabs-audio\.json/.test(url)) {
+    if (/raw\.githubusercontent\.com\/dictationb01\/dictationb01\.github\.io\/main\/data\/elevenlabs-audio\.json/.test(url)) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: REMOTE_MANIFEST });
     }
     return route.abort();
@@ -682,7 +682,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       await ctx.route('**/*', (route) => {
         const url = route.request().url();
         if (url.startsWith(server.origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
-        if (/raw\.githubusercontent\.com\/dictationb1\/dictationb1\.github\.io\/main\/data\/elevenlabs-audio\.json/.test(url)) {
+        if (/raw\.githubusercontent\.com\/dictationb01\/dictationb01\.github\.io\/main\/data\/elevenlabs-audio\.json/.test(url)) {
           return route.fulfill({ status: 200, contentType: 'application/json', body: REMOTE_MANIFEST });
         }
         if (TTS_HOSTS.some(function (h) { return url.indexOf(h) >= 0; })) {

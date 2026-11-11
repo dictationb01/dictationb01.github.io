@@ -273,7 +273,7 @@
 
   var lang = 'en';
   var theme = 'dark';
-  var SESSION_BYTES = 62427; /* D20: measured data/session.json on 0.0.6.m (sha256 931037f7...); re-derived live below */
+  var SESSION_BYTES = 62425; /* D20: updated repository metadata; re-derived live below */
   var APP_BYTES = 421000; /* D20: measured shell + six modules on 0.0.5.c */
   function utf8Bytes(text) { try { return new TextEncoder().encode(str(text || '')).length; } catch (e) { return String(text || '').length; } }
   function deriveSessionBytes() {

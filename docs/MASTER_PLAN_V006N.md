@@ -3,7 +3,7 @@
 
 **Release stamp:** v0.0.6.n · ver 28 · schema 28 · settingsRev 44 · syncRev 1794500000000 ·
 SW_VERSION `sdp-v0.0.6.n-s29` · SHELL_CACHE `sdp-v0.0.6.n-s29-shell` · buildDate 2026-11-07
-**Live site:** https://dictationb1.github.io/ · **Repo:** dictationb1/dictationb1.github.io (main)
+**Live site:** https://dictationb01.github.io/ · **Repo:** dictationb01/dictationb01.github.io (main)
 
 ---
 

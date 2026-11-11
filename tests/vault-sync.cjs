@@ -135,7 +135,7 @@ function gitHubStub(opts) {
     check('G11.4b the relay stays CORS-simple and tiny', Buffer.byteLength(relay) < 600, Buffer.byteLength(relay));
     const url = app.SDP.Sync.contentsUrl('data/config.json');
     check('G11.4c the Contents URL is the raw api.github.com path (CDN-lag bypass)',
-      url === 'https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/data/config.json', url);
+      url === 'https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/data/config.json', url);
     check('G11.4d the Contents URL never embeds a token', !/token|ghp_|github_pat_/.test(url), url);
     app.close();
   }
@@ -298,7 +298,7 @@ function gitHubStub(opts) {
         if (u.indexOf('api.github.com') >= 0) {
           /* the token check reads the repo (not /contents/): accept it */
           if (u.indexOf('/repos/') >= 0 && u.indexOf('/contents/') < 0) {
-            return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ full_name: 'dictationb1/dictationb1.github.io', permissions: { push: true } }) });
+            return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ full_name: 'dictationb01/dictationb01.github.io', permissions: { push: true } }) });
           }
           return stub.fetch(url, init);
         }

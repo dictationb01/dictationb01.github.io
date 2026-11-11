@@ -79,8 +79,8 @@ test('R1: app, schema and service-worker constants are all 0.0.6.e', () => {
   assert.equal(version.appVersion, '0.0.6.u');
   assert.equal(version.version, '0.0.6.u');
   assert.equal(version.schema, 35);
-  assert.equal(version.settingsRev, 51);
-  assert.equal(Number(version.syncRev), 1797000000000);
+  assert.equal(version.settingsRev, 53);
+  assert.equal(Number(version.syncRev), 1797000000002);
   assert.equal(String(version.session), '8');
 
   const cfg = readJSON('data/config.json');
@@ -88,7 +88,7 @@ test('R1: app, schema and service-worker constants are all 0.0.6.e', () => {
   assert.equal(cfg.appVersion, '0.0.6.u');
   assert.equal(cfg.version, '0.0.6.u');
   assert.equal(cfg.schema, 35);
-  assert.equal(cfg.settingsRev, 51);
+  assert.equal(cfg.settingsRev, 53);
   assert.ok(typeof cfg.encVault === 'string' && cfg.encVault.indexOf('SDP_ENC_V2:') === 0, 'encVault is SDP_ENC_V2');
 
   const sw = read('sw.js');
@@ -419,7 +419,7 @@ test('R7: GitHub Contents payload, CORS-simple GAS relay and 40K word chunking',
   assert.equal(payload.sha, 'abc123');
   assert.equal(Buffer.from(payload.content, 'base64').toString('utf8'), text);
   assert.equal(SDP.Sync.contentsUrl('data/session.json'),
-    'https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/data/session.json');
+    'https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/data/session.json');
 
   const relay = SDP.Sync.buildKeysRelayPayload('login');
   assert.ok(Buffer.byteLength(relay) < 600, 'relay body must stay CORS-simple and tiny');

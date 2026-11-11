@@ -82,7 +82,7 @@ const BUDGETS = {
   'data/sdp-morphe-hooks.js': 8000,
   'data/config.json': 42000,
   'data/version.json': 2000,
-  'data/session.json': 62427,
+  'data/session.json': 62425,
   'data/gas-source.txt': 13764,
   'data/elevenlabs-audio.json': 4900000, /* v0.0.6.t: the 49/75/84/74-word authentic first-person beats */
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
@@ -209,7 +209,7 @@ check('G9.5c only the five R4 localStorage keys are named in scripts', strayKeys
  * now writes it on every publish (D-UI11), so it is budgeted and header-checked
  * instead of hash-frozen, and its clips are still never re-rendered for free. */
 const LOCKED = [
-  ['data/session.json', '931037f7'],
+  ['data/session.json', '17ea1593'],
   ['data/gas-source.txt', '591b9b08'],
   ['assets/fonts/NotoSansSinhala-Regular.woff2', '23f1503e'],
   ['assets/fonts/NotoSansSinhala-Bold.woff2', 'bf59c148']
@@ -238,8 +238,8 @@ const keepKeys = ['encVault', 'repoOwner', 'repoName', 'voiceId', 'voiceName', '
 const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
-  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.u is ver 35 / schema 35 / settingsRev 51
-  config.ver === 35 && config.appVersion === '0.0.6.u' && config.version === '0.0.6.u' && config.schema === 35 && config.settingsRev === 51,
+  // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.u is ver 35 / schema 35 / settingsRev 53
+  config.ver === 35 && config.appVersion === '0.0.6.u' && config.version === '0.0.6.u' && config.schema === 35 && config.settingsRev === 53,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */

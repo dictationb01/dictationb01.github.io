@@ -63,7 +63,7 @@ const BUDGET = {
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
   'data/sdp-morphe-hooks.js': 8000,
-  'data/session.json': 62427,
+  'data/session.json': 62425,
   'data/config.json': 42000,
   'data/version.json': 2000,
   'data/gas-source.txt': 13764,
@@ -99,9 +99,9 @@ const EXACT = [
 const PRESERVED_SHA = {
   /* v0.0.6.m: the pin moved in lockstep with the lecturer's intentional
      "Smart Dictation words 0.0.6.k" publish (commit 643a70b) — the LIVE
-     classroom Session 8 words are preserved byte-for-byte (still exactly
-     62,427 B); the previous 26bf2f9a… pin referred to the v0.0.6.j words. */
-  'data/session.json': '931037f77f8bbbfe2e171b26b589a6fc7f2ffbc3b2811b9aa442331d2e01bba1',
+      classroom Session 8 words are preserved; the current digest includes the
+      intentional GitHub owner/repository metadata update. */
+    'data/session.json': '17ea15931adf86768a3abd249241230b2d60e4e3b574381361f4443ced9c4aa3',
   'data/gas-source.txt': '591b9b086f6d3723afb2604a837ffc495c69a481c490f11e58131c2222b0981e',
   'assets/fonts/NotoSansSinhala-Regular.woff2': '23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280',
   'assets/fonts/NotoSansSinhala-Bold.woff2': 'bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e'
@@ -276,9 +276,9 @@ function pending(p) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.m ships ver 27 / schema 26 / settingsRev 42
     const ok = v.ver === 35 && v.appVersion === '0.0.6.u' && v.version === '0.0.6.u' &&
-      v.schema === 35 && v.settingsRev === 51 && String(v.session) === '8';
+      v.schema === 35 && v.settingsRev === 53 && String(v.session) === '8';
     record('version.json carries the v0.0.6.u schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1797000000000', Number(v.syncRev) === 1797000000000, JSON.stringify(v).slice(0, 200));
+    record('version.json pins syncRev 1797000000002', Number(v.syncRev) === 1797000000002, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -293,13 +293,13 @@ function pending(p) {
     record('config.json keeps the preserved backend payload',
       c.credits && c.credits.createdBy === 'Hansana' && c.credits.ideaBy === 'Ayya01 (Lesandu)' &&
       c.tts && c.live && c.live.state && c.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && c.voiceName === 'Alice' &&
-      c.modelId === 'eleven_flash_v2_5' && c.repoOwner === 'dictationb1' &&
-      c.repoName === 'dictationb1.github.io' && c.defaults && c.classInfo,
+      c.modelId === 'eleven_flash_v2_5' && c.repoOwner === 'dictationb01' &&
+      c.repoName === 'dictationb01.github.io' && c.defaults && c.classInfo,
       'preserved payload trimmed');
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
     record('config.json carries v0.0.6.u version fields',
-      c.ver === 35 && c.appVersion === '0.0.6.u' && c.version === '0.0.6.u' && c.schema === 35 && c.settingsRev === 51,
+      c.ver === 35 && c.appVersion === '0.0.6.u' && c.version === '0.0.6.u' && c.schema === 35 && c.settingsRev === 53,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -772,8 +772,8 @@ function pending(p) {
           !/21-year-old|21yo|වයස 21/i.test(html + views + speech + studio);
       })());
     record('CB8 the briefing links the repository and the creator profile',
-      html.indexOf('https://github.com/dictationb1/dictationb1.github.io') > 0 &&
-      html.indexOf('https://github.com/dictationb1') > 0);
+      html.indexOf('https://github.com/dictationb01/dictationb01.github.io') > 0 &&
+      html.indexOf('https://github.com/dictationb01') > 0);
     /* v0.0.6.m Pillar 1 — dynamic weekly counter, word-flow, tap pill, real clips. */
     record('LB1 the week counter is computed from PROJECT_START_ISO 2026-10-22 (auto-bumping, min 2)',
       /PROJECT_START_ISO = '2026-10-22'/.test(views) && /function weeksSinceStart/.test(views) &&

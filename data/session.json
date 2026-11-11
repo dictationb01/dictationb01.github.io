@@ -953,7 +953,7 @@
     "assets/bunny-live-wallpaper": "./assets/bunny-poster.webp",
     "assets/wanderingpixels_2025-12-26_7588160805032430870": "./assets/wanderingpixels-poster.webp"
   },
-  "repoContentsUrl": "https://api.github.com/repos/dictationb1/dictationb1.github.io/contents/assets",
+  "repoContentsUrl": "https://api.github.com/repos/dictationb01/dictationb01.github.io/contents/assets",
   "ghMediaCache": "sdp.gh_assets_v44",
   "ghMediaTtl": 900000,
   "activeMediaType": "static",
@@ -1186,8 +1186,8 @@
   "voiceId": "Xb7hH8MSUJpSbSDYk0k2",
   "voiceName": "Alice",
   "modelId": "eleven_flash_v2_5",
-  "repoOwner": "dictationb1",
-  "repoName": "dictationb1.github.io",
+  "repoOwner": "dictationb01",
+  "repoName": "dictationb01.github.io",
   "syncRev": 1797000000002,
   "words": [
     {

@@ -22,243 +22,273 @@
     "words": [
       {
         "w": "buildings",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈbʌɪldɪŋs/",
+        "pos": "n.",
+        "m": "A buildings.",
+        "si": "ගොඩනැගිලි",
+        "s": "We saw a buildings near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/buildings-us.mp3"
       },
       {
         "w": "apartment block",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈæpɑːtment ˈblɒk/",
+        "pos": "n.",
+        "m": "A apartment block.",
+        "si": "මහල් නිවාස",
+        "s": "We saw a apartment block near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=apartment%20block"
       },
       {
         "w": "castle",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈkæstl/",
+        "pos": "n.",
+        "m": "A castle.",
+        "si": "බලකොටුව",
+        "s": "We saw a castle near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/castle-au.mp3"
       },
       {
         "w": "clinic",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈklɪnɪk/",
+        "pos": "adj.",
+        "m": "Having the quality of being clinic.",
+        "si": "සායනය",
+        "s": "The story was very clinic to read.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=clinic"
       },
       {
         "w": "cottage",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈkɒtæɡ/",
+        "pos": "n.",
+        "m": "A cottage.",
+        "si": "ගෘහය",
+        "s": "We saw a cottage near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cottage-us.mp3"
       },
       {
         "w": "department store",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈdepɑːtment ˈstɔː/",
+        "pos": "n.",
+        "m": "A department store.",
+        "si": "දෙපාර්තමේන්තු ගබඩාව",
+        "s": "We saw a department store near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=department%20store"
       },
       {
         "w": "elevator",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈelevætɔː/",
+        "pos": "n.",
+        "m": "A elevator.",
+        "si": "සෝපානය",
+        "s": "We saw a elevator near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=elevator"
       },
       {
         "w": "grocery store",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈɡrɒkəɪ ˈstɔː/",
+        "pos": "n.",
+        "m": "A grocery store.",
+        "si": "ග්රොසරි ස්ටෝ",
+        "s": "We saw a grocery store near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=grocery%20store"
       },
       {
         "w": "library",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈlɪbrɑːɪ/",
+        "pos": "n.",
+        "m": "A library.",
+        "si": "පුස්තකාලය",
+        "s": "We saw a library near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/library-us.mp3"
       },
       {
         "w": "palace",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpælæk/",
+        "pos": "n.",
+        "m": "A palace.",
+        "si": "මාලිගාව",
+        "s": "We saw a palace near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/palace-us.mp3"
       },
       {
         "w": "police station",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpɒlɪk ˈsteɪʃn/",
+        "pos": "n.",
+        "m": "A police station.",
+        "si": "පොලිස් ස්ථානය",
+        "s": "We saw a police station near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=police%20station"
       },
       {
         "w": "post office",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpɒst ˈɒfɪk/",
+        "pos": "n.",
+        "m": "A post office.",
+        "si": "තැපැල් කාර්යාලය",
+        "s": "We saw a post office near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=post%20office"
       },
       {
         "w": "prison",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈpɹɪzən/",
+        "pos": "noun.",
+        "m": "A place or institution of confinement, especially of long-term confinement for those convicted of serious crimes or otherwise considered undesirable by the government.",
+        "si": "සිරගෙදර",
+        "s": "The cold stone walls of the prison had stood for over a century.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/prison-us.mp3"
       },
       {
         "w": "railway station",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈreɪlweɪ ˈsteɪʃn/",
+        "pos": "noun.",
+        "m": "A place where trains stop for passengers to embark and disembark.",
+        "si": "දුම්රිය ස්ථානය",
+        "s": "We saw a railway station near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/railway%20station-uk.mp3"
       },
       {
         "w": "stadium",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈsteɪ.di.əm/",
+        "pos": "noun.",
+        "m": "A venue where sporting events are held.",
+        "si": "ක්රීඩාංගනය",
+        "s": "We saw a stadium near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stadium-us.mp3"
       },
       {
         "w": "supermarket",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˌsuːpəˈmɑːkɪt/",
+        "pos": "noun.",
+        "m": "A large self-service store that sells groceries and, usually, medications, household goods and/or clothing.",
+        "si": "සුපිරි වෙළඳසැල",
+        "s": "I went to the supermarket to buy some food.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/supermarket-uk.mp3"
       },
       {
         "w": "university",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/juːnɪˈvɜːsətiː/",
+        "pos": "noun.",
+        "m": "Institution of higher education (typically accepting students from the age of about 17 or 18, depending on country, but in some exceptional cases able to take younger students) where subjects are studied and researched in depth and degrees are offered.",
+        "si": "විශ්ව විද්යාලය",
+        "s": "The only reason why I haven't gone to university is because I can't afford it.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/university-uk.mp3"
       },
       {
         "w": "countryside",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈkʌn.tɹiˌsaɪd/",
+        "pos": "noun.",
+        "m": "A rural area, or the rural part of a larger area.",
+        "si": "ගම්බද",
+        "s": "We live in the Swedish countryside.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/countryside-uk.mp3"
       },
       {
         "w": "campsite",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈkæmpsɪt/",
+        "pos": "n.",
+        "m": "A campsite.",
+        "si": "කඳවුරු භූමිය",
+        "s": "We saw a campsite near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=campsite"
       },
       {
         "w": "canal",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/kəˈnɛl/",
+        "pos": "noun.",
+        "m": "An artificial waterway or artificially improved river used for travel, shipping, or irrigation.",
+        "si": "ඇළ",
+        "s": "The story was very canal to read.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/canal-uk.mp3"
       },
       {
         "w": "cliff",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/klɪf/",
+        "pos": "noun.",
+        "m": "A vertical (or nearly vertical) rock face.",
+        "si": "පර්වතය",
+        "s": "We saw a cliff near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cliff-us.mp3"
       },
       {
         "w": "field",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈfaɪld/",
+        "pos": "n.",
+        "m": "A field.",
+        "si": "ක්ෂේත්රය",
+        "s": "We saw a field near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=field"
       },
       {
         "w": "harbour",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈhɑːbə/",
+        "pos": "n.",
+        "m": "A harbour.",
+        "si": "වරාය",
+        "s": "We saw a harbour near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=harbour"
       },
       {
         "w": "island",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈaɪ̯lənd/",
+        "pos": "noun.",
+        "m": "A contiguous area of land, smaller than a continent, totally surrounded by water.",
+        "si": "දිවයින",
+        "s": "an island of colors on a butterfly's wing",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/island-uk.mp3"
       },
       {
         "w": "mountain",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈmaʊntɪn/",
+        "pos": "noun.",
+        "m": "An elevation of land of considerable dimensions rising more or less abruptly, forming a conspicuous figure in the landscape, usually having a small extent of surface at its summit.",
+        "si": "කන්ද",
+        "s": "We spent the weekend hiking in the mountains.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/mountain-uk.mp3"
       },
       {
         "w": "ocean",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈəʊ.ʃən/",
+        "pos": "noun.",
+        "m": "One of the large bodies of water separating the continents.",
+        "si": "සාගරය",
+        "s": "The island is surrounded by ocean",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ocean-us.mp3"
       },
       {
         "w": "region",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈreɡɪɒn/",
+        "pos": "n.",
+        "m": "A region.",
+        "si": "කලාපය",
+        "s": "We saw a region near the station.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=region"
       },
       {
         "w": "scenery",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈsiːnəɹi/",
+        "pos": "noun.",
+        "m": "View, natural features, landscape.",
+        "si": "දර්ශන",
+        "s": "We saw a scenery near the station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scenery-us.mp3"
       },
       {
         "w": "stream",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/stɹiːm/",
+        "pos": "noun.",
+        "m": "A small river; a large creek; a body of moving water confined by banks.",
+        "si": "ධාරාව",
+        "s": "He poured the milk in a thin stream from the jug to the glass.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stream-us.mp3"
       },
       {
         "w": "valley",
-        "p": "",
-        "pos": "",
-        "m": "",
-        "si": "",
-        "s": ""
+        "p": "/ˈvæli/",
+        "pos": "noun.",
+        "m": "An elongated depression between hills or mountains, often with a river flowing through it.",
+        "si": "නිම්නය",
+        "s": "The story was very valley to read.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/valley-uk.mp3"
       }
     ]
   },
@@ -274,243 +304,273 @@
       "words": [
         {
           "w": "buildings",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈbʌɪldɪŋs/",
+          "pos": "n.",
+          "m": "A buildings.",
+          "si": "ගොඩනැගිලි",
+          "s": "We saw a buildings near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/buildings-us.mp3"
         },
         {
           "w": "apartment block",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈæpɑːtment ˈblɒk/",
+          "pos": "n.",
+          "m": "A apartment block.",
+          "si": "මහල් නිවාස",
+          "s": "We saw a apartment block near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=apartment%20block"
         },
         {
           "w": "castle",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈkæstl/",
+          "pos": "n.",
+          "m": "A castle.",
+          "si": "බලකොටුව",
+          "s": "We saw a castle near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/castle-au.mp3"
         },
         {
           "w": "clinic",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈklɪnɪk/",
+          "pos": "adj.",
+          "m": "Having the quality of being clinic.",
+          "si": "සායනය",
+          "s": "The story was very clinic to read.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=clinic"
         },
         {
           "w": "cottage",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈkɒtæɡ/",
+          "pos": "n.",
+          "m": "A cottage.",
+          "si": "ගෘහය",
+          "s": "We saw a cottage near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cottage-us.mp3"
         },
         {
           "w": "department store",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈdepɑːtment ˈstɔː/",
+          "pos": "n.",
+          "m": "A department store.",
+          "si": "දෙපාර්තමේන්තු ගබඩාව",
+          "s": "We saw a department store near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=department%20store"
         },
         {
           "w": "elevator",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈelevætɔː/",
+          "pos": "n.",
+          "m": "A elevator.",
+          "si": "සෝපානය",
+          "s": "We saw a elevator near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=elevator"
         },
         {
           "w": "grocery store",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈɡrɒkəɪ ˈstɔː/",
+          "pos": "n.",
+          "m": "A grocery store.",
+          "si": "ග්රොසරි ස්ටෝ",
+          "s": "We saw a grocery store near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=grocery%20store"
         },
         {
           "w": "library",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈlɪbrɑːɪ/",
+          "pos": "n.",
+          "m": "A library.",
+          "si": "පුස්තකාලය",
+          "s": "We saw a library near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/library-us.mp3"
         },
         {
           "w": "palace",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpælæk/",
+          "pos": "n.",
+          "m": "A palace.",
+          "si": "මාලිගාව",
+          "s": "We saw a palace near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/palace-us.mp3"
         },
         {
           "w": "police station",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpɒlɪk ˈsteɪʃn/",
+          "pos": "n.",
+          "m": "A police station.",
+          "si": "පොලිස් ස්ථානය",
+          "s": "We saw a police station near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=police%20station"
         },
         {
           "w": "post office",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpɒst ˈɒfɪk/",
+          "pos": "n.",
+          "m": "A post office.",
+          "si": "තැපැල් කාර්යාලය",
+          "s": "We saw a post office near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=post%20office"
         },
         {
           "w": "prison",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈpɹɪzən/",
+          "pos": "noun.",
+          "m": "A place or institution of confinement, especially of long-term confinement for those convicted of serious crimes or otherwise considered undesirable by the government.",
+          "si": "සිරගෙදර",
+          "s": "The cold stone walls of the prison had stood for over a century.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/prison-us.mp3"
         },
         {
           "w": "railway station",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈreɪlweɪ ˈsteɪʃn/",
+          "pos": "noun.",
+          "m": "A place where trains stop for passengers to embark and disembark.",
+          "si": "දුම්රිය ස්ථානය",
+          "s": "We saw a railway station near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/railway%20station-uk.mp3"
         },
         {
           "w": "stadium",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈsteɪ.di.əm/",
+          "pos": "noun.",
+          "m": "A venue where sporting events are held.",
+          "si": "ක්රීඩාංගනය",
+          "s": "We saw a stadium near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stadium-us.mp3"
         },
         {
           "w": "supermarket",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˌsuːpəˈmɑːkɪt/",
+          "pos": "noun.",
+          "m": "A large self-service store that sells groceries and, usually, medications, household goods and/or clothing.",
+          "si": "සුපිරි වෙළඳසැල",
+          "s": "I went to the supermarket to buy some food.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/supermarket-uk.mp3"
         },
         {
           "w": "university",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/juːnɪˈvɜːsətiː/",
+          "pos": "noun.",
+          "m": "Institution of higher education (typically accepting students from the age of about 17 or 18, depending on country, but in some exceptional cases able to take younger students) where subjects are studied and researched in depth and degrees are offered.",
+          "si": "විශ්ව විද්යාලය",
+          "s": "The only reason why I haven't gone to university is because I can't afford it.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/university-uk.mp3"
         },
         {
           "w": "countryside",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈkʌn.tɹiˌsaɪd/",
+          "pos": "noun.",
+          "m": "A rural area, or the rural part of a larger area.",
+          "si": "ගම්බද",
+          "s": "We live in the Swedish countryside.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/countryside-uk.mp3"
         },
         {
           "w": "campsite",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈkæmpsɪt/",
+          "pos": "n.",
+          "m": "A campsite.",
+          "si": "කඳවුරු භූමිය",
+          "s": "We saw a campsite near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=campsite"
         },
         {
           "w": "canal",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/kəˈnɛl/",
+          "pos": "noun.",
+          "m": "An artificial waterway or artificially improved river used for travel, shipping, or irrigation.",
+          "si": "ඇළ",
+          "s": "The story was very canal to read.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/canal-uk.mp3"
         },
         {
           "w": "cliff",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/klɪf/",
+          "pos": "noun.",
+          "m": "A vertical (or nearly vertical) rock face.",
+          "si": "පර්වතය",
+          "s": "We saw a cliff near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cliff-us.mp3"
         },
         {
           "w": "field",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈfaɪld/",
+          "pos": "n.",
+          "m": "A field.",
+          "si": "ක්ෂේත්රය",
+          "s": "We saw a field near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=field"
         },
         {
           "w": "harbour",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈhɑːbə/",
+          "pos": "n.",
+          "m": "A harbour.",
+          "si": "වරාය",
+          "s": "We saw a harbour near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=harbour"
         },
         {
           "w": "island",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈaɪ̯lənd/",
+          "pos": "noun.",
+          "m": "A contiguous area of land, smaller than a continent, totally surrounded by water.",
+          "si": "දිවයින",
+          "s": "an island of colors on a butterfly's wing",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/island-uk.mp3"
         },
         {
           "w": "mountain",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈmaʊntɪn/",
+          "pos": "noun.",
+          "m": "An elevation of land of considerable dimensions rising more or less abruptly, forming a conspicuous figure in the landscape, usually having a small extent of surface at its summit.",
+          "si": "කන්ද",
+          "s": "We spent the weekend hiking in the mountains.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/mountain-uk.mp3"
         },
         {
           "w": "ocean",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈəʊ.ʃən/",
+          "pos": "noun.",
+          "m": "One of the large bodies of water separating the continents.",
+          "si": "සාගරය",
+          "s": "The island is surrounded by ocean",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ocean-us.mp3"
         },
         {
           "w": "region",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈreɡɪɒn/",
+          "pos": "n.",
+          "m": "A region.",
+          "si": "කලාපය",
+          "s": "We saw a region near the station.",
+          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=region"
         },
         {
           "w": "scenery",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈsiːnəɹi/",
+          "pos": "noun.",
+          "m": "View, natural features, landscape.",
+          "si": "දර්ශන",
+          "s": "We saw a scenery near the station.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scenery-us.mp3"
         },
         {
           "w": "stream",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/stɹiːm/",
+          "pos": "noun.",
+          "m": "A small river; a large creek; a body of moving water confined by banks.",
+          "si": "ධාරාව",
+          "s": "He poured the milk in a thin stream from the jug to the glass.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stream-us.mp3"
         },
         {
           "w": "valley",
-          "p": "",
-          "pos": "",
-          "m": "",
-          "si": "",
-          "s": ""
+          "p": "/ˈvæli/",
+          "pos": "noun.",
+          "m": "An elongated depression between hills or mountains, often with a river flowing through it.",
+          "si": "නිම්නය",
+          "s": "The story was very valley to read.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/valley-uk.mp3"
         }
       ]
     },
@@ -816,7 +876,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-12T09:26:27.236Z",
+  "updatedAt": "2026-11-12T09:27:00.737Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
   "settingsRev": 58,
@@ -1132,243 +1192,273 @@
   "words": [
     {
       "w": "buildings",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈbʌɪldɪŋs/",
+      "pos": "n.",
+      "m": "A buildings.",
+      "si": "ගොඩනැගිලි",
+      "s": "We saw a buildings near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/buildings-us.mp3"
     },
     {
       "w": "apartment block",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈæpɑːtment ˈblɒk/",
+      "pos": "n.",
+      "m": "A apartment block.",
+      "si": "මහල් නිවාස",
+      "s": "We saw a apartment block near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=apartment%20block"
     },
     {
       "w": "castle",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈkæstl/",
+      "pos": "n.",
+      "m": "A castle.",
+      "si": "බලකොටුව",
+      "s": "We saw a castle near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/castle-au.mp3"
     },
     {
       "w": "clinic",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈklɪnɪk/",
+      "pos": "adj.",
+      "m": "Having the quality of being clinic.",
+      "si": "සායනය",
+      "s": "The story was very clinic to read.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=clinic"
     },
     {
       "w": "cottage",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈkɒtæɡ/",
+      "pos": "n.",
+      "m": "A cottage.",
+      "si": "ගෘහය",
+      "s": "We saw a cottage near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cottage-us.mp3"
     },
     {
       "w": "department store",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈdepɑːtment ˈstɔː/",
+      "pos": "n.",
+      "m": "A department store.",
+      "si": "දෙපාර්තමේන්තු ගබඩාව",
+      "s": "We saw a department store near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=department%20store"
     },
     {
       "w": "elevator",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈelevætɔː/",
+      "pos": "n.",
+      "m": "A elevator.",
+      "si": "සෝපානය",
+      "s": "We saw a elevator near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=elevator"
     },
     {
       "w": "grocery store",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈɡrɒkəɪ ˈstɔː/",
+      "pos": "n.",
+      "m": "A grocery store.",
+      "si": "ග්රොසරි ස්ටෝ",
+      "s": "We saw a grocery store near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=grocery%20store"
     },
     {
       "w": "library",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈlɪbrɑːɪ/",
+      "pos": "n.",
+      "m": "A library.",
+      "si": "පුස්තකාලය",
+      "s": "We saw a library near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/library-us.mp3"
     },
     {
       "w": "palace",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpælæk/",
+      "pos": "n.",
+      "m": "A palace.",
+      "si": "මාලිගාව",
+      "s": "We saw a palace near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/palace-us.mp3"
     },
     {
       "w": "police station",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpɒlɪk ˈsteɪʃn/",
+      "pos": "n.",
+      "m": "A police station.",
+      "si": "පොලිස් ස්ථානය",
+      "s": "We saw a police station near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=police%20station"
     },
     {
       "w": "post office",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpɒst ˈɒfɪk/",
+      "pos": "n.",
+      "m": "A post office.",
+      "si": "තැපැල් කාර්යාලය",
+      "s": "We saw a post office near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=post%20office"
     },
     {
       "w": "prison",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈpɹɪzən/",
+      "pos": "noun.",
+      "m": "A place or institution of confinement, especially of long-term confinement for those convicted of serious crimes or otherwise considered undesirable by the government.",
+      "si": "සිරගෙදර",
+      "s": "The cold stone walls of the prison had stood for over a century.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/prison-us.mp3"
     },
     {
       "w": "railway station",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈreɪlweɪ ˈsteɪʃn/",
+      "pos": "noun.",
+      "m": "A place where trains stop for passengers to embark and disembark.",
+      "si": "දුම්රිය ස්ථානය",
+      "s": "We saw a railway station near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/railway%20station-uk.mp3"
     },
     {
       "w": "stadium",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈsteɪ.di.əm/",
+      "pos": "noun.",
+      "m": "A venue where sporting events are held.",
+      "si": "ක්රීඩාංගනය",
+      "s": "We saw a stadium near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stadium-us.mp3"
     },
     {
       "w": "supermarket",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˌsuːpəˈmɑːkɪt/",
+      "pos": "noun.",
+      "m": "A large self-service store that sells groceries and, usually, medications, household goods and/or clothing.",
+      "si": "සුපිරි වෙළඳසැල",
+      "s": "I went to the supermarket to buy some food.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/supermarket-uk.mp3"
     },
     {
       "w": "university",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/juːnɪˈvɜːsətiː/",
+      "pos": "noun.",
+      "m": "Institution of higher education (typically accepting students from the age of about 17 or 18, depending on country, but in some exceptional cases able to take younger students) where subjects are studied and researched in depth and degrees are offered.",
+      "si": "විශ්ව විද්යාලය",
+      "s": "The only reason why I haven't gone to university is because I can't afford it.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/university-uk.mp3"
     },
     {
       "w": "countryside",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈkʌn.tɹiˌsaɪd/",
+      "pos": "noun.",
+      "m": "A rural area, or the rural part of a larger area.",
+      "si": "ගම්බද",
+      "s": "We live in the Swedish countryside.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/countryside-uk.mp3"
     },
     {
       "w": "campsite",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈkæmpsɪt/",
+      "pos": "n.",
+      "m": "A campsite.",
+      "si": "කඳවුරු භූමිය",
+      "s": "We saw a campsite near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=campsite"
     },
     {
       "w": "canal",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/kəˈnɛl/",
+      "pos": "noun.",
+      "m": "An artificial waterway or artificially improved river used for travel, shipping, or irrigation.",
+      "si": "ඇළ",
+      "s": "The story was very canal to read.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/canal-uk.mp3"
     },
     {
       "w": "cliff",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/klɪf/",
+      "pos": "noun.",
+      "m": "A vertical (or nearly vertical) rock face.",
+      "si": "පර්වතය",
+      "s": "We saw a cliff near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cliff-us.mp3"
     },
     {
       "w": "field",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈfaɪld/",
+      "pos": "n.",
+      "m": "A field.",
+      "si": "ක්ෂේත්රය",
+      "s": "We saw a field near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=field"
     },
     {
       "w": "harbour",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈhɑːbə/",
+      "pos": "n.",
+      "m": "A harbour.",
+      "si": "වරාය",
+      "s": "We saw a harbour near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=harbour"
     },
     {
       "w": "island",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈaɪ̯lənd/",
+      "pos": "noun.",
+      "m": "A contiguous area of land, smaller than a continent, totally surrounded by water.",
+      "si": "දිවයින",
+      "s": "an island of colors on a butterfly's wing",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/island-uk.mp3"
     },
     {
       "w": "mountain",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈmaʊntɪn/",
+      "pos": "noun.",
+      "m": "An elevation of land of considerable dimensions rising more or less abruptly, forming a conspicuous figure in the landscape, usually having a small extent of surface at its summit.",
+      "si": "කන්ද",
+      "s": "We spent the weekend hiking in the mountains.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/mountain-uk.mp3"
     },
     {
       "w": "ocean",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈəʊ.ʃən/",
+      "pos": "noun.",
+      "m": "One of the large bodies of water separating the continents.",
+      "si": "සාගරය",
+      "s": "The island is surrounded by ocean",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ocean-us.mp3"
     },
     {
       "w": "region",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈreɡɪɒn/",
+      "pos": "n.",
+      "m": "A region.",
+      "si": "කලාපය",
+      "s": "We saw a region near the station.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=region"
     },
     {
       "w": "scenery",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈsiːnəɹi/",
+      "pos": "noun.",
+      "m": "View, natural features, landscape.",
+      "si": "දර්ශන",
+      "s": "We saw a scenery near the station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scenery-us.mp3"
     },
     {
       "w": "stream",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/stɹiːm/",
+      "pos": "noun.",
+      "m": "A small river; a large creek; a body of moving water confined by banks.",
+      "si": "ධාරාව",
+      "s": "He poured the milk in a thin stream from the jug to the glass.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stream-us.mp3"
     },
     {
       "w": "valley",
-      "p": "",
-      "pos": "",
-      "m": "",
-      "si": "",
-      "s": ""
+      "p": "/ˈvæli/",
+      "pos": "noun.",
+      "m": "An elongated depression between hills or mountains, often with a river flowing through it.",
+      "si": "නිම්නය",
+      "s": "The story was very valley to read.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/valley-uk.mp3"
     }
   ],
   "versionFamily": "9.0.0"

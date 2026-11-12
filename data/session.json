@@ -21,274 +21,244 @@
     "wallpaperVideo": false,
     "words": [
       {
-        "w": "horror",
-        "p": "/ˈhɔɹɚ/",
-        "pos": "noun.",
-        "m": "An intense distressing emotion of fear or repugnance.",
-        "si": "භීෂණය",
-        "s": "I saw many horrors during the war.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
+        "w": "buildings",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "instrument",
-        "p": "/ˈɪnstɹəmənt/",
-        "pos": "noun.",
-        "m": "A device used to produce music.",
-        "si": "උපකරණය",
-        "s": "The violinist was a master of her instrument.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
+        "w": "apartment block",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "interval",
-        "p": "/ˈɪntəvəl/",
-        "pos": "noun.",
-        "m": "A distance in space.",
-        "si": "පරතරය",
-        "s": "the interval between contractions during childbirth",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
+        "w": "castle",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "interview",
-        "p": "/ˈɪntəvjuː/",
-        "pos": "noun.",
-        "m": "An official face-to-face meeting of monarchs or other important figures.",
-        "si": "සම්මුඛ පරීක්ෂණය",
-        "s": "The reporter gave the witness an interview.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
+        "w": "clinic",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "jazz music",
-        "p": "/ˈdʒæz ˈmʌsɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being jazz music.",
-        "si": "ජෑස් සංගීතය",
-        "s": "The story was very jazz music to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
+        "w": "cottage",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "journalist",
-        "p": "/ˈdʒɜːnəlɪst/",
-        "pos": "noun.",
-        "m": "The keeper of a personal journal, who writes in it regularly.",
-        "si": "මාධ්යවේදී",
-        "s": "We saw a journalist near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
+        "w": "department store",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "laugh",
-        "p": "/laːf/",
-        "pos": "v.",
-        "m": "To laugh (something).",
-        "si": "හිනා වෙනවා",
-        "s": "They laugh together every weekend.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
+        "w": "elevator",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "magazine",
-        "p": "/mæɡəˈziːn/",
-        "pos": "n.",
-        "m": "A magazine.",
-        "si": "සඟරාව",
-        "s": "We saw a magazine near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
+        "w": "grocery store",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "musician",
-        "p": "/mjuˈzɪʃən/",
-        "pos": "n.",
-        "m": "A musician.",
-        "si": "සංගීතඥයා",
-        "s": "We saw a musician near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
+        "w": "library",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "orchestra",
-        "p": "/ˈɔːkəstɹə/",
-        "pos": "n.",
-        "m": "A orchestra.",
-        "si": "වාද්‍ය වෘන්දය",
-        "s": "We saw a orchestra near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
+        "w": "palace",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "painter",
-        "p": "/ˈpeɪntə/",
-        "pos": "n.",
-        "m": "A painter.",
-        "si": "චිත්ර ශිල්පියා",
-        "s": "We saw a painter near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+        "w": "police station",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "performance",
-        "p": "/ˈpəfɔːmænk/",
-        "pos": "n.",
-        "m": "A performance.",
-        "si": "කාර්ය සාධනය",
-        "s": "We saw a performance near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+        "w": "post office",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "podcast",
-        "p": "/ˈpɒdkæst/",
-        "pos": "n.",
-        "m": "A podcast.",
-        "si": "පොඩ්කාස්ට්",
-        "s": "We saw a podcast near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+        "w": "prison",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "presenter",
-        "p": "/pɹɪˈzɛntə(ɹ)/",
-        "pos": "n.",
-        "m": "A presenter.",
-        "si": "ඉදිරිපත් කරන්නා",
-        "s": "We saw a presenter near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
+        "w": "railway station",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "production",
-        "p": "/ˈprɒdʌkʃn/",
-        "pos": "n.",
-        "m": "A production.",
-        "si": "නිෂ්පාදනය",
-        "s": "We saw a production near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/production-uk.mp3"
+        "w": "stadium",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "programme",
-        "p": "/ˈprɒɡræm/",
-        "pos": "n.",
-        "m": "A programme.",
-        "si": "වැඩසටහන",
-        "s": "We saw a programme near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/programme-uk.mp3"
+        "w": "supermarket",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "quiz",
-        "p": "/ˈkwɪz/",
-        "pos": "n.",
-        "m": "A quiz.",
-        "si": "ප්‍රශ්නාවලිය",
-        "s": "We saw a quiz near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=quiz"
+        "w": "university",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "review",
-        "p": "/ˈrevaɪw/",
-        "pos": "n.",
-        "m": "A review.",
-        "si": "සමාලෝචනය",
-        "s": "We saw a review near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/review-us.mp3"
+        "w": "countryside",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "romantic",
-        "p": "/ˈrɒmæntɪk/",
-        "pos": "adj.",
-        "m": "Having the quality of being romantic.",
-        "si": "රොමැන්ටික්",
-        "s": "The story was very romantic to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=romantic"
+        "w": "campsite",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "scene",
-        "p": "/ˈsken/",
-        "pos": "n.",
-        "m": "A scene.",
-        "si": "දර්ශනය",
-        "s": "We saw a scene near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scene-us.mp3"
+        "w": "canal",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "screen",
-        "p": "/ˈskriːn/",
-        "pos": "v.",
-        "m": "To screen (something).",
-        "si": "තිරය",
-        "s": "They screen together every weekend.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/screen-au.mp3"
+        "w": "cliff",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "selfie",
-        "p": "/ˈselfɪ/",
-        "pos": "n.",
-        "m": "A selfie.",
-        "si": "සෙල්ෆි",
-        "s": "We saw a selfie near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=selfie"
+        "w": "field",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "series",
-        "p": "/ˈsəiz/",
-        "pos": "n.",
-        "m": "A series.",
-        "si": "මාලාවක්",
-        "s": "We saw a series near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=series"
+        "w": "harbour",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "soap opera",
-        "p": "/ˈsəʊp ˈɒpəæ/",
-        "pos": "n.",
-        "m": "A soap opera.",
-        "si": "සබන් ඔපෙරා",
-        "s": "We saw a soap opera near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soap%20opera"
+        "w": "island",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "soundtrack",
-        "p": "/ˈsaʊndtræk/",
-        "pos": "n.",
-        "m": "A soundtrack.",
-        "si": "ශබ්ද පටය",
-        "s": "We saw a soundtrack near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soundtrack"
+        "w": "mountain",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "stage",
-        "p": "/ˈstæɡ/",
-        "pos": "n.",
-        "m": "A stage.",
-        "si": "අදියර",
-        "s": "We saw a stage near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stage-uk.mp3"
+        "w": "ocean",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "studio",
-        "p": "/ˈstʌdɪɒ/",
-        "pos": "n.",
-        "m": "A studio.",
-        "si": "චිත්රාගාරය",
-        "s": "We saw a studio near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/studio-uk.mp3"
+        "w": "region",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "television",
-        "p": "/ˈtelevɪʃn/",
-        "pos": "n.",
-        "m": "A television.",
-        "si": "රූපවාහිනිය",
-        "s": "We saw a television near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/television-uk.mp3"
+        "w": "scenery",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "thriller",
-        "p": "/ˈθrɪlə/",
-        "pos": "n.",
-        "m": "A thriller.",
-        "si": "ත්‍රාසජනක",
-        "s": "We saw a thriller near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=thriller"
+        "w": "stream",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       },
       {
-        "w": "video",
-        "p": "/ˈvɪdeɒ/",
-        "pos": "n.",
-        "m": "A video.",
-        "si": "වීඩියෝ",
-        "s": "We saw a video near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/video-us.mp3"
+        "w": "valley",
+        "p": "",
+        "pos": "",
+        "m": "",
+        "si": "",
+        "s": ""
       }
     ]
   },
@@ -303,274 +273,244 @@
       "active": true,
       "words": [
         {
-          "w": "horror",
-          "p": "/ˈhɔɹɚ/",
-          "pos": "noun.",
-          "m": "An intense distressing emotion of fear or repugnance.",
-          "si": "භීෂණය",
-          "s": "I saw many horrors during the war.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
+          "w": "buildings",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "instrument",
-          "p": "/ˈɪnstɹəmənt/",
-          "pos": "noun.",
-          "m": "A device used to produce music.",
-          "si": "උපකරණය",
-          "s": "The violinist was a master of her instrument.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
+          "w": "apartment block",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "interval",
-          "p": "/ˈɪntəvəl/",
-          "pos": "noun.",
-          "m": "A distance in space.",
-          "si": "පරතරය",
-          "s": "the interval between contractions during childbirth",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
+          "w": "castle",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "interview",
-          "p": "/ˈɪntəvjuː/",
-          "pos": "noun.",
-          "m": "An official face-to-face meeting of monarchs or other important figures.",
-          "si": "සම්මුඛ පරීක්ෂණය",
-          "s": "The reporter gave the witness an interview.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
+          "w": "clinic",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "jazz music",
-          "p": "/ˈdʒæz ˈmʌsɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being jazz music.",
-          "si": "ජෑස් සංගීතය",
-          "s": "The story was very jazz music to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
+          "w": "cottage",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "journalist",
-          "p": "/ˈdʒɜːnəlɪst/",
-          "pos": "noun.",
-          "m": "The keeper of a personal journal, who writes in it regularly.",
-          "si": "මාධ්යවේදී",
-          "s": "We saw a journalist near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
+          "w": "department store",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "laugh",
-          "p": "/laːf/",
-          "pos": "v.",
-          "m": "To laugh (something).",
-          "si": "හිනා වෙනවා",
-          "s": "They laugh together every weekend.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
+          "w": "elevator",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "magazine",
-          "p": "/mæɡəˈziːn/",
-          "pos": "n.",
-          "m": "A magazine.",
-          "si": "සඟරාව",
-          "s": "We saw a magazine near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
+          "w": "grocery store",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "musician",
-          "p": "/mjuˈzɪʃən/",
-          "pos": "n.",
-          "m": "A musician.",
-          "si": "සංගීතඥයා",
-          "s": "We saw a musician near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
+          "w": "library",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "orchestra",
-          "p": "/ˈɔːkəstɹə/",
-          "pos": "n.",
-          "m": "A orchestra.",
-          "si": "වාද්‍ය වෘන්දය",
-          "s": "We saw a orchestra near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
+          "w": "palace",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "painter",
-          "p": "/ˈpeɪntə/",
-          "pos": "n.",
-          "m": "A painter.",
-          "si": "චිත්ර ශිල්පියා",
-          "s": "We saw a painter near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+          "w": "police station",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "performance",
-          "p": "/ˈpəfɔːmænk/",
-          "pos": "n.",
-          "m": "A performance.",
-          "si": "කාර්ය සාධනය",
-          "s": "We saw a performance near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+          "w": "post office",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "podcast",
-          "p": "/ˈpɒdkæst/",
-          "pos": "n.",
-          "m": "A podcast.",
-          "si": "පොඩ්කාස්ට්",
-          "s": "We saw a podcast near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+          "w": "prison",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "presenter",
-          "p": "/pɹɪˈzɛntə(ɹ)/",
-          "pos": "n.",
-          "m": "A presenter.",
-          "si": "ඉදිරිපත් කරන්නා",
-          "s": "We saw a presenter near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
+          "w": "railway station",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "production",
-          "p": "/ˈprɒdʌkʃn/",
-          "pos": "n.",
-          "m": "A production.",
-          "si": "නිෂ්පාදනය",
-          "s": "We saw a production near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/production-uk.mp3"
+          "w": "stadium",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "programme",
-          "p": "/ˈprɒɡræm/",
-          "pos": "n.",
-          "m": "A programme.",
-          "si": "වැඩසටහන",
-          "s": "We saw a programme near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/programme-uk.mp3"
+          "w": "supermarket",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "quiz",
-          "p": "/ˈkwɪz/",
-          "pos": "n.",
-          "m": "A quiz.",
-          "si": "ප්‍රශ්නාවලිය",
-          "s": "We saw a quiz near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=quiz"
+          "w": "university",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "review",
-          "p": "/ˈrevaɪw/",
-          "pos": "n.",
-          "m": "A review.",
-          "si": "සමාලෝචනය",
-          "s": "We saw a review near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/review-us.mp3"
+          "w": "countryside",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "romantic",
-          "p": "/ˈrɒmæntɪk/",
-          "pos": "adj.",
-          "m": "Having the quality of being romantic.",
-          "si": "රොමැන්ටික්",
-          "s": "The story was very romantic to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=romantic"
+          "w": "campsite",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "scene",
-          "p": "/ˈsken/",
-          "pos": "n.",
-          "m": "A scene.",
-          "si": "දර්ශනය",
-          "s": "We saw a scene near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scene-us.mp3"
+          "w": "canal",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "screen",
-          "p": "/ˈskriːn/",
-          "pos": "v.",
-          "m": "To screen (something).",
-          "si": "තිරය",
-          "s": "They screen together every weekend.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/screen-au.mp3"
+          "w": "cliff",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "selfie",
-          "p": "/ˈselfɪ/",
-          "pos": "n.",
-          "m": "A selfie.",
-          "si": "සෙල්ෆි",
-          "s": "We saw a selfie near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=selfie"
+          "w": "field",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "series",
-          "p": "/ˈsəiz/",
-          "pos": "n.",
-          "m": "A series.",
-          "si": "මාලාවක්",
-          "s": "We saw a series near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=series"
+          "w": "harbour",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "soap opera",
-          "p": "/ˈsəʊp ˈɒpəæ/",
-          "pos": "n.",
-          "m": "A soap opera.",
-          "si": "සබන් ඔපෙරා",
-          "s": "We saw a soap opera near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soap%20opera"
+          "w": "island",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "soundtrack",
-          "p": "/ˈsaʊndtræk/",
-          "pos": "n.",
-          "m": "A soundtrack.",
-          "si": "ශබ්ද පටය",
-          "s": "We saw a soundtrack near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soundtrack"
+          "w": "mountain",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "stage",
-          "p": "/ˈstæɡ/",
-          "pos": "n.",
-          "m": "A stage.",
-          "si": "අදියර",
-          "s": "We saw a stage near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stage-uk.mp3"
+          "w": "ocean",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "studio",
-          "p": "/ˈstʌdɪɒ/",
-          "pos": "n.",
-          "m": "A studio.",
-          "si": "චිත්රාගාරය",
-          "s": "We saw a studio near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/studio-uk.mp3"
+          "w": "region",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "television",
-          "p": "/ˈtelevɪʃn/",
-          "pos": "n.",
-          "m": "A television.",
-          "si": "රූපවාහිනිය",
-          "s": "We saw a television near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/television-uk.mp3"
+          "w": "scenery",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "thriller",
-          "p": "/ˈθrɪlə/",
-          "pos": "n.",
-          "m": "A thriller.",
-          "si": "ත්‍රාසජනක",
-          "s": "We saw a thriller near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=thriller"
+          "w": "stream",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         },
         {
-          "w": "video",
-          "p": "/ˈvɪdeɒ/",
-          "pos": "n.",
-          "m": "A video.",
-          "si": "වීඩියෝ",
-          "s": "We saw a video near the station.",
-          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/video-us.mp3"
+          "w": "valley",
+          "p": "",
+          "pos": "",
+          "m": "",
+          "si": "",
+          "s": ""
         }
       ]
     },
@@ -876,10 +816,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.a",
-  "updatedAt": "2026-11-12T02:33:25.357Z",
+  "updatedAt": "2026-11-12T09:26:27.236Z",
   "version": "0.0.6.a",
   "buildDate": "2026-10-31",
-  "settingsRev": 57,
+  "settingsRev": 58,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1188,277 +1128,247 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000006,
+  "syncRev": 1797000000007,
   "words": [
     {
-      "w": "horror",
-      "p": "/ˈhɔɹɚ/",
-      "pos": "noun.",
-      "m": "An intense distressing emotion of fear or repugnance.",
-      "si": "භීෂණය",
-      "s": "I saw many horrors during the war.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/horror-us.mp3"
+      "w": "buildings",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "instrument",
-      "p": "/ˈɪnstɹəmənt/",
-      "pos": "noun.",
-      "m": "A device used to produce music.",
-      "si": "උපකරණය",
-      "s": "The violinist was a master of her instrument.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/instrument-us.mp3"
+      "w": "apartment block",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "interval",
-      "p": "/ˈɪntəvəl/",
-      "pos": "noun.",
-      "m": "A distance in space.",
-      "si": "පරතරය",
-      "s": "the interval between contractions during childbirth",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interval-au.mp3"
+      "w": "castle",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "interview",
-      "p": "/ˈɪntəvjuː/",
-      "pos": "noun.",
-      "m": "An official face-to-face meeting of monarchs or other important figures.",
-      "si": "සම්මුඛ පරීක්ෂණය",
-      "s": "The reporter gave the witness an interview.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/interview-us.mp3"
+      "w": "clinic",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "jazz music",
-      "p": "/ˈdʒæz ˈmʌsɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being jazz music.",
-      "si": "ජෑස් සංගීතය",
-      "s": "The story was very jazz music to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=jazz%20music"
+      "w": "cottage",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "journalist",
-      "p": "/ˈdʒɜːnəlɪst/",
-      "pos": "noun.",
-      "m": "The keeper of a personal journal, who writes in it regularly.",
-      "si": "මාධ්යවේදී",
-      "s": "We saw a journalist near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/journalist-uk.mp3"
+      "w": "department store",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "laugh",
-      "p": "/laːf/",
-      "pos": "v.",
-      "m": "To laugh (something).",
-      "si": "හිනා වෙනවා",
-      "s": "They laugh together every weekend.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/laugh-us.mp3"
+      "w": "elevator",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "magazine",
-      "p": "/mæɡəˈziːn/",
-      "pos": "n.",
-      "m": "A magazine.",
-      "si": "සඟරාව",
-      "s": "We saw a magazine near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=magazine"
+      "w": "grocery store",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "musician",
-      "p": "/mjuˈzɪʃən/",
-      "pos": "n.",
-      "m": "A musician.",
-      "si": "සංගීතඥයා",
-      "s": "We saw a musician near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/musician-us.mp3"
+      "w": "library",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "orchestra",
-      "p": "/ˈɔːkəstɹə/",
-      "pos": "n.",
-      "m": "A orchestra.",
-      "si": "වාද්‍ය වෘන්දය",
-      "s": "We saw a orchestra near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/orchestra-uk.mp3"
+      "w": "palace",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "painter",
-      "p": "/ˈpeɪntə/",
-      "pos": "n.",
-      "m": "A painter.",
-      "si": "චිත්ර ශිල්පියා",
-      "s": "We saw a painter near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/painter-us.mp3"
+      "w": "police station",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "performance",
-      "p": "/ˈpəfɔːmænk/",
-      "pos": "n.",
-      "m": "A performance.",
-      "si": "කාර්ය සාධනය",
-      "s": "We saw a performance near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/performance-us.mp3"
+      "w": "post office",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "podcast",
-      "p": "/ˈpɒdkæst/",
-      "pos": "n.",
-      "m": "A podcast.",
-      "si": "පොඩ්කාස්ට්",
-      "s": "We saw a podcast near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=podcast"
+      "w": "prison",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "presenter",
-      "p": "/pɹɪˈzɛntə(ɹ)/",
-      "pos": "n.",
-      "m": "A presenter.",
-      "si": "ඉදිරිපත් කරන්නා",
-      "s": "We saw a presenter near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=presenter"
+      "w": "railway station",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "production",
-      "p": "/ˈprɒdʌkʃn/",
-      "pos": "n.",
-      "m": "A production.",
-      "si": "නිෂ්පාදනය",
-      "s": "We saw a production near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/production-uk.mp3"
+      "w": "stadium",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "programme",
-      "p": "/ˈprɒɡræm/",
-      "pos": "n.",
-      "m": "A programme.",
-      "si": "වැඩසටහන",
-      "s": "We saw a programme near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/programme-uk.mp3"
+      "w": "supermarket",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "quiz",
-      "p": "/ˈkwɪz/",
-      "pos": "n.",
-      "m": "A quiz.",
-      "si": "ප්‍රශ්නාවලිය",
-      "s": "We saw a quiz near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=quiz"
+      "w": "university",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "review",
-      "p": "/ˈrevaɪw/",
-      "pos": "n.",
-      "m": "A review.",
-      "si": "සමාලෝචනය",
-      "s": "We saw a review near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/review-us.mp3"
+      "w": "countryside",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "romantic",
-      "p": "/ˈrɒmæntɪk/",
-      "pos": "adj.",
-      "m": "Having the quality of being romantic.",
-      "si": "රොමැන්ටික්",
-      "s": "The story was very romantic to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=romantic"
+      "w": "campsite",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "scene",
-      "p": "/ˈsken/",
-      "pos": "n.",
-      "m": "A scene.",
-      "si": "දර්ශනය",
-      "s": "We saw a scene near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/scene-us.mp3"
+      "w": "canal",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "screen",
-      "p": "/ˈskriːn/",
-      "pos": "v.",
-      "m": "To screen (something).",
-      "si": "තිරය",
-      "s": "They screen together every weekend.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/screen-au.mp3"
+      "w": "cliff",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "selfie",
-      "p": "/ˈselfɪ/",
-      "pos": "n.",
-      "m": "A selfie.",
-      "si": "සෙල්ෆි",
-      "s": "We saw a selfie near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=selfie"
+      "w": "field",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "series",
-      "p": "/ˈsəiz/",
-      "pos": "n.",
-      "m": "A series.",
-      "si": "මාලාවක්",
-      "s": "We saw a series near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=series"
+      "w": "harbour",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "soap opera",
-      "p": "/ˈsəʊp ˈɒpəæ/",
-      "pos": "n.",
-      "m": "A soap opera.",
-      "si": "සබන් ඔපෙරා",
-      "s": "We saw a soap opera near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soap%20opera"
+      "w": "island",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "soundtrack",
-      "p": "/ˈsaʊndtræk/",
-      "pos": "n.",
-      "m": "A soundtrack.",
-      "si": "ශබ්ද පටය",
-      "s": "We saw a soundtrack near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=soundtrack"
+      "w": "mountain",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "stage",
-      "p": "/ˈstæɡ/",
-      "pos": "n.",
-      "m": "A stage.",
-      "si": "අදියර",
-      "s": "We saw a stage near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/stage-uk.mp3"
+      "w": "ocean",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "studio",
-      "p": "/ˈstʌdɪɒ/",
-      "pos": "n.",
-      "m": "A studio.",
-      "si": "චිත්රාගාරය",
-      "s": "We saw a studio near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/studio-uk.mp3"
+      "w": "region",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "television",
-      "p": "/ˈtelevɪʃn/",
-      "pos": "n.",
-      "m": "A television.",
-      "si": "රූපවාහිනිය",
-      "s": "We saw a television near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/television-uk.mp3"
+      "w": "scenery",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "thriller",
-      "p": "/ˈθrɪlə/",
-      "pos": "n.",
-      "m": "A thriller.",
-      "si": "ත්‍රාසජනක",
-      "s": "We saw a thriller near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=thriller"
+      "w": "stream",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     },
     {
-      "w": "video",
-      "p": "/ˈvɪdeɒ/",
-      "pos": "n.",
-      "m": "A video.",
-      "si": "වීඩියෝ",
-      "s": "We saw a video near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/video-us.mp3"
+      "w": "valley",
+      "p": "",
+      "pos": "",
+      "m": "",
+      "si": "",
+      "s": ""
     }
   ],
   "versionFamily": "9.0.0"

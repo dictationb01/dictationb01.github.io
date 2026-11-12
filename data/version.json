@@ -2,16 +2,14 @@
   "ver": 35,
   "appVersion": "0.0.6.u",
   "version": "0.0.6.u",
-  "buildDate": "2026-11-11",
+  "buildDate": "2026-11-12",
   "schema": 35,
-  "settingsRev": 56,
+  "settingsRev": 57,
   "session": "12",
   "title": "Session 12 -  Entertainment and Media",
-  "updatedAt": "2026-11-11T16:01:15.828Z",
-  "syncRev": 1797000000005,
+  "updatedAt": "2026-11-12T02:31:09.096Z",
+  "syncRev": 1797000000006,
   "payloadFiles": [
-    "data/session.json",
-    "data/config.json",
     "data/elevenlabs-audio.json",
     "data/version.json"
   ]

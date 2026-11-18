@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "ver": 61,
+  "ver": 62,
   "session": {
     "no": "14",
     "day": "Thursday",
@@ -26,170 +26,189 @@
         "pos": "noun.",
         "m": "A settlement; an area with residential districts, shops and amenities, and its own local government; especially one larger than a village and smaller than a city.",
         "si": "නගරය",
-        "s": "This town is really dangerous because these youngsters have Beretta handguns.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/town-uk.mp3"
+        "s": "The old market town is very busy on Saturday mornings.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/town-uk.mp3",
+        "ttsHint": "TAWN"
       },
       {
         "w": "airport",
-        "p": "/ˈɛə.pɔːt/",
+        "p": "/ˈeə.pɔːt/",
         "pos": "noun.",
         "m": "An airfield (an area designated for the takeoff and landing of aircraft), including one or more runways and (for commercial airports) one or more passenger terminals.",
         "si": "ගුවන් තොටුපළ",
-        "s": "Because of this, and contrary to popular belief, British airports primarily act as giant wealth extractors, transporting our richest citizens out of the country as often as possible to take their money overseas. ― The Independent, Heathrow expansion to mainly benefit wealthy frequent fliers, research finds, 23 june 2018.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/airport-uk.mp3"
+        "s": "We arrived at the airport two hours before our flight.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/airport-uk.mp3",
+        "ttsHint": "EAIR-port"
       },
       {
         "w": "bridge",
-        "p": "/bɹɪd͡ʒ/",
+        "p": "/brɪdʒ/",
         "pos": "noun.",
         "m": "A construction or natural feature that spans a divide.",
         "si": "පාලම",
-        "s": "We saw a bridge near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bridge-us.mp3"
+        "s": "Walk across the stone bridge to reach the railway station.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bridge-uk.mp3",
+        "ttsHint": "BRIJ"
       },
       {
         "w": "cash machine",
-        "p": "/ˈkæʃ məˈʃiːn/",
+        "p": "/ˈkæʃ məˌʃiːn/",
         "pos": "noun.",
         "m": "An automated teller machine.",
         "si": "මුදල් යන්ත්රය",
-        "s": "We saw a cash machine near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cash%20machine"
+        "s": "I stopped at the cash machine outside the bank to withdraw some money.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cash%20machine",
+        "ttsHint": "KASH muh-sheen"
       },
       {
         "w": "cashpoint",
-        "p": "/ˈkæʃpɔɪnt/",
+        "p": "/ˈkæʃ.pɔɪnt/",
         "pos": "noun.",
         "m": "An automated teller machine.",
         "si": "මුදල් ලක්ෂ්යය",
-        "s": "We saw a cashpoint near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cashpoint"
+        "s": "Is there a cashpoint near the shopping centre?",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cashpoint",
+        "ttsHint": "KASH-poynt"
       },
       {
         "w": "city centre",
-        "p": "/ˈkɪtɪ ˈkentr/",
+        "p": "/ˌsɪt.i ˈsen.tə/",
         "pos": "noun.",
         "m": "The central business and shopping area of a city.",
         "si": "නගර මධ්යස්ථානය",
-        "s": "We saw a city centre near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=city%20centre"
+        "s": "Buses run every ten minutes from the suburbs to the city centre.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=city%20centre",
+        "ttsHint": "SIT-ee sen-tuh"
       },
       {
         "w": "crossroads",
-        "p": "/ˈkrɒsrəʊds/",
+        "p": "/ˈkrɒs.rəʊdz/",
         "pos": "noun.",
         "m": "A crossroads (place where one road crosses another).",
         "si": "හරස් මාර්ග",
-        "s": "We saw a crossroads near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=crossroads"
+        "s": "Turn left at the traffic lights by the main crossroads.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=crossroads",
+        "ttsHint": "KROSS-rohdz"
       },
       {
         "w": "fountain",
-        "p": "[ˈfaʊn.ʔn̩]",
+        "p": "/ˈfaʊn.tɪn/",
         "pos": "noun.",
         "m": "A natural source of water; a spring.",
         "si": "උල්පත",
-        "s": "We saw a fountain near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fountain-us.mp3"
+        "s": "Tourists took photos beside the marble fountain in the square.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fountain-uk.mp3",
+        "ttsHint": "FOWN-tin"
       },
       {
         "w": "monument",
-        "p": "/ˈmɒnjʊmənt/",
+        "p": "/ˈmɒn.jʊ.mənt/",
         "pos": "noun.",
         "m": "A structure built for commemorative or symbolic reasons, or as a memorial; a commemoration.",
         "si": "ස්මාරකය",
-        "s": "There is a monument on the town green to the soldiers who died in World War I.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/monument-us.mp3"
+        "s": "A tall stone monument stands in the middle of the public park.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/monument-uk.mp3",
+        "ttsHint": "MON-yoo-muhnt"
       },
       {
         "w": "pavement",
-        "p": "/ˈpeɪvmənt/",
+        "p": "/ˈpeɪv.mənt/",
         "pos": "noun.",
         "m": "(now chiefly in technical contexts) A paved surface; a hard covering on the ground.",
         "si": "පදික වේදිකාව",
-        "s": "We saw a pavement near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pavement-uk.mp3"
+        "s": "Cyclists should stay on the road and not ride on the pavement.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pavement-uk.mp3",
+        "ttsHint": "PAYV-muhnt"
       },
       {
         "w": "petrol station",
-        "p": "/ˈpetrɒl ˈsteɪʃn/",
+        "p": "/ˈpet.rəl ˌsteɪ.ʃən/",
         "pos": "noun.",
         "m": "A filling station, gas station; a facility selling fuel for road motor vehicles",
         "si": "ඉන්ධන පිරවුම්හල",
-        "s": "We saw a petrol station near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=petrol%20station"
+        "s": "We stopped at a petrol station on the motorway to fill up the car.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=petrol%20station",
+        "ttsHint": "PET-ruhl stay-shuhn"
       },
       {
         "w": "roundabout",
-        "p": "/ˈɹaʊndəˌbaʊt/",
+        "p": "/ˈraʊnd.ə.baʊt/",
         "pos": "noun.",
         "m": "(Australia and sometimes United States) A road junction at which traffic streams circularly around a central island.",
         "si": "වටරවුම",
-        "s": "We saw a roundabout near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/roundabout-au.mp3"
+        "s": "Take the second exit at the roundabout towards the hospital.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/roundabout-uk.mp3",
+        "ttsHint": "ROWND-uh-bowt"
       },
       {
         "w": "shopping centre",
-        "p": "/ˈʃɒpɪŋ ˈkentr/",
+        "p": "/ˈʃɒp.ɪŋ ˌsen.tə/",
         "pos": "noun.",
         "m": "A large retail outlet consisting of several shops.",
         "si": "සාප්පු මධ්යස්ථානය",
-        "s": "We saw a shopping centre near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=shopping%20centre"
+        "s": "The new shopping centre has over fifty clothes shops and cafes.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=shopping%20centre",
+        "ttsHint": "SHOP-ing sen-tuh"
       },
       {
         "w": "square",
-        "p": "/skwɛə(ɹ)/",
+        "p": "/skweə/",
         "pos": "noun.",
         "m": "A polygon with four sides of equal length and four right angles; an equilateral rectangle; a regular quadrilateral.",
         "si": "හතරැස්",
-        "s": "64 is the square of 8.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/square-au.mp3"
+        "s": "There is an open-air market in the main town square every Friday.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/square-uk.mp3",
+        "ttsHint": "SKWEAIR"
       },
       {
         "w": "street",
-        "p": "/stɹiːt/",
+        "p": "/striːt/",
         "pos": "noun.",
         "m": "A paved part of road, usually in a village or a town.",
         "si": "වීදිය",
-        "s": "Walk down the street until you see a hotel on the right.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/street-uk.mp3"
+        "s": "Walk down the street until you see the post office on the right.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/street-uk.mp3",
+        "ttsHint": "STREET"
       },
       {
         "w": "subway",
-        "p": "/ˈsʌbˌweɪ/",
+        "p": "/ˈsʌb.weɪ/",
         "pos": "noun.",
         "m": "An underground railway, especially for mass transit of people in urban areas.",
         "si": "උමං මග",
-        "s": "The story was very subway to read.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/subway-us.mp3"
+        "s": "Use the pedestrian subway to cross safely under the busy main road.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/subway-uk.mp3",
+        "ttsHint": "SUB-way"
       },
       {
         "w": "tunnel",
-        "p": "/ˈtʌn(ə)l/",
+        "p": "/ˈtʌn.əl/",
         "pos": "noun.",
         "m": "An underground or underwater passage.",
         "si": "උමග",
-        "s": "We saw a tunnel near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/tunnel-us.mp3"
+        "s": "The high-speed train travels through a long tunnel under the sea.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/tunnel-uk.mp3",
+        "ttsHint": "TUN-uhl"
       },
       {
         "w": "turning",
-        "p": "[ˈtɜː.nɪŋ]",
-        "pos": "verb.",
+        "p": "/ˈtɜː.nɪŋ/",
+        "pos": "noun.",
         "m": "(heading) to make a non-linear physical movement.",
         "si": "හැරෙනවා",
-        "s": "They say they can turn the parts in two days.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/turning-us.mp3"
+        "s": "Take the first turning on the left just after the bridge.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/turning-uk.mp3",
+        "ttsHint": "TUR-ning"
       },
       {
         "w": "services",
-        "p": "/ˈsɜːvɪsɪz/",
+        "p": "/ˈsɜː.vɪ.sɪz/",
         "pos": "noun.",
         "m": "An act of being of assistance to someone.",
         "si": "සේවා",
-        "s": "I say I did him a service by ending our relationship – now he can freely pursue his career.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/services-us.mp3"
+        "s": "Public transport and emergency services operate throughout the city.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/services-uk.mp3",
+        "ttsHint": "SUR-vi-siz"
       },
       {
         "w": "bank",
@@ -197,98 +216,109 @@
         "pos": "noun.",
         "m": "An institution where one can place and borrow money and take care of financial affairs.",
         "si": "බැංකුව",
-        "s": "blood bank; sperm bank; data bank",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bank-us.mp3"
+        "s": "She went to the bank on the high street to open a savings account.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bank-uk.mp3",
+        "ttsHint": "BANGK"
       },
       {
         "w": "cafe",
-        "p": "/ˈkæf/",
-        "pos": "n.",
+        "p": "/ˈkæf.eɪ/",
+        "pos": "noun.",
         "m": "A cafe.",
         "si": "කැෆේ",
-        "s": "We saw a cafe near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cafe-us.mp3"
+        "s": "We met for coffee and sandwiches at a small street cafe.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cafe-uk.mp3",
+        "ttsHint": "KAF-ay"
       },
       {
         "w": "cafeteria",
-        "p": "/ˈkæfetəɪæ/",
-        "pos": "n.",
+        "p": "/ˌkæf.əˈtɪə.ri.ə/",
+        "pos": "noun.",
         "m": "A cafeteria.",
         "si": "ආපනශාලාව",
-        "s": "We saw a cafeteria near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cafeteria"
+        "s": "Students have hot lunches in the university cafeteria at noon.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cafeteria",
+        "ttsHint": "kaf-uh-TEER-ee-uh"
       },
       {
         "w": "cinema",
-        "p": "/ˈkɪnemæ/",
-        "pos": "n.",
+        "p": "/ˈsɪn.ə.mə/",
+        "pos": "noun.",
         "m": "A cinema.",
         "si": "සිනමාව",
-        "s": "We saw a cinema near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cinema-uk.mp3"
+        "s": "We watched the new adventure film at the local cinema last night.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cinema-uk.mp3",
+        "ttsHint": "SIN-uh-muh"
       },
       {
         "w": "dentist",
-        "p": "/ˈdentɪst/",
-        "pos": "n.",
+        "p": "/ˈden.tɪst/",
+        "pos": "noun.",
         "m": "A dentist.",
         "si": "දන්ත වෛද්යවරයා",
-        "s": "We saw a dentist near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/dentist-us.mp3"
+        "s": "I have an appointment at the dentist at three o'clock this afternoon.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/dentist-uk.mp3",
+        "ttsHint": "DEN-tist"
       },
       {
         "w": "gallery",
-        "p": "/ˈɡæləɪ/",
-        "pos": "n.",
+        "p": "/ˈɡæl.ər.i/",
+        "pos": "noun.",
         "m": "A gallery.",
         "si": "ගැලරිය",
-        "s": "We saw a gallery near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=gallery"
+        "s": "The national art gallery is free to visit every day of the week.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=gallery",
+        "ttsHint": "GAL-uh-ree"
       },
       {
         "w": "hairdresser",
-        "p": "/ˈheɪrdresə/",
-        "pos": "n.",
+        "p": "/ˈheəˌdres.ə/",
+        "pos": "noun.",
         "m": "A hairdresser.",
         "si": "කොණ්ඩා මෝස්තරකරු",
-        "s": "We saw a hairdresser near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hairdresser"
+        "s": "She booked an appointment with her hairdresser before the wedding.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hairdresser",
+        "ttsHint": "HEAIR-dres-uh"
       },
       {
         "w": "museum",
-        "p": "/ˈmʌseʌm/",
-        "pos": "n.",
+        "p": "/mjuːˈziː.əm/",
+        "pos": "noun.",
         "m": "A museum.",
         "si": "කෞතුකාගාරය",
-        "s": "We saw a museum near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-us.mp3"
+        "s": "The natural history museum has a famous collection of dinosaur fossils.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-uk.mp3",
+        "ttsHint": "myoo-ZEE-uhm"
       },
       {
         "w": "restaurant",
-        "p": "/ˈrestɔːrænt/",
-        "pos": "adj.",
+        "p": "/ˈres.trɒnt/",
+        "pos": "noun.",
         "m": "Having the quality of being restaurant.",
         "si": "අවන්හල",
-        "s": "The story was very restaurant to read.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/restaurant-uk.mp3"
+        "s": "They booked a table for four at an Italian restaurant in town.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/restaurant-uk.mp3",
+        "ttsHint": "RES-tront"
       },
       {
         "w": "theatre",
-        "p": "/ˈθiːtr/",
-        "pos": "n.",
+        "p": "/ˈθɪə.tə/",
+        "pos": "noun.",
         "m": "A theatre.",
         "si": "රඟහල",
-        "s": "We saw a theatre near the station.",
-        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/theatre-uk.mp3"
+        "s": "We bought tickets to see a classic play at the royal theatre.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/theatre-uk.mp3",
+        "ttsHint": "THEE-uh-tuh"
       },
       {
         "w": "tourist information",
-        "p": "/ˈtaʊrɪst ˈɪnfɔːmeɪʃn/",
-        "pos": "n.",
+        "p": "/ˈtʊə.rɪst ˌɪn.fəˈmeɪ.ʃən/",
+        "pos": "noun.",
         "m": "A tourist information.",
         "si": "සංචාරක තොරතුරු",
-        "s": "We saw a tourist information near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=tourist%20information"
+        "s": "Pick up a free city map from the tourist information office.",
+        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=tourist%20information",
+        "ttsHint": "TOOR-ist in-fuh-may-shuhn"
       }
     ]
   },
@@ -1196,170 +1226,189 @@
       "pos": "noun.",
       "m": "A settlement; an area with residential districts, shops and amenities, and its own local government; especially one larger than a village and smaller than a city.",
       "si": "නගරය",
-      "s": "This town is really dangerous because these youngsters have Beretta handguns.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/town-uk.mp3"
+      "s": "The old market town is very busy on Saturday mornings.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/town-uk.mp3",
+      "ttsHint": "TAWN"
     },
     {
       "w": "airport",
-      "p": "/ˈɛə.pɔːt/",
+      "p": "/ˈeə.pɔːt/",
       "pos": "noun.",
       "m": "An airfield (an area designated for the takeoff and landing of aircraft), including one or more runways and (for commercial airports) one or more passenger terminals.",
       "si": "ගුවන් තොටුපළ",
-      "s": "Because of this, and contrary to popular belief, British airports primarily act as giant wealth extractors, transporting our richest citizens out of the country as often as possible to take their money overseas. ― The Independent, Heathrow expansion to mainly benefit wealthy frequent fliers, research finds, 23 june 2018.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/airport-uk.mp3"
+      "s": "We arrived at the airport two hours before our flight.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/airport-uk.mp3",
+      "ttsHint": "EAIR-port"
     },
     {
       "w": "bridge",
-      "p": "/bɹɪd͡ʒ/",
+      "p": "/brɪdʒ/",
       "pos": "noun.",
       "m": "A construction or natural feature that spans a divide.",
       "si": "පාලම",
-      "s": "We saw a bridge near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bridge-us.mp3"
+      "s": "Walk across the stone bridge to reach the railway station.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bridge-uk.mp3",
+      "ttsHint": "BRIJ"
     },
     {
       "w": "cash machine",
-      "p": "/ˈkæʃ məˈʃiːn/",
+      "p": "/ˈkæʃ məˌʃiːn/",
       "pos": "noun.",
       "m": "An automated teller machine.",
       "si": "මුදල් යන්ත්රය",
-      "s": "We saw a cash machine near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cash%20machine"
+      "s": "I stopped at the cash machine outside the bank to withdraw some money.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cash%20machine",
+      "ttsHint": "KASH muh-sheen"
     },
     {
       "w": "cashpoint",
-      "p": "/ˈkæʃpɔɪnt/",
+      "p": "/ˈkæʃ.pɔɪnt/",
       "pos": "noun.",
       "m": "An automated teller machine.",
       "si": "මුදල් ලක්ෂ්යය",
-      "s": "We saw a cashpoint near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cashpoint"
+      "s": "Is there a cashpoint near the shopping centre?",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cashpoint",
+      "ttsHint": "KASH-poynt"
     },
     {
       "w": "city centre",
-      "p": "/ˈkɪtɪ ˈkentr/",
+      "p": "/ˌsɪt.i ˈsen.tə/",
       "pos": "noun.",
       "m": "The central business and shopping area of a city.",
       "si": "නගර මධ්යස්ථානය",
-      "s": "We saw a city centre near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=city%20centre"
+      "s": "Buses run every ten minutes from the suburbs to the city centre.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=city%20centre",
+      "ttsHint": "SIT-ee sen-tuh"
     },
     {
       "w": "crossroads",
-      "p": "/ˈkrɒsrəʊds/",
+      "p": "/ˈkrɒs.rəʊdz/",
       "pos": "noun.",
       "m": "A crossroads (place where one road crosses another).",
       "si": "හරස් මාර්ග",
-      "s": "We saw a crossroads near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=crossroads"
+      "s": "Turn left at the traffic lights by the main crossroads.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=crossroads",
+      "ttsHint": "KROSS-rohdz"
     },
     {
       "w": "fountain",
-      "p": "[ˈfaʊn.ʔn̩]",
+      "p": "/ˈfaʊn.tɪn/",
       "pos": "noun.",
       "m": "A natural source of water; a spring.",
       "si": "උල්පත",
-      "s": "We saw a fountain near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fountain-us.mp3"
+      "s": "Tourists took photos beside the marble fountain in the square.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/fountain-uk.mp3",
+      "ttsHint": "FOWN-tin"
     },
     {
       "w": "monument",
-      "p": "/ˈmɒnjʊmənt/",
+      "p": "/ˈmɒn.jʊ.mənt/",
       "pos": "noun.",
       "m": "A structure built for commemorative or symbolic reasons, or as a memorial; a commemoration.",
       "si": "ස්මාරකය",
-      "s": "There is a monument on the town green to the soldiers who died in World War I.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/monument-us.mp3"
+      "s": "A tall stone monument stands in the middle of the public park.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/monument-uk.mp3",
+      "ttsHint": "MON-yoo-muhnt"
     },
     {
       "w": "pavement",
-      "p": "/ˈpeɪvmənt/",
+      "p": "/ˈpeɪv.mənt/",
       "pos": "noun.",
       "m": "(now chiefly in technical contexts) A paved surface; a hard covering on the ground.",
       "si": "පදික වේදිකාව",
-      "s": "We saw a pavement near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pavement-uk.mp3"
+      "s": "Cyclists should stay on the road and not ride on the pavement.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/pavement-uk.mp3",
+      "ttsHint": "PAYV-muhnt"
     },
     {
       "w": "petrol station",
-      "p": "/ˈpetrɒl ˈsteɪʃn/",
+      "p": "/ˈpet.rəl ˌsteɪ.ʃən/",
       "pos": "noun.",
       "m": "A filling station, gas station; a facility selling fuel for road motor vehicles",
       "si": "ඉන්ධන පිරවුම්හල",
-      "s": "We saw a petrol station near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=petrol%20station"
+      "s": "We stopped at a petrol station on the motorway to fill up the car.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=petrol%20station",
+      "ttsHint": "PET-ruhl stay-shuhn"
     },
     {
       "w": "roundabout",
-      "p": "/ˈɹaʊndəˌbaʊt/",
+      "p": "/ˈraʊnd.ə.baʊt/",
       "pos": "noun.",
       "m": "(Australia and sometimes United States) A road junction at which traffic streams circularly around a central island.",
       "si": "වටරවුම",
-      "s": "We saw a roundabout near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/roundabout-au.mp3"
+      "s": "Take the second exit at the roundabout towards the hospital.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/roundabout-uk.mp3",
+      "ttsHint": "ROWND-uh-bowt"
     },
     {
       "w": "shopping centre",
-      "p": "/ˈʃɒpɪŋ ˈkentr/",
+      "p": "/ˈʃɒp.ɪŋ ˌsen.tə/",
       "pos": "noun.",
       "m": "A large retail outlet consisting of several shops.",
       "si": "සාප්පු මධ්යස්ථානය",
-      "s": "We saw a shopping centre near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=shopping%20centre"
+      "s": "The new shopping centre has over fifty clothes shops and cafes.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=shopping%20centre",
+      "ttsHint": "SHOP-ing sen-tuh"
     },
     {
       "w": "square",
-      "p": "/skwɛə(ɹ)/",
+      "p": "/skweə/",
       "pos": "noun.",
       "m": "A polygon with four sides of equal length and four right angles; an equilateral rectangle; a regular quadrilateral.",
       "si": "හතරැස්",
-      "s": "64 is the square of 8.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/square-au.mp3"
+      "s": "There is an open-air market in the main town square every Friday.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/square-uk.mp3",
+      "ttsHint": "SKWEAIR"
     },
     {
       "w": "street",
-      "p": "/stɹiːt/",
+      "p": "/striːt/",
       "pos": "noun.",
       "m": "A paved part of road, usually in a village or a town.",
       "si": "වීදිය",
-      "s": "Walk down the street until you see a hotel on the right.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/street-uk.mp3"
+      "s": "Walk down the street until you see the post office on the right.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/street-uk.mp3",
+      "ttsHint": "STREET"
     },
     {
       "w": "subway",
-      "p": "/ˈsʌbˌweɪ/",
+      "p": "/ˈsʌb.weɪ/",
       "pos": "noun.",
       "m": "An underground railway, especially for mass transit of people in urban areas.",
       "si": "උමං මග",
-      "s": "The story was very subway to read.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/subway-us.mp3"
+      "s": "Use the pedestrian subway to cross safely under the busy main road.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/subway-uk.mp3",
+      "ttsHint": "SUB-way"
     },
     {
       "w": "tunnel",
-      "p": "/ˈtʌn(ə)l/",
+      "p": "/ˈtʌn.əl/",
       "pos": "noun.",
       "m": "An underground or underwater passage.",
       "si": "උමග",
-      "s": "We saw a tunnel near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/tunnel-us.mp3"
+      "s": "The high-speed train travels through a long tunnel under the sea.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/tunnel-uk.mp3",
+      "ttsHint": "TUN-uhl"
     },
     {
       "w": "turning",
-      "p": "[ˈtɜː.nɪŋ]",
-      "pos": "verb.",
+      "p": "/ˈtɜː.nɪŋ/",
+      "pos": "noun.",
       "m": "(heading) to make a non-linear physical movement.",
       "si": "හැරෙනවා",
-      "s": "They say they can turn the parts in two days.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/turning-us.mp3"
+      "s": "Take the first turning on the left just after the bridge.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/turning-uk.mp3",
+      "ttsHint": "TUR-ning"
     },
     {
       "w": "services",
-      "p": "/ˈsɜːvɪsɪz/",
+      "p": "/ˈsɜː.vɪ.sɪz/",
       "pos": "noun.",
       "m": "An act of being of assistance to someone.",
       "si": "සේවා",
-      "s": "I say I did him a service by ending our relationship – now he can freely pursue his career.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/services-us.mp3"
+      "s": "Public transport and emergency services operate throughout the city.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/services-uk.mp3",
+      "ttsHint": "SUR-vi-siz"
     },
     {
       "w": "bank",
@@ -1367,98 +1416,109 @@
       "pos": "noun.",
       "m": "An institution where one can place and borrow money and take care of financial affairs.",
       "si": "බැංකුව",
-      "s": "blood bank; sperm bank; data bank",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bank-us.mp3"
+      "s": "She went to the bank on the high street to open a savings account.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bank-uk.mp3",
+      "ttsHint": "BANGK"
     },
     {
       "w": "cafe",
-      "p": "/ˈkæf/",
-      "pos": "n.",
+      "p": "/ˈkæf.eɪ/",
+      "pos": "noun.",
       "m": "A cafe.",
       "si": "කැෆේ",
-      "s": "We saw a cafe near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cafe-us.mp3"
+      "s": "We met for coffee and sandwiches at a small street cafe.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cafe-uk.mp3",
+      "ttsHint": "KAF-ay"
     },
     {
       "w": "cafeteria",
-      "p": "/ˈkæfetəɪæ/",
-      "pos": "n.",
+      "p": "/ˌkæf.əˈtɪə.ri.ə/",
+      "pos": "noun.",
       "m": "A cafeteria.",
       "si": "ආපනශාලාව",
-      "s": "We saw a cafeteria near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cafeteria"
+      "s": "Students have hot lunches in the university cafeteria at noon.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cafeteria",
+      "ttsHint": "kaf-uh-TEER-ee-uh"
     },
     {
       "w": "cinema",
-      "p": "/ˈkɪnemæ/",
-      "pos": "n.",
+      "p": "/ˈsɪn.ə.mə/",
+      "pos": "noun.",
       "m": "A cinema.",
       "si": "සිනමාව",
-      "s": "We saw a cinema near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cinema-uk.mp3"
+      "s": "We watched the new adventure film at the local cinema last night.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/cinema-uk.mp3",
+      "ttsHint": "SIN-uh-muh"
     },
     {
       "w": "dentist",
-      "p": "/ˈdentɪst/",
-      "pos": "n.",
+      "p": "/ˈden.tɪst/",
+      "pos": "noun.",
       "m": "A dentist.",
       "si": "දන්ත වෛද්යවරයා",
-      "s": "We saw a dentist near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/dentist-us.mp3"
+      "s": "I have an appointment at the dentist at three o'clock this afternoon.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/dentist-uk.mp3",
+      "ttsHint": "DEN-tist"
     },
     {
       "w": "gallery",
-      "p": "/ˈɡæləɪ/",
-      "pos": "n.",
+      "p": "/ˈɡæl.ər.i/",
+      "pos": "noun.",
       "m": "A gallery.",
       "si": "ගැලරිය",
-      "s": "We saw a gallery near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=gallery"
+      "s": "The national art gallery is free to visit every day of the week.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=gallery",
+      "ttsHint": "GAL-uh-ree"
     },
     {
       "w": "hairdresser",
-      "p": "/ˈheɪrdresə/",
-      "pos": "n.",
+      "p": "/ˈheəˌdres.ə/",
+      "pos": "noun.",
       "m": "A hairdresser.",
       "si": "කොණ්ඩා මෝස්තරකරු",
-      "s": "We saw a hairdresser near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hairdresser"
+      "s": "She booked an appointment with her hairdresser before the wedding.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hairdresser",
+      "ttsHint": "HEAIR-dres-uh"
     },
     {
       "w": "museum",
-      "p": "/ˈmʌseʌm/",
-      "pos": "n.",
+      "p": "/mjuːˈziː.əm/",
+      "pos": "noun.",
       "m": "A museum.",
       "si": "කෞතුකාගාරය",
-      "s": "We saw a museum near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-us.mp3"
+      "s": "The natural history museum has a famous collection of dinosaur fossils.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/museum-uk.mp3",
+      "ttsHint": "myoo-ZEE-uhm"
     },
     {
       "w": "restaurant",
-      "p": "/ˈrestɔːrænt/",
-      "pos": "adj.",
+      "p": "/ˈres.trɒnt/",
+      "pos": "noun.",
       "m": "Having the quality of being restaurant.",
       "si": "අවන්හල",
-      "s": "The story was very restaurant to read.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/restaurant-uk.mp3"
+      "s": "They booked a table for four at an Italian restaurant in town.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/restaurant-uk.mp3",
+      "ttsHint": "RES-tront"
     },
     {
       "w": "theatre",
-      "p": "/ˈθiːtr/",
-      "pos": "n.",
+      "p": "/ˈθɪə.tə/",
+      "pos": "noun.",
       "m": "A theatre.",
       "si": "රඟහල",
-      "s": "We saw a theatre near the station.",
-      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/theatre-uk.mp3"
+      "s": "We bought tickets to see a classic play at the royal theatre.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/theatre-uk.mp3",
+      "ttsHint": "THEE-uh-tuh"
     },
     {
       "w": "tourist information",
-      "p": "/ˈtaʊrɪst ˈɪnfɔːmeɪʃn/",
-      "pos": "n.",
+      "p": "/ˈtʊə.rɪst ˌɪn.fəˈmeɪ.ʃən/",
+      "pos": "noun.",
       "m": "A tourist information.",
       "si": "සංචාරක තොරතුරු",
-      "s": "We saw a tourist information near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=tourist%20information"
+      "s": "Pick up a free city map from the tourist information office.",
+      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=tourist%20information",
+      "ttsHint": "TOOR-ist in-fuh-may-shuhn"
     }
   ],
   "versionFamily": "9.0.0"

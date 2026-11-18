@@ -264,6 +264,8 @@ open; because audio is cache-first, replaying a word costs zero data.
 | G6 | `tests/upgrade-browser.cjs` | Chromium | v60 cache → 0.0.1.d, single reload, offline shell |
 | G7 | `tests/e2e.cjs` | Chromium | the full student journey + backup download |
 | G8 | `tests/live-lab.cjs` | Chromium | dead API, offline reload, hung relay, empty bank |
+| G14 | `tests/v006w-verification.cjs` | static + jsdom | W1 boot-briefing law, W2 no-quarantine MP3 synthesis, W3 unified cloned voice, W4 live lab ES5 |
+
 | G9 | `tests/audit-v42.cjs` | node | retirement, H1 budgets, ES5, PWA pins, preserved hashes |
 | G10 | `tests/voice-guide.cjs` | jsdom | `pickVoice` exists, one en-GB professor, male names −100, Guide 2.0 step machine + tap banner |
 | G11 | `tests/vault-sync.cjs` | jsdom | `SDP_ENC_V2` round trip, sequential publish with `version.json` last, fresh SHA per PUT, no PIN in any body |
@@ -755,3 +757,56 @@ G1 147/0 · G2 12/0 · G3 122/0 · G4 8/0 · G5 103/0 · G6 15/0 · G7 58/0 ·
 G8 39/0 · G9 47/0 · G10 38/0 · G11 74/0 · G12 103/0 — **764 assertions,
 0 FAIL** (`cd tests && npm run gates`), plus the CI preserved-payloads step
 (all four SHA-256 locks OK).
+
+
+## §R-LIVE-LAB — the Real-Time Live Browser Diagnostic Lab (v0.0.6.w)
+
+`lab.html` (≤ 28,000 B) + `data/sdp-live-lab.js` (≤ 38,000 B, strict ES5,
+`window.SDP.LiveLab`) live at the repository root so they share the exact
+https://dictationb01.github.io origin with the app — real-time direct access to
+the live `localStorage` (sdp.settings / sdp.session / sdp.progress), the
+`sdp-audio-clips` + `sdp-v0.0.6.w-s36-shell` CacheStorage, the Service Worker
+registration, the Studio vault keys and the live `/data/*.json` payloads.
+
+Stations (all real browser APIs — zero mocks):
+1. **Audio Pack & Acoustic Decoder Inspector** — loads the live
+   `data/elevenlabs-audio.json`, decodes every clip via real
+   `AudioContext.decodeAudioData()`, verifies the MPEG-1 Layer III / WAV
+   signature and measures real BS.1770-4 LUFS + true peak + duration, with a
+   ▶ Play & Measure button per row, a live waveform/FFT canvas visualizer and
+   the 🔊 Test All 30 Words Sequentially fast audit.
+2. **ElevenLabs Key Pool & Voice Clone Inspector** — live GET /v1/voices +
+   /v1/user/subscription, cloned/generated/professional listing with character
+   quota, and 🎙 Test Live Synthesis with HTTP status, latency and LUFS.
+3. **Studio New-Word Synthesis & British RP Pipeline Tester** — live Stage A
+   lexicon → Stage B dictionaryapi.dev UK IPA + -uk.mp3 (separate-entry law) →
+   Stage C AI verdict → Stage D deterministic fallback (never quarantined) →
+   Stage E real TTS POST + MP3 playback + CacheStorage hydration.
+4. **Cross-Tab & Voice-Mode Consistency Verifier** — same-origin iframe probe:
+   voiceLock/voiceSource/activeVoiceId agreement and the on-demand Settings
+   Project Briefing law (boot keeps #briefingModal hidden).
+5. **SW / CacheStorage / GitHub CDN vs Raw Sync Inspector** — propagation-lag
+   matrix + the 1-click 🧹 Force Purge All Audio Caches & Pull Latest button.
+6. **1-Click Full Diagnostic Run & Report Exporter** — all stations, a
+   PASS/WARN/FAIL scorecard, and the ⬇ .json / .zip live lab report.
+
+## §R-NO-BOOT-BRIEFING (v0.0.6.w)
+
+Students opening the app are NEVER blocked by the Project Briefing or the
+Welcome splash: boot goes straight to the Dictation cockpit. The Project
+Briefing lives ONLY behind Settings › About › Project Briefing (#btnCreatorNote)
+— a direct user gesture that unlocks audio, opens #briefingStage immediately
+(#welcomeStage skipped), unlocks Exit / Skip-top / ▶ Start Dictation instantly,
+and auto-narrates the 4 _intro_male beats (George) with karaoke from Paragraph
+1, Word 1. The 4 clips, transcript and attribution credits are preserved
+byte-for-byte.
+
+## §R-UNIFIED-CLONED-VOICE (v0.0.6.w)
+
+`sdp.settings.voiceSignature.voiceId/.voiceName` persists the ONE unified
+classroom voice (default Alice Xb7hH8MSUJpSbSDYk0k2). `Apply Cloned Voice to
+All Words & UI` / `Fetch My Cloned Voices` switch every words.*/num.*/cmd.*/
+guide.* take to the clone through the Cloned-Voice-safe ladder
+({stability 0.55, similarity_boost 0.85, use_speaker_boost:true} → 0.80 →
+eleven_multilingual_v2), and `Re-bake All Classroom Clips` regenerates the full
+classroom set in that voice. The briefing George voice stays separate.

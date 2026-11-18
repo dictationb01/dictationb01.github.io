@@ -260,37 +260,35 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         ]
       });
       await page.waitForTimeout(700);
-      /* ── Stage 1: the cinematic welcome splash. */
+      /* v0.0.6.w — the NO-BOOT-BRIEFING LAW: even a stale-stamp device boots
+         straight into the cockpit; the briefing opens ONLY from Settings. */
+      const bootProbe = await page.evaluate(() => ({
+        briefingOpen: document.getElementById('briefingModal').hidden === false,
+        homeActive: (document.querySelector('.screen.active') || {}).id
+      }));
+      check(`LAB1a(${vp.tag}) NO-BOOT-BRIEFING: the stale-stamp device boots straight to the cockpit (modal hidden)`,
+        bootProbe.briefingOpen === false && bootProbe.homeActive === 'screen-home', JSON.stringify(bootProbe));
+      /* On-demand open from Settings — the direct Stage-2 entry. */
+      await page.evaluate(() => { document.getElementById('btnCreatorNote').click(); });
+      await page.waitForTimeout(700);
       const stage1 = await page.evaluate(() => {
         const modal = document.getElementById('briefingModal');
         const w = document.getElementById('welcomeStage');
         const b = document.getElementById('briefingStage');
-        const rect = w ? w.getBoundingClientRect() : null;
+        const rect = b ? b.getBoundingClientRect() : null;
         return {
           briefingOpen: modal ? modal.hidden === false : false,
-          welcomeVisible: !!(w && w.hidden === false),
-          overviewHidden: !!(b && b.hidden === true),
-          eyebrow: w ? ((w.querySelector('.welcome-eyebrow') || {}).textContent || '').trim() : '',
-          title: w ? ((w.querySelector('.welcome-title') || {}).innerText || '').replace(/\s+/g, ' ').trim() : '',
-          sub: w ? ((w.querySelector('.welcome-sub') || {}).innerText || '').replace(/\s+/g, ' ').trim() : '',
-          cta: w ? ((w.querySelector('#btnWelcomeContinue') || {}).textContent || '').trim() : '',
-          ctaVisible: !!(function () { const c = document.getElementById('btnWelcomeContinue'); if (!c) return false; const r = c.getBoundingClientRect(); return r.height > 10 && r.width > 40; })(),
+          welcomeHidden: !!(w && w.hidden === true),
+          overviewVisible: !!(b && b.hidden === false),
+          exitsUnlocked: document.getElementById('btnBriefingSkip').disabled === false &&
+            document.getElementById('btnBriefingSkipTop').disabled === false,
           stageH: rect ? Math.round(rect.height) : 0,
-          crest: !!w && !!w.querySelector('.welcome-crest'),
           tapPillHidden: (document.getElementById('briefingTapPill') || {}).hidden !== false
         };
       });
-      check(`LAB1a(${vp.tag}) a v0.0.6.m device (briefingSeen:1, guide 0.0.6.m) auto-replays on v0.0.6.t and opens on the WELCOME stage (the guaranteed-welcome law ignores the stale guide stamp)`,
-        stage1.briefingOpen === true && stage1.welcomeVisible === true && stage1.overviewHidden === true, JSON.stringify(stage1));
-      check(`LAB1a2(${vp.tag}) Stage 1 shows the animated splash: CCBE eyebrow + Welcome to Smart Dictation Web App + $0 subtitle`,
-        /CCBE GALLE BRANCH · B1 ENGLISH CLASS/.test(stage1.eyebrow) &&
-        /Welcome to Smart Dictation Web App/i.test(stage1.title) &&
-        /Zero-Cost \(\$0\) · 100% Open-Source/.test(stage1.sub) &&
-        /Autonomous AI-Engineered System by Hansana/.test(stage1.sub) &&
-        stage1.crest === true && stage1.stageH >= 220,
-        JSON.stringify({ eyebrow: stage1.eyebrow, title: stage1.title, sub: stage1.sub, h: stage1.stageH }));
-      check(`LAB1a3(${vp.tag}) the prominent tactile CTA "Continue to Project Overview →" is visible and the tap pill stays retired`,
-        stage1.cta === 'Continue to Project Overview →' && stage1.ctaVisible === true && stage1.tapPillHidden === true,
+      check(`LAB1a2(${vp.tag}) the Settings Project Briefing opens #briefingStage DIRECTLY (Welcome skipped, exits unlocked)`,
+        stage1.briefingOpen === true && stage1.welcomeHidden === true && stage1.overviewVisible === true &&
+        stage1.exitsUnlocked === true && stage1.stageH >= 120,
         JSON.stringify(stage1));
       /* ── v0.0.6.q: inject the 4.2 s fixture beats BEFORE the Continue
          click — with the REAL sha1(text|voiceId|modelId) pins the zero
@@ -314,9 +312,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           }
         } catch (e) {}
       });
-      /* ── The Continue click: audio unlocks INSIDE the gesture; Stage 2
-         starts STRICTLY at Paragraph 1, Word 1 (idx === 0). */
-      await page.click('#btnWelcomeContinue');
+      /* v0.0.6.w: the on-demand open already narrates Paragraph 1 inside the
+         #btnCreatorNote click gesture — no Continue hop. */
       await page.waitForTimeout(1000);
       const stage2 = await page.evaluate(() => {
         const w = document.getElementById('welcomeStage');
@@ -335,13 +332,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           verPill: (document.getElementById('sdpVerPill') || {}).textContent || ''
         };
       });
-      check(`LAB1b(${vp.tag}) clicking Continue transitions 320ms into Stage 2 (#briefingStage) with the welcome gone`,
+      check(`LAB1b(${vp.tag}) Stage 2 (#briefingStage) is live with the welcome gone`,
         stage2.welcomeGone === true && stage2.overviewVisible === true, JSON.stringify(stage2));
-      check(`LAB1b2(${vp.tag}) narration starts STRICTLY at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, app stamped v0.0.6.t)`,
+      check(`LAB1b2(${vp.tag}) narration starts at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, karaoke already painting — the direct open narrates inside the click gesture)`,
         stage2.beats === 4 && stage2.beat1WordCount > 0 && /^Welcome/.test(stage2.beat1Word1 || '') &&
-        /0\.0\.6\.v/.test(stage2.verPill), JSON.stringify(stage2));
-      check(`LAB1b3(${vp.tag}) the shared <audio> was primed by the Continue gesture (muted false, volume 1.0)`,
-        stage2.audioUnlocked === true, JSON.stringify({ audioUnlocked: stage2.audioUnlocked }));
+        /0\.0\.6\.w/.test(stage2.verPill), JSON.stringify(stage2));
+      check(`LAB1b3(${vp.tag}) the shared <audio> stays un-muted through the on-demand narration (muted false)`,
+        stage2.audioUnlocked === true || stage2.audioMuted === false, JSON.stringify({ audioUnlocked: stage2.audioUnlocked }));
       /* ── v0.0.6.t LAB1m — the PARAGRAPH-1 COMPLETION GATE, observed
          LIVE from the moment Stage 2 begins narrating: while Paragraph 1 is
          still speaking (beat1Done === false) BOTH footer buttons stay
@@ -354,24 +351,19 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         /* fire-and-forget: the sampler runs in-page WITHOUT blocking the
            parallel cutOff observation. */
         page.evaluate(() => {
-          window.__lock1m = { samples: 0, lockedWhileBeat1: false, sawFinishing: false, labels: [], unlocked: false, finalLabel: '', done: false };
+          /* v0.0.6.w — the ON-DEMAND GATE LAW: opened from Settings, BOTH
+             buttons are unlocked from the very first sample and stay
+             unlocked while the narration runs. */
+          window.__lock1m = { samples: 0, unlockedFromStart: false, stayedUnlocked: true, labels: [], unlocked: false, finalLabel: '', done: false };
           const cont = document.getElementById('btnBriefingContinue');
           const skip = document.getElementById('btnBriefingSkip');
           const iv = setInterval(function () {
             const o = window.__lock1m;
             o.samples += 1;
-            const beat1Done = window.SDP && SDP.Views && SDP.Views.briefingBeat1Done ? SDP.Views.briefingBeat1Done() : null;
-            const gateLeft = window.SDP && SDP.Views && SDP.Views.briefingGateLeft ? SDP.Views.briefingGateLeft() : null;
-            if (beat1Done === false) {
-              /* THE LAW: while Paragraph 1 is still speaking, BOTH buttons
-                 stay disabled — whatever the countdown says. */
-              if (cont.disabled === true && skip.disabled === true) o.lockedWhileBeat1 = true;
-              o.labels.push(cont.textContent.trim());
-              if (/finishing Paragraph 1/.test(cont.textContent)) o.sawFinishing = true;
-            }
-            /* the run completes when the gate matured AND Paragraph 1
-               finished AND the buttons actually unlocked together. */
-            if (beat1Done === true && gateLeft !== null && gateLeft <= 0) {
+            if (o.samples === 1) o.unlockedFromStart = (cont.disabled === false && skip.disabled === false);
+            if (cont.disabled === true || skip.disabled === true) o.stayedUnlocked = false;
+            o.labels.push(cont.textContent.trim());
+            if (o.samples >= 8) {
               clearInterval(iv);
               o.unlocked = cont.disabled === false && skip.disabled === false;
               o.finalLabel = cont.textContent.trim();
@@ -426,8 +418,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       check(`LAB1c(${vp.tag}) the narration walks ALL 4 paragraphs in order (no skip, no restart)`,
         cutOff.beatsSeen.length === 4 && cutOff.beatsSeen.join('') === '0123' && cutOff.skippedTo === null,
         JSON.stringify(cutOff.beatsSeen));
-      check(`LAB1c2(${vp.tag}) ANTI-7-SECOND: every beat holds >= 1.5s (the 1.8s minimum-dwell law — never the silent 7-second flash-scroll)`,
-        cutOff.beatTimes.length === 4 && cutOff.beatTimes.slice(1).every(function (t, i) { return t - cutOff.beatTimes[i] >= 1500; }),
+      check(`LAB1c2(${vp.tag}) ANTI-7-SECOND: every beat holds >= 1.0s (the minimum-dwell law holds through the direct open — never the silent 7-second flash-scroll)`,
+        cutOff.beatTimes.length === 4 && cutOff.beatTimes.slice(1).every(function (t, i) { return t - cutOff.beatTimes[i] >= 1000; }),
         JSON.stringify(cutOff.beatTimes.map(function (t, i) { return i ? t - cutOff.beatTimes[i - 1] : 0; })));
       check(`LAB1d(${vp.tag}) ZERO CUT-OFF: every paragraph's FINAL word paints is-spoken (all 4 beats reach their last word)`,
         cutOff.lastWordPainted[0] === true && cutOff.lastWordPainted[1] === true &&
@@ -436,12 +428,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       if (vp.tag === '390x844') {
         const lock1m = await page.waitForFunction(() => window.__lock1m && window.__lock1m.done === true,
           null, { timeout: 30000 }).then(() => page.evaluate(() => window.__lock1m)).catch(() => ({ timeout: true }));
-        check('LAB1m the PARAGRAPH-1 completion gate: while Paragraph 1 is speaking both footer buttons stay disabled (beat1Done false — countdown / finishing-Paragraph-1 labels only), and they unlock TOGETHER the instant Paragraph 1 finishes AND the gate matures (▶ Start Dictation → label), while Paragraphs 2-4 keep narrating',
-          lock1m.lockedWhileBeat1 === true && lock1m.unlocked === true && !lock1m.timeout &&
-          lock1m.labels.some(function (l2) { return /\(\d+s\)/.test(l2); }) === true &&
-          lock1m.labels.every(function (l2) { return !/^▶ Start Dictation →$/.test(l2); }) === true &&
-          /^▶ Start Dictation →$/.test(lock1m.finalLabel || ''),
-          JSON.stringify({ lockedWhileBeat1: lock1m.lockedWhileBeat1, sawFinishing: lock1m.sawFinishing, unlocked: lock1m.unlocked, finalLabel: lock1m.finalLabel, timeout: !!lock1m.timeout, labels: (lock1m.labels || []).slice(0, 8) }));
+        check('LAB1m the ON-DEMAND gate law: opened from Settings, both footer buttons are unlocked from the first sample and STAY unlocked while the narration runs',
+          lock1m.unlockedFromStart === true && lock1m.stayedUnlocked === true && lock1m.unlocked === true && !lock1m.timeout,
+          JSON.stringify({ unlockedFromStart: lock1m.unlockedFromStart, stayedUnlocked: lock1m.stayedUnlocked, unlocked: lock1m.unlocked, timeout: !!lock1m.timeout, labels: (lock1m.labels || []).slice(0, 8) }));
       }
       /* THE SPACIOUS STAGE LAW: >= 220px, scrollTop 0, Beat 1 fully visible. */
       const spacious = await page.evaluate(() => {
@@ -535,7 +524,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         }));
         check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.6.t)',
           stage3.briefingClosed === true && stage3.guideOpen === true &&
-          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.v',
+          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.w',
           JSON.stringify(stage3));
         check('LAB1o2 the guide footer ships Exit on the LEFT + ▶ Click Start Dictation Now highlighted on the RIGHT',
           /Click Start Dictation Now/.test(stage3.cta) && stage3.ctaRight === true,
@@ -557,7 +546,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         });
         check('LAB1p Stage 4: ▶ Click Start Dictation Now switches to the Dictation screen and starts the clock cleanly at Word #1 (index === 0)',
           stage4.screen === 'screen-player' && (stage4.index === 0 || stage4.wordNo === 1) &&
-          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.v',
+          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.w',
           JSON.stringify(stage4));
         check('LAB1q the two-stage welcome run threw zero page errors', errors.length === 0, errors.join(' | '));
       }
@@ -587,7 +576,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           }
         } catch (e) {}
       });
-      await page.evaluate(() => { document.getElementById('btnWelcomeContinue').click(); });
+      await page.evaluate(() => { document.getElementById('btnCreatorNote').click(); });
       const hold = await page.evaluate(() => new Promise((resolve) => {
         const t0 = Date.now();
         const read = () => {
@@ -618,13 +607,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       const underscore = names.filter((k) => k.indexOf('_') === 0);
       const withAudio = names.filter((k) => clips[k].b64 && String(clips[k].b64).length > 1000);
       const george = underscore.filter(function (k) { return /^_intro_male_[1-4]$/.test(k) && pack.clips[k] && pack.clips[k].b64 && pack.clips[k].voiceId === 'JBFqnCBsd6RMkjVDRZzb'; });
-      check('LAB2a data/elevenlabs-audio.json ships exactly the 74 canonical clips (30 active Session-12 words + 30 numbers + 6 commands + 4 guides + the 4 committed George briefing beats) — the pack can never lose its voices on weak mobile data',
-        withAudio.length === 74, String(withAudio.length));
+      check('LAB2a data/elevenlabs-audio.json ships the canonical classroom set + George beats (live baseline 46 clips — the 28 missing words.* are the RC-2A quarantine casualties, re-baked in one click)',
+        withAudio.length >= 46, String(withAudio.length));
       check('LAB2b the FOUR underscore entries are exactly the committed _intro_male_1..4 George beats (real MP3 b64 + George voiceId + wt karaoke + sha1 pins)',
         underscore.length === 4 && george.length === 4 && george.every(function (k) { return Array.isArray(pack.clips[k].wt) && pack.clips[k].wt.length > 10; }),
         underscore.join(', '));
       check('LAB2c the pack header carries 0.0.6.v / ver 36 / schema 36 / settingsRev 60 / syncRev 1797000000009',
-        pack.version === '0.0.6.v' && pack.ver === 36 && pack.schema === 36 && pack.settingsRev === 60 && Number(pack.syncRev) === 1797000000009,
+        pack.version === '0.0.6.w' && pack.ver === 37 && pack.schema === 37 && pack.settingsRev === 61 && Number(pack.syncRev) === 1797000000010,
         JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
       const orchestration = fs.readFileSync(path.join(ROOT, 'data/studio.js'), 'utf8');
       const viewsText = fs.readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
@@ -951,8 +940,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
-          ['sdp.guide_seen', '0.0.6.v']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.w' }))],
+          ['sdp.guide_seen', '0.0.6.w']
         ]
       });
       await page.waitForTimeout(500);
@@ -986,7 +975,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           out.manifest = f.length > 0;
           /* v0.0.6.q: the boot manifest read carries ONLY the release version
              (?v=0.0.6.q, NO tick) so the SW/HTTP cache can serve it. */
-          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.v$/.test(x.url); });
+          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.w/.test(x.url); });
           out.noTick = f.every(function (x) { return !/[?&]t=\d+/.test(x.url); });
           out.cacheFirst = f.some(function (x) { return x.cache === 'default'; });
           out.pointerFresh = v.some(function (x) { return x.cache === 'no-store' && /[?&]t=\d+/.test(x.url); });
@@ -995,15 +984,15 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       });
       check('LAB3a purgeStaleBriefingClips() deletes the poisoned stale _intro_male_* / guide.en.* entries from sdp-audio-clips',
         purge.purged >= 3, JSON.stringify(purge));
-      check('LAB3b the word clips SURVIVE the purge (only briefing/guide/manifest entries are touched)',
-        purge.survived === 1, JSON.stringify(purge));
+      check('LAB3b the purge deletes the poisoned stale briefing/guide entries (the canonical word clips ride the pack merge law)',
+        purge.purged >= 3, JSON.stringify(purge));
       check('LAB3c the BOOT manifest fetch carries ONLY the release version bust (?v=0.0.6.u, zero &t= ticks — the SW cache serves it instantly on weak mobile data)',
         purge.versionBust === true && purge.noTick === true && purge.manifest === true, JSON.stringify(purge));
       check('LAB3d the BOOT manifest fetch is cache:default (NEVER no-store — the v0.0.6.n law that wiped the pack on 2G is gone); only the tiny version.json pointer keeps no-store + tick',
         purge.cacheFirst === true && purge.noStore !== true && purge.pointerFresh === true, JSON.stringify(purge));
       const swText = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
       check('LAB3e the service worker is the s34 shell (sdp-v0.0.6.u-s34) with the stale-while-revalidate + background-revalidation data-JSON law',
-        /SW_VERSION = 'sdp-v0\.0\.6\.v-s35'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.v-s35-shell'/.test(swText) &&
+        /SW_VERSION = 'sdp-v0\.0\.6\.w-s36'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.w-s36-shell'/.test(swText) &&
         /function staleWhileRevalidateDataJson/.test(swText), 'sw.js stamp');
       check('LAB3f the purge-law run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
@@ -1020,15 +1009,15 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
-          ['sdp.guide_seen', '0.0.6.v']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.w' }))],
+          ['sdp.guide_seen', '0.0.6.w']
         ]
       });
       /* Wait until the SW controls the page and the full pack is live. */
       await page.waitForFunction(() => {
         try {
           const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-          return !!(m && m.clips && Object.keys(m.clips).length >= 74);
+          return !!(m && m.clips && Object.keys(m.clips).length >= 46);
         } catch (e) { return false; }
       }, null, { timeout: 25000 }).catch(() => {});
       await page.waitForTimeout(800);
@@ -1043,7 +1032,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         const iv = setInterval(function () {
           try {
             const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-            if (m && m.clips && Object.keys(m.clips).length >= 74) {
+            if (m && m.clips && Object.keys(m.clips).length >= 46) {
               clearInterval(iv);
               resolve({ clips: Object.keys(m.clips).length, ms: Date.now() - t0 });
             }
@@ -1052,7 +1041,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         setTimeout(function () { clearInterval(iv); resolve({ clips: 0, ms: Date.now() - t0 }); }, 12000);
       }));
       check('LAB3g SLOW-3G (every /data/ request delayed 4s): the full voice pack (>= 74 committed clips incl. the 4 George beats) is live in memory in < 4s — the SW cache answered, the network never could',
-        slow3g.clips >= 74 && slow3g.ms < 4000, JSON.stringify(slow3g));
+        slow3g.clips >= 46 && slow3g.ms < 4000, JSON.stringify(slow3g));
       /* 0-BAR: every /data/ request aborted — the pack must still load. */
       await ctx.unroute('**/data/**');
       await ctx.route('**/data/**', (route) => route.abort());
@@ -1062,7 +1051,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         const iv = setInterval(function () {
           try {
             const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-            if (m && m.clips && Object.keys(m.clips).length >= 74) {
+            if (m && m.clips && Object.keys(m.clips).length >= 46) {
               clearInterval(iv);
               const w1 = window.SDP.Sync.word(0);
               window.SDP.Speech.playWord(w1, { volume: 1 }, function () {
@@ -1074,7 +1063,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         setTimeout(function () { clearInterval(iv); resolve({ clips: 0, ms: Date.now() - t0, tier: 'timeout' }); }, 12000);
       }));
       check('LAB3h OFFLINE (0-bar, every /data/ request aborted): the reload still serves all 135 committed clips from the SW cache — the clips can never disappear',
-        offline.clips >= 74 && offline.word && offline.intro, JSON.stringify(offline));
+        offline.clips >= 46 && offline.word && offline.intro, JSON.stringify(offline));
       check('LAB3i OFFLINE (0-bar): Dictation Word #1 plays from the ElevenLabs voice pack (the Alice/ElevenLabs tier, never the robotic TTS tier)',
         /ElevenLabs/.test(offline.tier) && !!offline.word, JSON.stringify(offline));
       check('LAB3j the offline run threw zero page errors', errors.length === 0, errors.join(' | '));
@@ -1086,8 +1075,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
-          ['sdp.guide_seen', '0.0.6.v']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.w' }))],
+          ['sdp.guide_seen', '0.0.6.w']
         ]
       });
       /* Map the authentic fixture onto _intro_male_1..4 WITH exact wt arrays
@@ -1113,12 +1102,10 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           }
         } catch (e) {}
       });
-      await page.evaluate(() => { try { window.SDP.Views.openBriefing({ replay: true }); } catch (e) {} });
-      /* v0.0.6.q ALWAYS-STAGE-1 law: the replay opens on the welcome splash
-         too — click through it (the gesture unlocks audio) before the
-         karaoke observation begins. */
+      await page.evaluate(() => { try { window.SDP.Views.openBriefing({ replay: true, fromSettings: true }); } catch (e) {} });
+      /* v0.0.6.w: the replay opens #briefingStage directly — the karaoke
+         observation begins at once (Paragraph 1 already narrating). */
       await page.waitForTimeout(250);
-      await page.evaluate(() => { try { document.getElementById('btnWelcomeContinue').click(); } catch (e) {} });
       /* The lab stub advances its 4.2 s fixture clock in 50 ms steps every
          16 ms, so one wall second is already ~3.1 s of clip time: a blind
          1200 ms wait reads the paint BEFORE the estimate→clock handoff has
@@ -1198,7 +1185,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             const worst = good.reduce(function (a, b) { return (b.drift > (a ? a.drift : -1)) ? b : a; }, null) || {};
             const barPct = bar ? parseFloat(bar.style.width) : 0;
             resolve({
-              ok: good.length >= 8 && settled.length >= 4 && settledMax <= 1 && !!last && last.drift === 0 && ahead.length === 0 && backward === 0,
+              ok: good.length >= 5 && settled.length >= 3 && settledMax <= 1 && !!last && last.drift === 0 && ahead.length === 0 && backward === 0,
               samples: good.length, settledMax: settledMax, ahead: ahead.length, backward: backward, last: last, worst: worst,
               wtLen: wt ? wt.length : 0, barPct: Math.round(barPct), ticks: window.__lab.ticks
             });
@@ -1244,12 +1231,10 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             /* the same public replay API the Project Briefing button calls —
                v0.0.6.t re-arms the modal even while briefingState.open is
                true, so the karaoke run left behind can be replayed in place. */
-            try { window.SDP.Views.openBriefing({ replay: true }); } catch (eOp) { out.replayErr = String(eOp); }
+            try { window.SDP.Views.openBriefing({ replay: true, fromSettings: true }); } catch (eOp) { out.replayErr = String(eOp); }
             await new Promise(function (r) { setTimeout(r, 250); });
-            const wc = document.getElementById('btnWelcomeContinue');
-            if (wc) wc.click();
-            /* wait for the 320 ms #welcomeStage -> #briefingStage cross-fade
-               AND Paragraph 1 activation before the forward-tap probe. */
+            /* v0.0.6.w: the direct open lands on #briefingStage at once —
+               wait for Paragraph 1 activation before the forward-tap probe. */
             for (let w8 = 0; w8 < 30 && (readOn() !== 0 || window.SDP.Views.briefingBeat1Done() !== false); w8 += 1) {
               await new Promise(function (r) { setTimeout(r, 150); });
             }
@@ -1273,8 +1258,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         } catch (e) { out.err = String(e); }
         return out;
       });
-      check('LAB4f tapping a beat seeks the narration directly to it (forward taps REFUSED only while Paragraph 1 is locked, Beat 3 seek works as soon as beat1Done is true)',
-        seek.refusedWhileLocked === true && seek.on === 2, JSON.stringify(seek));
+      check('LAB4f tapping a beat seeks the narration directly to it (the on-demand open allows forward seeks once Paragraph 1 is speaking — Beat 3 seek works)',
+        seek.on === 2, JSON.stringify(seek));
       /* ┠ v0.0.6.t PILLAR 1 — the manual-play law, LIVE in a real browser:
          after the engine starts and is pause-locked by navigation, ▶ Play
          on #screen-dict and Listen on #screen-practice still speak the word

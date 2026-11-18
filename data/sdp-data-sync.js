@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.v';
-  SDP.build = '2026-11-17';
-  SDP.ver = 36;
+  SDP.version = '0.0.6.w';
+  SDP.build = '2026-11-18';
+  SDP.ver = 37;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.v';
-  var SCHEMA = 35;
-  var SETTINGS_REV = 60;
+  var APP_VERSION = '0.0.6.w';
+  var SCHEMA = 37;
+  var SETTINGS_REV = 61;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1387,6 +1387,36 @@
      replaced while the runtime value still equals its shipped default, so
      any custom Lecturer edit in Studio is 100% preserved. */
   var CAMBRIDGE_B1_RP_LEXICON = {
+    "town": { p: "/taʊn/", pos: "noun.", ttsHint: "TAWN" },
+    "airport": { p: "/ˈeə.pɔːt/", pos: "noun.", ttsHint: "EAIR-port" },
+    "bridge": { p: "/brɪdʒ/", pos: "noun.", ttsHint: "BRIJ" },
+    "cash machine": { p: "/ˈkæʃ məˌʃiːn/", pos: "noun.", ttsHint: "KASH muh-sheen" },
+    "cashpoint": { p: "/ˈkæʃ.pɔɪnt/", pos: "noun.", ttsHint: "KASH-poynt" },
+    "city centre": { p: "/ˌsɪt.i ˈsen.tə/", pos: "noun.", ttsHint: "SIT-ee sen-tuh" },
+    "crossroads": { p: "/ˈkrɒs.rəʊdz/", pos: "noun.", ttsHint: "KROSS-rohdz" },
+    "fountain": { p: "/ˈfaʊn.tɪn/", pos: "noun.", ttsHint: "FOWN-tin" },
+    "monument": { p: "/ˈmɒn.jʊ.mənt/", pos: "noun.", ttsHint: "MON-yoo-muhnt" },
+    "pavement": { p: "/ˈpeɪv.mənt/", pos: "noun.", ttsHint: "PAYV-muhnt" },
+    "petrol station": { p: "/ˈpet.rəl ˌsteɪ.ʃən/", pos: "noun.", ttsHint: "PET-ruhl stay-shuhn" },
+    "roundabout": { p: "/ˈraʊnd.ə.baʊt/", pos: "noun.", ttsHint: "ROWND-uh-bowt" },
+    "shopping centre": { p: "/ˈʃɒp.ɪŋ ˌsen.tə/", pos: "noun.", ttsHint: "SHOP-ing sen-tuh" },
+    "square": { p: "/skweə/", pos: "noun.", ttsHint: "SKWEAIR" },
+    "street": { p: "/striːt/", pos: "noun.", ttsHint: "STREET" },
+    "subway": { p: "/ˈsʌb.weɪ/", pos: "noun.", ttsHint: "SUB-way" },
+    "tunnel": { p: "/ˈtʌn.əl/", pos: "noun.", ttsHint: "TUN-uhl" },
+    "turning": { p: "/ˈtɜː.nɪŋ/", pos: "noun.", ttsHint: "TUR-ning" },
+    "services": { p: "/ˈsɜː.vɪ.sɪz/", pos: "noun.", ttsHint: "SUR-vi-siz" },
+    "bank": { p: "/bæŋk/", pos: "noun.", ttsHint: "BANGK" },
+    "cafe": { p: "/ˈkæf.eɪ/", pos: "noun.", ttsHint: "KAF-ay" },
+    "cafeteria": { p: "/ˌkæf.əˈtɪə.ri.ə/", pos: "noun.", ttsHint: "kaf-uh-TEER-ee-uh" },
+    "cinema": { p: "/ˈsɪn.ə.mə/", pos: "noun.", ttsHint: "SIN-uh-muh" },
+    "dentist": { p: "/ˈden.tɪst/", pos: "noun.", ttsHint: "DEN-tist" },
+    "gallery": { p: "/ˈɡæl.ər.i/", pos: "noun.", ttsHint: "GAL-uh-ree" },
+    "hairdresser": { p: "/ˈheəˌdres.ə/", pos: "noun.", ttsHint: "HEAIR-dres-uh" },
+    "museum": { p: "/mjuːˈziː.əm/", pos: "noun.", ttsHint: "myoo-ZEE-uhm" },
+    "restaurant": { p: "/ˈres.trɒnt/", pos: "noun.", ttsHint: "RES-tront" },
+    "theatre": { p: "/ˈθɪə.tə/", pos: "noun.", ttsHint: "THEE-uh-tuh" },
+    "tourist information": { p: "/ˈtʊə.rɪst ˌɪn.fəˈmeɪ.ʃən/", pos: "noun.", ttsHint: "TOOR-ist in-fuh-may-shuhn" },
   /* v0.0.6.v — SESSION 12 (PLACES & BUILDINGS): the 30 active British RP
      entries, same shape as the entertainment set (p = Cambridge UK IPA,
      ttsHint = RP respelling spoken by buildQueue). */

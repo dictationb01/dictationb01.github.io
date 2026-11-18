@@ -197,6 +197,74 @@
   var base = (persona && str(persona.name)) ? str(persona.name) : INTRO_VOICE.name;
   return briefingCustomVoiceId() ? (base + ' · ' + briefingCustomVoiceId()) : base;
  }
+ /* v0.0.6.w — Data-first settings access: settings()/saveSettings() live on
+    SDP.Data (the five-key law owner); the sync().settings spelling is only a
+    legacy fallback so the controller works on every surface. */
+ function dataSettings() {
+  try { if (global.SDP && SDP.Data && SDP.Data.settings) return SDP.Data.settings() || {}; } catch (eD) {}
+  try { var sy = sync(); if (sy && sy.settings) return sy.settings() || {}; } catch (eS) {}
+  return {};
+ }
+ function dataSaveSettings(patch) {
+  try { if (global.SDP && SDP.Data && SDP.Data.saveSettings) { SDP.Data.saveSettings(patch); return true; } } catch (eD2) {}
+  try { var sy2 = sync(); if (sy2 && sy2.saveSettings) { sy2.saveSettings(patch); return true; } } catch (eS2) {}
+  return false;
+ }
+
+ /* ══ v0.0.6.w — the UNIFIED CLASSROOM & CLONED VOICE CONTROLLER ═══════════
+    ONE voice — the default energetic British RP Female Alice
+    (Xb7hH8MSUJpSbSDYk0k2) OR the Lecturer's chosen/pasted Cloned Voice —
+    speaks across 100% of the classroom UI (Dictation, 30 Words, Practice,
+    Board, Settings, Commands, Numbers, Guide). The Project Briefing male
+    voice (_intro_male_1..4, George) stays separate in Settings. The pick is
+    persisted inside sdp.settings.voiceSignature.voiceId / .voiceName (the
+    five-key law holds) and activeVoiceId follows it everywhere. */
+ function chosenClassroomVoiceId() {
+  var vs = null;
+  try { vs = dataSettings().voiceSignature || null; } catch (eVS) { vs = null; }
+  var v = str(vs && vs.voiceId);
+  if (!v) {
+   /* legacy vault pick: the briefing custom field doubles as the classroom clone */
+   try { v = str(ST.secrets && ST.secrets.classroomVoiceId) || ''; } catch (eCV) { v = ''; }
+  }
+  return /^[A-Za-z0-9]{16,32}$/.test(v) ? v : VOICE_ID;
+ }
+ function chosenClassroomVoiceName() {
+  var vs = null;
+  try { vs = dataSettings().voiceSignature || null; } catch (eVS2) { vs = null; }
+  var n = str(vs && vs.voiceName);
+  var id = chosenClassroomVoiceId();
+  if (id === VOICE_ID) return n || VOICE_NAME;
+  return n || ('My Cloned Voice · ' + id);
+ }
+ function applyClassroomVoice(voiceId, voiceName) {
+  var id = str(voiceId).replace(/\s+/g, '');
+  if (!/^[A-Za-z0-9]{16,32}$/.test(id)) { msg(' Paste a valid Cloned Voice ID (16-32 chars).', 'warn'); return false; }
+  var base = defaultVoiceSignature();
+  base.voiceId = id;
+  base.voiceName = str(voiceName) || ('My Cloned Voice · ' + id);
+  /* Cloned-Voice-safe: no style knob, speaker boost on. */
+  base.settings = { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true };
+  base.locked = false;
+  base.cloned = true;
+  if (!dataSaveSettings({ voiceSignature: base })) return false;
+  activeVoiceId = id;
+  activeVoiceName = base.voiceName;
+  if (isObj(ST.secrets)) ST.secrets.classroomVoiceId = id;
+  try { paintClassroomVoiceBar(); } catch (eP) {}
+  msg(' Cloned voice "' + base.voiceName + '" applied to ALL words & classroom UI — re-bake with Apply again or Generate.', 'ok');
+  return true;
+ }
+ function paintClassroomVoiceBar() {
+  var bar = byId('studioClassroomVoiceBar');
+  if (!bar) return false;
+  var id = chosenClassroomVoiceId();
+  bar.setAttribute('data-state', id === VOICE_ID ? 'alice' : 'cloned');
+  bar.textContent = (id === VOICE_ID)
+   ? '🔊 Unified Classroom Voice: Alice (energetic British RP female · Xb7hH8MSUJpSbSDYk0k2)'
+   : '🎙 Unified Classroom Voice: ' + chosenClassroomVoiceName() + ' (' + id + ')';
+  return true;
+ }
  /* v0.0.6.q Pillar 1 — the WEEKLY AUTO-REGENERATION clock: the same */
  function currentWeeksSinceStart() {
   try {
@@ -2014,6 +2082,25 @@
    '</div>';
  }
 
+ /* v0.0.6.w — the unified classroom & cloned voice card sits directly under
+    the security bar (never above it — the bar stays pinned at the header). */
+ function classroomVoiceCardMarkup() {
+  return '<div class="chip-row studio-classroom-voice-row">' +
+   '<span id="studioClassroomVoiceBar" class="studio-briefing-voice-bar" data-state="alice" role="status" aria-live="polite">🔊 Unified Classroom Voice: Alice</span>' +
+   '</div>' +
+   '<section id="studioCardClassroomVoice" class="studio-card studio-card-classroom-voice">' +
+   '<h4 class="studio-h4"><span class="studio-step-tag">UNIFIED CLASSROOM &amp; CLONED VOICE</span>One voice for every word, number, command &amp; guide</h4>' +
+   '<div class="chip-row">' +
+   '<input id="studioClassroomCustomVoiceId" class="input studio-voice-custom" type="text" value="' + esc(chosenClassroomVoiceId() === VOICE_ID ? '' : chosenClassroomVoiceId()) + '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Paste Cloned ElevenLabs Voice ID (e.g. from 🔄 Fetch My Cloned Voices)…">' +
+   btn('btnApplyClassroomVoice', '✅ Apply Cloned Voice to All Words &amp; UI', 'btn-primary') +
+   btn('btnRebakeClassroomVoice', '📊 Re-bake All Classroom Clips in This Voice', 'btn-ghost') +
+   btn('btnResetClassroomVoice', '↩ Back to Alice (default)', 'btn-ghost') +
+   btn('btnOpenLiveLab', '🔬 Open Real-Time Voice &amp; Clone Lab', 'btn-go') +
+   '</div>' +
+   '<p class="studio-hint">The cloned voice speaks every Dictation word, number, command and guide clip. The Settings › Project Briefing male narrator stays separate.</p>' +
+   '</section>';
+ }
+
  /* ═════════════ v0.0.6.v — VOICE SIGNATURE & ENERGY LOCK ═════════════════ */
  /* The locked broadcast signature every words-dot and num-dot take is normalized to:
     Alice (Xb7hH8MSUJpSbSDYk0k2 / eleven_flash_v2_5), -21 LUFS integrated,
@@ -2031,11 +2118,47 @@
  function voiceSignature() {
   var s = sync() && sync().settings ? (sync().settings() || {}) : {};
   var vs = s.voiceSignature;
-  if (!isObj(vs) || str(vs.voiceId) !== 'Xb7hH8MSUJpSbSDYk0k2') {
+  /* v0.0.6.w: a PERSISTED CLONE is a valid signature — the Alice-only guard
+     that overwrote every applied clone is gone. Only a missing/corrupt object
+     reseeds the default Alice signature. */
+  if (!isObj(vs) || !str(vs.voiceId)) {
    vs = defaultVoiceSignature();
    try { if (sync() && sync().saveSettings) sync().saveSettings({ voiceSignature: vs }); } catch (eV) {}
   }
   return vs;
+ }
+
+ /* v0.0.6.w — buildFallbackRpHint(w): a deterministic grapheme→British-RP
+    phonetic respelling for words outside the shipped lexicon and beyond the
+    dictionary/AI legs. Non-rhotic (no r-colouring), UK vowel and stress
+    mappings only — an informational hint, never a blocker. */
+ function buildFallbackRpHint(w) {
+  var s = str(w).toLowerCase().replace(/[^a-z\s-]/g, '');
+  if (!s) return str(w);
+  var map = {
+   'augh': 'ah', 'eigh': 'ay', 'ough': 'uh', 'aik': 'ayk', 'aire': 'air',
+   'tion': 'shun', 'sion': 'zhun', 'cious': 'shus', 'tious': 'shus', 'ture': 'chuh',
+   'ai': 'ay', 'ay': 'ay', 'ea': 'ee', 'ee': 'ee', 'oa': 'oh', 'oe': 'oh',
+   'ou': 'ow', 'ow': 'oh', 'oi': 'oy', 'oy': 'oy', 'au': 'aw', 'aw': 'aw',
+   'ei': 'ay', 'ey': 'ay', 'ie': 'ee', 'ue': 'oo', 'ui': 'oo',
+   'ch': 'ch', 'sh': 'sh', 'th': 'th', 'ph': 'f', 'gh': 'g', 'ck': 'k', 'qu': 'kw',
+   'ar': 'ah', 'er': 'uh', 'ir': 'uh', 'ur': 'uh', 'or': 'aw',
+   'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'y': 'ee'
+  };
+  var out = '', i = 0;
+  while (i < s.length) {
+   var hit = '';
+   var keys = ['augh', 'eigh', 'ough', 'aik', 'aire', 'tion', 'sion', 'cious', 'tious', 'ture',
+    'ai', 'ay', 'ea', 'ee', 'oa', 'oe', 'ou', 'ow', 'oi', 'oy', 'au', 'aw', 'ei', 'ey', 'ie', 'ue', 'ui',
+    'ch', 'sh', 'th', 'ph', 'gh', 'ck', 'qu', 'ar', 'er', 'ir', 'ur', 'or',
+    'a', 'e', 'i', 'o', 'u', 'y'];
+   for (var k = 0; k < keys.length; k++) {
+    if (s.indexOf(keys[k], i) === i) { hit = keys[k]; break; }
+   }
+   if (hit) { out += map[hit] + '-'; i += hit.length; }
+   else { out += s.charAt(i); i += 1; }
+  }
+  return str(w) && out.replace(/-+/g, '-').replace(/^-|-$/g, '');
  }
 
  /* The 4-stage British RP verifier run BEFORE synthesis in generateClips:
@@ -2067,44 +2190,93 @@
   var dictUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(w);
   global.fetch(dictUrl, { cache: 'no-store' }).then(function (res) { return res && res.ok ? res.json() : null; }, function () { return null; })
    .then(function (entries) {
+    if (!entries || !entries.length) {
+     /* v0.0.6.w: a dead dictionary still synthesizes — deterministic RP hint. */
+     result.stage = 'D';
+     result.quarantined = false;
+     result.rpSource = 'fallback';
+     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
+     result.ok = true;
+     finish();
+     return;
+    }
+    return entries;
+   })
+   .then(function (entries) {
+    /* v0.0.6.w — the SEPARATE-ENTRY LAW: dictionaryapi.dev often returns the
+       UK IPA text and the -uk.mp3 audio URL on DIFFERENT phonetics[] elements
+       (and the IPA on an entry with US audio). Scan EVERY entry: prefer a
+       phonetics[] item that carries -uk.mp3, else any non-US IPA text; the
+       -uk.mp3 URL is collected wherever it lives. */
     var uk = '';
+    var ukAudio = '';
+    var anyIpa = '';
     try {
      var ei, pi;
-     for (ei = 0; ei < (entries || []).length && !uk; ei++) {
+     for (ei = 0; ei < (entries || []).length; ei++) {
       var ph = (entries[ei] && entries[ei].phonetics) || [];
       for (pi = 0; pi < ph.length; pi++) {
-       if (str(ph[pi] && ph[pi].audio).indexOf('-uk.mp3') >= 0) { uk = str(ph[pi].text || ''); break; }
+       var pAudio = str(ph[pi] && ph[pi].audio);
+       var pText = str(ph[pi] && ph[pi].text || '');
+       if (pAudio.indexOf('-uk.mp3') >= 0 && !ukAudio) ukAudio = pAudio;
+       if (!uk) {
+        if (pAudio.indexOf('-uk.mp3') >= 0 && pText) { uk = pText; }
+        else if (!anyIpa && pText && pAudio.indexOf('-us.mp3') < 0) { anyIpa = pText; }
+       }
       }
+      var meanings = (entries[ei] && entries[ei].meanings) || [];
+      var defs = [];
+      try {
+       for (var mi = 0; mi < meanings.length; mi++) {
+        var ds = (meanings[mi] && meanings[mi].definitions) || [];
+        for (var di = 0; di < ds.length && defs.length < 2; di++) defs.push(str(ds[di] && ds[di].definition));
+       }
+      } catch (eD) {}
+      if (!result.defs && defs.length) result.defs = defs;
+      var posList = [];
+      try {
+       for (var mp = 0; mp < meanings.length; mp++) if (str(meanings[mp] && meanings[mp].partOfSpeech)) posList.push(str(meanings[mp].partOfSpeech));
+      } catch (eP2) {}
+      if (!result.pos && posList.length) result.pos = posList.slice(0, 2);
      }
     } catch (eP) {}
+    if (!uk && anyIpa) uk = anyIpa;
+    if (ukAudio) result.ukAudio = ukAudio;
     result.stage = 'B';
     if (uk) {
      result.ipa = uk;
-     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || '');
+     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
      result.confidence = 0.9;
-     result.ok = !!result.rpRespelling;
+     result.ok = true;
      finish();
      return;
     }
     /* Stage C — the AI verdict through the existing aiKey cascade. */
-    aiVerify(function (ai) {
+    aiVerify(w, function (ai) {
      result.stage = 'C';
      if (ai && ai.ipa && Number(ai.confidence) >= 0.85) {
       result.ipa = str(ai.ipa);
-      result.rpRespelling = str(ai.rpRespelling || (wordObj && wordObj.ttsHint) || '');
+      result.rpRespelling = str(ai.rpRespelling || (wordObj && wordObj.ttsHint) || buildFallbackRpHint(w));
       result.confidence = Number(ai.confidence) || 0;
-      result.ok = !!result.rpRespelling;
+      result.ok = true;
      } else {
+      /* v0.0.6.w — the NEVER-QUARANTINE LAW: a word outside the 60-entry
+         lexicon with no dictionary/AI verdict synthesizes ANYWAY through the
+         deterministic British RP phonetic respelling rule (Stage D fallback),
+         stamped rpSource: 'fallback'. NOTHING is ever skipped. */
       result.confidence = Number(ai && ai.confidence) || 0;
       result.ipa = str((ai && ai.ipa) || '');
-      result.quarantined = true; /* Stage D — conflict rule. */
+      result.quarantined = false;
+      result.rpRespelling = str((ai && ai.rpRespelling) || (wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
+      result.rpSource = 'fallback';
+      result.ok = true;
      }
      finish();
     });
    });
   return true;
  }
- function aiVerify(cb) {
+ function aiVerify(w, cb) {
   cb = cb || noop;
   var key = str(ST.secrets && ST.secrets.aiKey) || '';
   if (!key) { cb(null); return false; }
@@ -2112,7 +2284,7 @@
    model: 'llama-3.3-70b-versatile',
    messages: [
     { role: 'system', content: 'You verify British RP (Cambridge English B1, non-rhotic) pronunciations. Answer strict JSON only: {"ipa":"...","rpRespelling":"...","heterophone":false,"confidence":0.0}' },
-    { role: 'user', content: 'Word: ' + str(arguments.length) }
+    { role: 'user', content: 'Word: ' + str(w) }
    ]
   });
   /* The generic LLM leg reuses the existing Groq/OpenRouter cascade; a
@@ -2220,7 +2392,7 @@
  }
 
  function unlockedMarkup() {
-  return securityBarMarkup() +
+  return securityBarMarkup() + classroomVoiceCardMarkup() +
    /* v0.0.6.v — the Voice Signature & Energy Lock status bar. */
    '<div class="chip-row studio-voice-lock-bar"><span class="studio-briefing-voice-bar" data-state="locked" role="status" aria-live="polite">🔒 Locked: Energetic British RP Female (Alice · -21 LUFS · +2.5dB @ 3kHz)</span></div>' +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
@@ -2406,6 +2578,35 @@
   /* v0.0.6.v — Live Student Activity & Alerts popup wiring. */
   var actDock = byId('studioActivityDock');
   if (actDock && ST.unlocked) actDock.hidden = false;
+  onStudio('btnApplyClassroomVoice', 'click', function () {
+   withBusy('btnApplyClassroomVoice', function (d) {
+    var inp = byId('studioClassroomCustomVoiceId');
+    applyClassroomVoice(str(inp && inp.value || ''), '');
+    d();
+   });
+  });
+  onStudio('btnRebakeClassroomVoice', 'click', function () {
+   withBusy('btnRebakeClassroomVoice', function (d) {
+    /* re-bake ALL classroom clips in the active unified voice */
+    generateClips({ force: true, forceAllClassroom: true }, function () { d(); });
+   });
+  });
+  onStudio('btnResetClassroomVoice', 'click', function () {
+   withBusy('btnResetClassroomVoice', function (d) {
+    var base = defaultVoiceSignature();
+    try { dataSaveSettings({ voiceSignature: base }); } catch (eR) {}
+    activeVoiceId = VOICE_ID;
+    activeVoiceName = VOICE_NAME;
+    if (isObj(ST.secrets)) delete ST.secrets.classroomVoiceId;
+    paintClassroomVoiceBar();
+    msg(' Unified classroom voice reset to Alice.', 'ok');
+    d();
+   });
+  });
+  onStudio('btnOpenLiveLab', 'click', function () {
+   try { global.open('./lab.html', '_blank'); } catch (eL) { msg(' Open https://dictationb01.github.io/lab.html', 'warn'); }
+  });
+  try { paintClassroomVoiceBar(); } catch (ePB) {}
   onStudio('btnStudioActivityPopup', 'click', function () { openStudioActivityPopup(); });
   onStudio('btnStudioActivityClose', 'click', function () { closeStudioActivityPopup(); });
   onStudio('btnStudioActivityJson', 'click', function () {
@@ -2972,6 +3173,11 @@
         sel.value = 'id:' + str(firstClone.voice_id);
         var cust = byId('studioBriefingCustomVoiceId');
         if (cust) cust.value = str(firstClone.voice_id);
+        /* v0.0.6.w: the discovered clone becomes the UNIFIED classroom voice
+           too — one fetch click selects it for the briefing AND every word. */
+        try { applyClassroomVoice(str(firstClone.voice_id), str(firstClone.name)); } catch (eAC) {}
+        var cc = byId('studioClassroomCustomVoiceId');
+        if (cc) cc.value = str(firstClone.voice_id);
         ST.secrets.briefingCustomVoiceId = str(firstClone.voice_id);
         ST.secrets.briefingVoiceKey = 'custom';
         ST.secrets.briefingVoiceName = str(firstClone.name);
@@ -4857,7 +5063,18 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
   var introMode = !!opts.intro;
   /* v0.0.6.q Pillar 1: the Project Briefing clips use the CHOSEN */
-  var genVoiceId = introMode ? chosenBriefingVoiceId() : activeVoiceId;
+  /* v0.0.6.w: every classroom take follows the UNIFIED Classroom & Cloned
+     Voice Controller — Alice by default, the Lecturer's clone when applied. */
+  var genVoiceId = introMode ? chosenBriefingVoiceId() : (chosenClassroomVoiceId() || activeVoiceId);
+  activeVoiceId = introMode ? activeVoiceId : genVoiceId;
+  /* v0.0.6.w — forceAllClassroom: re-bake ALL 30 words + 30 numbers + 6
+     commands + 4 guides in the active cloned voice so ONE voice speaks
+     everywhere (the briefing beats keep George in intro mode only). */
+  if (!introMode && opts.forceAllClassroom) {
+   force = true;
+   regenKeys = null;
+   opts.keys = null;
+  }
   var genModel = introMode ? INTRO_VOICE.model : VOICE_MODEL;
   var genUrl = introMode ? introVoiceTtsUrl() : elevenUrl();
   var words = introMode ? [] : (Array.isArray(opts.words) ? opts.words : currentWords());
@@ -4925,16 +5142,18 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       (quarantined words are skipped with an amber row, never synthesized). */
    if (!introMode && /^words\./.test(str(item.key)) && !itemHashVerified(item)) {
     verifyBritishRPWord({ w: str(item.key).replace(/^words\./, ''), ttsHint: str(item.ttsText || '') }, function (res) {
-     if (res && res.quarantined) {
-      ST.voicePack.quarantined = ST.voicePack.quarantined || {};
-      ST.voicePack.quarantined[item.key] = res;
-      skipped += 1;
-      paintClipTable();
-      next();
-      return;
-     }
+     /* v0.0.6.w — the NEVER-SKIP LAW: verifyBritishRPWord can no longer
+        quarantine; whatever it resolves, the word SYNTHESIZES. A fallback
+        respelling is stamped rpSource: 'fallback' as an informational badge
+        (never a blocker). */
      if (res && res.ok && isObj(ST.voicePack.clips[item.key])) {
       ST.voicePack.clips[item.key].ttsVerified = true;
+     }
+     if (res && res.rpSource === 'fallback' && isObj(ST.voicePack.clips[item.key])) {
+      ST.voicePack.clips[item.key].rpSource = 'fallback';
+     }
+     if (res && res.rpRespelling && !str(item.ttsText || '')) {
+      item.ttsText = res.rpRespelling;
      }
      synthesizeItem();
     });
@@ -5017,11 +5236,22 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       and clipFromManifest still match the exact word spelling. */
    var vs;
    if (attempt === 0) {
-    /* v0.0.6.v — attempt 0 reads the LOCKED voice signature (Alice) whenever
-       the lock is engaged; the briefing beats keep their own persona. */
+    /* v0.0.6.w — the UNIFIED VOICE LAW: genVoiceId already follows
+       chosenClassroomVoiceId() for every classroom key. When the active voice
+       is a CLONE (not Alice), attempt 0 uses the Cloned-Voice-safe settings
+       { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true } on
+       eleven_flash_v2_5; the 400/422 ladder below retries with the minimal
+       { stability: 0.55, similarity_boost: 0.80 } and finally
+       eleven_multilingual_v2 (Instant/Professional clones are often bound to
+       it). Alice keeps the locked broadcast signature. */
     var lock = (!introMode && voiceSignature && voiceSignature().locked === true) ? voiceSignature().settings : null;
-    vs = lock ? { stability: lock.stability, similarity_boost: lock.similarity_boost, style: lock.style, use_speaker_boost: true }
+    var isClone = !introMode && genVoiceId !== VOICE_ID;
+    if (isClone) {
+     vs = { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true };
+    } else {
+     vs = lock ? { stability: lock.stability, similarity_boost: lock.similarity_boost, style: lock.style, use_speaker_boost: true }
       : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
+    }
     if (introMode) vs = { stability: INTRO_VOICE_SETTINGS.stability, similarity_boost: INTRO_VOICE_SETTINGS.similarity_boost, style: INTRO_VOICE_SETTINGS.style, use_speaker_boost: true };
    } else {
     vs = { stability: 0.55, similarity_boost: 0.80 };
@@ -5087,22 +5317,32 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
          signature (-21 LUFS, +2.5 dB @ 3 kHz, TP <= -1.0) -> PCM WAV b64.
          Fallback takes (attempt >= 1) are stamped degradedTake: true. */
       var isClassroomKey = !introMode && /^(words\.|num\.)/.test(str(item.key));
-        /* v0.0.6.v — the plain (non-timestamped) leg shares the same
-         normalize + degradedTake law as the timestamped leg above. */
-      if (isClassroomKey && global.SDP && SDP.AudioNormalize && SDP.AudioNormalize.normalizeTake) {
-       SDP.AudioNormalize.normalizeTake(payload, voiceSignature(), function (eN, wav, measured) {
-        var useB64 = (!eN && wav && arrayBufferToBase64(wav)) || b64;
-        var useBytes = (!eN && wav) ? wav.byteLength : payload.byteLength;
+      /* v0.0.6.w — the PURE-MP3 LAW: entry.b64 ALWAYS keeps the genuine
+         audio/mpeg MP3 bytes ElevenLabs returned (?output_format=mp3_44100_128,
+         ~14 KB/word). The v0.0.6.v normalizer converted every classroom take
+         into an uncompressed 16-bit PCM .wav (~130 KB, 8x larger) inside an
+         audio/mpeg pipeline; now SDP.AudioNormalize.measureBuffer() only
+         MEASURES the clip (BS.1770-4 integrated LUFS + true peak dBTP) and the
+         metadata stores the computed playback gainLinear — the binary stays
+         a compact MP3 that plays cleanly on iOS Safari, Android Chrome and
+         Desktop and satisfies the MPEG-1 Layer III frame-header gates. */
+      if (isClassroomKey && global.SDP && SDP.AudioNormalize && SDP.AudioNormalize.measureBuffer) {
+       SDP.AudioNormalize.measureBuffer(payload, function (eM, measured) {
+        var lufs = !eM && measured ? Number(measured.lufs) : -21;
+        var tpDb = !eM && measured ? Number(measured.truePeakDb) : -1;
+        if (!(lufs > -70)) lufs = -21;
+        var gainLinear = Math.max(0.5, Math.min(2.0, Math.pow(10, (-21.0 - lufs) / 20)));
         done(null, introMode ? {
-         b64: useB64, text: str(item.text), bytes: useBytes,
+         b64: b64, text: str(item.text), bytes: payload.byteLength,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
          liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
         } : {
-         b64: useB64, text: str(item.text), bytes: useBytes,
+         b64: b64, text: str(item.text), bytes: payload.byteLength,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
-         lufs: measured && measured.lufsAfter, truePeakDbTp: measured && measured.truePeakDb,
+         lufs: Math.round(lufs * 10) / 10, truePeakDbTp: Math.round(tpDb * 10) / 10,
+         gainLinear: Math.round(gainLinear * 1000) / 1000,
          normalized: 'bs1770-4:-21.0', degradedTake: attempt >= 1 ? true : undefined
         });
        });
@@ -5117,7 +5357,8 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
-       degradedTake: attempt >= 1 ? true : undefined
+       lufs: -21, truePeakDbTp: -1, gainLinear: 1,
+       normalized: 'bs1770-4:-21.0', degradedTake: attempt >= 1 ? true : undefined
       });
      }, function (err) { done(err || new Error('tts_failed')); });
    } catch (e) { done(e || new Error('tts_failed')); }
@@ -6137,6 +6378,11 @@ function setStudioWords(list, source) {
   refreshEditor: refreshEditor,
   /* D12/D18: busy state guard for view */
   isBusy: function () { return !!(ST.generating || ST.publishing || ST.enriching); },
+  /* v0.0.6.w exports — the unified classroom & cloned voice controller. */
+  chosenClassroomVoiceId: chosenClassroomVoiceId,
+  chosenClassroomVoiceName: chosenClassroomVoiceName,
+  applyClassroomVoice: applyClassroomVoice,
+  buildFallbackRpHint: buildFallbackRpHint,
   /* v0.0.6.v exports */
   defaultVoiceSignature: defaultVoiceSignature,
   voiceSignature: voiceSignature,

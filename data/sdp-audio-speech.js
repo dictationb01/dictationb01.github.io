@@ -732,6 +732,18 @@
     if (screenIsCovered()) { finish(false); return; }
     var conf = settings();
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
+    /* v0.0.6.w — the GAIN-LINEAR NORMALIZATION LAW: a clip measured at
+       BS.1770-4 integrated loudness (requestClip) carries gainLinear =
+       10^((-21 - lufs)/20) bounded 0.5..2.0. The element volume applies it
+       (compressed into the 0..1 range so a boost never hard-clips): quiet
+       takes are lifted toward the -21 LUFS classroom target, hot takes are
+       trimmed, and every word lands at ONE unified perceived loudness. */
+    try {
+      var gainEntry = state.manifest && state.manifest.clips ? (state.manifest.clips[normKey(str(url)).replace(/^data:[^,]*,/, '')] || null) : null;
+    } catch (eG0) { gainEntry = null; }
+    var gl = Number(opts.gainLinear !== undefined ? opts.gainLinear : (gainEntry && gainEntry.gainLinear)) || 1;
+    if (gl > 1) volume = Math.min(1, volume * (gl / 2));
+    else if (gl > 0) volume = Math.min(1, volume * gl);
     var done = false;
     var timer = null;
     var stopTicks = null;
@@ -904,7 +916,8 @@
       var bin = global.atob(u.slice(comma + 1));
       var bytes = new global.Uint8Array(bin.length);
       for (var b = 0; b < bin.length; b++) bytes[b] = bin.charCodeAt(b) & 0xff;
-      var blobUrl = global.URL.createObjectURL(new global.Blob([bytes], { type: 'audio/mpeg' }));
+      var isWav = (u.indexOf('data:audio/wav') === 0);
+      var blobUrl = global.URL.createObjectURL(new global.Blob([bytes], { type: isWav ? 'audio/wav' : 'audio/mpeg' }));
       /* Bounded memo: 40 clips is more than one class ever needs at once. */
       if (blobCount < 40) { blobUrls[u] = blobUrl; blobCount += 1; }
       return blobUrl;
@@ -926,7 +939,16 @@
       /* v0.0.6.t PILLAR 4D: ALWAYS recompute the in-memory data URL when the
          entry carries a b64 — a re-synthesized clip must never keep playing
          its previous audio through a stale v.url left from an older b64. */
-      if (canBlobUrl() && v && isObj(v) && v.b64) v.url = 'data:audio/mpeg;base64,' + v.b64;
+      /* v0.0.6.w — the FORMAT-AUTO-DETECT LAW: a b64 payload may be a genuine
+         MP3 (ElevenLabs ?output_format=mp3_44100_128 — the v0.0.6.w pure-MP3
+         law) OR a legacy PCM WAV (the v0.0.6.v normalizer output). The RIFF
+         magic prefix 'UklGR' (base64 of 'RIFF') selects audio/wav; every other
+         payload is audio/mpeg — so both formats play cleanly on iOS Safari,
+         Android Chrome and Desktop. */
+      if (canBlobUrl() && v && isObj(v) && v.b64) {
+        v.mime = (str(v.b64).indexOf('UklGR') === 0) ? 'audio/wav' : 'audio/mpeg';
+        v.url = 'data:' + v.mime + ';base64,' + v.b64;
+      }
       var n = normKey(srcKey);
       if (!n) continue;
       var bare = n.replace(/^words\./, '');
@@ -1035,7 +1057,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.v' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.w' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1140,7 +1162,14 @@
 
   function entryUrl(entry) {
     if (typeof entry === 'string') return entry;
-    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || (canBlobUrl() && entry.b64 ? 'data:audio/mpeg;base64,' + entry.b64 : ''));
+    if (entry && isObj(entry)) {
+      if (str(entry.url || entry.src || entry.file)) return str(entry.url || entry.src || entry.file);
+      if (entry.b64 && canBlobUrl()) {
+        var m = (str(entry.b64).indexOf('UklGR') === 0) ? 'audio/wav' : 'audio/mpeg';
+        return 'data:' + m + ';base64,' + entry.b64;
+      }
+      return '';
+    }
     return '';
   }
   /* R5: the 70-clip pack names every word clip 'words.<w>' and keeps the legacy
@@ -1606,7 +1635,7 @@
             SDP.Diagnostics.log('audio_tier_fallback', { word: pw.slice(0, 40), from: current.tier, to: (tiers[at] && tiers[at].tier) || 'end' });
           }
         } catch (e) {}
-        /* v0.0.6.v — T2/T3 self-heal triggers: a media error on the committed
+        /* v0.0.6.w — T2/T3 self-heal triggers: a media error on the committed
            word clip (T2) and a fall-through that reaches the tts tier (T3)
            both surface the student self-heal assistant with 1-tap actions. */
         try {

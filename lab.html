@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<meta name="color-scheme" content="only light">
+<title>🔬 Real-Time Voice &amp; Clone Lab · Smart Dictation 0.0.6.w</title>
+<style>
+:root{--ink:#0F172A;--mut:#64748B;--bg:#F1F5F9;--card:#FFFFFF;--line:#E2E8F0;--ok:#059669;--warn:#B45309;--bad:#DC2626;--acc:#0EA5E9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);padding:12px}
+header.lab-head{max-width:1080px;margin:0 auto 12px;padding:14px 16px;background:linear-gradient(135deg,#0C4A6E,#075985);color:#E0F2FE;border-radius:14px}
+header.lab-head h1{font-size:clamp(17px,4vw,22px)}
+header.lab-head p{font-size:12.5px;opacity:.9;margin-top:3px}
+#labScoreBadge{display:inline-block;margin-top:8px;padding:4px 12px;border-radius:999px;font-weight:800;font-size:13px;background:#0B1220;color:#fff}
+#labScoreBadge[data-state="pass"]{background:#065F46}
+#labScoreBadge[data-state="warn"]{background:#92400E}
+#labScoreBadge[data-state="fail"]{background:#991B1B}
+.score{font-weight:800}
+main{max-width:1080px;margin:0 auto;display:grid;gap:12px}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+section.card h2{font-size:15.5px;margin-bottom:6px}
+section.card h2 .st{display:inline-block;background:#E0F2FE;color:#075985;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-right:6px;vertical-align:1px}
+.hint{color:var(--mut);font-size:12.5px;margin-bottom:8px}
+.status{font-size:12.5px;font-weight:700;margin:6px 0;color:#334155}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button.lab-btn,button.lab-play{cursor:pointer;border:1px solid var(--line);background:#F8FAFC;color:var(--ink);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:700}
+button.lab-btn:hover,button.lab-play:hover{border-color:var(--acc);color:#0369A1}
+button.lab-btn--go{background:linear-gradient(135deg,#10B981,#059669 45%,#4F46E5);color:#fff;border:0}
+button.lab-btn--warn{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+input.lab-input{width:100%;max-width:420px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+table.lab-table{border-collapse:collapse;width:100%;font-size:12px;min-width:640px}
+table.lab-table th{position:sticky;top:0;background:#E0F2FE;text-align:left;padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+table.lab-table td{padding:6px 8px;border-top:1px solid var(--line);white-space:nowrap}
+table.lab-table td code{font-size:11px}
+canvas#labWaveformCanvas{width:100%;height:120px;border-radius:10px;border:1px solid var(--line);display:block;background:#0B1220}
+p.lab-stage{padding:7px 10px;border-left:3px solid var(--line);margin:6px 0;background:#F8FAFC;border-radius:0 8px 8px 0;font-size:12.5px}
+p.lab-stage[data-state="ok"]{border-left-color:var(--ok)}
+p.lab-stage[data-state="warn"]{border-left-color:var(--warn)}
+p.lab-stage[data-state="bad"]{border-left-color:var(--bad)}
+p.lab-stage[data-state="info"]{border-left-color:var(--acc)}
+.lab-warn{color:var(--warn);font-weight:700}
+iframe#labAppProbe{width:100%;height:260px;border:1px dashed var(--line);border-radius:10px;background:#fff;margin-top:8px}
+footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:11.5px;text-align:center}
+@media (max-width:640px){body{padding:8px}section.card{padding:11px}table.lab-table{min-width:560px}}
+</style>
+</head>
+<body>
+<header class="lab-head">
+ <h1>🔬 Real-Time Voice &amp; Clone Lab — Smart Dictation <span id="labVerPill">0.0.6.w</span></h1>
+ <p>https://dictationb01.github.io/lab.html · live AudioContext · real &lt;audio&gt; playback · real fetch — zero mocks · CREDITS GOES TO Hansana · Ms. Sumodya Sewmini · Ayya01 (Lesandu)</p>
+ <span id="labScoreBadge" data-state="pass">✓ ALL PASS</span>
+ <span class="score" style="margin-left:10px"><span id="labScorePass">0</span> PASS · <span id="labScoreWarn">0</span> WARN · <span id="labScoreFail">0</span> FAIL</span>
+</header>
+<main>
+
+<section class="card">
+ <h2><span class="st">STATION 1</span>Real-Time Audio Pack &amp; Acoustic Decoder Inspector</h2>
+ <p class="hint">Loads the live /data/elevenlabs-audio.json, decodes every clip through the real AudioContext, verifies the MP3 frame signature (MPEG-1 Layer III · 44.1 kHz · 128 kbps) or WAV magic, and measures real BS.1770-4 integrated loudness (LUFS), true peak (dBTP) and duration for all words · numbers · commands · guides · briefing beats.</p>
+ <div class="btnrow">
+  <button id="btnLabLoadPack" class="lab-btn" type="button">📦 Load &amp; Decode All Clips</button>
+  <button id="btnLabWordsOnly" class="lab-btn" type="button">🔤 Words.* Only</button>
+  <button id="btnLabTestAllWords" class="lab-btn" type="button">🔊 Test All 30 Words Sequentially (Fast Audit)</button>
+ </div>
+ <p class="status" id="labPackHeaderInfo">—</p>
+ <p class="status" id="labPackStatus">idle</p>
+ <p class="status" id="labNowPlaying"></p>
+ <canvas id="labWaveformCanvas" width="1024" height="120"></canvas>
+ <div class="tablewrap">
+ <table class="lab-table">
+  <thead><tr><th>clip</th><th>codec</th><th>bytes</th><th>loudness (live)</th><th>dBTP</th><th>voice</th><th>ttsHint</th><th></th></tr></thead>
+  <tbody id="labClipTableBody"></tbody>
+ </table>
+ </div>
+</section>
+
+<section class="card">
+ <h2><span class="st">STATION 2</span>Live ElevenLabs API Key Pool &amp; Voice Clone Inspector</h2>
+ <p class="hint">Calls GET https://api.elevenlabs.io/v1/voices and /v1/user/subscription in real time, lists every Cloned / Generated / Professional voice plus the Premade British catalog, and tests live synthesis on any custom word — hearing the exact audio with HTTP status, latency and measured LUFS before applying it to the app.</p>
+ <div class="btnrow">
+  <input id="labApiKey" class="lab-input" type="password" placeholder="ElevenLabs API key (or leave empty to read the Studio vault on this origin)">
+  <button id="btnLabFetchVoices" class="lab-btn lab-btn--go" type="button">🔄 Fetch Voices &amp; Quota (live)</button>
+  <input id="labSynthWord" class="lab-input" type="text" value="cathedral" placeholder="custom test word">
+ </div>
+ <p class="status" id="labQuota">Quota: —</p>
+ <p class="status" id="labSynthStatus">idle</p>
+ <div id="labVoiceList"><p class="hint">Paste a key and press Fetch.</p></div>
+</section>
+
+<section class="card">
+ <h2><span class="st">STATION 3</span>Live Studio New-Word Synthesis &amp; British RP Pipeline Tester</h2>
+ <p class="hint">Type any test word (e.g. cathedral, pharmacy, harbour) and trace the live 4-stage pipeline: (A) CAMBRIDGE_B1_RP_LEXICON → (B) dictionaryapi.dev live UK IPA + -uk.mp3 (separate-entry law) → (C) live AI RP verification → (D) the deterministic British RP fallback (never quarantined) → (E) the live ElevenLabs POST body + real MP3 synthesis + real &lt;audio&gt; playback + CacheStorage hydration.</p>
+ <div class="btnrow">
+  <input id="labTestWord" class="lab-input" type="text" value="cathedral" placeholder="test word (cathedral, pharmacy, harbour…)">
+  <button id="btnLabRunRp" class="lab-btn lab-btn--go" type="button">▶ Run Live RP Pipeline Trace</button>
+ </div>
+ <div id="labRpTrace"></div>
+</section>
+
+<section class="card">
+ <h2><span class="st">STATION 4</span>Live Cross-Tab &amp; Voice-Mode Consistency Verifier</h2>
+ <p class="hint">Probes the live app (same-origin iframe) and verifies voiceLock / voiceSource / activeVoiceId consistency across Dictation, 30 Words, Practice and Settings — and that Settings › Project Briefing opens on demand while boot keeps #briefingModal hidden.</p>
+ <div class="btnrow"><button id="btnLabCrossTab" class="lab-btn" type="button">🔗 Probe Live App Consistency</button></div>
+ <div id="labCrossTab"></div>
+ <iframe id="labAppProbe" title="Live app probe" loading="lazy"></iframe>
+</section>
+
+<section class="card">
+ <h2><span class="st">STATION 5</span>Live Service Worker, CacheStorage &amp; GitHub CDN vs Raw Sync Inspector</h2>
+ <p class="hint">Compares local storage, the Service Worker shell + sdp-audio-clips caches, the GitHub Pages CDN payloads and the GitHub Raw main branch in real time — showing instantly whether the CDN is lagging behind a Studio commit.</p>
+ <div class="btnrow">
+  <button id="btnLabSync" class="lab-btn" type="button">📡 Compare CDN vs Raw Now</button>
+  <button id="btnLabPurge" class="lab-btn lab-btn--warn" type="button">🧹 Force Purge All Audio Caches &amp; Pull Latest from GitHub Raw</button>
+ </div>
+ <p class="status" id="labPurgeStatus"></p>
+ <div id="labSyncMatrix"></div>
+</section>
+
+<section class="card">
+ <h2><span class="st">STATION 6</span>1-Click Full Real-Time Diagnostic Run &amp; Report Exporter</h2>
+ <p class="hint">Runs every station automatically, paints the PASS / WARN / FAIL scorecard, and exports the full live telemetry as .json or .zip to share anytime.</p>
+ <div class="btnrow">
+  <button id="btnLabRunAll" class="lab-btn lab-btn--go" type="button">🚀 Run Full Live Diagnostic Suite (All 6 Stations)</button>
+  <button id="btnLabDownloadJson" class="lab-btn" type="button">⬇ Download Full Live Lab Report (.json)</button>
+  <button id="btnLabDownloadZip" class="lab-btn" type="button">⬇ Download Full Live Lab Report (.zip)</button>
+ </div>
+ <p class="status" id="labRunStatus">idle</p>
+</section>
+
+</main>
+<footer class="lab-foot">Smart Dictation Player · CCBE Galle Branch B1 English Class · Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu) · $0 open-source system</footer>
+<script src="./data/sdp-data-sync.js" defer></script>
+<script src="./data/sdp-audio-normalize.js" defer></script>
+<script src="./data/sdp-audio-speech.js" defer></script>
+<script src="./data/studio.js" defer></script>
+<script src="./data/sdp-live-lab.js" defer></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+ try { if (window.SDP && SDP.version) document.getElementById('labVerPill').textContent = SDP.version; } catch (e) {}
+ /* Station 5 inspects the Service Worker live, so the lab first makes sure the
+    shared origin shell (./sw.js, sdp-v0.0.6.w-s36) is registered — a fresh
+    visitor opening lab.html directly must never see a false FAIL for a
+    missing registration. The 5 s failsafe keeps the boot unblocked. */
+ var booted = false;
+ var bootLab = function () {
+   if (booted) return; booted = true;
+   try { if (window.SDP && SDP.LiveLab) { SDP.LiveLab.station1(false); SDP.LiveLab.station5(); } } catch (e2) {}
+ };
+ try {
+   if (navigator.serviceWorker && navigator.serviceWorker.register) {
+     navigator.serviceWorker.register('./sw.js').then(bootLab, bootLab);
+     setTimeout(bootLab, 5000);
+   } else bootLab();
+ } catch (e3) { bootLab(); }
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,54 @@
 ## v0.0.6.v — 2026-11-17 — Small-Device Briefing Escape Hatch, the 74-Clip Purged Pack (-21 LUFS Broadcast Match), Dynamic Origin Derivation, Voice Signature Lock, Cross-Device Telemetry & the Student Self-Heal Assistant
 
+## v0.0.6.w — Live Lab + Voice Clone & Word-Gen Repair + No-Boot-Briefing (ver 37 · schema 37 · settingsRev 61 · syncRev 1797000000010 · SW sdp-v0.0.6.w-s36)
+
+**Objective 1 — Startup Project Briefing retired.** Boot never opens
+#briefingModal (students land straight on the Dictation screen). The Project
+Briefing lives ONLY at the bottom of Settings › About (#btnCreatorNote): the
+click opens #briefingStage directly (Welcome splash skipped), unlocks
+#btnBriefingSkipTop / #btnBriefingSkip / #btnBriefingContinue instantly, and
+auto-narrates the 4-paragraph Developer Overview (_intro_male_1..4, George)
+with karaoke from Paragraph 1, Word 1. The 4 clips, transcript and the
+CREDITS GOES TO Hansana / Ms. Sumodya Sewmini / Ayya01 (Lesandu) attribution
+are preserved byte-for-byte.
+
+**Objective 2 — the 3 catastrophic Voice-Clone & Studio Word-Generation bugs.**
+- **2A** aiVerify(w, cb) now sends 'Word: ' + w (was 'Word: 1'); Stage B
+  extracts the UK IPA from ANY phonetics[] entry and the -uk.mp3 URL even when
+  text/audio sit on separate elements; the quarantine skip in generateClips is
+  REMOVED — every new word synthesizes through the deterministic
+  buildFallbackRpHint() British RP respelling (rpSource 'fallback' badge).
+- **2B** requestClip keeps the GENUINE audio/mpeg MP3 (?output_format=
+  mp3_44100_128) as entry.b64; measureBuffer() only stamps lufs /
+  truePeakDbTp / gainLinear (10^((-21-lufs)/20), bounded 0.5..2.0) metadata —
+  the v0.0.6.v .wav conversion (8x size, RIFF bytes in an audio/mpeg
+  pipeline) is gone. Hydration auto-detects 'UklGR' → audio/wav vs
+  audio/mpeg; playback applies clip.gainLinear.
+- **2C** Unified Classroom & Cloned Voice Controller: chosenClassroomVoiceId/
+  Name persisted in sdp.settings.voiceSignature; Apply Cloned Voice to All
+  Words & UI / Fetch My Cloned Voices / Re-bake All Classroom Clips re-bake
+  the 30 words + numbers + commands + guides in the clone through the
+  Cloned-Voice-safe ladder; the briefing male narrator stays separate.
+
+**Objective 3 — Real-Time Live Browser Diagnostic Lab.** lab.html + data/
+sdp-live-lab.js (strict ES5, window.SDP.LiveLab) ship in-repo at the same
+origin with 6 real-API stations (pack decoder + LUFS, ElevenLabs voices/quota
++ live clone synthesis, new-word RP pipeline trace, cross-tab voice-mode
+verifier, SW/Cache/CDN-vs-Raw sync + purge, 1-click full run + .json/.zip
+report), linked from Lecturer Studio and Settings › About.
+
+**Objective 4 — the six v0.0.6.v fixes carried + re-asserted** (T4 15 s lag
+delay + Continue + modal/hidden guard, parseNtfy NDJSON + local ledger merge,
+0 ms activity popup, .briefing-links desktop visibility).
+
+Gates: all suites re-pinned to ver 37 / settingsRev 61 / syncRev 1797000000010
+/ sdp-v0.0.6.w-s36; lab.html + data/sdp-live-lab.js registered in every H1
+budget; tests/v006w-verification.cjs (W1–W4) added. The live pack ships its
+authentic 46-clip state (2 words + 30 num + 6 cmd + 4 guide + 4 George beats);
+the 28 missing Session-14 word clips are the Root-Cause-2A casualties and
+re-bake in one click with the fixed pipeline + a real key.
+
+
 **Release type:** classroom-data + reliability + telemetry release over the live v0.0.6.u main. The four `_intro_male_1..4` George briefing beats, the 30 `num.*`, the 6 `cmd.*` and the 4 `guide.en.*` clips stay **byte-for-byte identical to 5f48ceb**; the 141 stale Session-11 `words.*` keys are purged (215 -> 74 clips) and the 30 active Session-12 (Places & Buildings) `words.*` clips are re-baked to a uniform **-21.0 LUFS** (BS.1770-4, +2.5 dB presence @ 3 kHz Q 0.9, TP <= -1.0 dBTP, 44.1 kHz mono 128 kbps) so their loudness matches `cmd.complete`; `data/session.json` carries the verified Cambridge B1 UK IPA, RP `ttsHint` respellings, `-uk.mp3` dictionary audio (zero `-us.mp3`) and natural B1 sentences for all 30 words.
 
 **Stamp:** `appVersion/version '0.0.6.v'` · `ver 36` · `schema 36` · `settingsRev 60` · `syncRev 1797000000009` · `SW_VERSION 'sdp-v0.0.6.v-s35'` / `SHELL_CACHE 'sdp-v0.0.6.v-s35-shell'` · `TARGET='0.0.6.v'` · `BETA_SUBVERSION '0.0.6.v.beta'` · `buildDate 2026-11-17`.

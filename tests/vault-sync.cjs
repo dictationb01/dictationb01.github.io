@@ -48,8 +48,8 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -326,7 +326,7 @@ function gitHubStub(opts) {
     });
     const order = stub.puts.map((p) => p.path);
     check('G11.11a a 403 subscription read never aborts the one-click setup', !outcome.err, outcome.err && outcome.err.message);
-    check('G11.11b the trial clip call was rejected with 402 and tolerated', clipCalls.length === 1, clipCalls.length);
+    check('G11.11b the trial clip calls were rejected with 402 and tolerated (the ladder aborts the batch as tier-limited)', clipCalls.length >= 1, clipCalls.length);
     check('G11.11c all four JSON files are still published', order.length === 4, order.join(','));
     check('G11.11d version.json is still committed LAST', order[order.length - 1] === 'data/version.json', order.join(','));
     check('G11.11e one syncRev is shared by the whole bundle', (() => {
@@ -399,7 +399,7 @@ function gitHubStub(opts) {
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 15, appVersion: '0.0.6.v', version: '0.0.6.v', schema: 15, settingsRev: nextRev,
+      ver: 15, appVersion: '0.0.6.x', version: '0.0.6.x', schema: 15, settingsRev: nextRev,
       session: String(liveVersion.session || '12'), title: 'Session 12', syncRev: nextSync,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
@@ -409,7 +409,7 @@ function gitHubStub(opts) {
       app.SDP.Sync.checkForUpdates((err, res) => resolve(res));
     });
     check('G11.13a a settings-only publish is adopted', !!result && result.updated === true, JSON.stringify(result && result.error));
-    check('G11.13b D17: the 46 KB session.json is never re-pulled',
+    check('G11.13b D17: the 70 KB session.json is never re-pulled',
       seen.filter((u) => u.indexOf('session.json') >= 0).length === 0,
       seen.filter((u) => u.indexOf('session.json') >= 0).join(','));
     check('G11.13c the classroom settings really landed',

@@ -2522,6 +2522,9 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
 }
 .briefing-links {
   display: flex; flex-wrap: nowrap; gap: 8px; margin: 10px 0 0; font-size: 12.5px;
+  /* v0.0.6.v→w fix: keep the GitHub pills fully visible on 1280x800 desktops
+     (never clipped by the dvh card) — the nowrap row keeps its own width. */
+  max-width: 100%; overflow-x: auto; scrollbar-width: thin;
 }
 .briefing-links a {
   flex: 1 1 0; min-width: 0; text-align: center; padding: 6px 8px; border-radius: 999px;

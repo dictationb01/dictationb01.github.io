@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.u';
-  SDP.build = '2026-11-08';
-  SDP.ver = 35;
+  SDP.version = '0.0.6.v';
+  SDP.build = '2026-11-17';
+  SDP.ver = 36;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.u';
+  var APP_VERSION = '0.0.6.v';
   var SCHEMA = 35;
-  var SETTINGS_REV = 53;
+  var SETTINGS_REV = 60;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1387,6 +1387,160 @@
      replaced while the runtime value still equals its shipped default, so
      any custom Lecturer edit in Studio is 100% preserved. */
   var CAMBRIDGE_B1_RP_LEXICON = {
+  /* v0.0.6.v — SESSION 12 (PLACES & BUILDINGS): the 30 active British RP
+     entries, same shape as the entertainment set (p = Cambridge UK IPA,
+     ttsHint = RP respelling spoken by buildQueue). */
+  "buildings": { p: "/\u02c8b\u026al.d\u026a\u014bz/", pos: "noun.",
+    m: "Structures such as houses, offices and schools.",
+    s: "The tallest buildings are in the city centre.",
+    ttsHint: "BIL-dingz",
+    d: { p: "/\u02c8b\u028cl.d\u026a\u014bz/" } },
+  "apartment block": { p: "/\u0259\u02c8p\u0251\u02d0t.m\u0259nt \u02ccbl\u0252k/", pos: "noun.",
+    m: "A large building divided into many flats.",
+    s: "She lives on the top floor of a modern apartment block.",
+    ttsHint: "uh-PAART-muhnt blok",
+    d: { p: "/\u0259\u02c8p\u0251\u02d0rt.m\u0259nt bl\u0251\u02d0k/" } },
+  "castle": { p: "/\u02c8k\u0251\u02d0.s\u0259l/", pos: "noun.",
+    m: "A strong building from long ago, often with thick walls and towers.",
+    s: "The old stone castle stands on a hill above the town.",
+    ttsHint: "KAA-suhl",
+    d: { p: "/\u02c8k\u00e6s.\u0259l/" } },
+  "clinic": { p: "/\u02c8kl\u026an.\u026ak/", pos: "noun.",
+    m: "A small place where doctors treat people who are not staying overnight.",
+    s: "He went to the local clinic for a routine check-up.",
+    ttsHint: "KLIN-ik",
+    d: { p: "/\u02c8kl\u026an.\u026ak/" } },
+  "cottage": { p: "/\u02c8k\u0252t.\u026ad\u0292/", pos: "noun.",
+    m: "A small house, usually in the countryside.",
+    s: "They spent the weekend in a quiet country cottage.",
+    ttsHint: "KOT-ij",
+    d: { p: "/\u02c8k\u0251\u02d0.t\u026ad\u0292/" } },
+  "department store": { p: "/d\u026a\u02c8p\u0251\u02d0t.m\u0259nt \u02ccst\u0254\u02d0/", pos: "noun.",
+    m: "A large shop divided into sections selling different kinds of goods.",
+    s: "You can buy clothes and furniture in the department store.",
+    ttsHint: "di-PAART-muhnt stor",
+    d: { p: "/d\u026a\u02c8p\u0251\u02d0rt.m\u0259nt st\u0254\u02d0r/" } },
+  "elevator": { p: "/\u02c8el.\u026a.ve\u026a.t\u0259/", pos: "noun.",
+    m: "A machine that carries people up and down a building (UK: lift).",
+    s: "We took the elevator to the fifth floor of the hotel.",
+    ttsHint: "EL-i-vay-tuh",
+    d: { p: "/\u02c8el.\u0259.ve\u026a.t\u025a/" } },
+  "grocery store": { p: "/\u02c8\u0261r\u0252s.\u0259r.i \u02ccst\u0254\u02d0/", pos: "noun.",
+    m: "A shop that sells food and household items.",
+    s: "Please pick up some fresh milk from the grocery store.",
+    ttsHint: "GROSS-uh-ree stor",
+    d: { p: "/\u02c8\u0261ro\u028a.s\u0259ri st\u0254\u02d0r/" } },
+  "library": { p: "/\u02c8la\u026a.br\u0259r.i/", pos: "noun.",
+    m: "A place where you can borrow and read books.",
+    s: "Students borrow books and study quietly in the library.",
+    ttsHint: "LY-bruh-ree",
+    d: { p: "/\u02c8la\u026a.brer.i/" } },
+  "palace": { p: "/\u02c8p\u00e6l.\u026as/", pos: "noun.",
+    m: "A very large, grand house where a king or queen lives.",
+    s: "Tourists gathered outside the royal palace at noon.",
+    ttsHint: "PAL-is",
+    d: { p: "/\u02c8p\u00e6l.\u026as/" } },
+  "police station": { p: "/p\u0259\u02c8li\u02d0s \u02ccste\u026a.\u0283\u0259n/", pos: "noun.",
+    m: "The office where police officers work and people report crimes.",
+    s: "She reported the lost wallet at the nearest police station.",
+    ttsHint: "puh-LEES stay-shuhn",
+    d: { p: "/p\u0259\u02c8li\u02d0s \u02ccste\u026a.\u0283\u0259n/" } },
+  "post office": { p: "/\u02ccp\u0259\u028ast \u02c8\u0252f.\u026as/", pos: "noun.",
+    m: "The place where you buy stamps and send letters and parcels.",
+    s: "I need to go to the post office to send this parcel.",
+    ttsHint: "pohst OF-is",
+    d: { p: "/\u02cco\u028ast \u02c8\u0251\u02d0.f\u026as/" } },
+  "prison": { p: "/\u02c8pr\u026az.\u0259n/", pos: "noun.",
+    m: "A place where people are kept as punishment for crimes.",
+    s: "The former island prison is now a historical museum.",
+    ttsHint: "PRIZ-uhn",
+    d: { p: "/\u02c8pr\u026az.\u0259n/" } },
+  "railway station": { p: "/\u02c8re\u026al.we\u026a \u02ccste\u026a.\u0283\u0259n/", pos: "noun.",
+    m: "A place where trains stop so people can get on and off.",
+    s: "Our train leaves from the main railway station at six.",
+    ttsHint: "RAYL-way stay-shuhn",
+    d: { p: "/\u02c8re\u026al.we\u026a \u02ccste\u026a.\u0283\u0259n/" } },
+  "stadium": { p: "/\u02c8ste\u026a.di.\u0259m/", pos: "noun.",
+    m: "A large sports ground with seats for many spectators.",
+    s: "Fifty thousand fans filled the stadium for the final match.",
+    ttsHint: "STAY-dee-uhm",
+    d: { p: "/\u02c8ste\u026a.di.\u0259m/" } },
+  "supermarket": { p: "/\u02c8su\u02d0.p\u0259\u02ccm\u0251\u02d0.k\u026at/", pos: "noun.",
+    m: "A large shop where you choose food yourself and pay at the exit.",
+    s: "The large supermarket stays open until ten every evening.",
+    ttsHint: "SOO-puh-maa-kit",
+    d: { p: "/\u02c8su\u02d0.p\u025a\u02ccm\u0251\u02d0r.k\u0259t/" } },
+  "university": { p: "/\u02ccju\u02d0.n\u026a\u02c8v\u025c\u02d0.s\u0259.ti/", pos: "noun.",
+    m: "A place of higher education where people study for degrees.",
+    s: "Her brother is studying engineering at university.",
+    ttsHint: "yoo-ni-VUR-si-tee",
+    d: { p: "/\u02ccju\u02d0.n\u0259\u02c8v\u025d\u02d0.s\u0259.ti/" } },
+  "countryside": { p: "/\u02c8k\u028cn.tri.sa\u026ad/", pos: "noun.",
+    m: "Land outside towns and cities, with fields, trees and villages.",
+    s: "We enjoyed a long walk through the green countryside.",
+    ttsHint: "KUN-tree-syd",
+    d: { p: "/\u02c8k\u028cn.tri.sa\u026ad/" } },
+  "campsite": { p: "/\u02c8k\u00e6mp.sa\u026at/", pos: "noun.",
+    m: "A place where people stay in tents or caravans on holiday.",
+    s: "We pitched our tent at a shaded campsite near the lake.",
+    ttsHint: "KAMP-syt",
+    d: { p: "/\u02c8k\u00e6mp.sa\u026at/" } },
+  "canal": { p: "/k\u0259\u02c8n\u00e6l/", pos: "noun.",
+    m: "A man-made waterway for boats to travel along.",
+    s: "Narrow boats travel slowly along the historic canal.",
+    ttsHint: "kuh-NAL",
+    d: { p: "/k\u0259\u02c8n\u00e6l/" } },
+  "cliff": { p: "/kl\u026af/", pos: "noun.",
+    m: "A high, steep face of rock, often by the sea.",
+    s: "Seabirds nested along the high chalk cliff above the sea.",
+    ttsHint: "KLIF",
+    d: { p: "/kl\u026af/" } },
+  "field": { p: "/fi\u02d0ld/", pos: "noun.",
+    m: "An area of open land, often with grass or crops.",
+    s: "Horses were grazing in the sunny field behind the farm.",
+    ttsHint: "FEELD",
+    d: { p: "/fi\u02d0ld/" } },
+  "harbour": { p: "/\u02c8h\u0251\u02d0.b\u0259/", pos: "noun.",
+    m: "A protected area of water where boats stop and shelter.",
+    s: "Fishing boats returned safely to the harbour before dusk.",
+    ttsHint: "HAA-buh",
+    d: { p: "/\u02c8h\u0251\u02d0r.b\u025a/" } },
+  "island": { p: "/\u02c8a\u026a.l\u0259nd/", pos: "noun.",
+    m: "A piece of land completely surrounded by water.",
+    s: "You can reach the small island by ferry in twenty minutes.",
+    ttsHint: "EYE-luhnd",
+    d: { p: "/\u02c8a\u026a.l\u0259nd/" } },
+  "mountain": { p: "/\u02c8ma\u028an.t\u0259n/", pos: "noun.",
+    m: "A very high hill, often with rocky slopes.",
+    s: "Snow covered the peak of the highest mountain all winter.",
+    ttsHint: "MOWN-tuhn",
+    d: { p: "/\u02c8ma\u028an.t\u0259n/" } },
+  "ocean": { p: "/\u02c8\u0259\u028a.\u0283\u0259n/", pos: "noun.",
+    m: "A very large area of salt water between continents.",
+    s: "Warm currents flow across the vast Atlantic Ocean.",
+    ttsHint: "OH-shuhn",
+    d: { p: "/\u02c8o\u028a.\u0283\u0259n/" } },
+  "region": { p: "/\u02c8ri\u02d0.d\u0292\u0259n/", pos: "noun.",
+    m: "A large area of a country or the world.",
+    s: "This coastal region is famous for its tea and spices.",
+    ttsHint: "REE-juhn",
+    d: { p: "/\u02c8ri\u02d0.d\u0292\u0259n/" } },
+  "scenery": { p: "/\u02c8si\u02d0.n\u0259r.i/", pos: "noun.",
+    m: "The natural beauty you see around you, such as hills and trees.",
+    s: "The train journey offers breathtaking mountain scenery.",
+    ttsHint: "SEE-nuh-ree",
+    d: { p: "/\u02c8si\u02d0.n\u0259r.i/" } },
+  "stream": { p: "/stri\u02d0m/", pos: "noun.",
+    m: "A small, narrow river.",
+    s: "Clear cold water flowed down the narrow mountain stream.",
+    ttsHint: "STREEM",
+    d: { p: "/stri\u02d0m/" } },
+  "valley": { p: "/\u02c8v\u00e6l.i/", pos: "noun.",
+    m: "The low land between two hills or mountains, often with a river.",
+    s: "A thick morning mist settled over the quiet river valley.",
+    ttsHint: "VAL-ee",
+    d: { p: "/\u02c8v\u00e6l.i/" } },
+
     "entertainment": { p: "/ˌen.təˈteɪn.mənt/", pos: "noun.",
       m: "Shows, films, music, or performances that give people pleasure and enjoyment.",
       s: "There is plenty of live entertainment in the city centre every weekend.",
@@ -2064,6 +2218,7 @@
     /* D2: the shared dual-source reader, used by the watcher, SDP.Speech's
        manifest loader and the Studio voice pack loader. */
     fetchFreshDataJson: fetchFreshDataJson,
+    rpLexicon: function () { return CAMBRIDGE_B1_RP_LEXICON; },
     verifyPayloadLeg: verifyPayloadLeg,
     adoptionChain: adoptionChain,
     /* Called by the engine at the end of every beat / on pause / on finish so
@@ -2114,20 +2269,61 @@
      * and re-primes from the CURRENT BRIEFING_SENTENCES — an old cached
      * voice can never play. Returns a promise resolving to the number of
      * purged cache entries. */
-    purgeStaleBriefingClips: function () {
+    purgeStaleBriefingClips: function (opts) {
+      opts = opts || {};
       var purged = 0;
       var done = null;
       var p = new Promise(function (resolve) { done = resolve; });
+      /* v0.0.6.v — wordsRev advance purge: when the incoming manifest's
+         wordsRev differs from the stored one (or the caller forces
+         opts.words), every non-active words.* entry leaves the
+         sdp-audio-clips cache AND state.clipBase (blob URLs revoked). */
+      var wordsToo = false;
+      var activeWords = {};
+      try {
+        var manifest = (SDP.Speech && SDP.Speech.state && SDP.Speech.state.manifest) || state.manifest || null;
+        var storedRev = Number(state.wordsRev || 0);
+        var incomingRev = Number((manifest && manifest.wordsRev) || (opts.manifest && opts.manifest.wordsRev) || 0);
+        if (opts.words === true || (incomingRev > 0 && incomingRev !== storedRev)) {
+          wordsToo = true;
+          state.wordsRev = incomingRev;
+          var wlist = (state.words && state.words.length) ? state.words : [];
+          var wi;
+          for (wi = 0; wi < wlist.length; wi++) activeWords['words.' + str(wlist[wi] && wlist[wi].w).toLowerCase()] = 1;
+        }
+      } catch (eRev) { wordsToo = !!opts.words; }
+      if (wordsToo) {
+        try {
+          var base = state.clipBase || {};
+          for (var bk in base) {
+            if (!Object.prototype.hasOwnProperty.call(base, bk)) continue;
+            if (bk.indexOf('words.') === 0 && !activeWords[bk]) {
+              try {
+                var ent = base[bk];
+                if (ent && ent.url && ent.url.indexOf('blob:') === 0 && global.URL && global.URL.revokeObjectURL) global.URL.revokeObjectURL(ent.url);
+              } catch (eU) {}
+              delete base[bk];
+              try { delete base[bk.replace(/^words\./, '')]; } catch (eD) {}
+              purged += 1;
+            }
+          }
+        } catch (eB) {}
+      }
       try {
         if (!global.caches || !global.caches.open) { done(purged); return p; }
         global.caches.open('sdp-audio-clips').then(function (cache) {
           return cache.keys().then(function (reqs) {
             var staleRe = /(_intro_male_|guide\.en\.|_guide_|elevenlabs-audio)/i;
+            if (wordsToo) staleRe = /(_intro_male_|guide\.en\.|_guide_|elevenlabs-audio|words\.)/i;
             var jobs = [];
             for (var i = 0; i < reqs.length; i++) {
               (function (req) {
                 var url = String(req && req.url || '');
                 if (!url || !staleRe.test(url)) return;
+                if (wordsToo && /words\./i.test(url)) {
+                  var mm = url.match(/words\.([a-z0-9%20-]+)/i);
+                  if (mm && activeWords['words.' + mm[1].toLowerCase()]) return;
+                }
                 jobs.push(cache.delete(req).then(function (ok) { if (ok) purged += 1; }, function () {}));
               })(reqs[i]);
             }
@@ -2195,13 +2391,25 @@
 
     /* ── publishing plumbing (Contents API + CORS-simple GAS relay) ────── */
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 publishing */
-    repo: function () {
+    /* v0.0.6.v — DYNAMIC REPOSITORY ORIGIN DERIVATION: the owner is read
+       from the serving hostname first (owner.github.io), then the config
+       repoContentsUrl, then the config fallback — so a renamed or forked
+       repository never breaks publishing or the raw-CDN read path. */
+    repoFromOrigin: function () {
       var cfg = state.config || {};
+      var host = '';
+      try { host = str(global.location && global.location.hostname); } catch (eH) { host = ''; }
+      var m = host && host.match(/^([a-z0-9-]+)\.github\.io$/i);
+      if (m) return { owner: m[1], name: host, source: 'hostname' };
+      var um = str(cfg.repoContentsUrl || '').match(/repos\/([^\/]+)\/([^\/]+)\//);
+      if (um) return { owner: um[1], name: um[2], source: 'config-url' };
       return {
         owner: str(cfg.repoOwner || 'dictationb01'),
-        name: str(cfg.repoName || 'dictationb01.github.io')
+        name: str(cfg.repoName || 'dictationb01.github.io'),
+        source: 'config-fallback'
       };
     },
+    repo: function () { return Sync.repoFromOrigin(); },
     contentsUrl: function (path) {
       var repo = Sync.repo();
       return 'https://api.github.com/repos/' + repo.owner + '/' + repo.name + '/contents/' + str(path).replace(/^\/+/, '');
@@ -2560,12 +2768,27 @@
         done = true;
         cb(err, data);
       }
-      try {
-        global.fetch(url, { cache: 'no-store' })
-          .then(function (res) { return res && res.ok && res.json ? res.json() : null; })
-          .then(function (data) { if (data) finish(null, data); else finish(new Error('raw_unavailable')); },
-            function () { finish(new Error('raw_failed')); });
-      } catch (e) { finish(new Error('raw_failed')); return false; }
+      function attemptFetch(u, retried) {
+        try {
+          global.fetch(u, { cache: 'no-store' })
+            .then(function (res) { return res && res.ok && res.json ? res.json() : null; })
+            .then(function (data) {
+              if (data) { finish(null, data); return; }
+              /* v0.0.6.v — sync_origin_healed: a 404/error with a non-hostname
+                 derivation re-derives from the hostname ONCE and retries. */
+              if (!retried && repo.source !== 'hostname') {
+                var healed = Sync.repoFromOrigin();
+                if (healed.source === 'hostname' && (healed.owner !== repo.owner || healed.name !== repo.name)) {
+                  try { if (SDP.Diagnostics) SDP.Diagnostics.log('sync_origin_healed', { from: repo.owner, to: healed.owner }); } catch (eL) {}
+                  attemptFetch('https://raw.githubusercontent.com/' + healed.owner + '/' + healed.name + '/main/' + path + '?t=' + nowMs(), true);
+                  return;
+                }
+              }
+              finish(new Error('raw_unavailable'));
+            }, function () { finish(new Error('raw_failed')); });
+        } catch (e) { finish(new Error('raw_failed')); }
+      }
+      attemptFetch(url, false);
       /* v0.0.6.t PILLAR 3C: the raw-CDN leg of a fresh voice-pack download
          needs the same 25 s budget on mobile data (version.json keeps 5 s). */
       global.setTimeout(function () { finish(new Error('raw_timeout')); }, /elevenlabs-audio\.json/i.test(path) ? 25000 : 5000);

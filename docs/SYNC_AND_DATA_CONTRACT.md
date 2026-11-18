@@ -654,3 +654,22 @@ v0.0.2.a moved a lot of pixels without moving a byte of student data.
 The publish order is unchanged: `session.json → config.json → elevenlabs-audio.json →
 version.json`, one `syncRev` for all four, `version.json` last. A locked studio or a
 token-less studio still commits nothing.
+
+
+## R-AUDIO-NORM — v0.0.6.v client-side broadcast normalizer (`data/sdp-audio-normalize.js`)
+
+`window.SDP.AudioNormalize` (strict ES5) ships RBJ biquad generators (high-shelf +4 dB @ 1500 Hz, high-pass 38 Hz, peaking +2.5 dB @ 3000 Hz Q 0.9) with **all coefficients divided by a0**, `measureLoudness` implementing **BS.1770-4** (400 ms blocks, 75% overlap / 100 ms hop, two-stage gating at -70 LUFS absolute then -10 dB relative), `normalizeSamples` (presence shelf -> linear gain to the signature target -> tanh soft-limit at truePeakMax), `normalizeTake(arrayBuffer, signature, cb)` returning a 16-bit PCM WAV `ArrayBuffer`, plus `measureBuffer` and `encodeWav`. Studio `requestClip()` runs every `words.*` / `num.*` take through it (the `_intro_male_*` beats and `cmd.*` reference are NEVER re-normalized); fallback takes (attempt >= 1) are stamped `degradedTake: true` and paint an amber ⚠ badge in the clip table.
+
+## R-TELEMETRY — v0.0.6.v cross-device telemetry ledger (`data/sdp-telemetry.js`)
+
+`window.SDP.Telemetry` (strict ES5, no `.padStart()`) keeps a persistent `clientId` (`sdp_u_<16-hex>` via `('0' + n.toString(16)).slice(-2)`), `visitCount`, `totalDwellSec`, an **append-only** `sessions[]` and `incidents[]` — all nested inside `sdp.settings.telemetry` (the five-key law holds). `pushTelemetryEnvelope()` POSTs `text/plain` to `https://ntfy.sh/sdp_<owner>_telemetry_v1` and the GAS `telemetry_sync` action; `pullTelemetryLedger()` reads `…/json?poll=1&since=all` (3.5 s timeout) plus GAS `telemetry_pull` and merges into `sdp.settings.telemetryLedger`. No IP, no raw user-agent, no free text leaves the client.
+
+## R-SELFHEAL — v0.0.6.v student self-heal assistant (`data/sdp-selfheal.js`)
+
+`window.SDP.SelfHeal` owns `#sdpSelfHealModal` and the seven triggers: **T1** manifest load timeout/abort, **T2** `MEDIA_ERR_SRC_NOT_SUPPORTED/_DECODE/_NETWORK` on a word clip, **T3** tier fall-through reaching `tts`, **T4** long-frame lag (3 rAF deltas > 250 ms within 10 s), **T5** SW version mismatch (a waiting worker), **T6** localStorage quota failure, **T7** extension interference (dark-mode/translate meta). Each surfaces the exact plain-English copy with 1-tap actions (Reload Voice Clips, Switch to Backup Audio, Refresh Page, Clear Old Audio), deduped per trigger-type per session and re-armed after 5 minutes, and logs an incident through `SDP.Telemetry.recordIncident(...)`.
+
+## R-V006V — v0.0.6.v origin, briefing and pack laws
+
+- **Dynamic origin derivation**: `Sync.repoFromOrigin()` reads the serving `hostname` first (`owner.github.io`), then `cfg.repoContentsUrl`, then the config fallback; `fetchRawMainJson` retries once from the re-derived hostname on 404/error (logging `sync_origin_healed`).
+- **Briefing escape hatch**: `#btnBriefingSkipTop` (never disabled) closes the briefing immediately; both `beat1Guard` failsafes are 9000 ms; the gate timer pauses while `document.hidden`; `briefingContentHash` (inside `sdp.settings`) exempts returning students from version-bump replays when the content is unchanged.
+- **Pack law**: `data/elevenlabs-audio.json` ships exactly **74 clips** (30 active `words.*` + 30 `num.1..30` + 6 `cmd.*` + 4 `guide.en.*` + 4 `_intro_male_1..4`), raw JSON <= 4,500,000 B, `wordsRev` stamped on every publish, and `purgeStaleBriefingClips({ words: true })` clears non-active `words.*` entries from `sdp-audio-clips` and `state.clipBase` whenever `wordsRev` advances.

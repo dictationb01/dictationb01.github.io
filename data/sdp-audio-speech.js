@@ -1035,7 +1035,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.u' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.v' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1606,6 +1606,19 @@
             SDP.Diagnostics.log('audio_tier_fallback', { word: pw.slice(0, 40), from: current.tier, to: (tiers[at] && tiers[at].tier) || 'end' });
           }
         } catch (e) {}
+        /* v0.0.6.v — T2/T3 self-heal triggers: a media error on the committed
+           word clip (T2) and a fall-through that reaches the tts tier (T3)
+           both surface the student self-heal assistant with 1-tap actions. */
+        try {
+          if (global.SDP && SDP.SelfHeal && SDP.SelfHeal.show) {
+            var nextTier = (tiers[at] && tiers[at].tier) || 'end';
+            if (err && err.media && /MEDIA_ERR_(SRC_NOT_SUPPORTED|DECODE|NETWORK)/.test(String(err.media))) {
+              SDP.SelfHeal.show('T2', { clipKey: pw.slice(0, 40), lastErr: String(err.media) });
+            } else if (nextTier === 'tts' || nextTier === 'end') {
+              SDP.SelfHeal.show('T3', { clipKey: pw.slice(0, 40), from: current.tier });
+            }
+          }
+        } catch (eSH) {}
         attempt();
       });
     }

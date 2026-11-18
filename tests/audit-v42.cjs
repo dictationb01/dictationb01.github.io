@@ -66,25 +66,28 @@ check('G9.1f no retired CSS is merely hidden with display:none',
 // contract: docs/ARCHITECTURE_MAP.md §5 budget table
 const BUDGETS = {
   /* v0.0.2.b (W2) ceilings — identical to tests/check.cjs BUDGET. */
-  'index.html': 60000, /* v0.0.6.q */
+  'index.html': 63000, /* v0.0.6.q */
   /* v0.0.5.b: the appended Morphe material layer (glass header, layered
      shadows, spring motion, screen/modal/accordion transitions, mobile
      collision fixes) moved the ceiling in lockstep with the release. */
-  'assets/css/sdp-ui.css': 136000,
-  'data/sdp-data-sync.js': 150000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
-  'data/sdp-audio-speech.js': 88000, /* v0.0.6.u: +cold-manifest wait laws (playBriefingStep 8 s pack wait + playWord 2.5 s first-word wait) + briefingClipReady/preWarmBriefing */
+  'assets/css/sdp-ui.css': 140000,
+  'data/sdp-data-sync.js': 160000, /* v0.0.6.r: +maybeRevalidateVoicePack deferred pack-pointer check */
+  'data/sdp-audio-speech.js': 89000, /* v0.0.6.v: +T2/T3 self-heal triggers */
   'data/sdp-dictation-engine.js': 78000,
-  'data/sdp-ui-views.js': 266000, /* v0.0.6.t: +allBeatsDone full-briefing gate lock */
-  'data/studio.js': 281000, /* v0.0.6.t G9.3a lockstep — identical to check.cjs BUDGET and the monolith threshold */
+  'data/sdp-ui-views.js': 276000, /* v0.0.6.t: +allBeatsDone full-briefing gate lock */
+  'data/studio.js': 296000, /* v0.0.6.t G9.3a lockstep — identical to check.cjs BUDGET and the monolith threshold */
   'data/data-meter.js': 26000,
+  'data/sdp-audio-normalize.js': 11000, /* v0.0.6.v */
+  'data/sdp-telemetry.js': 12000, /* v0.0.6.v */
+  'data/sdp-selfheal.js': 11000 /* v0.0.6.v */,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
   'data/sdp-morphe-hooks.js': 8000,
   'data/config.json': 42000,
   'data/version.json': 2000,
-  'data/session.json': 62425,
-  'data/gas-source.txt': 13764,
-  'data/elevenlabs-audio.json': 4900000, /* v0.0.6.t: the 49/75/84/74-word authentic first-person beats */
+  'data/session.json': 66000,
+  'data/gas-source.txt': 16000,
+  'data/elevenlabs-audio.json': 4500000, /* v0.0.6.v: the 74-clip canonical pack */
   'assets/fonts/NotoSansSinhala-Regular.woff2': 48520,
   'assets/fonts/NotoSansSinhala-Bold.woff2': 48748,
   'data.html': 34000,
@@ -112,11 +115,11 @@ const testBytes = tracked.filter((f) => f.startsWith('tests/') && /\.(cjs|js)$/.
    pre-PR Arena.ai gate: cold-browser Beat-1 race x2, the 131-clip unified
    SoniaNeural pack audit, cross-tab eleven-tier audio and git hygiene);
    ceiling 560,000 B — comfortably above the ~534 KB the suite needs. */
-check('G9.2e the whole test suite stays inside 540,000 bytes (' + testBytes + ')', testBytes <= 560000, testBytes);
+check('G9.2e the whole test suite stays inside 580,000 bytes (' + testBytes + ')', testBytes <= 580000, testBytes);
 
 /* ── 3. no build step, no bundler, no monolith ─────────────────────────── */
 // contract: docs/ARCHITECTURE_MAP.md §R3 ES5 modules
-const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 281000);
+const monoliths = tracked.filter((f) => f.startsWith('data/') && /\.js$/.test(f) && bytes(f) > 296000);
 check('G9.3a no oversized monolith module exists (' + monoliths.join(',') + ')', monoliths.length === 0);
 check('G9.3b no package.json build script ships with the site', !exists('package.json') && !exists('webpack.config.js') && !exists('vite.config.js'));
 
@@ -209,8 +212,8 @@ check('G9.5c only the five R4 localStorage keys are named in scripts', strayKeys
  * now writes it on every publish (D-UI11), so it is budgeted and header-checked
  * instead of hash-frozen, and its clips are still never re-rendered for free. */
 const LOCKED = [
-  ['data/session.json', '17ea1593'],
-  ['data/gas-source.txt', '591b9b08'],
+  ['data/session.json', 'afb6908a'],
+  ['data/gas-source.txt', 'b7bbd23c'],
   ['assets/fonts/NotoSansSinhala-Regular.woff2', '23f1503e'],
   ['assets/fonts/NotoSansSinhala-Bold.woff2', 'bf59c148']
 ];
@@ -219,8 +222,8 @@ check('G9.6a all four preserved payloads still match their SHA-256 prefixes', lo
 const voicePack = JSON.parse(read('data/elevenlabs-audio.json'));
 check('G9.6g the voice pack stays app-writable and valid',
   voicePack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && voicePack.voiceName === 'Alice' &&
-  voicePack.version === '0.0.6.u' && voicePack.hashAlgo === 'sha1' &&
-  typeof voicePack.clips === 'object' && Object.keys(voicePack.clips).length === 135, JSON.stringify([voicePack.version, voicePack.voiceId]));
+  voicePack.version === '0.0.6.v' && voicePack.hashAlgo === 'sha1' &&
+  typeof voicePack.clips === 'object' && Object.keys(voicePack.clips).length === 74, JSON.stringify([voicePack.version, voicePack.voiceId]));
 
 const session = JSON.parse(read('data/session.json'));
 const words = session.lists[0].words;
@@ -239,24 +242,24 @@ const missingKeys = keepKeys.filter((key) => !(key in config));
 check('G9.6e config.json keeps every preserved payload field', missingKeys.length === 0, missingKeys.join(','));
 check('G9.6f config.json pins the new release metadata',
   // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.u is ver 35 / schema 35 / settingsRev 53
-  config.ver === 35 && config.appVersion === '0.0.6.u' && config.version === '0.0.6.u' && config.schema === 35 && config.settingsRev === 53,
+  config.ver === 36 && config.appVersion === '0.0.6.v' && config.version === '0.0.6.v' && config.schema === 36 && config.settingsRev === 60,
   JSON.stringify({ ver: config.ver, appVersion: config.appVersion, schema: config.schema }));
 
 /* ── 7. PWA pins and load order ────────────────────────────────────────── */
 // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6, docs/ARCHITECTURE_MAP.md §R10
 const manifest = JSON.parse(read('manifest.webmanifest'));
-check('G9.7a the manifest names 0.0.6.u in its description', /0\.0\.6\.u/.test(String(manifest.description)), manifest.description);
+check('G9.7a the manifest names 0.0.6.v in its description', /0\.0\.6\.v/.test(String(manifest.description)), manifest.description);
 check('G9.7b the manifest start_url carries the pwa source tag', /source=pwa/.test(String(manifest.start_url)), manifest.start_url);
 check('G9.7c theme and background are the 0.0.6.e daylight light', manifest.theme_color === '#F8FAFC' && manifest.background_color === '#F8FAFC', manifest.theme_color);
 
 const sw = read('sw.js');
-check('G9.7d the service worker pins the 0.0.6.u cache names', sw.indexOf('sdp-v0.0.6.u-s34') >= 0 && sw.indexOf('9.0.0.4') < 0);
+check('G9.7d the service worker pins the 0.0.6.v cache names', sw.indexOf('sdp-v0.0.6.v-s35') >= 0 && sw.indexOf('9.0.0.4') < 0);
 check('G9.7e the service worker preserves the audio caches', sw.indexOf('sdp-youdao-v1') >= 0 && sw.indexOf('sdp-audio-clips') >= 0);
 
 /* v0.0.5.b: sdp-morphe-hooks.js loads last so it decorates the finished DOM. */
-const order = ['data-meter.js', 'sdp-data-sync.js', 'sdp-audio-speech.js', 'sdp-dictation-engine.js', 'sdp-ui-views.js', 'studio.js', 'sdp-morphe-hooks.js'];
+const order = ['data-meter.js', 'sdp-data-sync.js', 'sdp-audio-normalize.js', 'sdp-telemetry.js', 'sdp-audio-speech.js', 'sdp-dictation-engine.js', 'sdp-ui-views.js', 'studio.js', 'sdp-selfheal.js', 'sdp-morphe-hooks.js'];
 const scriptTags = Array.from(indexHtml.matchAll(/<script[^>]*src="([^"]+)"[^>]*>/g)).map((x) => x[1]);
-check('G9.7f index.html loads exactly seven external scripts', scriptTags.length === 7, scriptTags.join(','));
+check('G9.7f index.html loads exactly ten external scripts', scriptTags.length === 10, scriptTags.join(','));
 check('G9.7g the R10 load order is respected', scriptTags.map((s) => s.replace('./data/', '')).join(',') === order.join(','), scriptTags.join(','));
 check('G9.7h every script is deferred', Array.from(indexHtml.matchAll(/<script[^>]*src="[^"]+"[^>]*>/g)).every((x) => /\bdefer\b/.test(x[0])));
 

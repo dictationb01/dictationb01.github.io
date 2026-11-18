@@ -9,7 +9,7 @@
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.u — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player 0.0.6.v — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -535,7 +535,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">0.0.6.u</span>
+      <span id="sdpVerPill">0.0.6.v</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -544,12 +544,12 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.u</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.6.v</span></li>
       <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-07</span></li>
       <!-- 0.0.6.q Pillar 1: the weekly release note lives HERE in About —
          changelog information — so it takes 0px away from the spacious
          #briefingLyrics reading stage. The DOM id contract is preserved. -->
-      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.u) · Cold-browser Beat-1 fix: Paragraph 1 is never skipped (manifest wait law + hard Beat-1 guard) · All 131 classroom clips re-baked in ONE unified en-GB-SoniaNeural British RP female educator voice · Studio: paste words → Publish &amp; Sync (auto-enrich → auto-synthesize → commit)</li>
+      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.6.v) · Cold-browser Beat-1 fix: Paragraph 1 is never skipped (manifest wait law + hard Beat-1 guard) · All 131 classroom clips re-baked in ONE unified en-GB-SoniaNeural British RP female educator voice · Studio: paste words → Publish &amp; Sync (auto-enrich → auto-synthesize → commit)</li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -574,6 +574,9 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <p id="lecturerSyncLast" class="muted" data-i18n="lecturerSyncIdle" aria-live="polite" data-state="idle">Not synced yet — press Save &amp; Sync</p>
     </div>
    </div>
+   <div class="chip-row studio-activity-row" id="studioActivityDock" hidden>
+    <button type="button" class="btn btn-go" id="btnStudioActivityPopup">📊 Live Student Activity &amp; Alerts</button>
+   </div>
    <div id="studioAccordion" class="studio-shell">
     <div id="studioBody" class="studio-body">
      <p class="muted" data-i18n="studioLocked">Enter the lecturer PIN to open the studio.</p>
@@ -581,7 +584,25 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    </div>
   </section>
 
- </main>
+</main>
+</div>
+
+<div id="studioActivityPopup" class="modal studio-activity-modal" role="dialog" aria-modal="true" aria-labelledby="studioActivityTitle" aria-hidden="true" hidden>
+ <div class="modal-card studio-activity-card">
+  <div class="modal-head">
+   <h2 id="studioActivityTitle">🔔 Live Student Activity &amp; Alerts</h2>
+  </div>
+  <p id="studioActivitySummary" class="studio-activity-summary" role="status" aria-live="polite">Loading…</p>
+  <div id="studioActivityBody" class="studio-activity-body">
+   <div class="studio-activity-table-wrap"><table class="studio-preview-table" id="studioActivityTable"><thead><tr><th>User ID</th><th>Device</th><th>Visits</th><th>Time on UI</th><th>Dictation</th><th>Score</th><th>Missed Words</th><th>Lag/Health</th></tr></thead><tbody></tbody></table></div>
+   <div id="studioIncidentsPanel" class="studio-incidents-panel"></div>
+  </div>
+  <div class="modal-foot studio-activity-foot">
+   <button type="button" class="btn btn-ghost" id="btnStudioActivityZip">Export .zip</button>
+   <button type="button" class="btn btn-ghost" id="btnStudioActivityJson">Export .json</button>
+   <button type="button" class="btn btn-go" id="btnStudioActivityClose">Close</button>
+  </div>
+ </div>
 </div>
 
 <nav id="tabbar" aria-label="Sections">
@@ -676,6 +697,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
     <p id="briefingPersona" class="briefing-persona">Started 2 Weeks Ago (Oct 22) · $0 Open-Source System</p>
    </div>
    <span id="briefingBeatBadge" class="briefing-beat" aria-hidden="true">♪ synced</span>
+   <button id="btnBriefingSkipTop" type="button" class="briefing-skip-top" data-i18n="briefingSkipTop" aria-label="Skip Project Briefing">✕ Skip →</button>
   </div>
   <div id="briefingLyrics" class="briefing-lyrics" aria-live="polite"></div>
   <div class="briefing-progress" aria-hidden="true"><div id="briefingBar"></div></div>
@@ -747,7 +769,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.6.u';
+ var TARGET = '0.0.6.v';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}
@@ -794,10 +816,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script src="./data/data-meter.js" defer></script>
 <script src="./data/sdp-data-sync.js" defer></script>
+<script src="./data/sdp-audio-normalize.js" defer></script>
+<script src="./data/sdp-telemetry.js" defer></script>
 <script src="./data/sdp-audio-speech.js" defer></script>
 <script src="./data/sdp-dictation-engine.js" defer></script>
 <script src="./data/sdp-ui-views.js" defer></script>
 <script src="./data/studio.js" defer></script>
+<script src="./data/sdp-selfheal.js" defer></script>
 <script src="./data/sdp-morphe-hooks.js" defer></script>
 </body>
 </html>

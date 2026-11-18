@@ -2866,3 +2866,48 @@ html[data-theme='dark'] .fab-drawer-title { color: #C7D2FE; }
 .about-links-row { margin: 4px 0 10px; flex-wrap: wrap; }
 .about-links-row .btn { flex: 0 1 auto; }
 .creator-note-label { white-space: nowrap; }
+
+
+/* ═════════ v0.0.6.v — Small-device & iOS Project Briefing escape hatch ═════════
+   The always-visible top-right Skip (#btnBriefingSkipTop) can never be
+   clipped by iOS dynamic toolbars; the card obeys dvh + safe-area insets;
+   the footer sticks to the bottom of the scrollable card on phones. */
+.briefing-skip-top {
+  flex: none; min-height: 44px; min-width: 76px; margin-left: auto; padding: 8px 14px;
+  border-radius: 999px; background: #FEF3C7; color: #92400E;
+  border: 1.5px solid #FDE68A; font-weight: 800; font-size: 13px; line-height: 1;
+  cursor: pointer; white-space: nowrap;
+}
+.briefing-skip-top:active { transform: scale(0.97); }
+html[data-theme='dark'] .briefing-skip-top { background: #422006; color: #FDE68A; border-color: #713F12; }
+.briefing-modal { z-index: 95; padding: max(10px, env(safe-area-inset-top, 0px)) 12px max(10px, env(safe-area-inset-bottom, 0px)); }
+.briefing-card { max-height: min(88dvh, 800px); }
+@supports not (height: 1dvh) { .briefing-card { max-height: min(88vh, 800px); } }
+.briefing-foot { position: sticky; bottom: 0; background: var(--bg-card); z-index: 4; }
+@media (max-width: 430px), (max-height: 820px) {
+  .briefing-card { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px); }
+  .briefing-lyrics { min-height: clamp(200px, 38dvh, 440px); }
+}
+body.modal-open { overflow: hidden; }
+.pill, .helper-pill { min-height: 44px; }
+@media (max-width: 390px) {
+  .welcome-crest { width: 64px; height: 64px; }
+}
+html.sdp-pack-loading .welcome-crest, html.prefers-reduced-motion .welcome-crest { animation: none; }
+@media (prefers-reduced-motion: reduce) { .welcome-crest { animation: none; } }
+
+/* ═════════ v0.0.6.v — Self-Heal modal + Studio Activity popup ═════════ */
+.selfheal-modal { z-index: 120; }
+.selfheal-card { width: min(480px, 100%); }
+.selfheal-body { font-size: 15px; line-height: 1.6; font-weight: 600; color: #0F172A; margin: 10px 0 14px; }
+html[data-theme='dark'] .selfheal-body { color: #E2E8F0; }
+.selfheal-foot { gap: 10px; }
+.studio-activity-modal { z-index: 130; }
+.studio-activity-card { width: min(860px, 100%); max-height: min(88dvh, 800px); display: flex; flex-direction: column; }
+.studio-activity-summary { font-size: 14px; font-weight: 750; margin: 8px 0 10px; }
+.studio-activity-body { overflow-y: auto; flex: 1 1 auto; }
+.studio-activity-table-wrap { overflow-x: auto; }
+.studio-activity-foot { gap: 10px; margin-top: 12px; }
+.studio-incidents-panel { margin-top: 12px; }
+.studio-incidents-panel .inc-row { padding: 8px 10px; border: 1px solid #FDE68A; border-radius: 10px; background: #FFFBEB; margin: 6px 0; font-size: 12.5px; font-weight: 650; }
+.studio-activity-row { margin: 8px 0; }

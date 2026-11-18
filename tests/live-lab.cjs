@@ -106,7 +106,16 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         toast: document.getElementById('sdpDataToast').textContent
       }));
       check('G8.1a with every external host dead the 30-word bank still loads', state.words === 30, state.words);
-      check('G8.1b the session title is read from the local payload', /Session 8/.test(state.title), state.title);
+      /* v0.0.6.v: the title must equal the LOCAL payload title (session.json
+         .session.title || version.json .title — the app's own derivation). */
+      const localTitle = (() => {
+        try {
+          const ses = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/session.json'), 'utf8'));
+          const ver = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/version.json'), 'utf8'));
+          return String((ses.session && ses.session.title) || ver.title || '');
+        } catch (e) { return ''; }
+      })();
+      check('G8.1b the session title is read from the local payload', localTitle.length > 0 && state.title === localTitle, state.title);
       check('G8.1c the whisper toast still reports bytes', /KB/.test(state.toast), state.toast);
       await page.click('#btnStart');
       await page.waitForTimeout(600);

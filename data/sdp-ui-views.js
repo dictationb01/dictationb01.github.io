@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.u';
+    return '0.0.6.v';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -334,6 +334,7 @@
     briefingContinueBeat1: 'Start Dictation (finishing Paragraph 1…)',
     briefingContinueAll: 'Start Dictation (Paragraph {p} of 4…)',
     briefingSkip: 'Exit',
+    briefingSkipTop: '✕ Skip →',
     briefingCountdown: 'Please listen / read ({n}s)…',
     briefingUnlocked: 'Thank you for listening — continue whenever you are ready.',
     betaPillLabel: 'Beta',
@@ -680,6 +681,7 @@
     briefingContinueBeat1: 'Start Dictation (පළමු පාරාග්‍රාෆය සම්පූර්ණ වෙමින්…)',
     briefingContinueAll: 'Start Dictation (පාරාග්‍රාෆය {p} / 4…)',
     briefingSkip: 'ඉවත් වන්න',
+    briefingSkipTop: '✕ මඟහරින්න →',
     briefingCountdown: 'කරුණාකර අහන්න / කියවන්න ({n}s)…',
     briefingUnlocked: 'ඇහුවට ස්තූතියි — කැමති විටක ඉදලා ඉදිරියට යන්න.',
     betaPillLabel: 'බීටා',
@@ -2528,6 +2530,9 @@
     on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
     on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
     on('btnBriefingSkip', 'click', function () { closeBriefing('skip'); });
+    /* v0.0.6.v: the ALWAYS-ENABLED top-right escape hatch — closes the
+       briefing immediately, gates and narration notwithstanding. */
+    on('btnBriefingSkipTop', 'click', function () { briefingSkipTop(); });
     var bModal = byId('briefingModal');
     if (bModal && !bModal._sdpBound) {
       bModal._sdpBound = true;
@@ -2936,7 +2941,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.u.beta';
+  var BETA_SUBVERSION = '0.0.6.v.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -3349,7 +3354,7 @@
       if (!briefingState.open || briefingState.beat1Done) return;
       briefingState.beat1Done = true;
       briefingCheckGateUnlock();
-    }, 25000);
+    }, 9000);
     briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
     briefingNarrate(idx, briefingState.epoch);
     return true;
@@ -3462,7 +3467,7 @@
         if (briefingState.beat1Done) return;
         briefingState.beat1Done = true;
         briefingCheckGateUnlock();
-      }, 25000);
+      }, 9000);
       global.setTimeout(function () {
         if (!briefingState.open || epoch !== briefingState.epoch) return;
         briefingNarrate(0, epoch);
@@ -4501,6 +4506,145 @@
     }
     return painted;
   }
+
+
+  /* ═══════════════════ v0.0.6.v — SMALL-DEVICE & iOS BRIEFING LAWS ═════════ */
+  /* briefingContentHash(): the returning-student exemption — the briefing
+     replays only when the CONTENT changed (hash of BRIEFING_SENTENCES), not
+     on every version bump. Stored inside sdp.settings (five-key law). */
+  function briefingSimpleHash(s) {
+    var h = 5381, i;
+    s = String(s || '');
+    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) & 0x7FFFFFFF;
+    return String(h);
+  }
+  function briefingContentHash() {
+    try { return briefingSimpleHash(BRIEFING_SENTENCES.join('|')); } catch (e) { return ''; }
+  }
+  function briefingContentSeen() {
+    var s = settings();
+    return !!(s && s.briefingContentHash && s.briefingContentHash === briefingContentHash());
+  }
+  function markBriefingContentSeen() {
+    try { SDP.Data.saveSettings({ briefingContentHash: briefingContentHash() }); } catch (e) {}
+  }
+
+  /* The top-right Skip (never disabled): closes the briefing at once, stops
+     the narration, stamps briefingSeen + briefingContentHash, releases the
+     scroll lock and logs the viewport (small-device diagnostics). */
+  function briefingSkipTop() {
+    var modal = byId('briefingModal');
+    if (!modal || !briefingState.open) return false;
+    briefingState.open = false;
+    briefingState.waitGesture = false;
+    briefingState.epoch += 1;
+    clearBriefingWordTimers();
+    if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+    if (briefingState.beat1Guard) { global.clearTimeout(briefingState.beat1Guard); briefingState.beat1Guard = null; }
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    if (modal.classList) modal.classList.remove('is-open');
+    briefingHideTapPill();
+    try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
+    markBriefingSeen();
+    markBriefingContentSeen();
+    releaseBodyScrollLock();
+    try {
+      if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_skip_top', { vw: global.innerWidth || 0, vh: global.innerHeight || 0 });
+    } catch (e2) {}
+    return true;
+  }
+
+  /* F5: lock background scroll while ANY modal is open. */
+  function syncBodyScrollLock() {
+    var body = global.document && global.document.body;
+    if (!body || !body.classList) return false;
+    var open = global.document.querySelectorAll('.modal.is-open').length;
+    if (open) body.classList.add('modal-open');
+    else body.classList.remove('modal-open');
+    return true;
+  }
+  function releaseBodyScrollLock() {
+    var body = global.document && global.document.body;
+    if (body && body.classList) body.classList.remove('modal-open');
+    return true;
+  }
+
+  /* F1: --tabbar-h measured from the real #tabbar rect on first paint. */
+  function measureTabbarHeight() {
+    try {
+      var bar = byId('tabbar');
+      if (!bar || !bar.getBoundingClientRect) return false;
+      var h = Math.round(bar.getBoundingClientRect().height);
+      if (h > 40 && global.document && global.document.documentElement) {
+        global.document.documentElement.style.setProperty('--tabbar-h', h + 'px');
+      }
+    } catch (e) {}
+    return true;
+  }
+
+  /* v0.0.6.v boot wiring for the new laws. */
+  function initV006v() {
+    measureTabbarHeight();
+    if (global.addEventListener) global.addEventListener('resize', measureTabbarHeight, false);
+    /* F6: pause the gate countdown while the tab is hidden. */
+    if (global.document && global.document.addEventListener) {
+      global.document.addEventListener('visibilitychange', function () {
+        if (global.document.visibilityState === 'hidden') {
+          if (briefingState.gateTimer) { global.clearInterval(briefingState.gateTimer); briefingState.gateTimer = null; }
+        } else if (briefingState.open && briefingState.gateLeft > 0 && !briefingState.gateTimer) {
+          briefingState.gateTimer = global.setInterval(briefingTickGate, 1000);
+        }
+        syncBodyScrollLock();
+      }, false);
+    }
+    /* pack-load pause for the crest orbit animation */
+    try {
+      var rootEl = global.document.documentElement;
+      if (rootEl && rootEl.classList) {
+        rootEl.classList.add('sdp-pack-loading');
+        var donePack = function () { rootEl.classList.remove('sdp-pack-loading'); };
+        if (SDP.Speech && SDP.Speech.loadManifest) SDP.Speech.loadManifest(function () { donePack(); });
+        else donePack();
+        global.setTimeout(donePack, 12000);
+      }
+      if (global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches && rootEl && rootEl.classList) {
+        rootEl.classList.add('prefers-reduced-motion');
+      }
+    } catch (e) {}
+    /* the returning-student content-hash exemption: a version bump alone no
+       longer forces a replay once the content hash matches (first-visit and
+       content-change replays stay intact through briefingSeen()). */
+    try {
+      if (!briefingSeen() && briefingContentSeen()) {
+        SDP.Data.saveSettings({ briefingSeen: APP_VERSION });
+      }
+    } catch (e2) {}
+    /* preWarmBriefing / manifest failure can never trap the student: the
+       9 s failsafe already arms beat1Done, and a failed pack load arms it
+       at once so the footer unlocks with the gate. */
+    try {
+      if (SDP.Speech && SDP.Speech.loadManifest) {
+        SDP.Speech.loadManifest(function (err) {
+          if (err && briefingState.open && !briefingState.beat1Done) {
+            briefingState.beat1Done = true;
+            briefingCheckGateUnlock();
+          }
+        });
+      }
+    } catch (e3) {}
+    /* T1: surface a manifest load failure through the Self-Heal assistant. */
+    try {
+      if (SDP.Speech && SDP.Speech.loadManifest) {
+        SDP.Speech.loadManifest(function (err) {
+          if (err && SDP.SelfHeal && SDP.SelfHeal.show) SDP.SelfHeal.show('T1', { lastErr: String(err && err.message || err) });
+        });
+      }
+    } catch (e4) {}
+    syncBodyScrollLock();
+  }
+  initV006v();
+
   var Views = {
     init: init,
     t: t,
@@ -4543,6 +4687,11 @@
     /* ══ v0.0.6.m public surface: briefing, beta channel, review card ══ */
     openBriefing: openBriefing,
     closeBriefing: closeBriefing,
+    briefingSkipTop: briefingSkipTop,
+    briefingContentHash: briefingContentHash,
+    briefingContentSeen: briefingContentSeen,
+    measureTabbarHeight: measureTabbarHeight,
+    syncBodyScrollLock: syncBodyScrollLock,
     briefingSentences: briefingSentences,
     briefingSeen: briefingSeen,
     briefingGateLeft: briefingGateLeft,

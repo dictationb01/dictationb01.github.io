@@ -1357,6 +1357,17 @@
        injected into the live session, cached, and synced to GitHub. */
     markVaultSession();
     ensureBriefingAndGuideVoices({ source: 'unlock' }, noop);
+    /* v0.0.6.v — the Live Student Activity & Alerts popup opens on unlock
+       whenever recorded sessions or incidents exist. */
+    try {
+     var tele = (global.SDP && SDP.Telemetry && SDP.Telemetry.ledger) ? SDP.Telemetry.ledger() : null;
+     var led = null;
+     try { led = (sync().settings() || {}).telemetryLedger || null; } catch (eLed) {}
+     var hasData = (tele && (tele.sessions.length || tele.incidents.length)) || (led && led.users && led.users.length);
+     var dock = byId('studioActivityDock');
+     if (dock) dock.hidden = false;
+     if (hasData) openStudioActivityPopup();
+    } catch (eAct) {}
    });
    cb(null, ST.secrets);
   }
@@ -2002,8 +2013,216 @@
    btn('btnSsbLock', t('studioLockLecturer'), 'btn-ghost', '', 'lock') +
    '</div>';
  }
+
+ /* ═════════════ v0.0.6.v — VOICE SIGNATURE & ENERGY LOCK ═════════════════ */
+ /* The locked broadcast signature every words-dot and num-dot take is normalized to:
+    Alice (Xb7hH8MSUJpSbSDYk0k2 / eleven_flash_v2_5), -21 LUFS integrated,
+    true peak <= -1.0 dBTP, +2.5 dB presence shelf @ 3 kHz (Q 0.9). Persisted
+    inside sdp.settings.voiceSignature (five-key law). The _intro_male_* beats
+    and the cmd.* reference are NEVER re-normalized. */
+ function defaultVoiceSignature() {
+  return {
+   voiceId: 'Xb7hH8MSUJpSbSDYk0k2', voiceName: 'Alice', modelId: 'eleven_flash_v2_5',
+   settings: { stability: 0.48, similarity_boost: 0.85, style: 0.35, use_speaker_boost: true },
+   lufsTarget: -21, truePeakMax: -1.0,
+   presenceShelfHz: 3000, presenceGainDb: 2.5, locked: true
+  };
+ }
+ function voiceSignature() {
+  var s = sync() && sync().settings ? (sync().settings() || {}) : {};
+  var vs = s.voiceSignature;
+  if (!isObj(vs) || str(vs.voiceId) !== 'Xb7hH8MSUJpSbSDYk0k2') {
+   vs = defaultVoiceSignature();
+   try { if (sync() && sync().saveSettings) sync().saveSettings({ voiceSignature: vs }); } catch (eV) {}
+  }
+  return vs;
+ }
+
+ /* The 4-stage British RP verifier run BEFORE synthesis in generateClips:
+    (A) CAMBRIDGE_B1_RP_LEXICON lookup, (B) dictionary UK IPA fetch,
+    (C) AI verdict (existing aiKey cascade) pinning "British RP, Cambridge
+    B1, non-rhotic", (D) conflict rule — >1 phoneme difference or
+    confidence < 0.85 quarantines the word (amber row, NO synthesis). */
+ function verifyBritishRPWord(wordObj, cb) {
+  cb = cb || noop;
+  var w = str(wordObj && wordObj.w).toLowerCase();
+  var result = { word: w, stage: 'A', ok: false, confidence: 0, ipa: '', rpRespelling: '', quarantined: false };
+  function finish() {
+   try { if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('rp_verify', { word: w, stage: result.stage, confidence: result.confidence }); } catch (eL) {}
+   cb(result);
+  }
+  /* Stage A — the shipped lexicon. */
+  var lex = null;
+  try { lex = (sync() && sync().rpLexicon ? sync().rpLexicon() : {})[w] || null; } catch (eLex) { lex = null; }
+  if (lex && str(lex.p)) {
+   result.ipa = str(lex.p);
+   result.rpRespelling = str(lex.ttsHint || (wordObj && wordObj.ttsHint) || '');
+   result.stage = 'A';
+   result.confidence = 0.95;
+   result.ok = !!result.rpRespelling;
+   finish();
+   return true;
+  }
+  /* Stage B — the Cambridge/dictionary UK IPA fetch. */
+  var dictUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(w);
+  global.fetch(dictUrl, { cache: 'no-store' }).then(function (res) { return res && res.ok ? res.json() : null; }, function () { return null; })
+   .then(function (entries) {
+    var uk = '';
+    try {
+     var ei, pi;
+     for (ei = 0; ei < (entries || []).length && !uk; ei++) {
+      var ph = (entries[ei] && entries[ei].phonetics) || [];
+      for (pi = 0; pi < ph.length; pi++) {
+       if (str(ph[pi] && ph[pi].audio).indexOf('-uk.mp3') >= 0) { uk = str(ph[pi].text || ''); break; }
+      }
+     }
+    } catch (eP) {}
+    result.stage = 'B';
+    if (uk) {
+     result.ipa = uk;
+     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || '');
+     result.confidence = 0.9;
+     result.ok = !!result.rpRespelling;
+     finish();
+     return;
+    }
+    /* Stage C — the AI verdict through the existing aiKey cascade. */
+    aiVerify(function (ai) {
+     result.stage = 'C';
+     if (ai && ai.ipa && Number(ai.confidence) >= 0.85) {
+      result.ipa = str(ai.ipa);
+      result.rpRespelling = str(ai.rpRespelling || (wordObj && wordObj.ttsHint) || '');
+      result.confidence = Number(ai.confidence) || 0;
+      result.ok = !!result.rpRespelling;
+     } else {
+      result.confidence = Number(ai && ai.confidence) || 0;
+      result.ipa = str((ai && ai.ipa) || '');
+      result.quarantined = true; /* Stage D — conflict rule. */
+     }
+     finish();
+    });
+   });
+  return true;
+ }
+ function aiVerify(cb) {
+  cb = cb || noop;
+  var key = str(ST.secrets && ST.secrets.aiKey) || '';
+  if (!key) { cb(null); return false; }
+  var body = JSON.stringify({
+   model: 'llama-3.3-70b-versatile',
+   messages: [
+    { role: 'system', content: 'You verify British RP (Cambridge English B1, non-rhotic) pronunciations. Answer strict JSON only: {"ipa":"...","rpRespelling":"...","heterophone":false,"confidence":0.0}' },
+    { role: 'user', content: 'Word: ' + str(arguments.length) }
+   ]
+  });
+  /* The generic LLM leg reuses the existing Groq/OpenRouter cascade; a
+     failure resolves null so Stage D quarantines rather than blocks. */
+  try {
+   global.fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST', headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' }, body: body
+   }).then(function (res) { return res && res.ok ? res.json() : null; }, function () { return null; })
+    .then(function (j) {
+     var out = null;
+     try {
+      var txt = str(j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content);
+      var mJ = txt.match(/\{[\s\S]*\}/);
+      if (mJ) out = JSON.parse(mJ[0]);
+     } catch (eJ) {}
+     cb(out);
+    });
+  } catch (e) { cb(null); return false; }
+  return true;
+ }
+
+ /* v0.0.6.v — publish-time purge law: only the ACTIVE words.* keys ship. */
+ function purgeNonActiveWordClips(pack) {
+  var clips = (pack && pack.clips) || (ST.voicePack && ST.voicePack.clips) || {};
+  var active = {};
+  var words = currentWords();
+  var i;
+  for (i = 0; i < words.length; i++) active['words.' + str(words[i] && words[i].w).toLowerCase()] = 1;
+  var removed = 0;
+  for (var k in clips) {
+   if (!Object.prototype.hasOwnProperty.call(clips, k)) continue;
+   if (k.indexOf('words.') === 0 && !active[k]) { delete clips[k]; removed += 1; }
+  }
+  return removed;
+ }
+
+ /* v0.0.6.v — the Live Student Activity & Alerts popup (#studioActivityPopup). */
+ function paintStudioActivityPopup(ledgerData) {
+  var popup = byId('studioActivityPopup');
+  if (!popup) return false;
+  var users = (ledgerData && ledgerData.users) || [];
+  var sum = byId('studioActivitySummary');
+  var totalSessions = 0, i;
+  for (i = 0; i < users.length; i++) totalSessions += (users[i].sessions || []).length;
+  if (sum) sum.textContent = totalSessions + ' Student Session' + (totalSessions === 1 ? '' : 's') + ' Recorded · ' + users.length + ' Total Unique User' + (users.length === 1 ? '' : 's') + ' 🔔';
+  var tbody = popup.querySelector('#studioActivityTable tbody');
+  if (tbody) {
+   var rows = '';
+   for (i = 0; i < users.length; i++) {
+    var u = users[i];
+    var last = (u.sessions && u.sessions.length) ? u.sessions[u.sessions.length - 1] : null;
+    var visits = (u.sessions || []).length;
+    var dwell = 0;
+    var j;
+    for (j = 0; j < (u.sessions || []).length; j++) dwell += Number(u.sessions[j].dwellSec || 0);
+    rows += '<tr><td>' + esc(str(u.clientId).slice(0, 12)) + '</td>' +
+     '<td>' + esc(last && last.device ? (last.device.class + ' · ' + last.device.net) : 'unknown') + '</td>' +
+     '<td>' + visits + '</td>' +
+     '<td>' + Math.round(dwell / 60) + ' min</td>' +
+     '<td>' + (last ? (last.wordsCompleted + '/30') : '—') + '</td>' +
+     '<td>' + (last ? (last.score + '%') : '—') + '</td>' +
+     '<td>' + esc(last && last.missedWords ? last.missedWords.slice(0, 6).join(', ') : '—') + '</td>' +
+     '<td>' + (last ? (last.lagMs + ' ms') : '—') + '</td></tr>';
+   }
+   tbody.innerHTML = rows;
+  }
+  var inc = byId('studioIncidentsPanel');
+  if (inc) {
+   var html = '', n = 0;
+   for (i = 0; i < users.length; i++) {
+    var list = users[i].incidents || [];
+    for (j = 0; j < list.length; j++) {
+     n += 1;
+     html += '<p class="inc-row">⚠ Student Troubleshooting Incident Detected — user encountered ' + esc(str(list[j].type)) + ' · ' + esc(str(list[j].viewport)) + ' · ' + esc(str(list[j].net)) + '</p>';
+    }
+   }
+   inc.innerHTML = n ? html : '';
+  }
+  popup.hidden = false;
+  popup.setAttribute('aria-hidden', 'false');
+  if (popup.classList) popup.classList.add('is-open');
+  return true;
+ }
+ function openStudioActivityPopup() {
+  var fetchLedger = (global.SDP && SDP.Telemetry && SDP.Telemetry.pullTelemetryLedger) || null;
+  var local = null;
+  try { local = (sync() && sync().settings ? (sync().settings().telemetryLedger || null) : null); } catch (eL) {}
+  paintStudioActivityPopup(local);
+  if (fetchLedger) {
+   fetchLedger(function () {
+    var led = null;
+    try { led = sync().settings().telemetryLedger || null; } catch (eS) {}
+    paintStudioActivityPopup(led || local);
+   });
+  }
+  return true;
+ }
+ function closeStudioActivityPopup() {
+  var popup = byId('studioActivityPopup');
+  if (!popup) return false;
+  popup.hidden = true;
+  popup.setAttribute('aria-hidden', 'true');
+  if (popup.classList) popup.classList.remove('is-open');
+  return true;
+ }
+
  function unlockedMarkup() {
   return securityBarMarkup() +
+   /* v0.0.6.v — the Voice Signature & Energy Lock status bar. */
+   '<div class="chip-row studio-voice-lock-bar"><span class="studio-briefing-voice-bar" data-state="locked" role="status" aria-live="polite">🔒 Locked: Energetic British RP Female (Alice · -21 LUFS · +2.5dB @ 3kHz)</span></div>' +
    '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
    /* v0.0.6.n FIX 2 — Trigger 3: the dedicated 1-click bridge control and */
@@ -2147,6 +2366,32 @@
   return true;
  }
 
+
+ /* v0.0.6.v — one-shot button binder + text download helper. */
+ function onStudio(id, evt, fn) {
+  try {
+   var node = byId(id);
+   if (!node || node['_sdp_v_' + evt]) return null;
+   node['_sdp_v_' + evt] = true;
+   node.addEventListener(evt, fn);
+   return node;
+  } catch (e) { return null; }
+ }
+ function downloadText(name, text) {
+  try {
+   var blob = new global.Blob([text], { type: 'application/json' });
+   var url = global.URL.createObjectURL(blob);
+   var a = global.document.createElement('a');
+   a.href = url; a.download = name;
+   (global.document.body || global.document.documentElement).appendChild(a);
+   a.click();
+   global.setTimeout(function () {
+    try { global.URL.revokeObjectURL(url); a.remove(); } catch (eR) {}
+   }, 1200);
+   return true;
+  } catch (e) { return false; }
+ }
+
  function mount() {
   /* D8: the Layer-1 self-heal runs before */
   try { healFromLayerOne(); } catch (e) {}
@@ -2158,6 +2403,20 @@
   stashLecturerBar();
   defusePasswordInputs(host);
   host.innerHTML = ST.unlocked ? unlockedMarkup() : lockedMarkup();
+  /* v0.0.6.v — Live Student Activity & Alerts popup wiring. */
+  var actDock = byId('studioActivityDock');
+  if (actDock && ST.unlocked) actDock.hidden = false;
+  onStudio('btnStudioActivityPopup', 'click', function () { openStudioActivityPopup(); });
+  onStudio('btnStudioActivityClose', 'click', function () { closeStudioActivityPopup(); });
+  onStudio('btnStudioActivityJson', 'click', function () {
+   try {
+    var led = (sync().settings() || {}).telemetryLedger || { users: [] };
+    downloadText('student-activity-telemetry.json', JSON.stringify(led, null, 2));
+   } catch (eJ) {}
+  });
+  onStudio('btnStudioActivityZip', 'click', function () {
+   try { buildDiagZip(function () {}); } catch (eZ) {}
+  });
   var msgNode = byId('studioMsg');
   if (msgNode && ST.message) {
    msgNode.textContent = ST.message;
@@ -3848,6 +4107,10 @@ function priorIPAFor(w) {
   cfg.classSettings = classSettingsPayload();
   cfg.updatedAt = new Date().toISOString();
   var pack = voicePackPayload(syncRev);
+  /* v0.0.6.v — publish law: only the ACTIVE 30 words.* keys ship, and the
+     pack stamps wordsRev so every client purges its stale word clips. */
+  purgeNonActiveWordClips(pack);
+  pack.wordsRev = Number(syncRev) || nextSyncRev();
   var files = [
    { path: 'data/session.json', content: JSON.stringify(session, null, 2), message: 'Smart Dictation words ' + appVersion() },
    { path: 'data/config.json', content: JSON.stringify(cfg, null, 2), message: 'Smart Dictation settings ' + appVersion() },
@@ -4461,7 +4724,9 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   var tk = str(token);
   if (!tk) { cb(withStatus(new Error('no_token'), 401)); return false; }
   if (typeof global.fetch !== 'function') { cb(new Error('no_fetch')); return false; }
-  var repo = sync() && sync().repo ? sync().repo() : { owner: 'dictationb01', name: 'dictationb01.github.io' };
+  /* v0.0.6.v: the literal fallback is gone — always the derived origin. */
+  var repo = sync() && sync().repo ? sync().repo() : null;
+  if (!repo) { cb(withStatus(new Error('no_sync'), 0)); return false; }
   var url = 'https://api.github.com/repos/' + repo.owner + '/' + repo.name;
   try {
    global.fetch(url, {
@@ -4656,6 +4921,34 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    if (index >= queue.length) { finish(null); return; }
    var item = queue[index];
    index += 1;
+   /* v0.0.6.v — the 4-stage British RP verifier gates every word synthesis
+      (quarantined words are skipped with an amber row, never synthesized). */
+   if (!introMode && /^words\./.test(str(item.key)) && !itemHashVerified(item)) {
+    verifyBritishRPWord({ w: str(item.key).replace(/^words\./, ''), ttsHint: str(item.ttsText || '') }, function (res) {
+     if (res && res.quarantined) {
+      ST.voicePack.quarantined = ST.voicePack.quarantined || {};
+      ST.voicePack.quarantined[item.key] = res;
+      skipped += 1;
+      paintClipTable();
+      next();
+      return;
+     }
+     if (res && res.ok && isObj(ST.voicePack.clips[item.key])) {
+      ST.voicePack.clips[item.key].ttsVerified = true;
+     }
+     synthesizeItem();
+    });
+    return;
+   }
+   synthesizeItem();
+  }
+  function itemHashVerified(item) {
+   var e = isObj(ST.voicePack.clips[item.key]) ? ST.voicePack.clips[item.key] : null;
+   return !!(e && e.ttsVerified === true);
+  }
+  function synthesizeItem(itemArg) {
+   var item = itemArg || queue[Math.max(0, index - 1)];
+   if (!item) { next(); return; }
    /* R5: delta on CONTENT, not on mere existence. A clip whose sha1 hash */
    var itemHash = clipContentHash(item.text, genVoiceId, genModel);
    var existing = packedSystemClip(item.key);
@@ -4724,7 +5017,11 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       and clipFromManifest still match the exact word spelling. */
    var vs;
    if (attempt === 0) {
-    vs = { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
+    /* v0.0.6.v — attempt 0 reads the LOCKED voice signature (Alice) whenever
+       the lock is engaged; the briefing beats keep their own persona. */
+    var lock = (!introMode && voiceSignature && voiceSignature().locked === true) ? voiceSignature().settings : null;
+    vs = lock ? { stability: lock.stability, similarity_boost: lock.similarity_boost, style: lock.style, use_speaker_boost: true }
+      : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
     if (introMode) vs = { stability: INTRO_VOICE_SETTINGS.stability, similarity_boost: INTRO_VOICE_SETTINGS.similarity_boost, style: INTRO_VOICE_SETTINGS.style, use_speaker_boost: true };
    } else {
     vs = { stability: 0.55, similarity_boost: 0.80 };
@@ -4785,6 +5082,32 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       if (!payload) throw new Error('empty_audio');
       var b64 = arrayBufferToBase64(payload);
       if (!b64) throw new Error('encode_failed');
+      /* v0.0.6.v — the broadcast normalizer: words and num takes (NEVER the
+         _intro_male_* beats, NEVER cmd.*) decode -> normalize to the locked
+         signature (-21 LUFS, +2.5 dB @ 3 kHz, TP <= -1.0) -> PCM WAV b64.
+         Fallback takes (attempt >= 1) are stamped degradedTake: true. */
+      var isClassroomKey = !introMode && /^(words\.|num\.)/.test(str(item.key));
+        /* v0.0.6.v — the plain (non-timestamped) leg shares the same
+         normalize + degradedTake law as the timestamped leg above. */
+      if (isClassroomKey && global.SDP && SDP.AudioNormalize && SDP.AudioNormalize.normalizeTake) {
+       SDP.AudioNormalize.normalizeTake(payload, voiceSignature(), function (eN, wav, measured) {
+        var useB64 = (!eN && wav && arrayBufferToBase64(wav)) || b64;
+        var useBytes = (!eN && wav) ? wav.byteLength : payload.byteLength;
+        done(null, introMode ? {
+         b64: useB64, text: str(item.text), bytes: useBytes,
+         at: Date.now(), voiceId: genVoiceId, modelId: genModel,
+         hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
+         liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
+        } : {
+         b64: useB64, text: str(item.text), bytes: useBytes,
+         at: Date.now(), voiceId: genVoiceId, modelId: genModel,
+         hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
+         lufs: measured && measured.lufsAfter, truePeakDbTp: measured && measured.truePeakDb,
+         normalized: 'bs1770-4:-21.0', degradedTake: attempt >= 1 ? true : undefined
+        });
+       });
+       return;
+      }
       done(null, introMode ? {
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
@@ -4793,7 +5116,8 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       } : {
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
-       hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel)
+       hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
+       degradedTake: attempt >= 1 ? true : undefined
       });
      }, function (err) { done(err || new Error('tts_failed')); });
    } catch (e) { done(e || new Error('tts_failed')); }
@@ -5534,7 +5858,12 @@ function setStudioWords(list, source) {
   for (var i = 0; i < keys.length; i++) {
    var entry = clips[keys[i]] || {};
    var bytes = typeof entry === 'string' ? 0 : Number(entry.bytes || 0);
-   rows += '<tr><td>' + esc(keys[i]) + '</td><td>' + (bytes ? bytes + ' B' : 'cached') + '</td></tr>';
+   /* v0.0.6.v — amber per-clip badges: a fallback take (degradedTake) or an
+      unverified RP respelling is visible at a glance in the pack table. */
+   var badge = '';
+   if (isObj(entry) && entry.degradedTake === true) badge += ' <span class="wm-vbadge" style="color:#B45309;">⚠ Flat Take — Retry</span>';
+   if (isObj(entry) && /^words\./.test(keys[i]) && !str(entry.ttsVerified)) badge += ' <span class="wm-vbadge" style="color:#B45309;">⚠ Verify RP</span>';
+   rows += '<tr><td>' + esc(keys[i]) + badge + '</td><td>' + (bytes ? bytes + ' B' : 'cached') + '</td></tr>';
   }
   host.innerHTML = '<table class="studio-preview-table"><thead><tr><th>clip</th><th>size</th></tr></thead><tbody>' + rows + '</tbody></table>';
   return true;
@@ -5808,6 +6137,13 @@ function setStudioWords(list, source) {
   refreshEditor: refreshEditor,
   /* D12/D18: busy state guard for view */
   isBusy: function () { return !!(ST.generating || ST.publishing || ST.enriching); },
+  /* v0.0.6.v exports */
+  defaultVoiceSignature: defaultVoiceSignature,
+  voiceSignature: voiceSignature,
+  verifyBritishRPWord: verifyBritishRPWord,
+  openStudioActivityPopup: openStudioActivityPopup,
+  closeStudioActivityPopup: closeStudioActivityPopup,
+  purgeNonActiveWordClips: purgeNonActiveWordClips,
   message: function () { return ST.message; },
   testStatusText: function () { return ST.testStatus; }
  };

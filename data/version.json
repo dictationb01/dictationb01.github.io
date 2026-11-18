@@ -1,18 +1,19 @@
 {
-  "ver": 35,
-  "appVersion": "0.0.6.u",
-  "version": "0.0.6.u",
-  "buildDate": "2026-11-12",
-  "schema": 35,
-  "settingsRev": 59,
+  "ver": 36,
+  "appVersion": "0.0.6.v",
+  "version": "0.0.6.v",
+  "buildDate": "2026-11-17",
+  "schema": 36,
+  "settingsRev": 60,
   "session": "12",
-  "title": "Session 12 -  Entertainment and Media",
-  "updatedAt": "2026-11-12T09:27:38.613Z",
-  "syncRev": 1797000000008,
+  "title": "Session 12 - Places and Buildings",
+  "updatedAt": "2026-11-17T09:00:00.000Z",
+  "syncRev": 1797000000009,
   "payloadFiles": [
     "data/session.json",
     "data/config.json",
     "data/elevenlabs-audio.json",
     "data/version.json"
-  ]
+  ],
+  "wordsRev": 1797000000009
 }

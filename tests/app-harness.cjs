@@ -14,10 +14,13 @@ const ROOT = path.resolve(__dirname, '..');
 const MODULES = [
   'data/data-meter.js',
   'data/sdp-data-sync.js',
+  'data/sdp-audio-normalize.js',
+  'data/sdp-telemetry.js',
   'data/sdp-audio-speech.js',
   'data/sdp-dictation-engine.js',
   'data/sdp-ui-views.js',
-  'data/studio.js'
+  'data/studio.js',
+  'data/sdp-selfheal.js'
 ];
 
 function readJSON(rel) {

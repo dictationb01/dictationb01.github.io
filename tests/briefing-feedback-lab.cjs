@@ -339,7 +339,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         stage2.welcomeGone === true && stage2.overviewVisible === true, JSON.stringify(stage2));
       check(`LAB1b2(${vp.tag}) narration starts STRICTLY at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, app stamped v0.0.6.t)`,
         stage2.beats === 4 && stage2.beat1WordCount > 0 && /^Welcome/.test(stage2.beat1Word1 || '') &&
-        /0\.0\.6\.u/.test(stage2.verPill), JSON.stringify(stage2));
+        /0\.0\.6\.v/.test(stage2.verPill), JSON.stringify(stage2));
       check(`LAB1b3(${vp.tag}) the shared <audio> was primed by the Continue gesture (muted false, volume 1.0)`,
         stage2.audioUnlocked === true, JSON.stringify({ audioUnlocked: stage2.audioUnlocked }));
       /* ── v0.0.6.t LAB1m — the PARAGRAPH-1 COMPLETION GATE, observed
@@ -535,7 +535,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         }));
         check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.6.t)',
           stage3.briefingClosed === true && stage3.guideOpen === true &&
-          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.u',
+          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.6.v',
           JSON.stringify(stage3));
         check('LAB1o2 the guide footer ships Exit on the LEFT + ▶ Click Start Dictation Now highlighted on the RIGHT',
           /Click Start Dictation Now/.test(stage3.cta) && stage3.ctaRight === true,
@@ -557,7 +557,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         });
         check('LAB1p Stage 4: ▶ Click Start Dictation Now switches to the Dictation screen and starts the clock cleanly at Word #1 (index === 0)',
           stage4.screen === 'screen-player' && (stage4.index === 0 || stage4.wordNo === 1) &&
-          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.u',
+          stage4.guideClosed === true && stage4.guideSeen === '0.0.6.v',
           JSON.stringify(stage4));
         check('LAB1q the two-stage welcome run threw zero page errors', errors.length === 0, errors.join(' | '));
       }
@@ -618,13 +618,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       const underscore = names.filter((k) => k.indexOf('_') === 0);
       const withAudio = names.filter((k) => clips[k].b64 && String(clips[k].b64).length > 1000);
       const george = underscore.filter(function (k) { return /^_intro_male_[1-4]$/.test(k) && pack.clips[k] && pack.clips[k].b64 && pack.clips[k].voiceId === 'JBFqnCBsd6RMkjVDRZzb'; });
-      check('LAB2a data/elevenlabs-audio.json ships exactly the 135 authentic clips (131 Alice + the 4 committed George briefing beats) — the pack can never lose its voices on weak mobile data',
-        withAudio.length === 135, String(withAudio.length));
+      check('LAB2a data/elevenlabs-audio.json ships exactly the 74 canonical clips (30 active Session-12 words + 30 numbers + 6 commands + 4 guides + the 4 committed George briefing beats) — the pack can never lose its voices on weak mobile data',
+        withAudio.length === 74, String(withAudio.length));
       check('LAB2b the FOUR underscore entries are exactly the committed _intro_male_1..4 George beats (real MP3 b64 + George voiceId + wt karaoke + sha1 pins)',
         underscore.length === 4 && george.length === 4 && george.every(function (k) { return Array.isArray(pack.clips[k].wt) && pack.clips[k].wt.length > 10; }),
         underscore.join(', '));
-      check('LAB2c the pack header carries 0.0.6.u / ver 35 / schema 35 / settingsRev 51 / syncRev 1797000000001',
-        pack.version === '0.0.6.u' && pack.ver === 35 && pack.schema === 35 && pack.settingsRev === 51 && pack.syncRev === 1797000000001,
+      check('LAB2c the pack header carries 0.0.6.v / ver 36 / schema 36 / settingsRev 60 / syncRev 1797000000009',
+        pack.version === '0.0.6.v' && pack.ver === 36 && pack.schema === 36 && pack.settingsRev === 60 && Number(pack.syncRev) === 1797000000009,
         JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
       const orchestration = fs.readFileSync(path.join(ROOT, 'data/studio.js'), 'utf8');
       const viewsText = fs.readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
@@ -660,7 +660,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           var pre = 0;
           for (var li = 1; li <= 4; li++) {
             var le = pack.clips['_intro_male_' + li];
-            if (le && le.provenance === 'repo-preload' && le.liveEleven === undefined && le.b64) pre += 1;
+            /* v0.0.6.v: the four beats are the committed live-Eleven takes. */
+            if (le && le.provenance === 'elevenlabs-live' && le.liveEleven === true && le.b64) pre += 1;
           }
           return pre === 4;
         })());
@@ -950,8 +951,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.u' }))],
-          ['sdp.guide_seen', '0.0.6.u']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
+          ['sdp.guide_seen', '0.0.6.v']
         ]
       });
       await page.waitForTimeout(500);
@@ -965,7 +966,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
               './audio/elevenlabs/_intro_male_1-old.mp3',
               './audio/elevenlabs/_intro_male_4.mp3',
               './audio/elevenlabs/guide.en.2-old.mp3',
-              './audio/elevenlabs/words.apple.mp3'
+              './audio/elevenlabs/words.castle.mp3'
             ];
             for (const u of urls) {
               await cache.put(new Request(u, { cache: 'reload' }), new Response('stale-audio', { headers: { 'Content-Type': 'audio/mpeg' } }));
@@ -974,7 +975,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             const n = await window.SDP.Sync.purgeStaleBriefingClips();
             out.purged = Number(n) || 0;
             const keys = (await cache.keys()).map(function (r) { return String(r.url); });
-            out.survived = keys.filter(function (u) { return /words\.apple/.test(u); }).length;
+            out.survived = keys.filter(function (u) { return /words\.castle/.test(u); }).length;
           }
           const f = (window.__lab && window.__lab.fetches ? window.__lab.fetches : []).filter(function (x) {
             return /elevenlabs-audio\.json/.test(x.url);
@@ -985,7 +986,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           out.manifest = f.length > 0;
           /* v0.0.6.q: the boot manifest read carries ONLY the release version
              (?v=0.0.6.q, NO tick) so the SW/HTTP cache can serve it. */
-          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.u$/.test(x.url); });
+          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.6\.v$/.test(x.url); });
           out.noTick = f.every(function (x) { return !/[?&]t=\d+/.test(x.url); });
           out.cacheFirst = f.some(function (x) { return x.cache === 'default'; });
           out.pointerFresh = v.some(function (x) { return x.cache === 'no-store' && /[?&]t=\d+/.test(x.url); });
@@ -1002,7 +1003,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         purge.cacheFirst === true && purge.noStore !== true && purge.pointerFresh === true, JSON.stringify(purge));
       const swText = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
       check('LAB3e the service worker is the s34 shell (sdp-v0.0.6.u-s34) with the stale-while-revalidate + background-revalidation data-JSON law',
-        /SW_VERSION = 'sdp-v0\.0\.6\.u-s34'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.u-s34-shell'/.test(swText) &&
+        /SW_VERSION = 'sdp-v0\.0\.6\.v-s35'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.6\.v-s35-shell'/.test(swText) &&
         /function staleWhileRevalidateDataJson/.test(swText), 'sw.js stamp');
       check('LAB3f the purge-law run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
@@ -1019,15 +1020,15 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.u' }))],
-          ['sdp.guide_seen', '0.0.6.u']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
+          ['sdp.guide_seen', '0.0.6.v']
         ]
       });
       /* Wait until the SW controls the page and the full pack is live. */
       await page.waitForFunction(() => {
         try {
           const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-          return !!(m && m.clips && Object.keys(m.clips).length >= 135);
+          return !!(m && m.clips && Object.keys(m.clips).length >= 74);
         } catch (e) { return false; }
       }, null, { timeout: 25000 }).catch(() => {});
       await page.waitForTimeout(800);
@@ -1042,7 +1043,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         const iv = setInterval(function () {
           try {
             const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-            if (m && m.clips && Object.keys(m.clips).length >= 135) {
+            if (m && m.clips && Object.keys(m.clips).length >= 74) {
               clearInterval(iv);
               resolve({ clips: Object.keys(m.clips).length, ms: Date.now() - t0 });
             }
@@ -1050,8 +1051,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         }, 100);
         setTimeout(function () { clearInterval(iv); resolve({ clips: 0, ms: Date.now() - t0 }); }, 12000);
       }));
-      check('LAB3g SLOW-3G (every /data/ request delayed 4s): the full voice pack (>= 135 committed clips incl. the 4 George beats) is live in memory in < 4s — the SW cache answered, the network never could',
-        slow3g.clips >= 135 && slow3g.ms < 4000, JSON.stringify(slow3g));
+      check('LAB3g SLOW-3G (every /data/ request delayed 4s): the full voice pack (>= 74 committed clips incl. the 4 George beats) is live in memory in < 4s — the SW cache answered, the network never could',
+        slow3g.clips >= 74 && slow3g.ms < 4000, JSON.stringify(slow3g));
       /* 0-BAR: every /data/ request aborted — the pack must still load. */
       await ctx.unroute('**/data/**');
       await ctx.route('**/data/**', (route) => route.abort());
@@ -1061,7 +1062,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         const iv = setInterval(function () {
           try {
             const m = window.SDP && window.SDP.Speech && window.SDP.Speech.clipManifest ? window.SDP.Speech.clipManifest() : null;
-            if (m && m.clips && Object.keys(m.clips).length >= 135) {
+            if (m && m.clips && Object.keys(m.clips).length >= 74) {
               clearInterval(iv);
               const w1 = window.SDP.Sync.word(0);
               window.SDP.Speech.playWord(w1, { volume: 1 }, function () {
@@ -1073,7 +1074,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         setTimeout(function () { clearInterval(iv); resolve({ clips: 0, ms: Date.now() - t0, tier: 'timeout' }); }, 12000);
       }));
       check('LAB3h OFFLINE (0-bar, every /data/ request aborted): the reload still serves all 135 committed clips from the SW cache — the clips can never disappear',
-        offline.clips >= 135 && offline.word && offline.intro, JSON.stringify(offline));
+        offline.clips >= 74 && offline.word && offline.intro, JSON.stringify(offline));
       check('LAB3i OFFLINE (0-bar): Dictation Word #1 plays from the ElevenLabs voice pack (the Alice/ElevenLabs tier, never the robotic TTS tier)',
         /ElevenLabs/.test(offline.tier) && !!offline.word, JSON.stringify(offline));
       check('LAB3j the offline run threw zero page errors', errors.length === 0, errors.join(' | '));
@@ -1085,8 +1086,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.u' }))],
-          ['sdp.guide_seen', '0.0.6.u']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.6.v' }))],
+          ['sdp.guide_seen', '0.0.6.v']
         ]
       });
       /* Map the authentic fixture onto _intro_male_1..4 WITH exact wt arrays

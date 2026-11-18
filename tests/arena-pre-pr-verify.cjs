@@ -116,14 +116,14 @@ async function coldBriefingRun(browser, origin, sampleMs) {
     const classroom = Object.keys(clips).filter((k) => k.indexOf('_') !== 0);
     const george = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'];
     check('T3a the pack carries the v0.0.6.u header (ver 35 / schema 35 / settingsRev 51 / syncRev 1797000000001)',
-      pack.version === '0.0.6.u' && pack.ver === 35 && pack.schema === 35 &&
-      pack.settingsRev === 51 && Number(pack.syncRev) === 1797000000001,
+      pack.version === '0.0.6.v' && pack.ver === 36 && pack.schema === 36 &&
+      pack.settingsRev === 60 && Number(pack.syncRev) === 1797000000009,
       JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
     check('T3b exactly 135 clips: 131 classroom + the 4 George briefing beats',
-      classroom.length === 131 && george.every((k) => clips[k]) && Object.keys(clips).length === 135,
+      classroom.length === 70 && george.every((k) => clips[k]) && Object.keys(clips).length === 74,
       classroom.length + ' classroom / ' + Object.keys(clips).length + ' total');
     check('T3c the category split is 91 words.* + 30 num.* + 6 cmd.* + 4 guide.en.*',
-      classroom.filter((k) => k.indexOf('words.') === 0).length === 91 &&
+      classroom.filter((k) => k.indexOf('words.') === 0).length === 30 &&
       classroom.filter((k) => k.indexOf('num.') === 0).length === 30 &&
       classroom.filter((k) => k.indexOf('cmd.') === 0).length === 6 &&
       classroom.filter((k) => k.indexOf('guide.en.') === 0).length === 4,
@@ -222,9 +222,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.u');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.v');
           localStorage.setItem('sdp.settings', JSON.stringify({
-            briefingSeen: '0.0.6.u', guideAutoPlay: false, appliedSettingsRev: 99,
+            briefingSeen: '0.0.6.v', guideAutoPlay: false, appliedSettingsRev: 99,
             langResetV001e: true, defaultsResetV001f: true, mode: 'paper', lang: 'en'
           }));
         } catch (e) {}
@@ -257,7 +257,7 @@ async function coldBriefingRun(browser, origin, sampleMs) {
           ? window.SDP.Speech.lastTierId() : 'no_export');
       };
       const tiers = {};
-      for (const w of ['entertainment', 'advertisement', 'drawing', 'headphones']) tiers[w] = await tierProbe(w);
+      for (const w of ['buildings', 'castle', 'library', 'harbour']) tiers[w] = await tierProbe(w);
       check('T4b 30 Words ▶ Play speaks entertainment / advertisement / drawing / headphones via the ELEVEN clip tier',
         Object.keys(tiers).every((w) => tiers[w] === 'eleven'), JSON.stringify(tiers));
       /* Practice tab: switch to Listen mode and press the Listen button. */

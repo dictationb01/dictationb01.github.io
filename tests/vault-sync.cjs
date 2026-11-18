@@ -48,8 +48,8 @@ function gitHubStub(opts) {
 }
 
 (async function main() {
-  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.u');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.u' })); } };
+  const base = { before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } };
 
   /* ── 1. R5: the SDP_ENC_V2 envelope is frozen ───────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 16B salt ‖ 12B iv ‖ AES-GCM-256
@@ -384,6 +384,7 @@ function gitHubStub(opts) {
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R6 verified adoption
   {
     const live = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/config.json'), 'utf8'));
+    const liveVersion = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/version.json'), 'utf8'));
     const app = await createApp(base);
     const seen = [];
     const inner = app.w.fetch;
@@ -398,8 +399,8 @@ function gitHubStub(opts) {
     });
     app.files['data/config.json'] = JSON.stringify(cfgOnly);
     app.files['data/version.json'] = JSON.stringify({
-      ver: 15, appVersion: '0.0.6.n', version: '0.0.6.n', schema: 15, settingsRev: nextRev,
-      session: '8', title: 'Session 8', syncRev: nextSync,
+      ver: 15, appVersion: '0.0.6.v', version: '0.0.6.v', schema: 15, settingsRev: nextRev,
+      session: String(liveVersion.session || '12'), title: 'Session 12', syncRev: nextSync,
       /* D17: a keys/settings-only publish — session.json is NOT rewritten. */
       payloadFiles: ['data/config.json', 'data/version.json']
     });

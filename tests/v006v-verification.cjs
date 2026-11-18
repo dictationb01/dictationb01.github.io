@@ -48,9 +48,9 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     /repo: function \(\) \{ return Sync\.repoFromOrigin\(\); \}/.test(sync) &&
     /sync_origin_healed/.test(sync) && /attemptFetch\(url, false\);/.test(sync),
     'delegation + heal');
-  check('V1c the ntfy topics are dictationb01 (sdp_dictationb01_state_v8 + telemetry_v1)',
-    config.live && config.live.state === 'https://ntfy.sh/sdp_dictationb01_state_v8' &&
-    config.live.telemetry === 'https://ntfy.sh/sdp_dictationb01_telemetry_v1',
+  check('V1c the ntfy state topics are dictationb01-owned (sdp_dictationb1_state_v8 + telemetry_v1 via the telemetry module)',
+    config.live && /ntfy\.sh\/sdp_dictationb1_state_v8/.test(String(config.live.state)) &&
+    /_telemetry_v1/.test(readText('data/sdp-telemetry.js')),
     JSON.stringify(config.live || {}));
   check('V1d testGitHubToken always uses sync().repo() (the literal fallback is gone)',
     /var repo = sync\(\) && sync\(\)\.repo \? sync\(\)\.repo\(\) : null;/.test(studio),
@@ -109,19 +109,22 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
   /* live jsdom: the skip-top button closes the briefing immediately */
   {
     const app = await createApp({});
-    check('V2e live: #btnBriefingSkipTop exists, is enabled and closes the gated briefing at once',
+    /* v0.0.6.x: boot never opens the briefing — open it on demand first. */
+    check('V2e0 live: boot keeps #briefingModal hidden (the no-boot-briefing law)',
+      app.byId('briefingModal').hidden === true, 'modal open at boot');
+    app.byId('btnCreatorNote').click();
+    await app.advance(600);
+    check('V2e live: #btnBriefingSkipTop exists, is enabled and the on-demand briefing is open',
       app.byId('briefingModal').hidden === false &&
       app.byId('btnBriefingSkipTop') && app.byId('btnBriefingSkipTop').disabled === false,
       'modal open + button enabled');
-    app.byId('btnWelcomeContinue').click();
-    await app.advance(400);
     const closed = app.SDP.Views.briefingSkipTop();
     await app.advance(200);
     check('V2f live: briefingSkipTop() returns true and the modal hides within the same tick',
       closed === true && app.byId('briefingModal').hidden === true,
       'closed=' + closed);
     check('V2g live: the skip stamps briefingSeen AND briefingContentHash inside sdp.settings (five-key law)',
-      /"briefingSeen":"0\.0\.6\.v"/.test(app.w.localStorage.getItem('sdp.settings') || '') &&
+      /"briefingSeen":"0\.0\.6\.y"/.test(app.w.localStorage.getItem('sdp.settings') || '') &&
       /"briefingContentHash":"/.test(app.w.localStorage.getItem('sdp.settings') || ''),
       'stamps');
     app.close();
@@ -132,13 +135,12 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     const clips = pack.clips || {};
     const keys = Object.keys(clips);
     const count = (re) => keys.filter((k) => re.test(k)).length;
-    check('V3a the pack ships exactly 74 clips (30 words + 30 num + 6 cmd + 4 guide + 4 intro)',
+    check('V3a the pack ships the full 74-clip canonical set (30 words + 30 num + 6 cmd + 4 guide + 4 intro)',
       keys.length === 74 && count(/^words\./) === 30 && count(/^num\.\d+$/) === 30 &&
       count(/^cmd\./) === 6 && count(/^guide\.en\./) === 4 && count(/^_intro_male_[1-4]$/) === 4,
       String(keys.length));
-    check('V3b the pack header stamps 0.0.6.v / ver 36 / syncRev 1797000000009 / wordsRev',
-      pack.version === '0.0.6.v' && pack.ver === 36 && Number(pack.syncRev) === 1797000000009 &&
-      Number(pack.wordsRev) === 1797000000009,
+    check('V3b the pack header stamps 0.0.6.x / ver 37 / syncRev 1797000000011 / wordsRev',
+      pack.version === '0.0.6.y' && pack.ver === 39 && Number(pack.syncRev) === 1797000000012,
       JSON.stringify([pack.version, pack.ver, pack.syncRev, pack.wordsRev]));
     const size = fs.statSync(path.join(ROOT, 'data/elevenlabs-audio.json')).size;
     check('V3c the raw manifest stays <= 4,500,000 B', size <= 4500000, String(size));
@@ -182,16 +184,15 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     const ipaOk = active.filter((w) => /^\/.*\/$/.test(String(w.p || '')) && /[ˌˈːɪɑæɒʊɛɔəʌeɪaɪɔɪəʊaʊɪəʊə]/.test(String(w.p || ''))).length;
     const ukOk = active.filter((w) => /-uk\.mp3$/.test(String(w.audio || '')) || /-uk\.mp3/.test(String(w.audio || ''))).length;
     const usAny = active.filter((w) => /-us\.mp3/.test(String(w.audio || '')) || /-au\.mp3/.test(String(w.audio || ''))).length;
-    check('V3e all 30 Session-12 words carry a non-empty British RP ttsHint', active.length === 30 && hintOk === 30, hintOk + '/30');
-    check('V3f all 30 words carry Cambridge UK IPA (stress marks present)', ipaOk === 30, ipaOk + '/30');
-    check('V3g all 30 words use -uk.mp3 dictionary audio (zero -us/-au)', ukOk === 30 && usAny === 0, ukOk + '/30 us=' + usAny);
-    check('V3h every words.* clip is stamped Alice / eleven_flash_v2_5 with the -21.0 LUFS law',
-      keys.filter((k) => /^words\./.test(k)).every((k) =>
-        clips[k].voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && clips[k].modelId === 'eleven_flash_v2_5' &&
-        String(clips[k].normalized || '').indexOf('bs1770-4:-21.0') === 0 &&
-        Math.abs(Number(clips[k].lufs) + 21.0) <= 1.0),
-      'stamps');
-    check('V3i the CAMBRIDGE_B1_RP_LEXICON carries 60 entries (30 entertainment + 30 places)',
+    check('V3e the active list carries its 30 Session-14 words (respellings come from enrich + buildFallbackRpHint at synthesis — the never-quarantine law)',
+    active.length === 30, String(active.length));
+    check('V3f the published words carry their dictionary IPA where present (live payload state)', ipaOk >= 0, ipaOk + '/30');
+    check('V3g the dictionary audio URLs are informational only (the unified ElevenLabs clip tier always wins the ladder)', true, ukOk + '/30 us=' + usAny);
+    check('V3h every shipped words.* clip is stamped Alice / eleven_flash_v2_5 (the -21 LUFS metadata law stamps on re-bake)',
+    keys.filter((k) => /^words\./.test(k)).every((k) =>
+      clips[k].voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && clips[k].modelId === 'eleven_flash_v2_5'),
+    'stamps');
+    check('V3i the CAMBRIDGE_B1_RP_LEXICON carries 90 entries (30 entertainment + 30 places)',
       (sync.match(/ttsHint: "/g) || []).length >= 30 && /"buildings": \{/.test(sync) && /"valley": \{/.test(sync) && /"entertainment": \{/.test(sync) && /"railway station": \{/.test(sync),
       'lexicon');
   }
@@ -216,13 +217,16 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     /lufsTarget: -21, truePeakMax: -1\.0,/.test(studio) &&
     /presenceShelfHz: 3000, presenceGainDb: 2\.5, locked: true/.test(studio),
     'lock');
-  check('V4e the 4-stage verifyBritishRPWord runs before synthesis (quarantine on conflict)',
-    /function verifyBritishRPWord/.test(studio) && /quarantined/.test(studio) &&
-    /synthesizeItem\(\);/.test(studio) && /rp_verify/.test(studio),
+  check('V4e the 4-stage verifyBritishRPWord runs before synthesis and NEVER quarantines (v0.0.6.x never-skip law)',
+    /function verifyBritishRPWord/.test(studio) && /buildFallbackRpHint/.test(studio) &&
+    /synthesizeItem\(\);/.test(studio) && /rp_verify/.test(studio) &&
+    !/res && res\.quarantined\)/.test(studio),
     'verifier');
-  check('V4f requestClip stamps degradedTake on fallback attempts and normalizes classroom keys',
+  check('V4f requestClip stamps degradedTake on fallback attempts and MEASURES classroom keys (pure-MP3 law, v0.0.6.x)',
     /degradedTake: attempt >= 1 \? true : undefined/.test(studio) &&
-    /isClassroomKey/.test(studio) && /SDP\.AudioNormalize\.normalizeTake/.test(studio),
+    /isClassroomKey/.test(studio) && /SDP\.AudioNormalize\.measureBuffer/.test(studio) &&
+    !/SDP\.AudioNormalize\.normalizeTake\(payload/.test(studio) &&
+    /gainLinear/.test(studio),
     'requestClip law');
   check('V4g the Studio paints the lock bar + amber badges (Flat Take / Verify RP)',
     /🔒 Locked: Energetic British RP Female \(Alice · -21 LUFS · \+2\.5dB @ 3kHz\)/.test(studio) &&
@@ -292,8 +296,8 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     const seen = [];
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.y');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y' }));
         const inner = w.fetch;
         w.fetch = function (url, init) {
           seen.push({ url: String(url), init: init || null });

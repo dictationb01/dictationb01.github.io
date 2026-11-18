@@ -247,6 +247,131 @@
     return true;
   }
 
+  /* ══ v0.0.6.y Pillar 3 (Y3): the Student → Lecturer/Admin alert channel.
+     Students hit missing/stale voice clips; the app must (a) record the alert
+     under the five-key law (sdp.settings.lecturerAlerts — never a sixth key),
+     (b) push it live to the lecturer over ntfy.sh + GAS, and (c) let the
+     Lecturer Studio inbox pull everything back in real time. ══ */
+  function alertStore() {
+    var s = settings();
+    var a = s.lecturerAlerts;
+    if (!a || typeof a !== 'object' || !Array.isArray(a.items)) a = { items: [], unread: 0, updatedAt: 0 };
+    return a;
+  }
+  function saveAlertStore(a) {
+    a.updatedAt = Date.now();
+    if (a.items.length > 120) a.items = a.items.slice(-120);
+    saveSettings({ lecturerAlerts: a });
+    return a;
+  }
+  /* sendLecturerAlert(payload, cb) — kind: "lecturer_alert". */
+  function sendLecturerAlert(payload, cb) {
+    cb = cb || function () {};
+    payload = payload && typeof payload === 'object' ? payload : {};
+    var t = ledger();
+    var alertType = String(payload.alertType || 'user_message');
+    var validTypes = ['missing_clips', 'stale_clips', 'pronunciation_error', 'user_message'];
+    if (validTypes.indexOf(alertType) < 0) alertType = 'user_message';
+    var rec = {
+      kind: 'lecturer_alert',
+      alertType: alertType,
+      missingWords: Array.isArray(payload.missingWords) ? payload.missingWords.slice(0, 30).map(function (w) { return String(w).slice(0, 60); }) : [],
+      staleKeys: Array.isArray(payload.staleKeys) ? payload.staleKeys.slice(0, 30).map(function (w) { return String(w).slice(0, 80); }) : [],
+      readyCount: Number(payload.readyCount || 0),
+      wordsRev: Number(payload.wordsRev || 0),
+      appVersion: String(SDP.version || ''),
+      clientId: t.clientId,
+      message: String(payload.message || '').slice(0, 300),
+      at: Date.now()
+    };
+    /* local inbox copy (survives offline; the lecturer reads it on pull) */
+    var a = alertStore();
+    a.items.push(rec);
+    a.unread += 1;
+    saveAlertStore(a);
+    /* telemetry incidents mirror the alert (bounded ring) */
+    recordIncident('lecturer_alert', { clipKey: alertType, lastErr: String(payload.message || '').slice(0, 160), recovery: { action: 'sendLecturerAlert', result: 'queued' } });
+    /* live push — best-effort, never blocks the student */
+    var body = JSON.stringify(rec);
+    var pushed = false;
+    try {
+      global.fetch(telemetryTopic(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: body })
+        .then(function () { pushed = true; }, function () {});
+    } catch (e) {}
+    try {
+      var gasUrl = '';
+      try { gasUrl = String((settings().gasUrl) || ''); } catch (eG) {}
+      if (gasUrl) global.fetch(gasUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: body }).then(null, null);
+    } catch (e2) {}
+    global.setTimeout(function () { cb(null, rec); }, 0);
+    return rec;
+  }
+  /* pullLecturerAlerts(cb) — merges ntfy rows + local store into the inbox. */
+  function pullLecturerAlerts(cb) {
+    cb = cb || function () {};
+    var a = alertStore();
+    function mergeRows(rows) {
+      var seen = {}, i, j, r;
+      for (i = 0; i < a.items.length; i++) seen[a.items[i].clientId + '@' + a.items[i].at + ':' + a.items[i].alertType] = 1;
+      if (Array.isArray(rows)) {
+        for (i = 0; i < rows.length; i++) {
+          r = rows[i];
+          if (!r || r.kind !== 'lecturer_alert' || !r.clientId) continue;
+          var key = r.clientId + '@' + Number(r.at || 0) + ':' + String(r.alertType || '');
+          if (seen[key]) continue;
+          seen[key] = 1;
+          a.items.push({
+            kind: 'lecturer_alert', alertType: String(r.alertType || 'user_message'),
+            missingWords: Array.isArray(r.missingWords) ? r.missingWords.slice(0, 30) : [],
+            staleKeys: Array.isArray(r.staleKeys) ? r.staleKeys.slice(0, 30) : [],
+            readyCount: Number(r.readyCount || 0), wordsRev: Number(r.wordsRev || 0),
+            appVersion: String(r.appVersion || ''), clientId: String(r.clientId),
+            message: String(r.message || '').slice(0, 300), at: Number(r.at || Date.now())
+          });
+          if (!r.__local) a.unread += 1;
+        }
+      }
+      /* sort newest-first, cap, persist */
+      a.items.sort(function (x, y) { return (Number(y.at) || 0) - (Number(x.at) || 0); });
+      if (a.items.length > 120) a.items = a.items.slice(0, 120);
+      saveAlertStore(a);
+      cb(null, a);
+    }
+    try {
+      global.fetch(telemetryTopic() + '/json?poll=1&since=12h', { method: 'GET' })
+        .then(function (res) {
+          if (!res || !res.ok) return [];
+          return typeof res.text === 'function' ? res.text().then(function (raw) {
+            var out = [], ls = String(raw || '').split(/\r?\n/), k;
+            for (k = 0; k < ls.length; k++) {
+              try {
+                var o = JSON.parse(ls[k]);
+                if (o && typeof o.message === 'string' && o.message.charAt(0) === '{') o = JSON.parse(o.message);
+                if (o && o.kind === 'lecturer_alert' && o.clientId) out.push(o);
+              } catch (eP) {}
+            }
+            return out;
+          }, function () { return []; }) : [];
+        }, function () { return []; })
+        .then(mergeRows, function () { mergeRows([]); });
+    } catch (e) { mergeRows([]); }
+    global.setTimeout(function () { mergeRows([]); }, PULL_TIMEOUT_MS + 500);
+    return true;
+  }
+  function clearLecturerAlerts() {
+    var a = alertStore();
+    a.items = [];
+    a.unread = 0;
+    saveAlertStore(a);
+    return a;
+  }
+  function markAlertsResolved() {
+    var a = alertStore();
+    a.unread = 0;
+    saveAlertStore(a);
+    return a;
+  }
+
   /* Boot binding: session lifecycle + pagehide beacon. */
   function bindLifecycle() {
     if (global.document && global.document.addEventListener) {
@@ -272,7 +397,7 @@
   }
 
   SDP.Telemetry = {
-    version: '1.0.0',
+    version: '1.1.0',
     ledger: ledger,
     owner: owner,
     telemetryTopic: telemetryTopic,
@@ -282,6 +407,12 @@
     envelope: envelope,
     pushTelemetryEnvelope: pushTelemetryEnvelope,
     pullTelemetryLedger: pullTelemetryLedger,
+    /* v0.0.6.y Pillar 3 (Y3): the Student → Lecturer/Admin alert channel. */
+    sendLecturerAlert: sendLecturerAlert,
+    pullLecturerAlerts: pullLecturerAlerts,
+    clearLecturerAlerts: clearLecturerAlerts,
+    markAlertsResolved: markAlertsResolved,
+    alertStore: alertStore,
     bindLifecycle: bindLifecycle,
     hex2: hex2
   };

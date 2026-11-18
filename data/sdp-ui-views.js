@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.v';
+    return '0.0.6.y';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -2527,7 +2527,11 @@
     on('btnGuideClose', 'click', closeGuide);
     /* v0.0.6.m: the relocated Project Briefing button replays the synced
        executive briefing from the About card. */
-    on('btnCreatorNote', 'click', function () { openBriefing({ replay: true }); });
+    on('btnCreatorNote', 'click', function () { openBriefing({ replay: true, fromSettings: true }); });
+    /* v0.0.6.w: the Real-Time Voice & Clone Lab (lab.html) launcher. */
+    on('btnOpenLiveLab', 'click', function () {
+      try { global.open('./lab.html', '_blank'); } catch (eL) {}
+    });
     on('btnBriefingContinue', 'click', function () { closeBriefing('continue'); });
     on('btnBriefingSkip', 'click', function () { closeBriefing('skip'); });
     /* v0.0.6.v: the ALWAYS-ENABLED top-right escape hatch — closes the
@@ -2941,7 +2945,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.v.beta';
+  var BETA_SUBVERSION = '0.0.6.y.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -2956,7 +2960,7 @@
      that now starts ONLY when Stage 2 actually begins narrating (inside
      welcomeContinueToOverview), never on the Welcome splash. Both footer
      buttons stay disabled until beat1Done === true && gateLeft <= 0. */
-  var briefingState = { open: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, allBeatsDone: false, beat1Guard: null };
+  var briefingState = { open: false, directOpen: false, gateLeft: 10, idx: -1, timer: null, gateTimer: null, epoch: 0, seenGuideAfter: false, waitGesture: false, gestureArmed: false, wordTimers: [], flow: null, beat1Done: false, allBeatsDone: false, beat1Guard: null };
   /* {W} is replaced with the live weeksSinceStart() at render time, so the
      committed clip text and the spoken sentence stay in drift-check sync.
      v0.0.6.s Pillar 1 — the 100% AUTHENTIC FIRST-PERSON CREATOR OVERVIEW,
@@ -3773,6 +3777,14 @@
     var modal = byId('briefingModal');
     if (!modal) return false;
     if (briefingState.open && !opts.replay) return true;
+    /* v0.0.6.w — the ON-DEMAND SETTINGS LAW: opening the briefing from the
+       Settings › About Project Briefing button (#btnCreatorNote) or any
+       explicit replay skips the intermediate Welcome splash entirely and
+       lands DIRECTLY on #briefingStage, because that click is already a real
+       user gesture that unlocked browser audio. All three exits unlock at
+       once (no countdown) and Paragraph 1 narrates from Word 1. */
+    var direct = !!(opts.fromSettings || (opts.replay && !opts.fromBoot && opts.welcome !== true));
+    briefingState.directOpen = direct;
     briefingState.open = true;
     briefingState.epoch += 1;
     briefingState.idx = -1;
@@ -3795,9 +3807,18 @@
     var bar = byId('briefingBar');
     if (bar) bar.style.width = '0%';
     var cont = byId('btnBriefingContinue'), skip = byId('btnBriefingSkip'), count = byId('briefingCount');
-    if (cont) { cont.disabled = true; cont.setAttribute('aria-disabled', 'true'); }
-    if (skip) { skip.disabled = true; skip.setAttribute('aria-disabled', 'true'); }
-    if (count) count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    if (direct) {
+      /* On-demand from Settings: every exit is unlocked the instant the modal
+         opens — the user may listen to the full developer story or close it
+         at any moment without waiting for a countdown. */
+      if (cont) { cont.disabled = false; cont.removeAttribute('aria-disabled'); }
+      if (skip) { skip.disabled = false; skip.removeAttribute('aria-disabled'); }
+      if (count) count.textContent = t('briefingUnlocked', 'Developer Overview — playing · close anytime.');
+    } else {
+      if (cont) { cont.disabled = true; cont.setAttribute('aria-disabled', 'true'); }
+      if (skip) { skip.disabled = true; skip.setAttribute('aria-disabled', 'true'); }
+      if (count) count.textContent = t('briefingCountdown', 'Please listen / read ({n}s)…').replace('{n}', String(briefingState.gateLeft));
+    }
     paintBriefingCtaLabel();
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
@@ -3818,7 +3839,26 @@
        unlocks browser audio. The v0.0.6.o replay path that jumped straight
        to the reading stage is retired; the user ALWAYS sees the Welcome
        first, exactly as the creator demanded. */
-    welcomeShowStage();
+    if (direct) {
+      /* v0.0.6.w: the Settings path reveals #briefingStage at once — the
+         #welcomeStage splash stays hidden — and narration begins from
+         Paragraph 1, Word 1 inside the already-unlocked click gesture. */
+      var wD = byId('welcomeStage'), bD = byId('briefingStage');
+      if (wD) wD.hidden = true;
+      if (bD) bD.hidden = false;
+      briefingState.gateLeft = 0;
+      briefingState.beat1Done = true;
+      briefingState.gestureArmed = true;
+      briefingState.waitGesture = false;
+      briefingCheckGateUnlock();
+      global.setTimeout(function () {
+        if (!briefingState.open) return;
+        briefingState.idx = -1;
+        briefingNarrate(0, briefingState.epoch);
+      }, 90);
+    } else {
+      welcomeShowStage();
+    }
     /* v0.0.6.u Fix 5A — the WELCOME-STAGE PRE-WARM: the moment the Welcome
        splash is on screen, loadManifest() is kicked in the background and
        _intro_male_1's base64 is decoded into its memoized Blob URL, so the
@@ -3858,8 +3898,12 @@
        dismissed (Exit / ▶ Start Dictation →) once the minimum gate matured
        AND Paragraph 1 finished speaking its final word. Paragraphs 2–4 may
        still be narrating; the user's explicit choice always wins. */
-    if (briefingState.gateLeft > 0 || !briefingState.beat1Done) return false;
+    /* v0.0.6.w: an on-demand (Settings) briefing opened with every exit
+       unlocked may be dismissed instantly — no gate, no Paragraph-1 lock. */
+    if (briefingState.gateLeft > 0 && !briefingState.directOpen) return false;
+    if (!briefingState.beat1Done && !briefingState.directOpen) return false;
     briefingState.open = false;
+    briefingState.directOpen = false;
     briefingState.waitGesture = false;
     briefingState.epoch += 1;
     clearBriefingWordTimers();
@@ -3899,7 +3943,7 @@
        already-spoken paragraph (i <= briefingState.idx) always stays
        allowed, and once Paragraph 1 completes (beat1Done === true) any
        paragraph 0..3 seeks freely. */
-    if (!briefingState.beat1Done && Number(idx) > briefingState.idx) return false;
+    if (!briefingState.beat1Done && !briefingState.directOpen && Number(idx) > briefingState.idx) return false;
     briefingState.epoch += 1;
     briefingState.waitGesture = false;
     briefingHideTapPill();
@@ -3933,7 +3977,7 @@
     paintBeta();
     if (!quiet) showCapsule(on ? t('betaOnToast') : t('betaOffToast'));
     try { if (SDP.Diagnostics) SDP.Diagnostics.log('beta_channel', { on: !!on }); } catch (e) {}
-    if (on) openBriefing({ replay: true });
+    if (on) openBriefing({ replay: true, fromSettings: true });
     return true;
   }
   function initBetaFromUrl() {
@@ -4410,8 +4454,13 @@
        from an earlier release can never hide the Welcome splash again (the
        exact v0.0.6.o field bug: `!briefingSeen() && !guideSeen()` skipped
        the whole briefing on every phone that had seen an older guide). */
-    if (!briefingSeen()) openBriefing({ fromBoot: true, welcome: true });
-    else if (!SDP.Data.guideSeen()) openGuide(null, { fromBoot: true });
+    /* v0.0.6.w — the NO-BOOT-BRIEFING LAW: students and users opening the app
+       must NEVER be blocked or interrupted by the Project Briefing or the
+       Welcome splash on startup. The boot goes straight into the main
+       Dictation screen; the Project Briefing lives ONLY behind the Settings ›
+       About › Project Briefing button (#btnCreatorNote), narrating on demand. */
+    try { SDP.Data.saveSettings({ briefingSeen: APP_VERSION }); } catch (eBS) {}
+    try { if (SDP.Diagnostics) SDP.Diagnostics.log('briefing_boot_retired', { ver: APP_VERSION }); } catch (eBL) {}
     showToast();
     try { SDP.Sync.registerSW(); } catch (e) {}
     try {

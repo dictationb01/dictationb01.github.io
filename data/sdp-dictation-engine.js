@@ -1442,6 +1442,12 @@
   if (opts.mode) E.mode = opts.mode === 'typing' ? 'typing' : 'paper';
   if (opts.writeSecs) E.writeSecs = Math.max(3, Number(opts.writeSecs));
   var words = opts.words && opts.words.length ? opts.words : (SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []);
+  /* v0.0.6.y Pillar 2 (Y2): the pre-start voice readiness audit — NEVER
+     blocks the session; it only purges stale clips and paints the bilingual
+     warning banner so dictation can run cleanly on the RP fallback. */
+  try {
+   if (SDP.Speech && SDP.Speech.auditSessionVoiceReadiness) SDP.Speech.auditSessionVoiceReadiness({});
+  } catch (eGuard) {}
   E.sessionNo = SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8';
   E.items = [];
   var i;

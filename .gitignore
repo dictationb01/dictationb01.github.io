@@ -5,3 +5,9 @@ node_modules/
 core
 core.*
 *.core
+
+# v0.0.6.y Pillar 6 (Y6): a release .zip must NEVER be committed into the
+# repository tree — GitHub Pages does not extract archives, so an unextracted
+# zip silently freezes the live app (the Root Cause 1 incident).
+*.zip
+*.tar.gz

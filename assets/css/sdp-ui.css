@@ -2522,6 +2522,9 @@ html[data-theme='dark'] .briefing-beat { background: #0C4A6E; color: #BAE6FD; }
 }
 .briefing-links {
   display: flex; flex-wrap: nowrap; gap: 8px; margin: 10px 0 0; font-size: 12.5px;
+  /* v0.0.6.v→w fix: keep the GitHub pills fully visible on 1280x800 desktops
+     (never clipped by the dvh card) — the nowrap row keeps its own width. */
+  max-width: 100%; overflow-x: auto; scrollbar-width: thin;
 }
 .briefing-links a {
   flex: 1 1 0; min-width: 0; text-align: center; padding: 6px 8px; border-radius: 999px;
@@ -2911,3 +2914,52 @@ html[data-theme='dark'] .selfheal-body { color: #E2E8F0; }
 .studio-incidents-panel { margin-top: 12px; }
 .studio-incidents-panel .inc-row { padding: 8px 10px; border: 1px solid #FDE68A; border-radius: 10px; background: #FFFBEB; margin: 6px 0; font-size: 12.5px; font-weight: 650; }
 .studio-activity-row { margin: 8px 0; }
+
+/* ═════════ v0.0.6.y Pillar 2 (Y2) — the voice clip guard banner ═════════ */
+.voice-clip-guard-banner { margin: 8px 0; padding: 12px 14px; border-radius: 14px; border: 1px solid #F59E0B; background: #FFFBEB; color: #78350F; display: flex; flex-direction: column; gap: 8px; }
+.voice-clip-guard-banner[hidden] { display: none; }
+.voice-clip-guard-banner[data-level='stale'] { border-color: #DC2626; background: #FEF2F2; color: #7F1D1D; }
+html[data-theme='dark'] .voice-clip-guard-banner { background: rgba(120, 53, 15, 0.32); color: #FDE68A; border-color: #B45309; }
+html[data-theme='dark'] .voice-clip-guard-banner[data-level='stale'] { background: rgba(127, 29, 29, 0.38); color: #FECACA; border-color: #B91C1C; }
+.vgb-head { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 800; }
+.vgb-si, .vgb-en { margin: 0; font-size: 13px; line-height: 1.5; font-weight: 650; }
+.vgb-detail { margin: 0; font-size: 12px; font-weight: 600; opacity: 0.9; }
+.vgb-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.vgb-sent { margin: 2px 0 0; font-size: 12.5px; font-weight: 700; color: #166534; }
+html[data-theme='dark'] .vgb-sent { color: #86EFAC; }
+.vgb-close { margin-left: auto; border: 0; background: transparent; cursor: pointer; font-size: 15px; line-height: 1; padding: 6px 8px; border-radius: 8px; color: inherit; opacity: 0.75; }
+.vgb-close:hover { opacity: 1; }
+
+/* ═════════ v0.0.6.y Pillar 1 (Y1) — Voice Sample Studio & AI Analyzer ═════════ */
+.studio-voice-sample-meter { height: 10px; border-radius: 6px; background: #E2E8F0; overflow: hidden; margin: 6px 0; }
+html[data-theme='dark'] .studio-voice-sample-meter { background: #1E293B; }
+.studio-voice-sample-meter > span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #22C55E, #EAB308 70%, #EF4444); transition: width 120ms linear; }
+.studio-vs-timer { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 15px; letter-spacing: 0.5px; }
+.studio-vs-passage { font-size: 12.5px; line-height: 1.6; padding: 10px 12px; border-radius: 10px; background: #F1F5F9; border: 1px dashed #94A3B8; max-height: 120px; overflow-y: auto; }
+html[data-theme='dark'] .studio-vs-passage { background: #0B1220; border-color: #334155; }
+.studio-voice-analysis-card { border: 1px solid #94A3B8; border-radius: 12px; padding: 10px 12px; margin-top: 10px; background: #F8FAFC; }
+html[data-theme='dark'] .studio-voice-analysis-card { background: #0F172A; border-color: #334155; }
+.studio-va-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; font-weight: 650; padding: 3px 0; border-bottom: 1px dashed #CBD5E1; }
+html[data-theme='dark'] .studio-va-row { border-color: #1E293B; }
+.studio-va-row:last-child { border-bottom: 0; }
+.studio-va-score { font-size: 26px; font-weight: 900; letter-spacing: 0.5px; }
+.studio-va-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; background: #FEF3C7; color: #92400E; margin: 2px 3px 2px 0; }
+.studio-va-badge.studio-va-fixed { background: #DCFCE7; color: #166534; }
+.studio-coverage-pill { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; font-weight: 750; padding: 6px 10px; border-radius: 999px; background: #ECFDF5; border: 1px solid #10B981; color: #065F46; }
+html[data-theme='dark'] .studio-coverage-pill { background: rgba(6, 95, 70, 0.25); border-color: #059669; color: #A7F3D0; }
+.studio-coverage-pill[data-state='partial'] { background: #FFFBEB; border-color: #F59E0B; color: #92400E; }
+html[data-theme='dark'] .studio-coverage-pill[data-state='partial'] { background: rgba(146, 64, 14, 0.25); color: #FDE68A; }
+.studio-alert-count-badge { display: inline-block; min-width: 20px; text-align: center; padding: 1px 7px; border-radius: 999px; background: #DC2626; color: #FFF; font-size: 11.5px; font-weight: 900; margin-left: 6px; }
+.studio-lecturer-alerts-card { margin-top: 8px; }
+.studio-alert-row { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px; border: 1px solid #FDE68A; border-radius: 10px; background: #FFFBEB; margin: 6px 0; font-size: 12.5px; }
+html[data-theme='dark'] .studio-alert-row { background: rgba(120, 53, 15, 0.25); border-color: #B45309; }
+.studio-alert-row[data-resolved='1'] { opacity: 0.55; }
+.studio-alert-row .sar-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-weight: 800; }
+.studio-alert-row .sar-type { padding: 1px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 900; background: #FEE2E2; color: #991B1B; }
+.studio-alert-row .sar-type[data-type='stale_clips'] { background: #FEF3C7; color: #92400E; }
+.studio-alert-row .sar-type[data-type='user_message'] { background: #DBEAFE; color: #1E40AF; }
+.studio-alert-row .sar-type[data-type='pronunciation_error'] { background: #F3E8FF; color: #6B21A8; }
+.studio-alert-row .sar-msg { font-weight: 600; }
+.studio-alert-row .sar-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.studio-alert-row .sar-actions .btn { padding: 4px 10px; font-size: 11.5px; }
+.studio-alert-empty { font-size: 12.5px; font-weight: 650; opacity: 0.75; }

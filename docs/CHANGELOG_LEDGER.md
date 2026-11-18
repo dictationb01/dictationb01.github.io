@@ -1,4 +1,104 @@
+## v0.0.6.x — Complete Voice-Engine Rebuild, 74-Clip Session-14 Bake, Studio UI Unification & Live Lab v2.0 (ver 38 · schema 38 · settingsRev 62 · syncRev 1797000000011 · wordsRev 1797000000011 · SW sdp-v0.0.6.x-s37)
+
+**Defect 1 — clean-word TTS law.** buildQueue()/requestClip() send the CLEAN
+British English orthography to ElevenLabs; only the curated RP_TTS_OVERRIDES
+heterophones (schedule, advertisement, lieutenant, tomato, vitamin, leisure,
+herb, garage, vase, laboratory, aluminium, yoghurt, clerk, derby) may be
+respelled. ttsHint and the Cambridge IPA (p) are display-only; the verifier's
+rpRespelling never overwrites item.ttsText; resynthWmRow's browser-TTS
+preview speaks the clean word too. Hyphenated pseudo-phonetics ("bri-dge-",
+"skwu-a-re-") can never reach a neural TTS again.
+
+**Defect 2 — broadcast output format everywhere.** Every non-timestamped
+ElevenLabs request appends ?output_format=mp3_44100_128 (a bare genUrl made
+ElevenLabs answer 22.05 kHz MPEG-2.5 instead of 44.1 kHz 128 kbps MPEG-1).
+
+**Defect 3 — the 74-clip Session-14 pack.** All 30 active words.* clips
+(town through tourist information) re-baked in the unified RP Female Educator
+voice (voiceId Xb7hH8MSUJpSbSDYk0k2 "Alice" / eleven_flash_v2_5): BS.1770-4
+-21.0 LUFS, true peak <= -1.0 dBTP, +2.5 dB presence @ 3 kHz (Q 0.9),
+silence-trimmed, 44.1 kHz mono 128 kbps MP3 (MPEG-1 Layer III 3:1:9:0:3),
+hash sha1(text|voiceId|modelId). The 30 num.*, 6 cmd.*, 4 guide.en.* and
+4 _intro_male_* clips stay byte-for-byte identical. All 30 Session-14 words
+in data/session.json repaired with the verified Cambridge B1 UK IPA, ttsHint,
+natural B1 sentences and -uk.mp3 URLs; CAMBRIDGE_B1_RP_LEXICON extended to
+90 entries (Sessions 11 + 12 + 14).
+
+**Defect 4 — stale-clip resurrection is impossible.** purgeStaleWordsFromPack
+runs inside voicePackPayload() and commitVoicePack() (only the ACTIVE
+session's words.* keys can ever be serialized); applyManifest() stops merging
+old words.* keys under a pack whose wordsRev advanced. #btnForceRegenWords
+wipes every words.* key from the pack, the Speech clipBase and the
+sdp-audio-clips CacheStorage, then re-synthesizes the 30 active words fresh.
+
+**Defect 5 — one unified Voice & Clone Control Center.** #studioCardClassroom
+Voice carries the unified #studioClassroomVoiceSelect dropdown (Alice + every
+fetched Cloned/Professional/Generated account voice), the custom-ID box, the
+Fetch My Cloned Voices button (populates BOTH selectors, auto-selects the
+clone) and the four canonical actions (Apply / Wipe & Re-Generate 30 Words /
+Re-Bake All 70 Classroom Clips / Open Live Lab). The retired briefing-voice
+card moved into the Advanced drawer with every DOM id intact; the lock bar
+shows the ACTIVE voice (Alice locked, or the applied clone).
+
+**Defect 6 — Live Lab v2.0 opens ALL PASS.** station2(), testVoiceSynthesis
+and station3() moved INSIDE the IIFE (the ReferenceError crashes are gone),
+labKey() reads #labApiKey / SDP.Studio.secrets() (never localStorage), the
+Web-Audio media-element tap is removed (G9.5a), Station 5 proactively
+registers ./sw.js and opens sdp-audio-clips (fresh-visit PASS) and treats an
+offline raw.githubusercontent.com as informational when /data/version.json
+answers. Station 3 gains the Live 1-Click Batch Word Synthesis & Repair tool
+(#btnLabBatchRepairWords) with per-word progress and playback.
+
 ## v0.0.6.v — 2026-11-17 — Small-Device Briefing Escape Hatch, the 74-Clip Purged Pack (-21 LUFS Broadcast Match), Dynamic Origin Derivation, Voice Signature Lock, Cross-Device Telemetry & the Student Self-Heal Assistant
+
+## v0.0.6.w — Live Lab + Voice Clone & Word-Gen Repair + No-Boot-Briefing (ver 37 · schema 37 · settingsRev 61 · syncRev 1797000000010 · SW sdp-v0.0.6.w-s36)
+
+**Objective 1 — Startup Project Briefing retired.** Boot never opens
+#briefingModal (students land straight on the Dictation screen). The Project
+Briefing lives ONLY at the bottom of Settings › About (#btnCreatorNote): the
+click opens #briefingStage directly (Welcome splash skipped), unlocks
+#btnBriefingSkipTop / #btnBriefingSkip / #btnBriefingContinue instantly, and
+auto-narrates the 4-paragraph Developer Overview (_intro_male_1..4, George)
+with karaoke from Paragraph 1, Word 1. The 4 clips, transcript and the
+CREDITS GOES TO Hansana / Ms. Sumodya Sewmini / Ayya01 (Lesandu) attribution
+are preserved byte-for-byte.
+
+**Objective 2 — the 3 catastrophic Voice-Clone & Studio Word-Generation bugs.**
+- **2A** aiVerify(w, cb) now sends 'Word: ' + w (was 'Word: 1'); Stage B
+  extracts the UK IPA from ANY phonetics[] entry and the -uk.mp3 URL even when
+  text/audio sit on separate elements; the quarantine skip in generateClips is
+  REMOVED — every new word synthesizes through the deterministic
+  buildFallbackRpHint() British RP respelling (rpSource 'fallback' badge).
+- **2B** requestClip keeps the GENUINE audio/mpeg MP3 (?output_format=
+  mp3_44100_128) as entry.b64; measureBuffer() only stamps lufs /
+  truePeakDbTp / gainLinear (10^((-21-lufs)/20), bounded 0.5..2.0) metadata —
+  the v0.0.6.v .wav conversion (8x size, RIFF bytes in an audio/mpeg
+  pipeline) is gone. Hydration auto-detects 'UklGR' → audio/wav vs
+  audio/mpeg; playback applies clip.gainLinear.
+- **2C** Unified Classroom & Cloned Voice Controller: chosenClassroomVoiceId/
+  Name persisted in sdp.settings.voiceSignature; Apply Cloned Voice to All
+  Words & UI / Fetch My Cloned Voices / Re-bake All Classroom Clips re-bake
+  the 30 words + numbers + commands + guides in the clone through the
+  Cloned-Voice-safe ladder; the briefing male narrator stays separate.
+
+**Objective 3 — Real-Time Live Browser Diagnostic Lab.** lab.html + data/
+sdp-live-lab.js (strict ES5, window.SDP.LiveLab) ship in-repo at the same
+origin with 6 real-API stations (pack decoder + LUFS, ElevenLabs voices/quota
++ live clone synthesis, new-word RP pipeline trace, cross-tab voice-mode
+verifier, SW/Cache/CDN-vs-Raw sync + purge, 1-click full run + .json/.zip
+report), linked from Lecturer Studio and Settings › About.
+
+**Objective 4 — the six v0.0.6.v fixes carried + re-asserted** (T4 15 s lag
+delay + Continue + modal/hidden guard, parseNtfy NDJSON + local ledger merge,
+0 ms activity popup, .briefing-links desktop visibility).
+
+Gates: all suites re-pinned to ver 37 / settingsRev 61 / syncRev 1797000000010
+/ sdp-v0.0.6.w-s36; lab.html + data/sdp-live-lab.js registered in every H1
+budget; tests/v006w-verification.cjs (W1–W4) added. The live pack ships its
+authentic 46-clip state (2 words + 30 num + 6 cmd + 4 guide + 4 George beats);
+the 28 missing Session-14 word clips are the Root-Cause-2A casualties and
+re-bake in one click with the fixed pipeline + a real key.
+
 
 **Release type:** classroom-data + reliability + telemetry release over the live v0.0.6.u main. The four `_intro_male_1..4` George briefing beats, the 30 `num.*`, the 6 `cmd.*` and the 4 `guide.en.*` clips stay **byte-for-byte identical to 5f48ceb**; the 141 stale Session-11 `words.*` keys are purged (215 -> 74 clips) and the 30 active Session-12 (Places & Buildings) `words.*` clips are re-baked to a uniform **-21.0 LUFS** (BS.1770-4, +2.5 dB presence @ 3 kHz Q 0.9, TP <= -1.0 dBTP, 44.1 kHz mono 128 kbps) so their loudness matches `cmd.complete`; `data/session.json` carries the verified Cambridge B1 UK IPA, RP `ttsHint` respellings, `-uk.mp3` dictionary audio (zero `-us.mp3`) and natural B1 sentences for all 30 words.
 

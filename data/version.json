@@ -4,14 +4,12 @@
   "version": "0.0.6.v",
   "buildDate": "2026-11-18",
   "schema": 36,
-  "settingsRev": 61,
+  "settingsRev": 62,
   "session": "14",
   "title": "Session 14 - Places: Town & City; Services",
-  "updatedAt": "2026-11-18T02:53:24.658Z",
-  "syncRev": 1797000000010,
+  "updatedAt": "2026-11-18T05:58:15.312Z",
+  "syncRev": 1797000000011,
   "payloadFiles": [
-    "data/session.json",
-    "data/config.json",
     "data/elevenlabs-audio.json",
     "data/version.json"
   ]

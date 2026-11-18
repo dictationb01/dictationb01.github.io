@@ -673,3 +673,44 @@ token-less studio still commits nothing.
 - **Dynamic origin derivation**: `Sync.repoFromOrigin()` reads the serving `hostname` first (`owner.github.io`), then `cfg.repoContentsUrl`, then the config fallback; `fetchRawMainJson` retries once from the re-derived hostname on 404/error (logging `sync_origin_healed`).
 - **Briefing escape hatch**: `#btnBriefingSkipTop` (never disabled) closes the briefing immediately; both `beat1Guard` failsafes are 9000 ms; the gate timer pauses while `document.hidden`; `briefingContentHash` (inside `sdp.settings`) exempts returning students from version-bump replays when the content is unchanged.
 - **Pack law**: `data/elevenlabs-audio.json` ships exactly **74 clips** (30 active `words.*` + 30 `num.1..30` + 6 `cmd.*` + 4 `guide.en.*` + 4 `_intro_male_1..4`), raw JSON <= 4,500,000 B, `wordsRev` stamped on every publish, and `purgeStaleBriefingClips({ words: true })` clears non-active `words.*` entries from `sdp-audio-clips` and `state.clipBase` whenever `wordsRev` advances.
+
+
+## §R-V006W — v0.0.6.w release laws (ver 37 / schema 37 / settingsRev 61 / syncRev 1797000000010 / SW sdp-v0.0.6.w-s36)
+
+1. **No-boot-briefing** — boot never opens #briefingModal;
+   `openBriefing({replay:true, fromSettings:true})` opens #briefingStage
+   directly with all exits unlocked and narrates from Paragraph 1 Word 1.
+2. **Never-quarantine** — `verifyBritishRPWord` never sets quarantined during
+   `generateClips`; every new word synthesizes via `buildFallbackRpHint(w)`
+   (rpSource 'fallback') when the lexicon/dictionary/AI legs miss.
+3. **Pure-MP3 law** — `requestClip` stores the genuine audio/mpeg MP3 bytes;
+   `measureBuffer` only MEASURES (lufs/truePeakDbTp/gainLinear metadata); the
+   speech layer auto-detects UklGR (audio/wav) vs MP3 on hydration and applies
+   clip.gainLinear at playback.
+4. **Unified cloned voice** — see ARCHITECTURE_MAP §R-UNIFIED-CLONED-VOICE.
+5. **Live Lab** — lab.html + data/sdp-live-lab.js (see §R-LIVE-LAB); both are
+   registered in the H1 budgets and the ES5 gate.
+
+## §R-V006X — the v0.0.6.x voice-engine laws
+
+1. **R-V006X-1 CLEAN-WORD TTS LAW** — `buildQueue()`/`requestClip()` speak the
+   clean British orthography (`item.text`); only curated `RP_TTS_OVERRIDES`
+   heterophones may be respelled. `ttsHint` and IPA `p` are display-only.
+2. **R-V006X-2 BROADCAST FORMAT LAW** — every non-timestamped TTS request
+   appends `?output_format=mp3_44100_128`.
+3. **R-V006X-3 74-CLIP PACK LAW** — the shipped pack carries exactly the 74
+   canonical clips (30 words.* + 30 num.* + 6 cmd.* + 4 guide.en.* +
+   4 _intro_male_*), every classroom take MP3 3:1:9:0:3 at -21.0 LUFS.
+4. **R-V006X-4 STALE-CLIP LAW** — `purgeStaleWordsFromPack()` gates
+   `voicePackPayload()`/`commitVoicePack()`; `applyManifest()` drops old
+   `words.*` keys when `wordsRev` advances; `#btnForceRegenWords` wipes and
+   re-synthesizes the 30 active words.
+5. **R-V006X-5 UNIFIED VOICE CENTER** — `#studioCardClassroomVoice` is the
+   single Voice & Clone Control Center; the briefing card lives in the
+   Advanced drawer with every DOM id intact.
+6. **R-V006X-6 LIVE LAB v2.0** — `lab.html` boots ALL PASS (0 FAIL); all
+   stations live inside the IIFE; `labKey()` never reads localStorage;
+   Station 3 carries the 1-click batch word repair tool.
+
+Version pins for this release: ver 38, schema 38, settingsRev 62,
+syncRev/wordsRev 1797000000011, SW `sdp-v0.0.6.x-s37`.

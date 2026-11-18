@@ -732,6 +732,18 @@
     if (screenIsCovered()) { finish(false); return; }
     var conf = settings();
     var volume = Math.min(1, Math.max(0, opts.volume === undefined ? (isNaN(Number(conf.volume)) ? 1 : Number(conf.volume)) : Number(opts.volume)));
+    /* v0.0.6.w — the GAIN-LINEAR NORMALIZATION LAW: a clip measured at
+       BS.1770-4 integrated loudness (requestClip) carries gainLinear =
+       10^((-21 - lufs)/20) bounded 0.5..2.0. The element volume applies it
+       (compressed into the 0..1 range so a boost never hard-clips): quiet
+       takes are lifted toward the -21 LUFS classroom target, hot takes are
+       trimmed, and every word lands at ONE unified perceived loudness. */
+    try {
+      var gainEntry = state.manifest && state.manifest.clips ? (state.manifest.clips[normKey(str(url)).replace(/^data:[^,]*,/, '')] || null) : null;
+    } catch (eG0) { gainEntry = null; }
+    var gl = Number(opts.gainLinear !== undefined ? opts.gainLinear : (gainEntry && gainEntry.gainLinear)) || 1;
+    if (gl > 1) volume = Math.min(1, volume * (gl / 2));
+    else if (gl > 0) volume = Math.min(1, volume * gl);
     var done = false;
     var timer = null;
     var stopTicks = null;
@@ -904,7 +916,8 @@
       var bin = global.atob(u.slice(comma + 1));
       var bytes = new global.Uint8Array(bin.length);
       for (var b = 0; b < bin.length; b++) bytes[b] = bin.charCodeAt(b) & 0xff;
-      var blobUrl = global.URL.createObjectURL(new global.Blob([bytes], { type: 'audio/mpeg' }));
+      var isWav = (u.indexOf('data:audio/wav') === 0);
+      var blobUrl = global.URL.createObjectURL(new global.Blob([bytes], { type: isWav ? 'audio/wav' : 'audio/mpeg' }));
       /* Bounded memo: 40 clips is more than one class ever needs at once. */
       if (blobCount < 40) { blobUrls[u] = blobUrl; blobCount += 1; }
       return blobUrl;
@@ -926,7 +939,16 @@
       /* v0.0.6.t PILLAR 4D: ALWAYS recompute the in-memory data URL when the
          entry carries a b64 — a re-synthesized clip must never keep playing
          its previous audio through a stale v.url left from an older b64. */
-      if (canBlobUrl() && v && isObj(v) && v.b64) v.url = 'data:audio/mpeg;base64,' + v.b64;
+      /* v0.0.6.w — the FORMAT-AUTO-DETECT LAW: a b64 payload may be a genuine
+         MP3 (ElevenLabs ?output_format=mp3_44100_128 — the v0.0.6.w pure-MP3
+         law) OR a legacy PCM WAV (the v0.0.6.v normalizer output). The RIFF
+         magic prefix 'UklGR' (base64 of 'RIFF') selects audio/wav; every other
+         payload is audio/mpeg — so both formats play cleanly on iOS Safari,
+         Android Chrome and Desktop. */
+      if (canBlobUrl() && v && isObj(v) && v.b64) {
+        v.mime = (str(v.b64).indexOf('UklGR') === 0) ? 'audio/wav' : 'audio/mpeg';
+        v.url = 'data:' + v.mime + ';base64,' + v.b64;
+      }
       var n = normKey(srcKey);
       if (!n) continue;
       var bare = n.replace(/^words\./, '');
@@ -956,13 +978,21 @@
        never disappear mid-session. */
     if (!isObj(state.clipBase)) state.clipBase = {};
     var base = state.clipBase, k;
+    /* v0.0.6.y STALE-CLIP LAW: when the incoming pack advances wordsRev, the
+       old base's words.* keys are NOT merged under it — a retired session's
+       word clips can never resurrect after the active list moves on. System
+       keys (num/cmd/guide/_intro_male) and same-rev weak reloads keep the
+       v0.0.6.q zero-drop merge. */
+    var wordsAdvance = Number(next.wordsRev || 0) > Number(state.manifestWordsRev || 0);
     for (k in base) {
       if (!Object.prototype.hasOwnProperty.call(base, k)) continue;
+      if (wordsAdvance && /^words\./.test(k)) continue;
       if (!Object.prototype.hasOwnProperty.call(next.clips, k)) next.clips[k] = base[k];
     }
     for (k in next.clips) {
       if (Object.prototype.hasOwnProperty.call(next.clips, k)) base[k] = next.clips[k];
     }
+    if (Number(next.wordsRev || 0)) state.manifestWordsRev = Number(next.wordsRev);
     state.manifest = next;
     hydrateClips(state.manifest.clips);
     reapplyInjectedClips();
@@ -1035,7 +1065,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.v' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.y' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1140,7 +1170,14 @@
 
   function entryUrl(entry) {
     if (typeof entry === 'string') return entry;
-    if (entry && isObj(entry)) return str(entry.url || entry.src || entry.file || (canBlobUrl() && entry.b64 ? 'data:audio/mpeg;base64,' + entry.b64 : ''));
+    if (entry && isObj(entry)) {
+      if (str(entry.url || entry.src || entry.file)) return str(entry.url || entry.src || entry.file);
+      if (entry.b64 && canBlobUrl()) {
+        var m = (str(entry.b64).indexOf('UklGR') === 0) ? 'audio/wav' : 'audio/mpeg';
+        return 'data:' + m + ';base64,' + entry.b64;
+      }
+      return '';
+    }
     return '';
   }
   /* R5: the 70-clip pack names every word clip 'words.<w>' and keeps the legacy
@@ -1606,7 +1643,7 @@
             SDP.Diagnostics.log('audio_tier_fallback', { word: pw.slice(0, 40), from: current.tier, to: (tiers[at] && tiers[at].tier) || 'end' });
           }
         } catch (e) {}
-        /* v0.0.6.v — T2/T3 self-heal triggers: a media error on the committed
+        /* v0.0.6.w — T2/T3 self-heal triggers: a media error on the committed
            word clip (T2) and a fall-through that reaches the tts tier (T3)
            both surface the student self-heal assistant with 1-tap actions. */
         try {
@@ -1752,6 +1789,332 @@
   }
   function micReleased() { return state.micReleased !== false; }
 
+  /* ══ v0.0.6.y Pillar 2 (Y2) — the strict anti-stale voice clip guard.
+     Four rules classify every clip: KEY MEMBERSHIP (words.<k> must be one of
+     the 30 active session words), REVISION & HASH (wordsRev + text pin),
+     VOICE IDENTITY (the locked voiceSignature().voiceId) and AUDIO DECODE
+     (real MP3 bytes). Stale/orphaned/mismatched/corrupted keys are purged
+     from every layer — manifest, clipBase, injectedClips, the studio pack
+     and CacheStorage — before they can ever play. ══ */
+  function activeWordKeys() {
+    var out = {}, words = [], i;
+    try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eS) { words = []; }
+    for (i = 0; i < words.length; i++) out[normKey(words[i] && words[i].w)] = 1;
+    return out;
+  }
+  /* System-clip namespaces: num.*, cmd.*, guide.* and the _intro_male_*
+     briefing beats (plus their words.<sys> mirror aliases from hydrateClips)
+     are never membership-gated against the 30 active session words. */
+  var SYSTEM_CLIP_RE = /^(num|cmd|guide)\./;
+  function isSystemClipKey(k) {
+    var n = normKey(str(k).replace(/^words\./, ''));
+    return SYSTEM_CLIP_RE.test(n) || n.indexOf('_intro_') === 0;
+  }
+  function isValidMp3B64(b64) {
+    var s = str(b64);
+    if (s.length < 1400) return false; /* < ~1000 decoded bytes */
+    return s.indexOf('UklGR') !== 0;   /* a WAV payload in a word slot is not classroom MP3 */
+  }
+  function validatePackClips(manifest, activeWords, expectedVoiceId) {
+    var src = isObj(manifest) ? manifest : (state.manifest || {});
+    if (!isObj(src.clips)) src = { clips: {} };
+    var clips = src.clips, report = { stale: [], orphaned: [], voiceMismatch: [], corrupted: [], clean: [], readyWords: 0, missingWords: [] };
+    var active = {}, words = activeWords, i;
+    if (!Array.isArray(words) || !words.length) {
+      try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
+    }
+    for (i = 0; i < (words || []).length; i++) active[normKey(words[i] && words[i].w)] = 1;
+    var expectedVid = str(expectedVoiceId);
+    if (!expectedVid) {
+      try {
+        var st = settings();
+        if (isObj(st.voiceSignature)) expectedVid = str(st.voiceSignature.voiceId);
+      } catch (eVs) {}
+    }
+    var k, entry, wkey, bare, entryVoice, missingMap = {};
+    for (k in clips) {
+      if (!Object.prototype.hasOwnProperty.call(clips, k)) continue;
+      entry = clips[k];
+      /* only words.* (and their bare <word> aliases) are membership-gated;
+         the num/cmd/guide/_introMale system clips — and their words.<sys>
+         mirror aliases created by hydrateClips — are never orphans. */
+      if (/^words\./.test(k) || (!/\./.test(k) && k.indexOf('_') !== 0)) {
+        wkey = normKey(k.replace(/^words\./, ''));
+        bare = normKey(k);
+        /* A words.<sys> key (words.num.1, words.cmd.*, …) is legal ONLY as
+           the runtime mirror alias hydrateClips stamps over the real <sys>
+           entry — the SAME object reference. A distinct words.<sys> object
+           came from a polluted pack file (the live-repo corruption) and is
+           classified ORPHANED so it can never play. */
+        if (SYSTEM_CLIP_RE.test(wkey) || wkey.indexOf('_intro_') === 0) {
+          if (isObj(clips[wkey]) && clips[k] === clips[wkey]) { report.clean.push(k); continue; }
+          if (!/^words\./.test(k) && clips[k] === clips['words.' + bare]) { report.clean.push(k); continue; }
+          report.orphaned.push(k);
+          continue;
+        }
+        if (SYSTEM_CLIP_RE.test(bare) || bare.indexOf('_intro_') === 0) { report.clean.push(k); continue; }
+        if (!active[wkey] && !active[bare]) { report.orphaned.push(k); continue; }
+        if (!isValidMp3B64(isObj(entry) ? entry.b64 : entry)) { report.corrupted.push(k); continue; }
+        if (expectedVid && isObj(entry) && str(entry.voiceId) && str(entry.voiceId) !== expectedVid) { report.voiceMismatch.push(k); continue; }
+        if (isObj(entry) && Number(entry.wordsRev) && Number(src.wordsRev) && Number(entry.wordsRev) < Number(src.wordsRev)) { report.stale.push(k); continue; }
+        report.clean.push(k);
+        if (/^words\./.test(k)) report.readyWords += 1;
+      } else {
+        report.clean.push(k);
+      }
+    }
+    for (i = 0; i < (words || []).length; i++) {
+      var wk = normKey(words[i] && words[i].w);
+      var hit = clips['words.' + wk] || clips[wk];
+      if (!hit || !isValidMp3B64(isObj(hit) ? hit.b64 : hit)) missingMap[wk] = 1;
+    }
+    report.missingWords = Object.keys ? Object.keys(missingMap) : (function () { var a = [], q; for (q in missingMap) if (Object.prototype.hasOwnProperty.call(missingMap, q)) a.push(q); return a; })();
+    return report;
+  }
+  function purgeStaleClipsEverywhere(opts) {
+    opts = opts || {};
+    var purged = 0, report = validatePackClips(opts.manifest, opts.activeWords, opts.expectedVoiceId);
+    var kill = {};
+    var i, k;
+    for (i = 0; i < report.orphaned.length; i++) kill[report.orphaned[i]] = 'orphaned';
+    for (i = 0; i < report.corrupted.length; i++) kill[report.corrupted[i]] = 'corrupted';
+    if (opts.purgeVoiceMismatch !== false) {
+      for (i = 0; i < report.voiceMismatch.length; i++) kill[report.voiceMismatch[i]] = 'voice_mismatch';
+    }
+    if (opts.purgeStaleRev !== false) {
+      for (i = 0; i < report.stale.length; i++) kill[report.stale[i]] = 'stale';
+    }
+    /* 1. the live manifest + the zero-drop clip base + injected clips */
+    var layers = [];
+    if (isObj(state.manifest) && isObj(state.manifest.clips)) layers.push(state.manifest.clips);
+    if (isObj(state.clipBase)) layers.push(state.clipBase);
+    if (isObj(state.injectedClips)) layers.push(state.injectedClips);
+    if (SDP.Studio && SDP.Studio.state && isObj(SDP.Studio.state.voicePack) && isObj(SDP.Studio.state.voicePack.clips)) layers.push(SDP.Studio.state.voicePack.clips);
+    for (k in kill) {
+      if (!Object.prototype.hasOwnProperty.call(kill, k)) continue;
+      for (i = 0; i < layers.length; i++) {
+        if (layers[i] && Object.prototype.hasOwnProperty.call(layers[i], k)) { delete layers[i][k]; purged += 1; }
+      }
+    }
+    /* 2. the local-briefing-pack inside CacheStorage('sdp-audio-clips') */
+    try {
+      if (global.caches && global.caches.open) {
+        global.caches.open('sdp-audio-clips').then(function (cache) {
+          return cache.match('./local-briefing-pack.json');
+        }).then(function (res) {
+          if (!res) return null;
+          return res.json();
+        }).then(function (pack) {
+          if (!isObj(pack) || !isObj(pack.clips)) return null;
+          var n = 0, q;
+          for (q in kill) {
+            if (Object.prototype.hasOwnProperty.call(pack.clips, q)) { delete pack.clips[q]; n += 1; }
+          }
+          if (n) {
+            global.caches.open('sdp-audio-clips').then(function (cache) {
+              cache.put('./local-briefing-pack.json', new Response(JSON.stringify(pack), { headers: { 'Content-Type': 'application/json' } }));
+            });
+          }
+          return null;
+        }).catch(function () {});
+      }
+    } catch (eC) {}
+    /* 3. localStorage 'sdp-audio-clips' fallback pockets */
+    try {
+      var pocket = global.localStorage.getItem('sdp-audio-clips');
+      if (pocket) {
+        var po = JSON.parse(pocket);
+        if (isObj(po) && isObj(po.clips)) {
+          var pn = 0, q2;
+          for (q2 in kill) {
+            if (Object.prototype.hasOwnProperty.call(po.clips, q2)) { delete po.clips[q2]; pn += 1; }
+          }
+          if (pn) global.localStorage.setItem('sdp-audio-clips', JSON.stringify(po));
+        }
+      }
+    } catch (eL) {}
+    /* re-hydrate what is left */
+    if (isObj(state.manifest) && isObj(state.manifest.clips)) hydrateClips(state.manifest.clips);
+    return { purged: purged, killed: kill, report: report };
+  }
+  /* auditSessionVoiceReadiness() — Case A (stale/mismatch in cache) and
+     Case B (missing clips) both raise #sdpVoiceClipGuardBanner; dictation
+     ALWAYS continues on the clean British RP fallback. */
+  function auditSessionVoiceReadiness(opts) {
+    opts = opts || {};
+    /* Before the manifest has ever loaded there is nothing to audit — an
+       absent manifest is the BOOT state, not a missing-clip incident. */
+    if (!isObj(state.manifest)) {
+      return { level: 'boot', ready: 0, missing: 0, total: 0, report: null, bannerShown: false, autoPurged: false };
+    }
+    var words = [];
+    if (Array.isArray(opts.words) && opts.words.length) words = opts.words;
+    else { try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {} }
+    var total = words.length || 30;
+    var report = validatePackClips(state.manifest, words, opts.expectedVoiceId);
+    var auto = false;
+    /* auto-purge orphans + corrupted at once (the 0% stale playback law) */
+    if (report.orphaned.length || report.corrupted.length) {
+      try { purgeStaleClipsEverywhere({ manifest: state.manifest, activeWords: words, expectedVoiceId: opts.expectedVoiceId }); } catch (eP) {}
+      report = validatePackClips(state.manifest, words, opts.expectedVoiceId);
+      auto = true;
+    }
+    var missing = report.missingWords.length;
+    var staleHit = report.voiceMismatch.length > 0 || report.stale.length > 0;
+    var level = 'ok';
+    if (staleHit) level = 'stale';
+    else if (missing >= total) level = 'missing_all';
+    else if (missing > 0) level = 'missing_partial';
+    var banner = paintVoiceClipGuardBanner(level, missing, total, report);
+    /* once per session: auto-notify the lecturer when clips are degraded */
+    if ((staleHit || missing > 0) && !state.voiceGuardAlertSent && (opts.autoNotify !== false)) {
+      state.voiceGuardAlertSent = true;
+      try {
+        if (SDP.Telemetry && SDP.Telemetry.sendLecturerAlert) {
+          SDP.Telemetry.sendLecturerAlert({
+            alertType: staleHit ? 'stale_clips' : 'missing_clips',
+            missingWords: report.missingWords.slice(0, 30),
+            staleKeys: report.voiceMismatch.concat(report.stale).slice(0, 30),
+            readyCount: report.readyWords,
+            wordsRev: Number((state.manifest && state.manifest.wordsRev) || 0),
+            message: 'Auto: ' + (staleHit ? 'stale/mismatched voice clips detected' : 'voice clips missing') + ' (' + report.readyWords + '/' + total + ' ready)'
+          });
+        }
+      } catch (eT) {}
+    }
+    return { level: level, ready: report.readyWords, missing: missing, total: total, report: report, bannerShown: banner, autoPurged: auto };
+  }
+  /* The single shared #sdpVoiceClipGuardBanner — bilingual, always rendered
+     into BOTH the Player and the Words screen. */
+  function paintVoiceClipGuardBanner(level, missing, total, report) {
+    if (!doc || !doc.getElementById) return false;
+    var host = doc.getElementById('sdpVoiceClipGuardBanner');
+    if (!host) return false;
+    var stateTxt = '', siTxt = '', mode = level;
+    if (level === 'stale') {
+      mode = 'stale';
+      stateTxt = 'Old voice clips were detected in cache. Tap Purge & Refresh now.';
+      siTxt = 'පැරණි හඬ පට හමු විය! නිවැරදි හඬ පට ලබා ගැනීමට දැන්ම Purge & Refresh ඔබන්න.';
+    } else if (level === 'missing_all' || level === 'missing_partial') {
+      mode = 'missing';
+      stateTxt = 'Voice clips are missing for ' + missing + ' of ' + total + ' words. Dictation is running in clip-free backup mode (British RP voice).';
+      siTxt = 'වචන සඳහා හඬ පට තවම ජනනය කර නැත (' + (total - missing) + '/' + total + ' Ready)! දැනට තාවකාලික හඬ (Backup Voice) භාවිත වේ. Lecturer Studio හරහා හඬ පට ජනනය කරන්න නැතහොත් Admin දැනුවත් කරන්න.';
+    } else {
+      host.hidden = true;
+      host.removeAttribute('data-level');
+      return false;
+    }
+    var staleKeys = report && report.voiceMismatch ? report.voiceMismatch.length : 0;
+    host.setAttribute('data-level', mode);
+    host.setAttribute('role', 'alert');
+    host.hidden = false;
+    host.innerHTML =
+      '<div class="vgb-head"><span class="vgb-icon" aria-hidden="true">⚠️</span>' +
+      '<strong>' + (mode === 'stale' ? 'Stale Voice Clips Detected' : 'Voice Clips Missing (' + (total - missing) + '/' + total + ' Ready)') + '</strong></div>' +
+      '<p class="vgb-si" lang="si">' + escSi(siTxt) + '</p>' +
+      '<p class="vgb-en">' + escSi(stateTxt) + '</p>' +
+      (staleKeys ? '<p class="vgb-detail">' + staleKeys + ' mismatched/stale clip(s) in local cache.</p>' : '') +
+      '<div class="vgb-actions">' +
+      (mode === 'stale' ? '<button type="button" class="btn btn-primary" id="btnGuardPurgeRefresh">🔄 Purge Old Clips &amp; Refresh Now</button>' : '') +
+      (mode === 'missing' ? '<button type="button" class="btn btn-primary" id="btnGuardOpenStudio">⚡ Generate Missing Clips in Studio</button>' : '') +
+      '<button type="button" class="btn btn-ghost" id="btnGuardNotifyAdmin">📨 Notify Lecturer / Admin</button>' +
+      '<button type="button" class="vgb-close" id="btnGuardDismiss" aria-label="Dismiss">✕</button>' +
+      '</div>';
+    return true;
+  }
+  function escSi(s) { return str(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function bindVoiceGuardBanner(root) {
+    if (!doc || !doc.addEventListener) return false;
+    var host = (root && root.addEventListener) ? root : doc;
+    if (host._sdpVoiceGuardBound) return false;
+    host._sdpVoiceGuardBound = true;
+    host.addEventListener('click', function (ev) {
+      var t = ev && ev.target;
+      while (t && t !== host) {
+        if (t.id === 'btnGuardPurgeRefresh') {
+          ev.preventDefault();
+          try { if (SDP.Speech && SDP.Speech.guardPurgeAndRefresh) SDP.Speech.guardPurgeAndRefresh(); } catch (e1) {}
+          return;
+        }
+        if (t.id === 'btnGuardNotifyAdmin') {
+          ev.preventDefault();
+          try { if (SDP.Speech && SDP.Speech.guardNotifyAdmin) SDP.Speech.guardNotifyAdmin(); } catch (e2) {}
+          return;
+        }
+        if (t.id === 'btnGuardOpenStudio') {
+          ev.preventDefault();
+          try {
+            if (SDP.Views && SDP.Views.showTab) SDP.Views.showTab('studio');
+            else if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount();
+          } catch (e3) {}
+          return;
+        }
+        if (t.id === 'btnGuardDismiss') {
+          ev.preventDefault();
+          var b = doc.getElementById('sdpVoiceClipGuardBanner');
+          if (b) b.hidden = true;
+          return;
+        }
+        t = t.parentNode;
+      }
+    }, false);
+    return true;
+  }
+  /* 1-click Purge & Refresh: wipe every local audio pocket + pull the
+     canonical pack from raw.githubusercontent.com + reload clean. */
+  function guardPurgeAndRefresh() {
+    try {
+      if (global.caches && global.caches.keys) {
+        global.caches.keys().then(function (names) {
+          var keep = ['sdp-audio-clips', 'sdp-youdao-v1'], i, kills = [];
+          for (i = 0; i < names.length; i++) if (names[i].indexOf('sdp-') === 0 && keep.indexOf(names[i]) < 0) kills.push(names[i]);
+          return Promise.all(kills.map(function (n) { return caches.delete(n); }));
+        }).catch(function () {});
+      }
+    } catch (eK) {}
+    try {
+      if (global.caches && global.caches['delete']) global.caches['delete']('sdp-audio-clips').catch(function () {});
+    } catch (eC) {}
+    try { if (state.manifest && isObj(state.manifest.clips)) state.manifest.clips = {}; } catch (eM) {}
+    try { state.clipBase = {}; state.injectedClips = {}; } catch (eB) {}
+    try {
+      var qs = global.location && global.location.search ? global.location.search : '';
+      if (qs.indexOf('voicepurge') >= 0) global.location.reload();
+      else global.location.replace('./?voicepurge=' + nowMs());
+    } catch (eR) { try { global.location.reload(); } catch (eR2) {} }
+    return true;
+  }
+  function guardNotifyAdmin() {
+    var words = [];
+    try { if (SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
+    var report = validatePackClips(state.manifest, words);
+    var note = '';
+    var inp = doc && doc.getElementById ? doc.getElementById('studentAlertNoteInput') : null;
+    if (inp) note = str(inp.value || '');
+    try {
+      if (SDP.Telemetry && SDP.Telemetry.sendLecturerAlert) {
+        SDP.Telemetry.sendLecturerAlert({
+          alertType: (report.missingWords.length && !report.voiceMismatch.length && !report.stale.length) ? 'missing_clips' : (report.voiceMismatch.length || report.stale.length ? 'stale_clips' : 'user_message'),
+          missingWords: report.missingWords.slice(0, 30),
+          staleKeys: report.voiceMismatch.concat(report.stale).slice(0, 30),
+          readyCount: report.readyWords,
+          wordsRev: Number((state.manifest && state.manifest.wordsRev) || 0),
+          message: note || ('Student report: ' + report.readyWords + '/' + (words.length || 30) + ' word clips ready')
+        });
+      }
+    } catch (eT) {}
+    var b = doc && doc.getElementById ? doc.getElementById('sdpVoiceClipGuardBanner') : null;
+    if (b) {
+      var confirmEl = doc.createElement('p');
+      confirmEl.className = 'vgb-sent';
+      confirmEl.textContent = '📨 Alert sent to the Lecturer/Admin. පණිවිඩය යවන ලදී.';
+      var old = b.querySelector('.vgb-sent');
+      if (old) old.parentNode.removeChild(old);
+      b.appendChild(confirmEl);
+    }
+    return true;
+  }
+
   var Speech = {
     state: state,
     normalizeInput: normalizeInput,
@@ -1791,6 +2154,14 @@
     restoreLocalBriefingPack: restoreLocalBriefingPack,
     reloadManifest: reloadManifest,
     injectClips: injectClips,
+    /* v0.0.6.y Pillar 2 (Y2): the strict anti-stale voice clip guard. */
+    validatePackClips: validatePackClips,
+    purgeStaleClipsEverywhere: purgeStaleClipsEverywhere,
+    auditSessionVoiceReadiness: auditSessionVoiceReadiness,
+    paintVoiceClipGuardBanner: paintVoiceClipGuardBanner,
+    bindVoiceGuardBanner: bindVoiceGuardBanner,
+    guardPurgeAndRefresh: guardPurgeAndRefresh,
+    guardNotifyAdmin: guardNotifyAdmin,
     /* v0.0.6.o: the welcome stage primes THIS element inside the Continue
        click gesture (muted=false, volume=1.0) so autoplay is unlocked. */
     sharedAudioElement: function () { return sharedAudio(); },
@@ -1852,6 +2223,16 @@
     };
     try { if (doc && doc.addEventListener) doc.addEventListener('sdp:update', onUpdate, false); } catch (e) {}
     try { if (global.addEventListener) global.addEventListener('sdp:update', onUpdate, false); } catch (e) {}
+    /* v0.0.6.y Pillar 2 (Y2): arm the banner delegate once, run the first
+       readiness audit as soon as the manifest lands (sdp:ready) and re-run
+       it whenever the word list or the pack changes. The audit NEVER blocks
+       playback — it only paints the bilingual warning banner. */
+    bindVoiceGuardBanner(doc);
+    var runGuardAudit = function () {
+      try { auditSessionVoiceReadiness({}); } catch (eA) {}
+    };
+    try { if (doc && doc.addEventListener) doc.addEventListener('sdp:ready', runGuardAudit, false); } catch (eR) {}
+    try { if (doc && doc.addEventListener) doc.addEventListener('sdp:update', runGuardAudit, false); } catch (eU) {}
   })();
 
   SDP.Speech = Speech;

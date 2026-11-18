@@ -63,8 +63,8 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -79,7 +79,7 @@ async function newPage(browser, origin, opts) {
 }
 
 /* appliedSettingsRev pins this pacing against a classSettings adoption (R11.2). */
-const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99, briefingSeen: '0.0.6.v' };
+const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99, briefingSeen: '0.0.6.x' };
 
 (async function main() {
   const server = await start({ root: ROOT });
@@ -99,78 +99,48 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const briefing = await page.evaluate(() => ({
       briefingOpen: document.getElementById('briefingModal').hidden === false,
       guideOpen: document.getElementById('guideModal').hidden === false,
-      beats: document.querySelectorAll('#briefingLyrics .b-line').length,
-      ctaLocked: document.getElementById('btnBriefingContinue').disabled === true,
-      skipLocked: document.getElementById('btnBriefingSkip').disabled === true,
-      count: (document.getElementById('briefingCount') || {}).textContent || '',
       homeActive: document.querySelector('.screen.active').id,
       header: getComputedStyle(document.getElementById('appHeader')).position,
       headerHeight: document.getElementById('appHeader').getBoundingClientRect().height
     }));
-    check('G7.1a the Creator Briefing opens by itself on a brand-new visit',
-      briefing.briefingOpen === true && briefing.guideOpen === false);
-    check('G7.1a2 the synced transcript carries the 4 executive beats',
-      briefing.beats === 4, briefing.beats);
-    check('G7.1a3 both exit CTAs are locked behind the 10-second gate',
-      briefing.ctaLocked === true && briefing.skipLocked === true, JSON.stringify(briefing.count));
-    check('G7.1a4 the live countdown starts at 10s', /\(10s\)/.test(briefing.count), briefing.count);
-    check('G7.1a5 Home is already rendered underneath', briefing.homeActive === 'screen-home', briefing.homeActive);
-    /* v0.0.6.q Rule A: the gate clock starts ONLY when Stage 2 begins
-       narrating — so a brand-new visit first clicks through the cinematic
-       WELCOME splash (unlocking audio inside the gesture), and ONLY THEN
-       waits for the Paragraph-1 completion gate (beat1Done && gateLeft 0)
-       to release ▶ Start Dictation →. DOM clicks: the modal footer can sit
-       outside the 390x844 viewport. */
-    const welcomeVisible = await page.evaluate(() => {
-      const w = document.getElementById('welcomeStage');
-      return !!(w && w.hidden === false);
-    });
-    if (welcomeVisible) {
-      /* v0.0.6.t G7.1: the full-briefing lock now holds until ALL 4
-         paragraphs finish. The shipped repo-preload beats are 17-28 s each
-         (~88 s total), so BEFORE the Continue click this gate installs a
-         FAST playBriefingStep stub (a 1.5 s reported duration per beat)
-         that still narrates all 4 beats cleanly in order through the real
-         callback ladder — allBeatsDone latches true and the CTA unlocks
-         well inside the 30 s window, exactly like a fast device. */
-      await page.evaluate(() => {
-        try {
-          if (window.SDP && window.SDP.Speech) {
-            window.SDP.Speech.playBriefingStep = function (idx, text, cb, hooks) {
-              setTimeout(function () {
-                try { if (hooks && typeof hooks.onDuration === 'function') hooks.onDuration(1.5); } catch (e0) {}
-                setTimeout(function () { if (typeof cb === 'function') cb(null); }, 30);
-              }, 40);
-              return true;
-            };
-          }
-        } catch (e) {}
-      });
-      await page.evaluate(() => { document.getElementById('btnWelcomeContinue').click(); });
-      await page.waitForTimeout(600);
-    }
-    await page.waitForFunction(
-      () => document.getElementById('btnBriefingContinue') && document.getElementById('btnBriefingContinue').disabled === false,
-      null, { timeout: 30000 });
-    await page.evaluate(() => { document.getElementById('btnBriefingContinue').click(); });
-    await page.waitForTimeout(600);
+    /* v0.0.6.x — the NO-BOOT-BRIEFING LAW: a brand-new visit boots straight
+       into the cockpit; nothing interrupts the student. */
+    check('G7.1a a brand-new visit boots STRAIGHT to the Dictation screen (no briefing, no guide, no welcome)',
+      briefing.briefingOpen === false && briefing.guideOpen === false && briefing.homeActive === 'screen-home',
+      JSON.stringify(briefing));
+    /* The on-demand Settings briefing: opens #briefingStage directly with
+       all exits unlocked and narrates Paragraph 1. */
+    await page.evaluate(() => { document.getElementById('btnCreatorNote').click(); });
+    await page.waitForTimeout(900);
+    const onDemand = await page.evaluate(() => ({
+      open: document.getElementById('briefingModal').hidden === false,
+      welcomeHidden: document.getElementById('welcomeStage').hidden === true,
+      stageVisible: document.getElementById('briefingStage').hidden === false,
+      beats: document.querySelectorAll('#briefingLyrics .b-line').length,
+      exitsUnlocked: document.getElementById('btnBriefingContinue').disabled === false &&
+        document.getElementById('btnBriefingSkip').disabled === false,
+      onBeat: (document.querySelector('#briefingLyrics .b-line.on') || {}).getAttribute('data-bline')
+    }));
+    check('G7.1a2 the Settings Project Briefing opens the reading stage directly with all exits unlocked',
+      onDemand.open === true && onDemand.welcomeHidden === true && onDemand.stageVisible === true &&
+      onDemand.exitsUnlocked === true && onDemand.beats === 4, JSON.stringify(onDemand));
+    await page.evaluate(() => { document.getElementById('btnBriefingSkip').click(); });
+    await page.waitForTimeout(400);
     const firstRun = await page.evaluate(() => ({
       guideOpen: document.getElementById('guideModal').hidden === false,
       briefingClosed: document.getElementById('briefingModal').hidden === true,
       steps: document.getElementById('guideSteps').children.length,
       homeActive: document.querySelector('.screen.active').id
     }));
-    check('G7.1b continue hands over to the guide (briefing closed)',
-      firstRun.guideOpen === true && firstRun.briefingClosed === true);
-    check('G7.1b2 the guide shows four steps', firstRun.steps === 4, firstRun.steps);
-    check('G7.1c Home is already rendered underneath', firstRun.homeActive === 'screen-home', firstRun.homeActive);
+    check('G7.1b Exit closes the on-demand briefing instantly (no handover forced)',
+      firstRun.briefingClosed === true && firstRun.homeActive === 'screen-home', JSON.stringify(firstRun));
     await page.evaluate(() => { document.getElementById('btnGuideClose').click(); });
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.v', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.x', afterGuide);
     const briefingStamp = await page.evaluate(() => localStorage.getItem('sdp.settings'));
     check('G7.1d2 the briefing completion is stamped inside sdp.settings',
-      /"briefingSeen":"0\.0\.6\.v"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
+      /"briefingSeen":"0\.0\.6\.x"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
 
     /* ── 2. credits: on Home and in About, never floating ─────────────── */
     // contract: docs/ARCHITECTURE_MAP.md §R7 attribution placement
@@ -430,11 +400,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.6\.v\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.6\.x\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.v', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.x', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

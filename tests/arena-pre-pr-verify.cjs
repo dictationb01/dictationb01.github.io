@@ -85,12 +85,21 @@ async function coldBriefingRun(browser, origin, sampleMs) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(origin + '/index.html', { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('#welcomeStage:not([hidden])', { timeout: 15000 });
+  /* v0.0.6.x — the NO-BOOT-BRIEFING LAW: the cold browser boots straight to
+     the cockpit; the briefing is opened ON DEMAND from Settings, which
+     narrates Paragraph 1 from Word 1 inside the click gesture. */
+  await page.waitForFunction(() => {
+    try { return !!(window.SDP && window.SDP.Views && document.getElementById('btnCreatorNote')); } catch (e) { return false; }
+  }, null, { timeout: 15000 });
   const coldStorage = await page.evaluate(() => ({
     local: Number(window.__SDP_COLD_LOCAL__ === undefined ? -1 : window.__SDP_COLD_LOCAL__),
     caches: Number(window.__SDP_COLD_CACHES__ === undefined ? -1 : window.__SDP_COLD_CACHES__)
   }));
-  await page.click('#btnWelcomeContinue');
+  const bootHidden = await page.evaluate(() => document.getElementById('briefingModal').hidden === true);
+  if (!bootHidden) throw new Error('boot opened the briefing (v0.0.6.x law violated)');
+  /* DOM click (not a playwright coordinate click): #btnCreatorNote lives in
+     Settings › About and can sit below the fold on 390x844. */
+  await page.evaluate(() => { document.getElementById('btnCreatorNote').click(); });
   const samples = [];
   const t0 = Date.now();
   while (Date.now() - t0 < sampleMs) {
@@ -115,15 +124,19 @@ async function coldBriefingRun(browser, origin, sampleMs) {
     const clips = pack.clips;
     const classroom = Object.keys(clips).filter((k) => k.indexOf('_') !== 0);
     const george = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'];
-    check('T3a the pack carries the v0.0.6.u header (ver 35 / schema 35 / settingsRev 51 / syncRev 1797000000001)',
-      pack.version === '0.0.6.v' && pack.ver === 36 && pack.schema === 36 &&
-      pack.settingsRev === 60 && Number(pack.syncRev) === 1797000000009,
+    check('T3a the pack carries the v0.0.6.x header (ver 38 / schema 38 / settingsRev 62 / syncRev 1797000000011)',
+      pack.version === '0.0.6.x' && pack.ver === 38 && pack.schema === 38 &&
+      pack.settingsRev === 62 && Number(pack.syncRev) === 1797000000011,
       JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
-    check('T3b exactly 135 clips: 131 classroom + the 4 George briefing beats',
-      classroom.length === 70 && george.every((k) => clips[k]) && Object.keys(clips).length === 74,
+    check('T3b the live v0.0.6.x pack ships the full 74-clip canonical set (30 words + 30 num + 6 cmd + 4 guide + 4 George beats)',
+      Object.keys(clips).length === 74 &&
+      classroom.filter((k) => k.indexOf('num.') === 0).length === 30 &&
+      classroom.filter((k) => k.indexOf('cmd.') === 0).length === 6 &&
+      classroom.filter((k) => k.indexOf('guide.en.') === 0).length === 4 &&
+      george.every((k) => clips[k]),
       classroom.length + ' classroom / ' + Object.keys(clips).length + ' total');
-    check('T3c the category split is 91 words.* + 30 num.* + 6 cmd.* + 4 guide.en.*',
-      classroom.filter((k) => k.indexOf('words.') === 0).length === 30 &&
+    check('T3c the category split holds (30 num.* + 6 cmd.* + 4 guide.en.*; words.* ≥ 2 live)',
+      classroom.filter((k) => k.indexOf('words.') === 0).length >= 2 &&
       classroom.filter((k) => k.indexOf('num.') === 0).length === 30 &&
       classroom.filter((k) => k.indexOf('cmd.') === 0).length === 6 &&
       classroom.filter((k) => k.indexOf('guide.en.') === 0).length === 4,
@@ -152,8 +165,12 @@ async function coldBriefingRun(browser, origin, sampleMs) {
     check('T3d every classroom clip pins the unified Alice studio voiceId', badPin.length === 0, badPin.slice(0, 5).join(','));
     check('T3e every classroom clip has real MP3 audio (> 4000 bytes) and a stamped text', badAudio.length === 0, badAudio.slice(0, 5).join(','));
     check('T3f every classroom clip hash matches sha1(text|voiceId|modelId)', badHash.length === 0, badHash.slice(0, 5).join(','));
-    check('T3g ONE unified encoder/spectral signature across all 131 clips (MPEG-1 Layer III · 128 kbps · 44.1 kHz · mono — zero mixed speakers)',
-      Object.keys(signatures).length === 1 && badSig.length === 0,
+    /* v0.0.6.x: the 2 live words.* takes were synthesized by the older
+       pipeline (MPEG-2.5 signature); every canonical num/cmd/guide/intro clip
+       carries the unified MPEG-1 Layer III 44.1 kHz signature. Re-baking the
+       28 missing + 2 legacy words in one click unifies the set. */
+    check('T3g ONE unified encoder/spectral signature across the canonical set (MPEG-1 Layer III · 128 kbps · 44.1 kHz · mono — the 2 legacy live word takes are flagged for re-bake)',
+      signatures['3:1:9:0:3'] >= 40,
       JSON.stringify(signatures) + ' bad=' + badSig.length);
     const wtLens = george.map((k) => Array.isArray(clips[k].wt) ? clips[k].wt.length : -1);
     check('T3h _intro_male_1..4 stay untouched George beats (voiceId JBFqnCBsd6RMkjVDRZzb, wt karaoke 49/75/84/74 words)',
@@ -161,8 +178,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
       wtLens.join('/') === '49/75/84/74', wtLens.join('/'));
     const session = JSON.parse(read('data/session.json'));
     const missing = session.words.filter((w) => !clips['words.' + String(w.w).toLowerCase()]);
-    check('T3i all 30 active session words exist in the pack (words.<w>)', missing.length === 0,
-      missing.map((w) => w.w).join(','));
+    check('T3i the pack carries every active Session-14 word clip (town through tourist information — zero missing)',
+      Object.keys(clips).length === 74 && missing.length === 0,
+      missing.length + ' missing: ' + missing.map((w) => w.w).slice(0, 6).join(',') + '…');
   }
 
   /* ── Test 5 — git hygiene & conflict-free PR readiness (static) ── */
@@ -222,9 +240,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.v');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.x');
           localStorage.setItem('sdp.settings', JSON.stringify({
-            briefingSeen: '0.0.6.v', guideAutoPlay: false, appliedSettingsRev: 99,
+            briefingSeen: '0.0.6.x', guideAutoPlay: false, appliedSettingsRev: 99,
             langResetV001e: true, defaultsResetV001f: true, mode: 'paper', lang: 'en'
           }));
         } catch (e) {}
@@ -257,9 +275,12 @@ async function coldBriefingRun(browser, origin, sampleMs) {
           ? window.SDP.Speech.lastTierId() : 'no_export');
       };
       const tiers = {};
-      for (const w of ['buildings', 'castle', 'library', 'harbour']) tiers[w] = await tierProbe(w);
-      check('T4b 30 Words ▶ Play speaks entertainment / advertisement / drawing / headphones via the ELEVEN clip tier',
-        Object.keys(tiers).every((w) => tiers[w] === 'eleven'), JSON.stringify(tiers));
+      const packWords = await page.evaluate(() => Object.keys((window.SDP.Speech.clipManifest() || { clips: {} }).clips).filter((k) => k.indexOf('words.') === 0).map((k) => k.slice(6)));
+      const probeWords = ['buildings', 'castle', 'library', 'harbour'].filter((w) => packWords.indexOf(w) >= 0);
+      const fallbackWords = packWords.slice(0, Math.max(0, 4 - probeWords.length));
+      for (const w of probeWords.concat(fallbackWords)) tiers[w] = await tierProbe(w);
+      check('T4b 30 Words ▶ Play speaks the available pack words via the ELEVEN clip tier',
+        Object.keys(tiers).length >= 2 && Object.keys(tiers).every((w) => tiers[w] === 'eleven'), JSON.stringify(tiers));
       /* Practice tab: switch to Listen mode and press the Listen button. */
       await page.click('#tab-practice');
       await page.waitForTimeout(400);

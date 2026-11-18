@@ -49,8 +49,8 @@ function installVoices(app, list) {
   /* ── 1. D-V1: the ReferenceError that killed v0.0.1.b ────────────────── */
   // contract: docs/CHANGELOG_LEDGER.md §D-V1 — pickVoice must always be a function
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     check('G10.1a the speech module exports pickVoice as a function',
       typeof app.SDP.Speech.pickVoice === 'function');
     let picked = 'unset';
@@ -66,8 +66,8 @@ function installVoices(app, list) {
   /* ── 2. D-V2: one unified British female professor, male names banned ── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 male-name blacklist
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     const list = fakeVoices();
     installVoices(app, list);
     await new Promise((resolve) => app.SDP.Speech.selectProfessorVoice((v) => { app.w.__picked = v; resolve(); }));
@@ -93,16 +93,20 @@ function installVoices(app, list) {
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' }));
     } });
     const steps = app.qa('#guideSteps .guide-step');
     check('G10.3a the hidden step list carries exactly four sentences', steps.length === 4, steps.length);
     check('G10.3b the step list is screen-reader only, never the visible card',
       !!app.byId('guideSteps') && app.byId('guideSteps').hidden === true);
     const modal = app.byId('guideModal');
-    check('G10.3c the guide auto-opens for a first-time student',
-      !!modal && modal.hidden === false && modal.classList.contains('is-open'),
+    /* v0.0.6.x — the NO-BOOT-INTERRUPTION law: neither the briefing nor the
+       guide opens on boot; the guide opens on demand (#btnGuideTop / Start). */
+    check('G10.3c the guide stays closed on boot (the no-boot-interruption law) and opens on demand',
+      !!modal && modal.hidden === true &&
+      (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false),
       modal ? (modal.hidden + '/' + modal.className) : 'missing');
+    app.byId('btnGuideClose').click();
     check('G10.3d the spotlight renders Step 1 of 4 and the first sentence',
       app.byId('guideStepTag').textContent === 'Step 1 of 4' &&
       app.byId('guideStepText').textContent === 'Press Start Dictation to begin.',
@@ -140,7 +144,7 @@ function installVoices(app, list) {
       /runId !== guideState\.guideRunId/.test(block) && /guideState\.guideRunId \+= 1/.test(viewSrc));
     app.byId('btnGuideClose').click();
     check('G10.3l closing hides the modal and stamps the visit',
-      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.v');
+      app.byId('guideModal').hidden === true && app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.x');
     app.close();
   }
 
@@ -152,8 +156,8 @@ function installVoices(app, list) {
     check('G10.4b a banner tap resumes the CURRENT step, never step 1',
       /startGuideNarration\(guideState\.activeStep\)/.test(viewSrc) &&
       !/onGuideBannerTap[\s\S]{0,400}?startGuideNarration\(0\)/.test(viewSrc));
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     app.byId('btnReplayGuide').click();
     await app.settle(4);
     const banner = app.byId('guideTapBanner');
@@ -178,9 +182,9 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
         /* appliedSettingsRev pins the student's own lock against adoption. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', voiceLock: 'custom', voiceSource: 'native', lang: 'en', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99 }));
       }
     });
     check('G10.5a a custom voice lock is preserved, not overwritten',
@@ -194,8 +198,11 @@ function installVoices(app, list) {
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' }));
     } });
+    /* v0.0.6.x: open the guide on demand before asserting its internals. */
+    app.byId('btnGuideTop').click();
+    await app.settle(2);
     const banner = app.byId('guideAutoplayBanner');
     check('G10.6a the autoplay banner ships in the guide modal',
       !!banner && app.byId('guideModal').hidden === false, !!banner);
@@ -219,8 +226,8 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
           voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
         }));
@@ -254,8 +261,8 @@ function installVoices(app, list) {
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false,
           voiceLock: 'unified', appliedSettingsRev: 99, defaultsResetV001f: true
         }));
@@ -269,8 +276,11 @@ function installVoices(app, list) {
       if (app.SDP.Engine.state() === 'writing') { sawWriting = true; writeText = app.byId('beatStateText').textContent; break; }
     }
     const said = app.SDP.Speech.lastUtterances();
-    check('G10.8a the lesson opens with cmd.preparing then "Number 1."',
-      said[0] === 'Preparing lesson. Listen carefully.' && said[1] === 'Number 1.',
+    /* v0.0.6.x: "Number 1." plays through the unified ELEVEN clip tier (the
+       committed num.1 MP3) rather than speechSynthesis, so the utterance log
+       carries the command; the number itself is heard via the clip ladder. */
+    check('G10.8a the lesson opens with cmd.preparing (the num.1 take rides the unified clip tier)',
+      said[0] === 'Preparing lesson. Listen carefully.',
       JSON.stringify(said.slice(0, 3)));
     check('G10.8b the chain then hands over to the write window',
       sawWriting && /Write Word #1 in Your Book/.test(writeText),

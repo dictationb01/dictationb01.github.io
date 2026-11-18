@@ -49,8 +49,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
         w.localStorage.setItem('sdp.progress', '{not json at all');
         w.localStorage.setItem('sdp.settings', 'null');
         w.localStorage.setItem('sdp.session', '[]]');
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' }));
         w.localStorage.setItem('sdp.pin_rev_guard', '1');
       },
       files: (() => {
@@ -75,8 +75,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const stale = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', writeSecs: 8, repeats: 3, pauseSecs: 1.5, autoAdvance: true,
           lang: 'si', theme: 'dark', pacingPreset: 'standard', voiceLock: 'custom',
           touchedKeys: { pacingPreset: true, writeSecs: true, repeats: true },
           appliedSettingsRev: 7
@@ -96,8 +96,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     // a device that has already migrated keeps the student's own choices
     const migrated = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'typing', writeSecs: 9, repeats: 3, lang: 'si', pacingPreset: 'standard',
           voiceLock: 'custom', theme: 'light', langResetV001e: true,
           /* D10: above the shipped settingsRev, so adoption cannot overwrite. */
           defaultsResetV001f: true, appliedSettingsRev: 99
@@ -114,8 +114,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 2. studio PIN lockout ──────────────────────────────────────────── */
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R5 PIN attempt tracking
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     /* R7: use a PIN that is NOT the master recovery code, so the lockout
        assertions below still see a plain refusal. */
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
@@ -144,8 +144,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   // contract: docs/SYNC_AND_DATA_CONTRACT.md §R7 recovery — the master code
   // always opens a recovery session, even while the PIN pad is locked out.
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     const envelope = await app.SDP.Sync.Vault.encryptV2({ ghToken: 'ghp_t', elevenKey: 'sk_t' }, '159753');
     app.SDP.Studio.setEnvelope(envelope);
     app.SDP.Sync.Vault.resetLock();
@@ -169,9 +169,13 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({ before(w) {
       w.localStorage.removeItem('sdp.guide_seen');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' }));
     } });
-    check('G3.3a guide auto-opens on the first visit', app.byId('guideModal').hidden === false);
+    /* v0.0.6.x — the NO-BOOT-INTERRUPTION law: the guide stays closed on boot
+       and opens on demand through #btnGuideTop. */
+    check('G3.3a the guide stays closed on boot and opens on demand (the no-boot-interruption law)',
+      app.byId('guideModal').hidden === true &&
+      (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     check('G3.3b guide renders exactly four steps', app.byId('guideSteps').children.length === 4, app.byId('guideSteps').children.length);
     check('G3.3c guide opens in English chrome', /Press .*Start Dictation/.test(app.byId('guideSteps').textContent),
       app.byId('guideSteps').textContent.slice(0, 80));
@@ -180,14 +184,14 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     app.byId('guideLangPill').click();
     app.byId('btnGuideClose').click();
     // contract: docs/ARCHITECTURE_MAP.md §R2 + W7 — the stamp is the version string
-    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.v');
+    check('G3.3e closing stores sdp.guide_seen = the running version', app.w.localStorage.getItem('sdp.guide_seen') === '0.0.6.x');
     check('G3.3f the modal is hidden after closing', app.byId('guideModal').hidden === true);
     check('G3.3g no fake guide audio stubs exist', !fs.existsSync(path.join(ROOT, 'assets/audio/guide-si-1.mp3')));
     check('G3.3h the header guide button reopens it', (app.byId('btnGuideTop').click(), app.byId('guideModal').hidden === false));
     app.byId('btnGuideClose').click();
     // a returning visitor is not interrupted
-    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const again = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     check('G3.3i returning students are not interrupted by the guide', again.byId('guideModal').hidden === true);
     again.close();
     app.close();
@@ -198,100 +202,46 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   // the new front door: 4 executive beats (project summary first), a 10s
   // locked gate, then the guide.
   {
+    /* v0.0.6.x — the NO-BOOT-BRIEFING LAW: a brand-new visit boots straight
+       into the Dictation cockpit; #briefingModal AND the guide stay hidden.
+       The Project Briefing opens ONLY from Settings (#btnCreatorNote). */
     const app = await createApp();
-    check('G3.13a the briefing opens on a brand-new visit (guide deferred)',
-      app.byId('briefingModal').hidden === false && app.byId('guideModal').hidden === true);
-    check('G3.13b the synced transcript renders all 4 executive beats',
+    check('G3.13a the briefing NEVER opens on boot (guide deferred, straight to the cockpit)',
+      app.byId('briefingModal').hidden === true && app.byId('guideModal').hidden === true);
+    /* v0.0.6.x: the on-demand SETTINGS briefing — #btnCreatorNote opens
+       #briefingStage DIRECTLY (Welcome splash skipped), unlocks all exits at
+       once, and narrates Paragraph 1 from Word 1 inside the click gesture. */
+    app.byId('btnCreatorNote').click();
+    await app.advance(600);
+    check('G3.13b the Settings Project Briefing opens the reading stage DIRECTLY (no Welcome splash)',
+      app.byId('briefingModal').hidden === false &&
+      app.byId('welcomeStage').hidden === true && app.byId('briefingStage').hidden === false);
+    check('G3.13b2 the synced transcript renders all 4 executive beats',
       app.qa('#briefingLyrics .b-line').length === 4, app.qa('#briefingLyrics .b-line').length);
-    check('G3.13c both exit CTAs are locked behind the 10-second gate',
-      app.byId('btnBriefingContinue').disabled === true && app.byId('btnBriefingSkip').disabled === true);
-    check('G3.13d the countdown starts at the full 10s', /10s/.test(app.byId('briefingCount').textContent));
-    check('G3.13e the modal cannot be dismissed while gated',
-      app.SDP.Views.closeBriefing('skip') === false && app.byId('briefingModal').hidden === false);
-    /* v0.0.6.q Rule A: the gate clock starts ONLY inside
-       welcomeContinueToOverview() — so jsdom first clicks through the
-       WELCOME splash (Stage 1 → Stage 2) before any countdown can tick. */
-    check('G3.13a2 the two-stage entry opens on the WELCOME splash (gate clock NOT armed yet)',
-      app.byId('welcomeStage').hidden === false);
-    await app.advance(1500);
-    check('G3.13e2 the gate does NOT burn while the Welcome splash is on screen (still 10s after 1.5s)',
-      app.SDP.Views.briefingGateLeft() === 10 && app.byId('btnBriefingContinue').disabled === true,
-      'gateLeft=' + app.SDP.Views.briefingGateLeft());
-    app.byId('btnWelcomeContinue').click();
-    await app.advance(2200);
-    check('G3.13e3 clicking Continue arms the gate clock with Stage 2 narrating Paragraph 1 (9s after 2.2s)',
-      app.SDP.Views.briefingGateLeft() === 9, 'gateLeft=' + app.SDP.Views.briefingGateLeft());
-    /* Rule B: with the jsdom speech layer dead (no voices), the natural
-       reading estimate holds Beat 1 for ~22.1s — the buttons must STILL be
-       locked at the 10s mark (Paragraph 1 has not finished). */
-    await app.advance(5800);
-    /* v0.0.6.v — the 9 s dead-browser failsafe arms beat1Done BEFORE the 10 s
-       gate matures (2.2 s + 5.8 s = 8.0 s < 9 s), so while the gate still has
-       seconds left the CTAs stay LOCKED exactly as before; at gate 0 the
-       failsafe-armed beat1Done lets them unlock with zero trap. */
-    check('G3.13f2 while the gate still counts the CTAs stay LOCKED (gate > 0 holds the lock even with the failsafe armed)',
-      app.byId('btnBriefingContinue').disabled === true && app.byId('btnBriefingSkip').disabled === true &&
-      app.SDP.Views.briefingGateLeft() > 0 && app.SDP.Views.briefingAllBeatsDone() === false,
-      'gateLeft=' + app.SDP.Views.briefingGateLeft() + ' beat1Done=' + app.SDP.Views.briefingBeat1Done() + ' allBeatsDone=' + app.SDP.Views.briefingAllBeatsDone());
-    await app.advance(2400);
-    check('G3.13f2b at gate 0 the 9 s failsafe has armed beat1Done so BOTH CTAs unlock (the dead-browser no-trap law)',
-      app.SDP.Views.briefingBeat1Done() === true &&
-      app.byId('btnBriefingContinue').disabled === false && app.byId('btnBriefingSkip').disabled === false,
-      'gateLeft=' + app.SDP.Views.briefingGateLeft() + ' beat1Done=' + app.SDP.Views.briefingBeat1Done());
-    /* v0.0.6.t Pillar 2 — the no-forward-skip law: while the briefing is
-       locked, briefingSeek(3) is REFUSED (nobody can tap Paragraph 4 to
-       skip Paragraphs 1–3). */
-    /* v0.0.6.v: the no-forward-skip law guards only a LIVE Paragraph 1; the
-       9 s failsafe has armed beat1Done, so seek(3) is permitted (the reading
-       stage follows the user's explicit paragraph choice). */
-    check('G3.13f3 after the failsafe armed beat1Done a forward seek is permitted (seek(3) accepted)',
+    check('G3.13c all three exits are UNLOCKED instantly in the on-demand open (no countdown)',
+      app.byId('btnBriefingContinue').disabled === false && app.byId('btnBriefingSkip').disabled === false &&
+      app.byId('btnBriefingSkipTop').disabled === false);
+    check('G3.13d the narration starts at Paragraph 1 (one .on line, data-bline 0)',
+      app.qa('#briefingLyrics .b-line.on').length === 1 &&
+      app.q('#briefingLyrics .b-line.on').getAttribute('data-bline') === '0');
+    await app.advance(2600);
+    check('G3.13e the on-demand briefing is closable at ANY instant (Exit works, no gate)',
+      app.SDP.Views.closeBriefing('skip') === true && app.byId('briefingModal').hidden === true);
+    /* re-open: forward seeks are free in a direct open */
+    app.byId('btnCreatorNote').click();
+    await app.advance(600);
+    check('G3.13f a forward seek is permitted in the on-demand open (seek(3) accepted)',
       app.SDP.Views.briefingSeek(3) === true &&
       app.q('#briefingLyrics .b-line.on') !== null &&
       app.q('#briefingLyrics .b-line.on').getAttribute('data-bline') === '3',
       'on=' + (app.q('#briefingLyrics .b-line.on') || {}).getAttribute('data-bline'));
-    /* v0.0.6.t PILLAR 2: Beat 1 finishes at ~24.5s after Continue (2.6s floor
-       + 22.1s estimate + 0.32s pause) — the moment it does, BOTH CTAs UNLOCK
-       (gateLeft 0 && beat1Done true) while Paragraph 2 is still narrating
-       (allBeatsDone stays false — telemetry only). */
-    await app.advance(16000);
-    check('G3.13g the instant Paragraph 1 finishes BOTH CTAs UNLOCK (gateLeft 0 && beat1Done true) while Paragraphs 2–4 keep narrating (allBeatsDone false)',
-      app.byId('btnBriefingContinue').disabled === false && app.byId('btnBriefingSkip').disabled === false &&
-      app.SDP.Views.briefingBeat1Done() === true && app.SDP.Views.briefingAllBeatsDone() === false,
-      'gateLeft=' + app.SDP.Views.briefingGateLeft() + ' beat1Done=' + app.SDP.Views.briefingBeat1Done() + ' allBeatsDone=' + app.SDP.Views.briefingAllBeatsDone());
-    check('G3.13g1 the unlocked CTA paints the ▶ Start Dictation → label at once',
-      app.byId('btnBriefingContinue').textContent.indexOf('▶ Start Dictation →') === 0,
-      app.byId('btnBriefingContinue').textContent);
-    /* v0.0.6.v: the 9s beat1Guard force-arms beat1Done for a dead browser —
-       by ~26s after Continue it has long fired, so even a silent environment
-       can never trap a student behind the Paragraph-1 gate. */
-    await app.advance(3000);
-    check('G3.13g2 the 25s beat1 safety ceiling force-arms beat1Done so a dead browser can never trap a student (buttons stay unlocked)',
-      app.SDP.Views.briefingBeat1Done() === true &&
-      app.byId('btnBriefingContinue').disabled === false && app.byId('btnBriefingSkip').disabled === false,
-      'beat1Done=' + app.SDP.Views.briefingBeat1Done());
     app.byId('btnBriefingContinue').click();
     await app.advance(400);
     check('G3.13h continue closes the briefing and hands over to the guide',
       app.byId('briefingModal').hidden === true && app.byId('guideModal').hidden === false);
     check('G3.13i completion is stamped inside sdp.settings (five-key law)',
-      /"briefingSeen":"0\.0\.6\.v"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
+      /"briefingSeen":"0\.0\.6\.x"/.test(app.w.localStorage.getItem('sdp.settings') || ''));
     app.byId('btnGuideClose').click();
-    app.byId('btnCreatorNote').click();
-    check('G3.13j the relocated Project Briefing button replays it anytime',
-      app.byId('briefingModal').hidden === false && app.byId('btnBriefingContinue').disabled === true);
-    /* v0.0.6.t: a replay re-arms the Paragraph-1 lock, so a forward seek
-       is again refused until Beat 1 finishes. */
-    check('G3.13j2 a replay re-arms the Paragraph-1 lock (seek(3) refused again)',
-      app.SDP.Views.briefingSeek(3) === false && app.SDP.Views.briefingAllBeatsDone() === false);
-    /* the replay opens on the WELCOME splash — click through it so Stage 2
-       actually narrates Paragraph 1, then the active line paints .on. */
-    app.byId('btnWelcomeContinue').click();
-    await app.advance(4600);
-    check('G3.13k the active sentence highlights in sync (one .on line)',
-      app.qa('#briefingLyrics .b-line.on').length === 1 &&
-      app.q('#briefingLyrics .b-line.on').getAttribute('data-bline') === '0');
-    check('G3.13l the beat text stays free of external AI-tool names',
-      !/Z\.ai|Arena|Gemini|ChatGPT|Claude/i.test(app.byId('briefingLyrics').textContent));
     app.close();
     /* ┠ v0.0.6.t PILLAR 1 — the manual-play law, live: after the engine
        starts and is pause-locked by navigation, a manual playWord (the exact
@@ -301,8 +251,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
        binding itself is asserted statically in G1 P1h and live in LAB4h. */
     {
       const mp = await createApp({ before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', guideAutoPlay: false, appliedSettingsRev: 99 }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', guideAutoPlay: false, appliedSettingsRev: 99 }));
       } });
       mp.byId('btnStart').click();
       await mp.advance(1200);
@@ -324,8 +274,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
       mp.close();
     }
     const ret = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' }));
     } });
     check('G3.13m returning students are never blocked by the briefing',
       ret.byId('briefingModal').hidden === true);
@@ -337,12 +287,12 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
         // appliedSettingsRev pins the seeded pacing against a classSettings
         // adoption, and guideAutoPlay:false keeps Start on the fast path.
         /* D10: appliedSettingsRev sits ABOVE the shipped settingsRev so the
            classroom adoption cannot overwrite this test's own pacing. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, appliedSettingsRev: 99, defaultsResetV001f: true }));
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: false, appliedSettingsRev: 99, defaultsResetV001f: true }));
       }
     });
     check('G3.4a boot loads the 30-word active list', app.SDP.Sync.wordCount() === 30, app.SDP.Sync.wordCount());
@@ -417,7 +367,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -455,7 +405,7 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 5. language purity ─────────────────────────────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §5 language purity (W7)
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x'); w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     app.byId('tab-dict').click();
     const cards = app.byId('dictList').querySelectorAll('.dict-card');
     check('G3.5a the Words tab renders all 30 cards', cards.length === 30, cards.length);
@@ -493,8 +443,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   /* ── 6. settings order and the studio accordion ─────────────────────── */
   // contract: docs/UI_COMPONENT_GUIDE.md §student-first settings order
   {
-    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); } });
+    const app = await createApp({ before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); } });
     const order = app.SDP.Views.settingsOrder();
     check('G3.6a Settings is student-only: exactly five sections', order.length === 5, order.join(','));
     check('G3.6b About is the last student section and no studio card remains in Settings',
@@ -542,9 +492,9 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
         /* The student touched every classroom key — the lecturer still wins. */
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'typing', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: false,
           pacingPreset: 'exam', voiceLock: 'custom', voiceSource: 'custom', rate: 1.1, theme: 'board',
           lang: 'si', volume: 0.4, appliedSettingsRev: 0, langResetV001e: true,
           defaultsResetV001f: true,
@@ -576,8 +526,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     ver.syncRev = 1762000000012;
     const app = await createApp({
       files: { 'data/config.json': JSON.stringify(cfg), 'data/version.json': JSON.stringify(ver) },
-      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v' })); }
+      before(w) { w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x' })); }
     });
     const s = app.SDP.Data.settings();
     check('G3.8a a brand-new device adopts the teacher settings on its first boot (SYNC-02)',
@@ -594,8 +544,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', mode: 'paper', writeSecs: 3, repeats: 1, pauseSecs: 0.5, autoAdvance: true,
           rate: 1, volume: 1, lang: 'en', theme: 'dark', guideAutoPlay: true, appliedSettingsRev: 7
         }));
       }
@@ -705,9 +655,11 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
     const barDocked = app.byId('lecturerSyncBar').parentNode.id;
     await new Promise((resolve) => app.SDP.Studio.unlock('78987898', resolve));
     await app.settle(4);
-    check('G3.11b unlock mounts the four numbered cards + diagnostics vault + the v0.0.6.o Studio ↔ Briefing bridge card',
-      app.qa('.studio-card').length === 5 && app.byId('studioGate') === null && app.byId('studioCardDiag') !== null &&
-      app.byId('studioCardBriefingVoices') !== null && app.byId('studioBriefingVoiceBar') !== null,
+    check('G3.11b unlock mounts the four numbered cards + diagnostics vault + the Studio ↔ Briefing bridge card + the v0.0.6.x unified classroom voice card',
+      app.qa('.studio-card').length === 6 && app.byId('studioGate') === null && app.byId('studioCardDiag') !== null &&
+      app.byId('studioCardBriefingVoices') !== null && app.byId('studioBriefingVoiceBar') !== null &&
+      app.byId('studioCardClassroomVoice') !== null && app.byId('studioClassroomVoiceBar') !== null &&
+      app.byId('btnApplyClassroomVoice') !== null && app.byId('btnOpenLiveLab') !== null,
       app.qa('.studio-card').length + ' cards');
     check('G3.11c the 74-clip dashboard states X/74 live',
       /Voice Pack: \d+\/74 Clips/.test(app.byId('studioPackDashboard').textContent),
@@ -748,8 +700,8 @@ function escapeRe(str) { return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&
   {
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.v');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.v', appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.x');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.x', appliedSettingsRev: 99, langResetV001e: true, defaultsResetV001f: true, guideAutoPlay: false, mode: 'paper', writeSecs: 8, repeats: 2, pauseSecs: 1.5, autoAdvance: false }));
       }
     });
     await app.settle(2);

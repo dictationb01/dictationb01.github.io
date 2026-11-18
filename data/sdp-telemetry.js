@@ -247,7 +247,7 @@
     return true;
   }
 
-  /* ══ v0.0.6.y Pillar 3 (Y3): the Student → Lecturer/Admin alert channel.
+  /* ══ v0.0.6.z Pillar 3 (Y3): the Student → Lecturer/Admin alert channel.
      Students hit missing/stale voice clips; the app must (a) record the alert
      under the five-key law (sdp.settings.lecturerAlerts — never a sixth key),
      (b) push it live to the lecturer over ntfy.sh + GAS, and (c) let the
@@ -407,7 +407,7 @@
     envelope: envelope,
     pushTelemetryEnvelope: pushTelemetryEnvelope,
     pullTelemetryLedger: pullTelemetryLedger,
-    /* v0.0.6.y Pillar 3 (Y3): the Student → Lecturer/Admin alert channel. */
+    /* v0.0.6.z Pillar 3 (Y3): the Student → Lecturer/Admin alert channel. */
     sendLecturerAlert: sendLecturerAlert,
     pullLecturerAlerts: pullLecturerAlerts,
     clearLecturerAlerts: clearLecturerAlerts,

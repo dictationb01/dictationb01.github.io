@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.y';
+  SDP.version = '0.0.6.z';
   SDP.build = '2026-11-18';
-  SDP.ver = 39;
+  SDP.ver = 40; /* v0.0.6.z */
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.y';
+  var APP_VERSION = '0.0.6.z'; /* v0.0.6.z */
   var SCHEMA = 39;
-  var SETTINGS_REV = 63;
+  var SETTINGS_REV = 64; /* v0.0.6.z */
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1163,7 +1163,7 @@
     online: (typeof global.navigator !== 'undefined' && global.navigator.onLine !== false)
   };
   var listeners = [];
-  /* v0.0.6.y Pillar 4 (Y4): the reactive change bus (emitChange/onChange). */
+  /* v0.0.6.z Pillar 4 (Y4): the reactive change bus (emitChange/onChange). */
   var changeListeners = [];
   var bootCallbacks = [];
   var booting = false;
@@ -1725,7 +1725,7 @@
         s: "We saw a heroine near the station." } },
   
 
-    /* v0.0.6.y — SESSION 14 (PLACES: TOWN & CITY; SERVICES): the 30 active
+    /* v0.0.6.z — SESSION 14 (PLACES: TOWN & CITY; SERVICES): the 30 active
      British RP entries (90 total with Sessions 11 + 12) so Stage A
      resolves every live Session-14 word instantly, offline. */
   "town": { p: "/taʊn/", pos: "noun.", ttsHint: "TAWN", d: { p: "/taʊn/" } },
@@ -1999,7 +1999,7 @@
   var Sync = {
     state: state,
     listen: listen,
-    /* v0.0.6.y Pillar 4 (Y4): the reactive event bus — the Studio clip
+    /* v0.0.6.z Pillar 4 (Y4): the reactive event bus — the Studio clip
        table, pack dashboard, coverage matrix, Words screen and the running
        dictation engine all repaint within the same tick on every change. */
     emitChange: function (kind, detail) {

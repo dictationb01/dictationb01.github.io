@@ -85,7 +85,12 @@
   endedAt: 0,
   wordStartAt: 0,
   rapidSkipCount: 0,
-  wordsCompletedCount: 0
+  wordsCompletedCount: 0,
+  /* v0.0.6.z Z4 — the strict Dictation Mode lock state (set by the Studio's
+     Lock Studio & Unlock Dictation flow). While true, start()/pause()/retry/
+     new-session are refused and the bilingual lock overlay is painted. */
+  studioLocked: false,
+  worstLagMs: 0
  };
 
  var els = {};
@@ -249,8 +254,9 @@
     pill[i].setAttribute('aria-current', i === E.index ? 'true' : 'false');
    }
   }
-  /* Phase 5: the single-line cockpit header (WORD #01 / 30). */
-  setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + t('progressOf30', ' / 30'));
+  /* Phase 5: the single-line cockpit header (WORD #01 / N).
+     v0.0.6.z Z5: the denominator is the LIVE item count, never a fixed 30. */
+  setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + ' / ' + (E.items.length || 30));
   /* v0.0.5.c: an ICON-first deck — the dual-tone SVG is the button, the
     caption beside it carries the word. aria-label keeps it accessible. */
   setBtnIconLabel(byId('btnPrev'), 'prev', '', t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')');
@@ -951,6 +957,7 @@
  }
 
  function togglePlayPause() {
+  if (studioLocked()) return 'studio_locked';
   if (E.phase === 'paused') { resume(); return 'resumed'; }
   if (E.phase === 'idle') {
    /* v0.0.6.f (R1) + v0.0.6.i: a cold cockpit arms itself from the live
@@ -1380,6 +1387,23 @@
   try {
    if (SDP.Diagnostics) SDP.Diagnostics.log('session_telemetry', sessionTelemetry());
   } catch (e) {}
+  /* v0.0.6.z PILLAR 6 (Z6) — REAL telemetry: the finished run now writes the
+     full sessionEnd record into the append-only five-key ledger with REAL
+     values (words completed, score, missed words, the audio tier that
+     actually spoke the beats, and the worst beat lag) instead of leaving the
+     ledger's wordsCompleted at 0 forever. */
+  try {
+    if (SDP.Telemetry && SDP.Telemetry.sessionEnd) {
+     var sc6 = scored();
+     SDP.Telemetry.sessionEnd({
+      wordsCompleted: E.wordsCompletedCount,
+      score: sc6.total ? Math.round((sc6.correct / sc6.total) * 100) : 0,
+      missedWords: missedWords().slice(0, 30),
+      audioTierUsed: str((SDP.Speech && SDP.Speech.lastTierName) ? SDP.Speech.lastTierName() : ''),
+      lagMs: Math.max(0, Math.round(Number(E.worstLagMs) || 0))
+     });
+    }
+  } catch (eT6) {}
   try {
    if (SDP.Data) {
     SDP.Data.recordResult(buildModel());
@@ -1403,7 +1427,33 @@
   return out;
  }
 
+ /* v0.0.6.z PILLAR 4 (Z4) — studioLocked() / setStudioLocked(): the strict
+    Dictation Mode lock. Locked = the lecturer has armed the classroom lock
+    (Studio: Lock Studio & Unlock Dictation); every start surface refuses and
+    the bilingual overlay is painted. The lock survives the Studio surface
+    re-locking itself (the S4 tab-exit guard auto-locks the Studio the moment
+    the lecturer walks away from the studio tab — the classroom lock must
+    HOLD through that transition so students stay gated). The only unlock
+    paths are the overlay's own Unlock button and the Studio button while
+    the lecturer is still IN the studio tab (isUnlocked() true). */
+ function studioLocked() {
+  if (!E.studioLocked) return false;
+  /* While the Studio surface itself is unlocked (the lecturer is on the
+     studio tab, or the vault session is live on this device), the lock is
+     a real armed lock. The instant the lecturer re-enters the studio tab
+     after arming — isUnlocked() true again — the lock can be lifted by
+     hand; there is NO auto-release that could strand a student device:
+     the engine lock is memory-only and dies with the page anyway. */
+  return true;
+ }
+ function setStudioLocked(v) {
+  E.studioLocked = !!v;
+  try { if (SDP.Views && SDP.Views.paintDictationLockOverlay) SDP.Views.paintDictationLockOverlay(E.studioLocked); } catch (eP) {}
+  return E.studioLocked;
+ }
+
  function retryMissedOnly() {
+  if (studioLocked()) return { ok: false, reason: 'studio_locked' };
   var words = missedWords();
   if (!words.length) return { ok: false, reason: 'nothing_missed' };
   start({ words: words, mode: E.mode, retryOnly: true });
@@ -1411,6 +1461,7 @@
  }
 
  function startNewSession() {
+  if (studioLocked()) return { ok: false, reason: 'studio_locked' };
   var words = SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : [];
   start({ words: words, mode: E.mode, retryOnly: false });
   return { ok: true, count: words.length };
@@ -1438,11 +1489,15 @@
 
  function start(opts) {
   opts = opts || {};
+  /* v0.0.6.z PILLAR 4 (Z4) — the strict Dictation Mode lock: while the
+     lecturer has locked the Studio, no session can start from any surface
+     (cold cockpit, retry, board jumper, ?tab=player deep link). */
+  if (studioLocked()) return false;
   applySettings();
   if (opts.mode) E.mode = opts.mode === 'typing' ? 'typing' : 'paper';
   if (opts.writeSecs) E.writeSecs = Math.max(3, Number(opts.writeSecs));
   var words = opts.words && opts.words.length ? opts.words : (SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []);
-  /* v0.0.6.y Pillar 2 (Y2): the pre-start voice readiness audit — NEVER
+  /* v0.0.6.z Pillar 2 (Y2): the pre-start voice readiness audit — NEVER
      blocks the session; it only purges stale clips and paints the bilingual
      warning banner so dictation can run cleanly on the RP fallback. */
   try {
@@ -1718,6 +1773,8 @@
   bindLifecycle: bindLifecycle,
   flushDeferred: function () { try { if (SDP.Sync && SDP.Sync.flushDeferred) return SDP.Sync.flushDeferred(); } catch (e) {} return 0; },
   togglePlayPause: togglePlayPause,
+  studioLocked: studioLocked,
+  setStudioLocked: setStudioLocked,
   next: goNext,
   prev: goPrev,
   jumpTo: jumpTo,

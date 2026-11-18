@@ -1,7 +1,28 @@
-# ARCHITECTURE_MAP — Smart Dictation Player v0.0.6.t
+# ARCHITECTURE_MAP — Smart Dictation Player v0.0.6.z
 
 Audience: **CCBE Galle Branch — B1 English Class, Sri Lanka**
 Lecturer in Charge: **Ms. Sumodya Sewmini** · Creator: **Hansana** · Concept: **Ayya01 (Lesandu)**
+
+## v0.0.6.z — the seven-pillar studio layer (2026-11-18)
+
+- **data/studio.js** — +Z1 clone revert (#btnRemoveClonedVoiceRestoreDefault),
+  +Z2 free-speech cloning + transcription + low-credit verification,
+  +Z4 #studioActionAuditBanner (paintStudioActionAuditBanner re-reads the real
+  state after every save action) + #btnLockStudioUnlockDictation (setStudioLockArm),
+  +Z5 wordCap()/setWordCap() (5–50, default 30) + #studioWordCountSelect +
+  #studioSessionMetaCard + buildSessionPayload stamps (wordCount/date/day/
+  branch/classInfo/display). Studio export: wordCap, setWordCap,
+  paintStudioActionAuditBanner, armClassroomLock.
+- **data/sdp-dictation-engine.js** — +studioLocked()/setStudioLocked() gates
+  in start()/togglePlayPause()/startNewSession()/retryMissedOnly(); the lock
+  holds through the S4 tab-exit auto-lock; +Z6 finish() writes the REAL
+  Telemetry.sessionEnd record; cockpit denominators dynamic (WORD #NN / N).
+- **data/sdp-ui-views.js** — +paintDictationLockOverlay()/bindDictationLockOverlay
+  (#dictationStudioLockOverlay host in index.html); showTab('player') repaints
+  it (deep-link proof); startDictation() refuses while locked.
+- **tests/v006z-verification.cjs** — G18: 54 checks (Z1–Z7 static + live
+  headless Chromium: lock overlay, 20/10-word runs, real telemetry capture,
+  Studio cards, Live Lab v4.0 ALL PASS). CI yml step G18; TEST_BUDGET 730000.
 
 This file is the map of every shipped byte. Read it before touching anything; if
 a change needs a new file, it needs a new row in §H1 and a new budget in

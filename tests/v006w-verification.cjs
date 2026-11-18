@@ -103,8 +103,8 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
   /* live jsdom: a brand-new non-lexicon word synthesizes without quarantine */
   {
     const app = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.y');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.z');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z' }));
     } });
     /* deterministic: verifyBritishRPWord resolves fallback (dead dictionary + no AI key) */
     let verdict = null;
@@ -149,8 +149,8 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
   /* live jsdom: apply a clone + verify persistence */
   {
     const app = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.y');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.z');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z' }));
     } });
     const applied = app.SDP.Studio.applyClassroomVoice('AbCdEf0123456789AbCdEf0123456789', 'My Test Clone');
     const sig = JSON.parse(app.w.localStorage.getItem('sdp.settings')).voiceSignature;
@@ -172,8 +172,8 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
   check('W4a lab.html ships at the repo root (≤ 30000 B, Live Lab v3.0) with the 6 station sections',
     labHtml.length <= 30000 && (labHtml.match(/<section class="card">/g) || []).length === 8,
     String(labHtml.length));
-  check('W4b data/sdp-live-lab.js ships (≤ 70000 B, Live Lab v3.0) and parses as strict ES5 (acorn ecmaVersion 5)',
-    labJs.length <= 70000 && (function () { try { acorn.parse(labJs, { ecmaVersion: 5, sourceType: 'script' }); return true; } catch (e) { return false; } })(),
+  check('W4b data/sdp-live-lab.js ships (≤ 76000 B, Live Lab v4.0 — v0.0.6.z Z3) and parses as strict ES5 (acorn ecmaVersion 5)',
+    labJs.length <= 76000 && (function () { try { acorn.parse(labJs, { ecmaVersion: 5, sourceType: 'script' }); return true; } catch (e) { return false; } })(),
     String(labJs.length));
   check('W4c the LiveLab engine exposes window.SDP.LiveLab with all 6 stations + report exports',
     /SDP\.LiveLab = \{/.test(labJs) && /station1: station1/.test(labJs) && /station2: station2/.test(labJs) &&
@@ -196,12 +196,12 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     /forcePurgeAndResync/.test(labJs), 'station5');
   check('W4i Station 6 runs the full suite + .json/.zip exports',
     /Run Full Live Diagnostic Suite/.test(labHtml) && /Download Full Live Lab Report/.test(labHtml), 'station6');
-  check('W4j sw.js precaches the lab files and pins the sdp-v0.0.6.y-s38 shell',
+  check('W4j sw.js precaches the lab files and pins the sdp-v0.0.6.z-s39 shell',
     /'\.\/data\/sdp-live-lab\.js'/.test(readText('sw.js')) &&
-    /SW_VERSION = 'sdp-v0\.0\.6\.y-s38'/.test(readText('sw.js')), 'sw precache');
-  check('W4k the pack header carries 0.0.6.y / ver 39 / schema 39 / settingsRev 63 / syncRev 1797000000012',
-    pack.version === '0.0.6.y' && pack.ver === 39 && pack.schema === 39 &&
-    pack.settingsRev === 63 && Number(pack.syncRev) === 1797000000012,
+    /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(readText('sw.js')), 'sw precache');
+  check('W4k the pack header carries 0.0.6.z / ver 40 / schema 40 / settingsRev 64 / syncRev 1797000000013',
+    pack.version === '0.0.6.z' && pack.ver === 40 && pack.schema === 40 &&
+    pack.settingsRev === 64 && Number(pack.syncRev) === 1797000000013,
     JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
 
   /* ── report ───────────────────────────────────────────────────────────── */

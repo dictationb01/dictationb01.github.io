@@ -67,8 +67,8 @@ check('Y2f the shipped pack has ZERO orphaned words.* keys (the 44-key live-repo
   Object.keys(pack.clips).filter((k) => /^words\./.test(k) && /^(num|cmd|guide)\./.test(k.replace(/^words\./, '')) && pack.clips['words.' + k.replace(/^words\./, '')] !== pack.clips[k.replace(/^words\./, '')]).length === 0);
 check('Y2g the shipped pack carries exactly the 74 canonical clips (30 words + 30 num + 6 cmd + 4 guide + 4 briefing)',
   Object.keys(pack.clips).length === 74);
-check('Y2h the pack header is v0.0.6.y / ver 39 / schema 39 / settingsRev 63 / syncRev+wordsRev 1797000000012',
-  pack.version === '0.0.6.y' && pack.ver === 39 && pack.schema === 39 && pack.settingsRev === 63 && Number(pack.syncRev) === 1797000000012 && Number(pack.wordsRev) === 1797000000012);
+check('Y2h the pack header is v0.0.6.z / ver 40 / schema 40 / settingsRev 64 / syncRev+wordsRev 1797000000013',
+  pack.version === '0.0.6.z' && pack.ver === 40 && pack.schema === 40 && pack.settingsRev === 64 && Number(pack.syncRev) === 1797000000013 && Number(pack.wordsRev) === 1797000000013);
 
 /* ── Y3: the student → lecturer alert channel ─────────────────────────── */
 check('Y3a sdp-telemetry.js ships sendLecturerAlert + pullLecturerAlerts + clearLecturerAlerts',
@@ -99,8 +99,8 @@ check('Y4e every new button id has a CLICK_ACTIONS or onStudio binding',
 /* ── Y5: Live Lab v3.0 ────────────────────────────────────────────────── */
 check('Y5a lab.html ships Station 2B (Voice Sample AI Analyzer sandbox) and Station 3B (stale-clip simulator)',
   /STATION 2B/.test(labHtml) && /STATION 3B/.test(labHtml));
-check('Y5b sdp-live-lab.js is Live Lab v3.0 with the built-in reference simulation + stale simulator',
-  /version: '3\.0\.0'/.test(liveLab) && /labSimulateSample/.test(liveLab) && /labStaleSimulator/.test(liveLab));
+check('Y5b sdp-live-lab.js is Live Lab v4.0 (v0.0.6.z Z3) with the low-credit verifier + reference simulation + stale simulator',
+  /version: '4\.0\.0'/.test(liveLab) && /labSimulateSample/.test(liveLab) && /labStaleSimulator/.test(liveLab) && /lowCreditVerify/.test(liveLab));
 check('Y5c the lab carries the guard banner host element',
   /id="sdpVoiceClipGuardBanner"/.test(labHtml));
 check('Y5d the lab ES5-parses (strict ES5 law)', (() => { try { require('acorn').parse(liveLab, { ecmaVersion: 5 }); return true; } catch (e) { return false; } })());
@@ -127,10 +127,10 @@ check('Y6d the four George briefing clips stay byte-for-byte identical to commit
   }
   return true;
 })());
-check('Y6e the service worker pins the s38 shell caches',
-  /SW_VERSION = 'sdp-v0\.0\.6\.y-s38'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.6\.y-s38-shell'/.test(sw));
-check('Y6f session.json carries the y pins (ver 63 / settingsRev 63 / syncRev 1797000000012 / 0.0.6.y)',
-  session.ver === 63 && session.settingsRev === 63 && Number(session.syncRev) === 1797000000012 && session.appVersion === '0.0.6.y');
+check('Y6e the service worker pins the s39 shell caches',
+  /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.6\.z-s39-shell'/.test(sw));
+check('Y6f session.json carries the z pins (ver 64 / settingsRev 64 / syncRev 1797000000013 / 0.0.6.z)',
+  session.ver === 64 && session.settingsRev === 64 && Number(session.syncRev) === 1797000000013 && session.appVersion === '0.0.6.z');
 
 /* ── Y2/Y3/Y5 live headless-Chromium verification (the boot law) ──────── */
 (async function live() {
@@ -244,7 +244,7 @@ check('Y6f session.json carries the y pins (ver 63 / settingsRev 63 / syncRev 17
           return { pass: c.pass, fail: c.fail, warn: c.warn, badge: document.getElementById('labScoreBadge').getAttribute('data-state'), ver: document.getElementById('labVerPill').textContent, s2b: document.getElementById('labSampleReport').innerHTML.length, s3b: document.getElementById('labStaleTrace').innerHTML.length };
         });
         check('Y5e Live Lab v3.0 fresh-visit boot: simulators run, ALL PASS (0 FAIL), 74 clips decoded',
-          lab.fail === 0 && lab.warn === 0 && lab.badge === 'pass' && lab.ver === '0.0.6.y' && lab.s2b > 100 && lab.s3b > 100 && errors.length === 0,
+          lab.fail === 0 && lab.warn === 0 && lab.badge === 'pass' && lab.ver === '0.0.6.z' && lab.s2b > 100 && lab.s3b > 100 && errors.length === 0,
           JSON.stringify(lab) + ' | ' + errors.slice(0, 2).join(','));
         await ctx.close();
       }

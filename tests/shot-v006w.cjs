@@ -20,8 +20,8 @@ const OUT = path.join(ROOT, 'shots-v006w');
     await ctx.addInitScript(() => {
       window.__SDP_NO_LIVE__ = true;
       try {
-        localStorage.setItem('sdp.guide_seen', '0.0.6.y');
-        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y', guideAutoPlay: false, appliedSettingsRev: 99 }));
+        localStorage.setItem('sdp.guide_seen', '0.0.6.z');
+        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z', guideAutoPlay: false, appliedSettingsRev: 99 }));
       } catch (e) {}
     });
     await ctx.route('**/*', (route) => {

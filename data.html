@@ -8,12 +8,12 @@
    color-scheme meta follows only this page's own theme button. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.6.y — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
-<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.y</title>
+<meta name="description" content="Smart Dictation Player 0.0.6.z — network, cache, storage and mobile-data transparency for the CCBE Galle B1 class.">
+<title>Data &amp; Cache Transparency · Smart Dictation 0.0.6.z</title>
 <script>
 (function () {
   var vUrl = location.pathname.indexOf('/data/') !== -1 ? './version.json' : './data/version.json';
-  var TARGET = '0.0.6.y';
+  var TARGET = '0.0.6.z';
   if (typeof fetch !== 'function') return;
   fetch(vUrl + '?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { return r && r.ok ? r.json() : null; })
@@ -208,7 +208,7 @@
     <span class="credit-pill">CREDITS GOES TO Hansana</span>
     <p>Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)</p>
     <p lang="si" style="font-family:'Noto Sans Sinhala',sans-serif">නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini</p>
-    <p>CCBE Galle Branch · B1 English Class · Smart Dictation Player 0.0.6.y</p>
+    <p>CCBE Galle Branch · B1 English Class · Smart Dictation Player 0.0.6.z</p>
   </footer>
 </main>
 
@@ -276,7 +276,7 @@
 
   var lang = 'en';
   var theme = 'dark';
-  var SESSION_BYTES = 70144; /* D20: updated repository metadata; re-derived live below */
+  var SESSION_BYTES = 64826; /* D20: updated repository metadata; re-derived live below */
   var APP_BYTES = 421000; /* D20: measured shell + six modules on 0.0.5.c */
   function utf8Bytes(text) { try { return new TextEncoder().encode(str(text || '')).length; } catch (e) { return String(text || '').length; } }
   function deriveSessionBytes() {
@@ -362,7 +362,7 @@
   }
 
   function renderCaches() {
-    var roles = { 'sdp-v0.0.6.y-s34-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
+    var roles = { 'sdp-v0.0.6.z-s34-shell': 'roleShell', 'sdp-youdao-v1': 'roleYoudao', 'sdp-audio-clips': 'roleClips' };
     function paint(entries) {
       var html = '', i;
       if (!entries) { $('cacheTable').innerHTML = '<tr><td colspan="3" class="muted">' + tr('noCaches') + '</td></tr>'; return; }

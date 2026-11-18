@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.y';
+    return '0.0.6.z';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -984,7 +984,12 @@
       try { if (SDP.Studio && SDP.Studio.mount) SDP.Studio.mount(); } catch (e) {}
       try { if (SDP.Studio && SDP.Studio.paintQuickButton) SDP.Studio.paintQuickButton(); } catch (e2) {}
     }
-    if (target === 'player') { renderBoardJumper(); }
+    if (target === 'player') {
+      /* v0.0.6.z Z4: a deep link or tab tap onto the player can never bypass
+         the strict Dictation Mode lock — the overlay paints every time. */
+      paintDictationLockOverlay();
+      renderBoardJumper();
+    }
     renderBoardBar();
     if (target === 'player' && SDP.Engine && SDP.Engine.refreshEls) SDP.Engine.refreshEls();
     return target;
@@ -995,6 +1000,53 @@
       if (screen && screen.classList && screen.classList.contains('active')) return TABS[i];
     }
     return 'home';
+  }
+
+  /* ══ v0.0.6.z Z4 — the strict Dictation Mode lock overlay ══
+     Painted whenever Engine.studioLocked() is true (or the explicit value
+     arrives from setStudioLocked). Bilingual lock card; both buttons resolve:
+     ↩ Return to Lecturer Studio opens the studio tab; 🔒 Lock Studio &
+     Unlock Dictation clears the lock and starts the beat immediately. The
+     overlay repaints on every showTab('player') so a deep link (?tab=player)
+     can never bypass the engine gate, and it lifts the instant the Studio
+     reports ST.unlocked === false (studioLocked() itself releases). */
+  function paintDictationLockOverlay(force) {
+    var host = byId('dictationStudioLockOverlay');
+    if (!host) return false;
+    var locked = (force === true || force === false) ? !!force : (function () { try { return !!(SDP.Engine && SDP.Engine.studioLocked && SDP.Engine.studioLocked()); } catch (e) { return false; } })();
+    host.hidden = !locked;
+    try { host.setAttribute('aria-hidden', locked ? 'false' : 'true'); } catch (eA) {}
+    if (locked) {
+      var strip = byId('sessionProgressStrip');
+      if (strip) strip.setAttribute('data-lockdim', 'true');
+    } else {
+      var strip2 = byId('sessionProgressStrip');
+      if (strip2) strip2.removeAttribute('data-lockdim');
+    }
+    return locked;
+  }
+  function bindDictationLockOverlay() {
+    var back = byId('btnLockOverlayReturnStudio');
+    if (back) {
+      back.onclick = function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        try { showTab('studio'); } catch (eS) {}
+        return false;
+      };
+    }
+    var unlock = byId('btnLockOverlayUnlockDictation');
+    if (unlock) {
+      unlock.onclick = function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        try {
+          if (SDP.Engine && SDP.Engine.setStudioLocked) SDP.Engine.setStudioLocked(false);
+        } catch (eU) {}
+        paintDictationLockOverlay(false);
+        try { if (SDP.Engine && SDP.Engine.togglePlayPause) SDP.Engine.togglePlayPause(); } catch (eT) {}
+        return false;
+      };
+    }
+    return true;
   }
 
   /* ══ Home  ══ */
@@ -1177,6 +1229,13 @@
   /* VOX-07: the first Start of a session speaks a condensed two-step English… */
   var sessionState = { introShown: false };
   function startDictation(mode) {
+    /* v0.0.6.z Z4 — #btnStart can never start a session while the strict
+       Dictation Mode lock is armed; the bilingual overlay paints instead. */
+    if ((function () { try { return !!(SDP.Engine && SDP.Engine.studioLocked && SDP.Engine.studioLocked()); } catch (e) { return false; } })()) {
+      paintDictationLockOverlay(true);
+      showTab('player');
+      return false;
+    }
     var chosen = mode || settings().mode;
     var conf = settings();
     if (!sessionState.introShown && conf.guideAutoPlay === true && words().length) {
@@ -2945,7 +3004,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.y.beta';
+  var BETA_SUBVERSION = '0.0.6.z.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -4424,6 +4483,8 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
+    /* v0.0.6.z Z4: the lock overlay buttons arm on boot. */
+    bindDictationLockOverlay();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.m: pill lives in the About card */
     setText(byId('aboutVersion'), APP_VERSION);
@@ -4707,6 +4768,8 @@
     toggleLang: toggleLang,
     toggleTheme: toggleTheme,
     showTab: showTab,
+    /* v0.0.6.z Z4 — the strict Dictation Mode lock overlay painter. */
+    paintDictationLockOverlay: paintDictationLockOverlay,
     /* R6: showScreen is the documented alias of the one router (D10). */
     showScreen: showTab,
     currentTab: currentTab,

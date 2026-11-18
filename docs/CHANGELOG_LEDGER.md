@@ -1,3 +1,55 @@
+## v0.0.6.z — 2026-11-18 — The Seven-Pillar Studio Release: Locked Default Voice, Free-Speech Cloning, Live Lab 4.0, Strict Dictation-Mode Lock, Dynamic Word Count, Real Telemetry (ver 40 · schema 40 · settingsRev 64 · syncRev 1797000000013 · wordsRev 1797000000013 · SW sdp-v0.0.6.z-s39)
+
+**Pillar Z1 — Permanent Default Voice Lock + clone revert.** The Alice default
+voice is locked into the word ladder (the tts/neural_tts robotic tiers are
+removed when voiceSignature.locked); missing clips raise the bilingual guard
+banner and fall back to the cleanest British RP `<audio>`, never the robotic
+browser voice. #btnRemoveClonedVoiceRestoreDefault clears the signature,
+reseeds the default, purges cloned overrides (purgeVoiceMismatch) and repaints
+the coverage pill with the verified audit banner.
+
+**Pillar Z2 — Free-speech 1-minute cloning.** The fixed passage is gone; any
+30–120 s free speech validates. The auto-transcription leg (Gemini audio →
+transcript → WPM/articulation) plus the DSP profiler (F0/centroid/LUFS/RMS/
+LRA/presence/noise-floor) feed the same pre-enhancement mastering chain. A
+1-word ~10-char low-credit verification test shows the exact HTTP status +
+root cause before any full bake.
+
+**Pillar Z3 — Live Lab v4.0.** Retitled with the low-credit verifier Station
+(2), the free-speech Station 2B and the stale-clip simulator 3B; fresh-visit
+boot ALL PASS with 0 FAIL.
+
+**Pillar Z4 — Strict Dictation Mode lock + instant action verification.**
+Engine-level studioLocked() gates start()/togglePlayPause()/startNewSession()/
+retryMissedOnly() and every navigation surface (rail tap, #btnStart, deep
+link) paints the bilingual #dictationStudioLockOverlay; the lock HOLDS through
+the Studio's own S4 tab-exit auto-lock so students stay gated. Every publish/
+save/clone/remove/generate closes with #studioActionAuditBanner — a verifier
+that re-reads the real state (bank words, manifest clips, syncRev, voice
+match) and paints the green/red bilingual verdict with exact counts.
+
+**Pillar Z5 — Dynamic word count + Session-14 repair.** The word count is
+selectable (10/15/20/25/30/custom 5–50) with ST.wordCap as the single source
+of truth; the cockpit paints WORD #NN / N dynamically. The full Session
+Metadata Editor (#studioSessionMetaCard: No/Title/Date/Day/Branch/ClassInfo)
+stamps display = "SESSION 14 · 29/10/2026 ● CCBE GALLE BRANCH" — the shipped
+session.json + config.json carry the repaired display (listId kept as the
+historical container).
+
+**Pillar Z6 — Real telemetry.** finish() writes the REAL sessionEnd record
+(wordsCompletedCount, scored %, missed words, the audio tier that actually
+spoke, worst lag) into the append-only five-key ledger.
+
+**Pillar Z7 — Version pins.** ver/schema 40/40, settingsRev 64, syncRev +
+wordsRev 1797000000013, SW sdp-v0.0.6.z-s39 (+shell), appVersion 0.0.6.z
+across every surface; the G18 v006z-verification gate (54 checks, static +
+live headless Chromium) guards all seven pillars; CI registers 18 gates.
+
+**{W} week-flip note.** The briefing sentence's live week counter flipped
+3→4 weeks on 2026-11-18; the shipped _intro_male_1 pins were re-baked to the
+4-week text + sha1 (the audio bytes stay identical — only the text/hash pins
+moved), keeping the zero cut-off law green.
+
 ## v0.0.6.x — Complete Voice-Engine Rebuild, 74-Clip Session-14 Bake, Studio UI Unification & Live Lab v2.0 (ver 38 · schema 38 · settingsRev 62 · syncRev 1797000000011 · wordsRev 1797000000011 · SW sdp-v0.0.6.x-s37)
 
 **Defect 1 — clean-word TTS law.** buildQueue()/requestClip() send the CLEAN

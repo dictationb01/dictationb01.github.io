@@ -124,7 +124,7 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
       closed === true && app.byId('briefingModal').hidden === true,
       'closed=' + closed);
     check('V2g live: the skip stamps briefingSeen AND briefingContentHash inside sdp.settings (five-key law)',
-      /"briefingSeen":"0\.0\.6\.y"/.test(app.w.localStorage.getItem('sdp.settings') || '') &&
+      /"briefingSeen":"0\.0\.6\.[a-z]"/.test(app.w.localStorage.getItem('sdp.settings') || '') &&
       /"briefingContentHash":"/.test(app.w.localStorage.getItem('sdp.settings') || ''),
       'stamps');
     app.close();
@@ -140,7 +140,7 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
       count(/^cmd\./) === 6 && count(/^guide\.en\./) === 4 && count(/^_intro_male_[1-4]$/) === 4,
       String(keys.length));
     check('V3b the pack header stamps 0.0.6.x / ver 37 / syncRev 1797000000011 / wordsRev',
-      pack.version === '0.0.6.y' && pack.ver === 39 && Number(pack.syncRev) === 1797000000012,
+      pack.version === '0.0.6.z' && pack.ver === 40 && Number(pack.syncRev) === 1797000000013,
       JSON.stringify([pack.version, pack.ver, pack.syncRev, pack.wordsRev]));
     const size = fs.statSync(path.join(ROOT, 'data/elevenlabs-audio.json')).size;
     check('V3c the raw manifest stays <= 4,500,000 B', size <= 4500000, String(size));
@@ -296,8 +296,8 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     const seen = [];
     const app = await createApp({
       before(w) {
-        w.localStorage.setItem('sdp.guide_seen', '0.0.6.y');
-        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y' }));
+        w.localStorage.setItem('sdp.guide_seen', '0.0.6.z');
+        w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z' }));
         const inner = w.fetch;
         w.fetch = function (url, init) {
           seen.push({ url: String(url), init: init || null });

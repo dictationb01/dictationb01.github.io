@@ -141,8 +141,8 @@ function mp3Signature(buf) {
     /caches\.open\('sdp-audio-clips'\)/.test(studio) &&
     /generateClips\(\{ force: true, keys: wk \}/.test(studio),
     'force regen');
-  check('X4d the pack header advances wordsRev (1797000000011) so older packs purge their stale words',
-    Number(pack.wordsRev) === 1797000000012 && Number(pack.syncRev) === 1797000000012,
+  check('X4d the pack header advances wordsRev (1797000000013) so older packs purge their stale words',
+    Number(pack.wordsRev) === 1797000000013 && Number(pack.syncRev) === 1797000000013,
     String(pack.wordsRev));
 
   /* ── X5 — the unified Voice & Clone Control Center ───────────────────── */
@@ -171,8 +171,8 @@ function mp3Signature(buf) {
   /* live jsdom: the unified card + drawer render coherently after unlock-less mount */
   {
     const app = await createApp({ before(w) {
-      w.localStorage.setItem('sdp.guide_seen', '0.0.6.y');
-      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.y' }));
+      w.localStorage.setItem('sdp.guide_seen', '0.0.6.z');
+      w.localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z' }));
     } });
     check('X5f live: chosenClassroomVoiceId() defaults to Alice; a clone applies + persists (five-key law)',
       app.SDP.Studio.chosenClassroomVoiceId() === 'Xb7hH8MSUJpSbSDYk0k2' &&
@@ -183,10 +183,10 @@ function mp3Signature(buf) {
   }
 
   /* ── X6 — Live Lab v2.0 ──────────────────────────────────────────────── */
-  check('X6a lab.html ships 8 stations (v3.0: +Station 2B +Station 3B) + the 1-click batch word repair tool at 0.0.6.y',
+  check('X6a lab.html ships 8 stations (v4.0: +Station 2B +Station 3B) + the 1-click batch word repair tool at 0.0.6.z',
     (labHtml.match(/<section class="card">/g) || []).length === 8 && /STATION 2B/.test(labHtml) && /STATION 3B/.test(labHtml) &&
     /btnLabBatchRepairWords/.test(labHtml) && /labBatchStatus/.test(labHtml) &&
-    /0\.0\.6\.y/.test(labHtml),
+    /0\.0\.6\.z/.test(labHtml),
     'lab shell');
   check('X6b sdp-live-lab.js parses as strict ES5 with every station INSIDE the IIFE and labKey() defined',
     (function () { try { acorn.parse(labJs, { ecmaVersion: 5, sourceType: 'script' }); return true; } catch (e) { return false; } })() &&
@@ -204,12 +204,12 @@ function mp3Signature(buf) {
     /caches\.open\('sdp-audio-clips'\)/.test(labJs) &&
     /raw offline is informational/.test(labJs),
     'station5');
-  check('X6e SDP.LiveLab exports v3.0.0 with the batch repair + the no-key legs are informational (never a fresh-visit FAIL)',
-    /version: '3\.0\.0'/.test(labJs) && /labBatchRepairWords: labBatchRepairWords/.test(labJs) && /labStaleSimulator: labStaleSimulator/.test(labJs) && /labSimulateSample: labSimulateSample/.test(labJs) &&
+  check('X6e SDP.LiveLab exports v4.0.0 (v0.0.6.z Z3) with the low-credit verifier + batch repair + the no-key legs are informational (never a fresh-visit FAIL)',
+    /version: '4\.0\.0'/.test(labJs) && /lowCreditVerify: lowCreditVerify/.test(labJs) && /labBatchRepairWords: labBatchRepairWords/.test(labJs) && /labStaleSimulator: labStaleSimulator/.test(labJs) && /labSimulateSample: labSimulateSample/.test(labJs) &&
     /no key on this device — the live \/v1\/voices leg stays informational/.test(labJs),
     'exports');
-  check('X6f sw.js precaches the lab files and pins the sdp-v0.0.6.y-s38 shell',
-    /'\.\/data\/sdp-live-lab\.js'/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.6\.y-s38'/.test(sw),
+  check('X6f sw.js precaches the lab files and pins the sdp-v0.0.6.z-s39 shell',
+    /'\.\/data\/sdp-live-lab\.js'/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(sw),
     'sw pin');
 
   /* X6g — the real-Chromium boot: lab.html opens ✓ ALL PASS (0 FAIL) */

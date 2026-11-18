@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<title>🔬 Real-Time Voice &amp; Clone Lab · Smart Dictation 0.0.6.y</title>
+<title>🔬 Live Lab v4.0 · Real-Time Voice &amp; Clone Lab · Smart Dictation 0.0.6.z</title>
 <style>
 :root{--ink:#0F172A;--mut:#64748B;--bg:#F1F5F9;--card:#FFFFFF;--line:#E2E8F0;--ok:#059669;--warn:#B45309;--bad:#DC2626;--acc:#0EA5E9}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -57,7 +57,7 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
 </head>
 <body>
 <header class="lab-head">
- <h1>🔬 Real-Time Voice &amp; Clone Lab — Smart Dictation <span id="labVerPill">0.0.6.y</span></h1>
+ <h1>🔬 Live Lab v4.0 — Real-Time Voice &amp; Clone Lab — Smart Dictation <span id="labVerPill">0.0.6.z</span></h1>
  <p>https://dictationb01.github.io/lab.html · live AudioContext · real &lt;audio&gt; playback · real fetch — zero mocks · CREDITS GOES TO Hansana · Ms. Sumodya Sewmini · Ayya01 (Lesandu)</p>
  <span id="labScoreBadge" data-state="pass">✓ ALL PASS</span>
  <span class="score" style="margin-left:10px"><span id="labScorePass">0</span> PASS · <span id="labScoreWarn">0</span> WARN · <span id="labScoreFail">0</span> FAIL</span>
@@ -97,11 +97,16 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
  <p class="status" id="labQuota">Quota: —</p>
  <p class="status" id="labSynthStatus">idle</p>
  <div id="labVoiceList"><p class="hint">Paste a key and press Fetch.</p></div>
+ <div class="btnrow">
+  <input id="labLowCreditVoiceId" class="lab-input" type="text" placeholder="Voice ID for the low-credit test (blank = the active pack voice)">
+  <button id="btnLabLowCreditVerify" class="lab-btn lab-btn--go" type="button">🪙 1-Word Low-Credit Verification Test (~10 chars)</button>
+ </div>
+ <div id="labLowCreditStatus"><p class="hint">The STRICT CREDIT-PROTECTION LAW: nothing here ever burns credits on page load — only this explicit press synthesizes ONE ~10-character take to prove real ElevenLabs generation, with the exact HTTP status, root cause and 1-click remediation on failure.</p></div>
 </section>
 
 <section class="card">
- <h2><span class="st">STATION 2B</span>Voice Sample Upload / Record + Gemini AI Acoustic Analyzer + Clone Sandbox</h2>
- <p class="hint">Upload any 1–2 minute MP3/WAV/M4A/WebM/OGG file, record live from the mic, or run the built-in reference simulation (headless CI). The full DSP + Gemini acoustic quality analyzer runs — Voice Quality Score (0–100), detected weaknesses, before/after mastering LUFS, and the recommended ElevenLabs voice_settings — then test-synthesize any Session-14 word with the enhanced profile.</p>
+ <h2><span class="st">STATION 2B</span>Free-Speech Voice Sample Upload / Record + Gemini AI Acoustic Analyzer + Clone Sandbox</h2>
+ <p class="hint">FREE SPEECH — no fixed passage. Upload any 1–2 minute MP3/WAV/M4A/WebM/OGG file, record live from the mic speaking about anything, or run the built-in reference simulation (headless CI). The full DSP + Gemini acoustic quality analyzer runs — auto-transcription with WPM pacing, Voice Quality Score (0–100), F0 pitch, spectral centroid, detected weaknesses, before/after mastering LUFS, and the recommended ElevenLabs voice_settings — then test-synthesize any Session-14 word with the enhanced profile.</p>
  <div class="btnrow">
   <input id="labVoiceSampleFile" class="lab-input" type="file" accept="audio/*,.mp3,.wav,.m4a,.webm,.ogg,.flac">
   <button id="btnLabAnalyzeSample" class="lab-btn lab-btn--go" type="button">🔎 Analyze Voice Sample (DSP + Gemini)</button>

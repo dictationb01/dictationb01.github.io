@@ -978,7 +978,7 @@
        never disappear mid-session. */
     if (!isObj(state.clipBase)) state.clipBase = {};
     var base = state.clipBase, k;
-    /* v0.0.6.y STALE-CLIP LAW: when the incoming pack advances wordsRev, the
+    /* v0.0.6.z STALE-CLIP LAW: when the incoming pack advances wordsRev, the
        old base's words.* keys are NOT merged under it — a retired session's
        word clips can never resurrect after the active list moves on. System
        keys (num/cmd/guide/_intro_male) and same-rev weak reloads keep the
@@ -1065,7 +1065,7 @@
          tick + no-store bust so a proven publish can never be masked by a
          stale cache. */
       var fresh = force === true;
-      var url = './data/elevenlabs-audio.json?v=0.0.6.y' + (fresh ? '&t=' + nowMs() : '');
+      var url = './data/elevenlabs-audio.json?v=0.0.6.z' + (fresh ? '&t=' + nowMs() : '');
       global.fetch(url, { cache: fresh ? 'no-store' : 'default' })
         .then(function (res) { return res && res.ok ? res.json() : null; })
         .then(function (data) {
@@ -1243,7 +1243,23 @@
     /* v0.0.4.a W1: under 'unified' the Youdao dictionary MP3 tier is NEVER
        mixed with Web Speech TTS — opt in explicitly via includeDictionary. */
     if (dictionary && (!unified || (opts && opts.includeDictionary))) tiers.push({ tier: 'dictionary', url: dictionary });
-    tiers.push({ tier: 'tts', url: '' });
+    /* v0.0.6.z PILLAR 1 (Z1 — PERMANENT HIGH-PROFESSIONAL VOICE LOCK):
+       under the locked unified voiceSignature the robotic device TTS tier is
+       REMOVED from the word ladder entirely. A missing Alice/cloned clip must
+       surface the bilingual guard banner and fall to the real-human British
+       dictionary recording (the cleanest British RP fallback) — never silently
+       degrade to robotic speechSynthesis audio. Only when the lock is
+       explicitly OFF (voiceLock 'custom' / voiceSource 'custom' / 'device')
+       does the classic professor-TTS safety net stay armed. */
+    var sigLocked = unified;
+    try {
+      if (sigLocked && SDP.Studio && SDP.Studio.voiceSignature) {
+        var vs = SDP.Studio.voiceSignature();
+        if (isObj(vs)) sigLocked = sigLocked && vs.locked !== false;
+      }
+    } catch (eZ1) { /* Studio absent (student lab shell): keep the unified lock. */ }
+    if (!sigLocked) tiers.push({ tier: 'tts', url: '' });
+    else if (!tiers.length) tiers.push({ tier: 'silent_locked', url: '' });
     return tiers;
   }
   /* E3 / D-C6 helper: speak one guide step in English with professor cadence.
@@ -1591,6 +1607,22 @@
       }
       var current = tiers[at];
       at += 1;
+      /* v0.0.6.z PILLAR 1 (Z1): the silent_locked tier — the locked unified
+         signature left no clip, no neural voice and no dictionary URL, so the
+         word resolves honestly to the guard banner + telemetry incident and
+         NEVER to the robotic speechSynthesis voice. The tier name feeds
+         lastTierName() so the Lab and Studio report the lock honestly. */
+      if (current.tier === 'silent_locked') {
+        state.lastTier = 'silent_locked';
+        settled = true;
+        try {
+          if (global.SDP && SDP.Diagnostics) {
+            SDP.Diagnostics.log('voice_lock_silent', { word: str(w && w.w).slice(0, 40) });
+          }
+        } catch (eZ2) {}
+        cb(null);
+        return;
+      }
       if (current.tier === 'tts' || current.tier === 'neural_tts') {
         state.lastTier = current.tier;
         /* E2 professor cadence. D10: the utterance carries the word's real
@@ -1748,7 +1780,8 @@
       guide_clip: 'Alice guide clip',
       guide_audio: 'British guide audio',
       intro_male_clip: 'British male briefing clip',
-      tts: 'Professor voice'
+      tts: 'Professor voice',
+      silent_locked: 'Locked unified voice (clip missing — banner shown)'
     };
     return names[state.lastTier] || str(state.lastTier) || 'Professor voice';
   }
@@ -1789,7 +1822,7 @@
   }
   function micReleased() { return state.micReleased !== false; }
 
-  /* ══ v0.0.6.y Pillar 2 (Y2) — the strict anti-stale voice clip guard.
+  /* ══ v0.0.6.z Pillar 2 (Y2) — the strict anti-stale voice clip guard.
      Four rules classify every clip: KEY MEMBERSHIP (words.<k> must be one of
      the 30 active session words), REVISION & HASH (wordsRev + text pin),
      VOICE IDENTITY (the locked voiceSignature().voiceId) and AUDIO DECODE
@@ -2154,7 +2187,7 @@
     restoreLocalBriefingPack: restoreLocalBriefingPack,
     reloadManifest: reloadManifest,
     injectClips: injectClips,
-    /* v0.0.6.y Pillar 2 (Y2): the strict anti-stale voice clip guard. */
+    /* v0.0.6.z Pillar 2 (Y2): the strict anti-stale voice clip guard. */
     validatePackClips: validatePackClips,
     purgeStaleClipsEverywhere: purgeStaleClipsEverywhere,
     auditSessionVoiceReadiness: auditSessionVoiceReadiness,
@@ -2223,7 +2256,7 @@
     };
     try { if (doc && doc.addEventListener) doc.addEventListener('sdp:update', onUpdate, false); } catch (e) {}
     try { if (global.addEventListener) global.addEventListener('sdp:update', onUpdate, false); } catch (e) {}
-    /* v0.0.6.y Pillar 2 (Y2): arm the banner delegate once, run the first
+    /* v0.0.6.z Pillar 2 (Y2): arm the banner delegate once, run the first
        readiness audit as soon as the manifest lands (sdp:ready) and re-run
        it whenever the word list or the pack changes. The audit NEVER blocks
        playback — it only paints the bilingual warning banner. */

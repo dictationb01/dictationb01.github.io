@@ -124,11 +124,11 @@ async function coldBriefingRun(browser, origin, sampleMs) {
     const clips = pack.clips;
     const classroom = Object.keys(clips).filter((k) => k.indexOf('_') !== 0);
     const george = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'];
-    check('T3a the pack carries the v0.0.6.y header (ver 39 / schema 39 / settingsRev 63 / syncRev 1797000000012)',
-      pack.version === '0.0.6.y' && pack.ver === 39 && pack.schema === 39 &&
-      pack.settingsRev === 63 && Number(pack.syncRev) === 1797000000012,
+    check('T3a the pack carries the v0.0.6.z header (ver 40 / schema 40 / settingsRev 64 / syncRev 1797000000013)',
+      pack.version === '0.0.6.z' && pack.ver === 40 && pack.schema === 40 &&
+      pack.settingsRev === 64 && Number(pack.syncRev) === 1797000000013,
       JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
-    check('T3b the live v0.0.6.y pack ships the full 74-clip canonical set (30 words + 30 num + 6 cmd + 4 guide + 4 George beats)',
+    check('T3b the live v0.0.6.z pack ships the full 74-clip canonical set (30 words + 30 num + 6 cmd + 4 guide + 4 George beats)',
       Object.keys(clips).length === 74 &&
       classroom.filter((k) => k.indexOf('num.') === 0).length === 30 &&
       classroom.filter((k) => k.indexOf('cmd.') === 0).length === 6 &&
@@ -240,9 +240,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.6.y');
+          localStorage.setItem('sdp.guide_seen', '0.0.6.z');
           localStorage.setItem('sdp.settings', JSON.stringify({
-            briefingSeen: '0.0.6.y', guideAutoPlay: false, appliedSettingsRev: 99,
+            briefingSeen: '0.0.6.z', guideAutoPlay: false, appliedSettingsRev: 99,
             langResetV001e: true, defaultsResetV001f: true, mode: 'paper', lang: 'en'
           }));
         } catch (e) {}

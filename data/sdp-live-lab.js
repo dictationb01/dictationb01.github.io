@@ -1,7 +1,11 @@
-/* data/sdp-live-lab.js — v2.0.0 (v0.0.6.y) — window.SDP.LiveLab (strict ES5).
- * Powers the 6 real-time stations of lab.html through REAL browser APIs only
+/* data/sdp-live-lab.js — v4.0.0 (v0.0.6.z) — window.SDP.LiveLab (strict ES5).
+ * Powers the real-time stations of lab.html through REAL browser APIs only
  * (AudioContext.decodeAudioData, <audio> playback, live fetch) — zero mocks.
- * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (v2.0, v0.0.6.y). */
+ * v4.0 (Z3): the pack spectral/LUFS broadcast-signature consistency check
+ * (44.1 kHz / mono / -21 LUFS family), the Station 2 ElevenLabs low-credit
+ * 1-word verifier with exact HTTP status + root cause + remediation, and the
+ * free-speech voice-sample analyzer (no fixed passage).
+ * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (v4.0, v0.0.6.z). */
 (function (global) {
   'use strict';
 
@@ -160,7 +164,7 @@
     var host = byId('labClipTableBody');
     if (!host) return false;
     setTxt('labPackStatus', 'Loading live /data/elevenlabs-audio.json …');
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.y', { cache: 'no-store' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack || !isObj(pack.clips)) { setTxt('labPackStatus', '✗ pack unavailable (offline?)'); record('S1', 'manifest loads', false, 'fetch failed'); return; }
@@ -188,12 +192,17 @@
         }
         host.innerHTML = htmlRows;
         /* bounded serial decode: measure real LUFS per clip (fast audit) */
-        var idx = 0, okSig = 0, measured = 0;
+        var idx = 0, okSig = 0, measured = 0, lufsOk = 0, srOk = 0, monoOk = 0, kbpsEst = 0;
         var step = function () {
           if (idx >= keys.length) {
-            setTxt('labPackStatus', '✓ ' + keys.length + ' clips · ' + okSig + ' genuine MP3/WAV · ' + measured + ' measured to BS.1770-4');
+            setTxt('labPackStatus', '✓ ' + keys.length + ' clips · ' + okSig + ' genuine MP3/WAV · ' + measured + ' measured · ' + lufsOk + ' @ −21 LUFS family · ' + srOk + ' @ 44.1 kHz · ' + monoOk + ' mono');
             record('S1', 'the live pack decodes (' + keys.length + ' clips, real AudioContext)', true);
             record('S1', 'every clip carries a genuine MP3 (MPEG-1 Layer III 44.1kHz) or WAV signature', okSig === keys.length, okSig + '/' + keys.length);
+            /* v4.0 (Z3) — the BROADCAST SIGNATURE CONSISTENCY CHECK: the whole
+               pack must hold the locked acoustic profile (44.1 kHz · mono ·
+               -21.0 LUFS integrated family, ≤ -1.0 dBTP ceiling respected). */
+            record('S1', 'spectral consistency: every measured clip holds 44.1 kHz (mono) broadcast format', measured > 0 && srOk === measured && monoOk === measured, srOk + '/' + measured + ' @44.1kHz · ' + monoOk + '/' + measured + ' mono');
+            record('S1', 'loudness consistency: every measured clip sits in the -21.0 LUFS family (-23.5 … -19.0)', measured > 0 && lufsOk === measured, lufsOk + '/' + measured + ' in family');
             return;
           }
           var key = keys[idx], e = clips[key];
@@ -207,6 +216,9 @@
                 var m = measureLufs(buf);
                 if (m) {
                   measured += 1;
+                  if (buf.sampleRate === 44100) srOk += 1;
+                  if (buf.numberOfChannels === 1) monoOk += 1;
+                  if (m.lufs >= -23.5 && m.lufs <= -19.0) lufsOk += 1;
                   var cell = host.querySelector('tr[data-labrow="' + key + '"] .lab-lufs');
                   if (cell) cell.textContent = m.lufs + ' LUFS · ' + m.duration + ' ms';
                 }
@@ -223,7 +235,7 @@
   }
 
   function playKey(key) {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.y', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -239,7 +251,7 @@
   }
 
   function testAllWordsSequentially() {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.y', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -430,7 +442,8 @@
     var c = counts();
     LAB.report = {
       lab: 'SDP Real-Time Live Voice & Clone Lab',
-      appVersion: (global.SDP && SDP.version) || '0.0.6.y',
+      labVersion: '4.0.0',
+      appVersion: (global.SDP && SDP.version) || '0.0.6.z',
       at: new Date().toISOString(),
       href: str(global.location && global.location.href),
       viewport: (global.innerWidth || 0) + 'x' + (global.innerHeight || 0),
@@ -517,6 +530,8 @@
     bindBtn('btnLabWordsOnly', function () { station1(true); });
     bindBtn('btnLabTestAllWords', testAllWordsSequentially);
     bindBtn('btnLabFetchVoices', station2);
+    /* v4.0 (Z3) — the 1-Word Low-Credit Verification Test binding. */
+    bindBtn('btnLabLowCreditVerify', lowCreditVerify);
     bindBtn('btnLabRunRp', station3);
     bindBtn('btnLabBatchRepairWords', labBatchRepairWords);
     bindBtn('btnLabCrossTab', station4);
@@ -560,7 +575,7 @@
   /* v2.0 — the LIVE 1-CLICK BATCH WORD SYNTHESIS & REPAIR TOOL: tests, wipes
      and re-synthesizes ALL 30 active session words right here with live
      per-word progress and real <audio> playback (clean orthography, the
-     v0.0.6.y clean-word law; ?output_format=mp3_44100_128 on every call). */
+     v0.0.6.z clean-word law; ?output_format=mp3_44100_128 on every call). */
   function labBatchRepairWords() {
     var key = labKey();
     var out = byId('labBatchStatus');
@@ -572,7 +587,7 @@
     var words = [];
     try { if (global.SDP && SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
     if (words.length) { labBatchRun(words, key); return true; }
-    global.fetch('./data/session.json?v=0.0.6.y', { cache: 'no-store' })
+    global.fetch('./data/session.json?v=0.0.6.z', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (s) {
         if (s && Array.isArray(s.words) && s.words.length) labBatchRun(s.words, key);
@@ -669,6 +684,69 @@
                 : '<p class="lab-warn">⚠ /v1/voices returned zero voices — check the key.</p>';
             });
         });
+      return true;
+    }
+
+    /* ══ v4.0 (Z3) — the ElevenLabs 1-WORD LOW-CREDIT VERIFICATION TEST ══
+       A single ~10-character eleven_flash_v2_5 take (~1 credit) that proves
+       100% whether real ElevenLabs generation succeeds with the vault key.
+       On failure it paints the EXACT HTTP status, the root cause and the
+       1-click remediation guide. Never burns credits on page load — the
+       button must be pressed. */
+    function lowCreditVerify() {
+      var key = labKey();
+      var out = byId('labLowCreditStatus');
+      if (!key) {
+        if (out) out.innerHTML = '<p class="lab-warn">⚠ Paste an ElevenLabs API key in Station 2 (or unlock the Studio vault on this origin) — the low-credit test never runs without one.</p>';
+        record('S2C', 'the low-credit verifier needs a key (informational)', true, 'no key');
+        return false;
+      }
+      var voiceId = str(byId('labLowCreditVoiceId') && byId('labLowCreditVoiceId').value).replace(/\s+/g, '');
+      var packVoice = str((global.SDP && SDP.Speech && SDP.Speech.state && SDP.Speech.state.manifest && SDP.Speech.state.manifest.voiceId) || 'Xb7hH8MSUJpSbSDYk0k2');
+      if (!/^[A-Za-z0-9]{16,32}$/.test(voiceId)) voiceId = packVoice;
+      var text = 'Ready.'; /* 6 chars — the ~10-character low-credit probe */
+      if (out) out.innerHTML = '<p class="lab-stage" data-state="info">POST /v1/text-to-speech/' + esc(voiceId) + ' with "' + esc(text) + '" (≈' + text.length + ' chars ≈ ' + text.length + ' credits)…</p>';
+      var t0 = nowMs();
+      global.fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voiceId + '?output_format=mp3_44100_128', {
+        method: 'POST',
+        headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+        body: JSON.stringify({ text: text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true } })
+      }).then(function (r) {
+        var st = r && r.status ? r.status : 0;
+        var ms = nowMs() - t0;
+        if (!r || !r.ok) {
+          var cause = st === 401 ? 'INVALID API KEY — the key was rejected (xi-api-key header)' :
+            (st === 403 ? 'VOICE NOT ALLOWED — this voice is not enabled for your API tier' :
+             (st === 429 ? 'QUOTA EXHAUSTED / RATE LIMITED — character budget spent' :
+              (st === 0 ? 'NETWORK BLOCKED — the request never reached api.elevenlabs.io' : 'HTTP ' + st)));
+          var fix = st === 401 ? '1-click fix: paste a fresh sk_… key from ElevenLabs → Profile → API Keys into Station 2 (or the Studio vault), then press Verify again.' :
+            (st === 403 ? '1-click fix: pick a premade voice, or your OWN cloned voice from the /v1/voices list above, then press Verify again.' :
+             (st === 429 ? '1-click fix: wait for the monthly quota reset or add credits at elevenlabs.io/billing, then press Verify again.' :
+              '1-click fix: check the internet / proxy, then press Verify again.'));
+          if (out) out.innerHTML = '<p class="lab-stage" data-state="bad">✗ LOW-CREDIT TEST FAILED — HTTP ' + st + ' · ' + ms + ' ms</p>' +
+            '<p class="lab-stage" data-state="bad">Root cause: ' + esc(cause) + '</p>' +
+            '<p class="lab-stage" data-state="warn">' + esc(fix) + '</p>';
+          record('S2C', 'the low-credit verification test synthesizes one word live', false, 'HTTP ' + st + ' ' + cause);
+          return null;
+        }
+        return r.arrayBuffer().then(function (buf) {
+          var bytes = new Uint8Array(buf);
+          var sig = mp3Signature(bytes);
+          var el = sharedAudio();
+          try {
+            var blob = new global.Blob([bytes], { type: 'audio/mpeg' });
+            el.src = global.URL.createObjectURL(blob);
+            el.play().catch(noop);
+          } catch (eP) {}
+          if (out) out.innerHTML = '<p class="lab-stage" data-state="ok">✓ VERIFIED: real ElevenLabs generation SUCCEEDED — HTTP 200 · ' + ms + ' ms · ' + fmtBytes(bytes.length) + ' · genuine MP3 ' + esc(sig) + ' · only ~' + text.length + ' characters (~' + text.length + ' credits) burned.</p>' +
+            '<p class="lab-stage" data-state="ok">Root cause: none — the vault key synthesizes with voice ' + esc(voiceId) + '. Batch generation is safe to run from Studio.</p>';
+          record('S2C', 'the low-credit verification test synthesizes one word live (HTTP 200, ~' + text.length + ' chars)', true);
+          record('S2C', 'the low-credit take is a genuine MP3 (MPEG-1 Layer III)', sig === '3:1:9:0:3', sig);
+        });
+      }, function () {
+        if (out) out.innerHTML = '<p class="lab-stage" data-state="bad">✗ NETWORK ERROR — the request never reached api.elevenlabs.io.</p><p class="lab-stage" data-state="warn">1-click fix: check the internet / proxy, then press Verify again.</p>';
+        record('S2C', 'the low-credit verification test synthesizes one word live', false, 'network');
+      });
       return true;
     }
 
@@ -830,7 +908,7 @@
       return true;
     }
 
-  /* ══ v0.0.6.y — Live Lab v3.0 Station 2B: the Voice Sample AI Analyzer
+  /* ══ v0.0.6.z — Live Lab v3.0 Station 2B: the Voice Sample AI Analyzer
      sandbox (upload / record / built-in reference simulation) and Station
      3B: the stale-clip purge + clip-free fallback + lecturer alert
      simulator. Both stations run the REAL app modules — zero mocks. ══ */
@@ -1155,10 +1233,11 @@
   }
 
   SDP.LiveLab = {
-    version: '3.0.0',
+    version: '4.0.0',
     labKey: labKey,
     labBatchRepairWords: labBatchRepairWords,
     testVoiceSynthesis: testVoiceSynthesis,
+    lowCreditVerify: lowCreditVerify,
     record: record,
     counts: counts,
     station1: station1,

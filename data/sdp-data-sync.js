@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.v';
-  SDP.build = '2026-11-17';
-  SDP.ver = 36;
+  SDP.version = '0.0.6.y';
+  SDP.build = '2026-11-18';
+  SDP.ver = 39;
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.v';
-  var SCHEMA = 35;
-  var SETTINGS_REV = 60;
+  var APP_VERSION = '0.0.6.y';
+  var SCHEMA = 39;
+  var SETTINGS_REV = 63;
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1163,6 +1163,8 @@
     online: (typeof global.navigator !== 'undefined' && global.navigator.onLine !== false)
   };
   var listeners = [];
+  /* v0.0.6.y Pillar 4 (Y4): the reactive change bus (emitChange/onChange). */
+  var changeListeners = [];
   var bootCallbacks = [];
   var booting = false;
   var booted = false;
@@ -1721,6 +1723,41 @@
       d: { p: "/ˈhɛɹoʊɪn/", pos: "noun.",
         m: "A female hero.",
         s: "We saw a heroine near the station." } },
+  
+
+    /* v0.0.6.y — SESSION 14 (PLACES: TOWN & CITY; SERVICES): the 30 active
+     British RP entries (90 total with Sessions 11 + 12) so Stage A
+     resolves every live Session-14 word instantly, offline. */
+  "town": { p: "/taʊn/", pos: "noun.", ttsHint: "TAWN", d: { p: "/taʊn/" } },
+  "airport": { p: "/ˈeə.pɔːt/", pos: "noun.", ttsHint: "EAIR-port", d: { p: "/ˈer.pɔːrt/" } },
+  "bridge": { p: "/brɪdʒ/", pos: "noun.", ttsHint: "BRIJ", d: { p: "/brɪdʒ/" } },
+  "cash machine": { p: "/ˈkæʃ məˌʃiːn/", pos: "noun.", ttsHint: "KASH muh-sheen", d: { p: "/ˈkæʃ məˌʃiːn/" } },
+  "cashpoint": { p: "/ˈkæʃ.pɔɪnt/", pos: "noun.", ttsHint: "KASH-poynt", d: { p: "/ˈkæʃ.pɔɪnt/" } },
+  "city centre": { p: "/ˌsɪt.i ˈsen.tə/", pos: "noun.", ttsHint: "SIT-ee sen-tuh", d: { p: "/ˈsɪt.i ˈsen.t̬ɚ/" } },
+  "crossroads": { p: "/ˈkrɒs.rəʊdz/", pos: "noun.", ttsHint: "KROSS-rohdz", d: { p: "/ˈkrɔːs.roʊdz/" } },
+  "fountain": { p: "/ˈfaʊn.tɪn/", pos: "noun.", ttsHint: "FOWN-tin", d: { p: "/ˈfaʊn.tɪn/" } },
+  "monument": { p: "/ˈmɒn.jʊ.mənt/", pos: "noun.", ttsHint: "MON-yoo-muhnt", d: { p: "/ˈmɑːn.jə.mənt/" } },
+  "pavement": { p: "/ˈpeɪv.mənt/", pos: "noun.", ttsHint: "PAYV-muhnt", d: { p: "/ˈpeɪv.mənt/" } },
+  "petrol station": { p: "/ˈpet.rəl ˌsteɪ.ʃən/", pos: "noun.", ttsHint: "PET-ruhl stay-shuhn", d: { p: "/ˈpet.rəl ˌsteɪ.ʃən/" } },
+  "roundabout": { p: "/ˈraʊnd.ə.baʊt/", pos: "noun.", ttsHint: "ROWND-uh-bowt", d: { p: "/ˈraʊnd.ə.baʊt/" } },
+  "shopping centre": { p: "/ˈʃɒp.ɪŋ ˌsen.tə/", pos: "noun.", ttsHint: "SHOP-ing sen-tuh", d: { p: "/ˈʃɑː.pɪŋ ˈsen.t̬ɚ/" } },
+  "square": { p: "/skweə/", pos: "noun.", ttsHint: "SKWEAIR", d: { p: "/skwer/" } },
+  "street": { p: "/striːt/", pos: "noun.", ttsHint: "STREET", d: { p: "/striːt/" } },
+  "subway": { p: "/ˈsʌb.weɪ/", pos: "noun.", ttsHint: "SUB-way", d: { p: "/ˈsʌb.weɪ/" } },
+  "tunnel": { p: "/ˈtʌn.əl/", pos: "noun.", ttsHint: "TUN-uhl", d: { p: "/ˈtʌn.əl/" } },
+  "turning": { p: "/ˈtɜː.nɪŋ/", pos: "noun.", ttsHint: "TUR-ning", d: { p: "/ˈtɝː.nɪŋ/" } },
+  "services": { p: "/ˈsɜː.vɪ.sɪz/", pos: "noun.", ttsHint: "SUR-vi-siz", d: { p: "/ˈsɝː.vɪ.sɪz/" } },
+  "bank": { p: "/bæŋk/", pos: "noun.", ttsHint: "BANGK", d: { p: "/bæŋk/" } },
+  "cafe": { p: "/ˈkæf.eɪ/", pos: "noun.", ttsHint: "KAF-ay", d: { p: "/kæˈfeɪ/" } },
+  "cafeteria": { p: "/ˌkæf.əˈtɪə.ri.ə/", pos: "noun.", ttsHint: "kaf-uh-TEER-ee-uh", d: { p: "/ˌkæf.əˈtɪr.i.ə/" } },
+  "cinema": { p: "/ˈsɪn.ə.mə/", pos: "noun.", ttsHint: "SIN-uh-muh", d: { p: "/ˈsɪn.ə.mə/" } },
+  "dentist": { p: "/ˈden.tɪst/", pos: "noun.", ttsHint: "DEN-tist", d: { p: "/ˈden.tɪst/" } },
+  "gallery": { p: "/ˈɡæl.ər.i/", pos: "noun.", ttsHint: "GAL-uh-ree", d: { p: "/ˈɡæl.ɚ.i/" } },
+  "hairdresser": { p: "/ˈheəˌdres.ə/", pos: "noun.", ttsHint: "HEAIR-dres-uh", d: { p: "/ˈherˌdres.ɚ/" } },
+  "museum": { p: "/mjuːˈziː.əm/", pos: "noun.", ttsHint: "myoo-ZEE-uhm", d: { p: "/mjuˈziː.əm/" } },
+  "restaurant": { p: "/ˈres.trɒnt/", pos: "noun.", ttsHint: "RES-tront", d: { p: "/ˈres.tə.rɑːnt/" } },
+  "theatre": { p: "/ˈθɪə.tə/", pos: "noun.", ttsHint: "THEE-uh-tuh", d: { p: "/ˈθiː.ə.t̬ɚ/" } },
+  "tourist information": { p: "/ˈtʊə.rɪst ˌɪn.fəˈmeɪ.ʃən/", pos: "noun.", ttsHint: "TOOR-ist in-fuh-may-shuhn", d: { p: "/ˈtʊr.ɪst ˌɪn.fɚˈmeɪ.ʃən/" } },
   };
   /* v0.0.6.t PILLAR 4B — runtime Cambridge B1 British RP normalization.
      data/session.json stays byte-identical on disk (SHA-256 locked); the
@@ -1962,6 +1999,25 @@
   var Sync = {
     state: state,
     listen: listen,
+    /* v0.0.6.y Pillar 4 (Y4): the reactive event bus — the Studio clip
+       table, pack dashboard, coverage matrix, Words screen and the running
+       dictation engine all repaint within the same tick on every change. */
+    emitChange: function (kind, detail) {
+      var ls = changeListeners, i;
+      for (i = 0; i < ls.length; i++) {
+        try { ls[i](str(kind || 'change'), detail || {}); } catch (e) {}
+      }
+      emit('sdp:change', { kind: str(kind || 'change'), detail: detail || {} });
+      return true;
+    },
+    onChange: function (fn) {
+      if (typeof fn !== 'function') return function () {};
+      changeListeners.push(fn);
+      return function () {
+        var at = changeListeners.indexOf(fn);
+        if (at >= 0) changeListeners.splice(at, 1);
+      };
+    },
     onReady: function (cb) {
       if (state.ready) { try { cb(null, state); } catch (e) {} return; }
       listen(function (name) { if (name === 'ready') { try { cb(null, state); } catch (e) {} } });

@@ -197,6 +197,83 @@
   var base = (persona && str(persona.name)) ? str(persona.name) : INTRO_VOICE.name;
   return briefingCustomVoiceId() ? (base + ' · ' + briefingCustomVoiceId()) : base;
  }
+ /* v0.0.6.w — Data-first settings access: settings()/saveSettings() live on
+    SDP.Data (the five-key law owner); the sync().settings spelling is only a
+    legacy fallback so the controller works on every surface. */
+ function dataSettings() {
+  try { if (global.SDP && SDP.Data && SDP.Data.settings) return SDP.Data.settings() || {}; } catch (eD) {}
+  try { var sy = sync(); if (sy && sy.settings) return sy.settings() || {}; } catch (eS) {}
+  return {};
+ }
+ function dataSaveSettings(patch) {
+  try { if (global.SDP && SDP.Data && SDP.Data.saveSettings) { SDP.Data.saveSettings(patch); return true; } } catch (eD2) {}
+  try { var sy2 = sync(); if (sy2 && sy2.saveSettings) { sy2.saveSettings(patch); return true; } } catch (eS2) {}
+  return false;
+ }
+
+ /* ══ v0.0.6.w — the UNIFIED CLASSROOM & CLONED VOICE CONTROLLER ═══════════
+    ONE voice — the default energetic British RP Female Alice
+    (Xb7hH8MSUJpSbSDYk0k2) OR the Lecturer's chosen/pasted Cloned Voice —
+    speaks across 100% of the classroom UI (Dictation, 30 Words, Practice,
+    Board, Settings, Commands, Numbers, Guide). The Project Briefing male
+    voice (_intro_male_1..4, George) stays separate in Settings. The pick is
+    persisted inside sdp.settings.voiceSignature.voiceId / .voiceName (the
+    five-key law holds) and activeVoiceId follows it everywhere. */
+ function chosenClassroomVoiceId() {
+  var vs = null;
+  try { vs = dataSettings().voiceSignature || null; } catch (eVS) { vs = null; }
+  var v = str(vs && vs.voiceId);
+  if (!v) {
+   /* legacy vault pick: the briefing custom field doubles as the classroom clone */
+   try { v = str(ST.secrets && ST.secrets.classroomVoiceId) || ''; } catch (eCV) { v = ''; }
+  }
+  return /^[A-Za-z0-9]{16,32}$/.test(v) ? v : VOICE_ID;
+ }
+ function chosenClassroomVoiceName() {
+  var vs = null;
+  try { vs = dataSettings().voiceSignature || null; } catch (eVS2) { vs = null; }
+  var n = str(vs && vs.voiceName);
+  var id = chosenClassroomVoiceId();
+  if (id === VOICE_ID) return n || VOICE_NAME;
+  return n || ('My Cloned Voice · ' + id);
+ }
+ function applyClassroomVoice(voiceId, voiceName) {
+  var id = str(voiceId).replace(/\s+/g, '');
+  if (!/^[A-Za-z0-9]{16,32}$/.test(id)) { msg(' Paste a valid Cloned Voice ID (16-32 chars).', 'warn'); return false; }
+  var base = defaultVoiceSignature();
+  base.voiceId = id;
+  base.voiceName = str(voiceName) || ('My Cloned Voice · ' + id);
+  /* Cloned-Voice-safe: no style knob, speaker boost on. */
+  base.settings = { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true };
+  base.locked = false;
+  base.cloned = true;
+  if (!dataSaveSettings({ voiceSignature: base })) return false;
+  activeVoiceId = id;
+  activeVoiceName = base.voiceName;
+  if (isObj(ST.secrets)) ST.secrets.classroomVoiceId = id;
+  try { paintClassroomVoiceBar(); } catch (eP) {}
+  msg(' Cloned voice "' + base.voiceName + '" applied to ALL words & classroom UI — re-bake with Apply again or Generate.', 'ok');
+  return true;
+ }
+ function paintClassroomVoiceBar() {
+  var bar = byId('studioClassroomVoiceBar');
+  var lock = byId('studioVoiceLockBar');
+  var id = chosenClassroomVoiceId();
+  if (bar) {
+   bar.setAttribute('data-state', id === VOICE_ID ? 'alice' : 'cloned');
+   bar.textContent = (id === VOICE_ID)
+    ? '🔊 Unified Classroom Voice: Alice (energetic British RP female · Xb7hH8MSUJpSbSDYk0k2)'
+    : '🎙 Unified Classroom Voice: ' + chosenClassroomVoiceName() + ' (' + id + ')';
+  }
+  if (lock) {
+   lock.setAttribute('data-state', id === VOICE_ID ? 'locked' : 'cloned');
+   lock.textContent = (id === VOICE_ID)
+    ? '🔒 Locked: Energetic British RP Female (Alice · -21 LUFS · +2.5dB @ 3kHz)'
+    : '🟢 Active Cloned Voice: ' + chosenClassroomVoiceName() + ' (' + id + ') · target -21 LUFS';
+  }
+  return true;
+ }
+
  /* v0.0.6.q Pillar 1 — the WEEKLY AUTO-REGENERATION clock: the same */
  function currentWeeksSinceStart() {
   try {
@@ -1174,7 +1251,7 @@
   base.voiceModel = VOICE_MODEL;
   base.persona = VOICE_PERSONA;
   base.hashAlgo = HASH_ALGO;
-  base.clips = packClipsForDisk();
+  base.clips = purgeStaleWordsFromPack(packClipsForDisk(), currentWords());
   base.updatedAt = new Date().toISOString();
   /* D19: same publish clock as */
   base.syncRev = Number(syncRev) || nextSyncRev();
@@ -2014,6 +2091,82 @@
    '</div>';
  }
 
+ /* v0.0.6.w — the unified classroom & cloned voice card sits directly under
+    the security bar (never above it — the bar stays pinned at the header). */
+ function classroomVoiceCardMarkup() {
+  var opts = '<option value="alice">Alice — Energetic British RP Female (Default)</option>';
+  try {
+   var fv = Array.isArray(ST.fetchedVoices) ? ST.fetchedVoices : (isObj(ST.secrets) && Array.isArray(ST.secrets.fetchedVoices) ? ST.secrets.fetchedVoices : []);
+   var seen = {}, i;
+   for (i = 0; i < fv.length; i++) {
+    if (!isObj(fv[i]) || !str(fv[i].voice_id) || seen[str(fv[i].voice_id)]) continue;
+    seen[str(fv[i].voice_id)] = 1;
+    opts += '<option value="' + esc(str(fv[i].voice_id)) + '"' + (str(fv[i].voice_id) === chosenClassroomVoiceId() ? ' selected' : '') + '>' +
+     esc(str(fv[i].name) || 'Account Voice') + ' — ' + ((str(fv[i].category) === 'cloned') ? 'My Cloned Voice' : ((str(fv[i].category) === 'generated') ? 'Generated Voice' : 'Account Voice')) + ' · ' + esc(str(fv[i].voice_id)) + '</option>';
+   }
+   var cur = chosenClassroomVoiceId();
+   if (cur !== VOICE_ID && !seen[cur]) opts += '<option value="' + esc(cur) + '" selected>My Cloned Voice · ' + esc(cur) + '</option>';
+  } catch (eO) {}
+  return '<div class="chip-row studio-classroom-voice-row">' +
+   '<span id="studioClassroomVoiceBar" class="studio-briefing-voice-bar" data-state="alice" role="status" aria-live="polite">🔊 Unified Classroom Voice: Alice</span>' +
+   '</div>' +
+   '<section id="studioCardClassroomVoice" class="studio-card studio-card-classroom-voice">' +
+   '<h4 class="studio-h4"><span class="studio-step-tag">UNIFIED CLASSROOM &amp; CLONED VOICE</span>One voice for every word, number, command &amp; guide</h4>' +
+   '<div class="studio-voice-row">' +
+   '<label class="lbl" for="studioClassroomVoiceSelect">Classroom Voice</label>' +
+   '<select id="studioClassroomVoiceSelect" class="input studio-voice-select" aria-label="Classroom Voice">' + opts + '</select>' +
+   '</div>' +
+   '<div class="chip-row">' +
+   '<input id="studioClassroomCustomVoiceId" class="input studio-voice-custom" type="text" value="' + esc(chosenClassroomVoiceId() === VOICE_ID ? '' : chosenClassroomVoiceId()) + '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Paste Cloned ElevenLabs Voice ID…">' +
+   btn('btnFetchClassroomClonedVoices', '🔄 Fetch My Cloned Voices', 'btn-ghost') +
+   '</div>' +
+   '<div class="chip-row">' +
+   btn('btnApplyClassroomVoice', '✅ Apply Selected / Cloned Voice to App', 'btn-primary') +
+   btn('btnForceRegenWords', '🧹 Wipe Old Word Clips &amp; Re-Generate 30 Words Fresh', 'btn-ghost') +
+   btn('btnRebakeClassroomVoice', '📊 Re-Bake All 70 Classroom Clips (Words + Numbers + Commands + Guides) in This Voice', 'btn-ghost') +
+   btn('btnResetClassroomVoice', '↩ Back to Alice (default)', 'btn-ghost') +
+   btn('btnOpenLiveLab', '🔬 Open Real-Time Voice &amp; Clone Lab', 'btn-go') +
+   '</div>' +
+   '<p class="studio-hint">One voice for every word, number, command and guide clip; the briefing narrator stays in Advanced Tools.</p>' +
+   '</section>' +
+   voiceSampleStudioMarkup();
+ }
+ /* ══ v0.0.6.y Pillar 1 (Y1) — the Voice Sample Studio markup: record 30–120 s
+    live OR upload any 1–2 minute audio file, confirm it, then run the DSP +
+    Gemini acoustic analyzer, the automatic pre-enhancement mastering chain and
+    the ElevenLabs Instant Voice Clone pipeline. ══ */
+ function voiceSampleStudioMarkup() {
+  return '<section id="studioCardVoiceSample" class="studio-card studio-card-voice-sample">' +
+   '<h4 class="studio-h4"><span class="studio-step-tag">AI VOICE SAMPLE STUDIO &amp; CLONE PIPELINE</span>Record or upload a 1–2 minute voice sample</h4>' +
+   '<div class="chip-row studio-vs-timer-row">' +
+   '<span class="studio-vs-timer" id="voiceSampleTimer">00:00 / 02:00</span>' +
+   '<span class="studio-hint" id="voiceSampleTimerHint">Record 30 s – 2 min of natural British RP reading.</span>' +
+   '</div>' +
+   '<div class="studio-voice-sample-meter" id="voiceSampleMeterWrap" aria-hidden="true"><span id="voiceSampleMeter" style="width:0%"></span></div>' +
+   '<p class="studio-vs-passage" id="voiceSamplePassage">Read naturally for 1–2 minutes: "Good afternoon. This is the evening news summary for our town. ' +
+   'The new bridge near the city centre is now open, and the airport bus leaves from the square every half hour. ' +
+   'You can change money at the bank, buy tickets at the theatre, or ask at the tourist information office near the fountain. ' +
+   'On Thursday, the museum and the art gallery are free, and the market on the corner of the street sells fresh bread. ' +
+   'Please remember: practice makes progress, and every clear word you speak helps the whole class."</p>' +
+   '<div class="chip-row">' +
+   btn('btnVoiceSampleRecord', '🎤 Start Recording (Mic)', 'btn-primary') +
+   btn('btnVoiceSampleStop', '⏹ Stop Recording', 'btn-ghost') +
+   '</div>' +
+   '<div class="chip-row">' +
+   '<input id="voiceSampleFileInput" class="input" type="file" accept="audio/*,.mp3,.wav,.m4a,.webm,.ogg,.flac" aria-label="Upload a 1-2 minute voice sample (MP3, WAV, M4A, WebM, OGG, FLAC)">' +
+   '</div>' +
+   '<div class="chip-row">' +
+   btn('btnConfirmVoiceSample', '💾 Save &amp; Confirm Reference Voice Sample', 'btn-primary') +
+   btn('btnRunVoiceAnalyzer', '🔎 Analyze Voice Sample (DSP + Gemini AI)', 'btn-go') +
+   btn('btnCreateAndApplyVoiceClone', '🧬 Create ElevenLabs Voice Clone &amp; Synthesize 30 Words', 'btn-go') +
+   '</div>' +
+   '<audio id="voiceSamplePreviewAudio" controls preload="none" class="rec-preview" style="width:100%;margin-top:8px;"></audio>' +
+   '<p class="studio-hint" id="voiceSampleStatus">No voice sample yet — record or upload one, then confirm it.</p>' +
+   '<div id="studioVoiceAnalysisCard" class="studio-voice-analysis-card" hidden></div>' +
+   '</section>';
+ }
+
+
  /* ═════════════ v0.0.6.v — VOICE SIGNATURE & ENERGY LOCK ═════════════════ */
  /* The locked broadcast signature every words-dot and num-dot take is normalized to:
     Alice (Xb7hH8MSUJpSbSDYk0k2 / eleven_flash_v2_5), -21 LUFS integrated,
@@ -2031,11 +2184,47 @@
  function voiceSignature() {
   var s = sync() && sync().settings ? (sync().settings() || {}) : {};
   var vs = s.voiceSignature;
-  if (!isObj(vs) || str(vs.voiceId) !== 'Xb7hH8MSUJpSbSDYk0k2') {
+  /* v0.0.6.w: a PERSISTED CLONE is a valid signature — the Alice-only guard
+     that overwrote every applied clone is gone. Only a missing/corrupt object
+     reseeds the default Alice signature. */
+  if (!isObj(vs) || !str(vs.voiceId)) {
    vs = defaultVoiceSignature();
    try { if (sync() && sync().saveSettings) sync().saveSettings({ voiceSignature: vs }); } catch (eV) {}
   }
   return vs;
+ }
+
+ /* v0.0.6.w — buildFallbackRpHint(w): a deterministic grapheme→British-RP
+    phonetic respelling for words outside the shipped lexicon and beyond the
+    dictionary/AI legs. Non-rhotic (no r-colouring), UK vowel and stress
+    mappings only — an informational hint, never a blocker. */
+ function buildFallbackRpHint(w) {
+  var s = str(w).toLowerCase().replace(/[^a-z\s-]/g, '');
+  if (!s) return str(w);
+  var map = {
+   'augh': 'ah', 'eigh': 'ay', 'ough': 'uh', 'aik': 'ayk', 'aire': 'air',
+   'tion': 'shun', 'sion': 'zhun', 'cious': 'shus', 'tious': 'shus', 'ture': 'chuh',
+   'ai': 'ay', 'ay': 'ay', 'ea': 'ee', 'ee': 'ee', 'oa': 'oh', 'oe': 'oh',
+   'ou': 'ow', 'ow': 'oh', 'oi': 'oy', 'oy': 'oy', 'au': 'aw', 'aw': 'aw',
+   'ei': 'ay', 'ey': 'ay', 'ie': 'ee', 'ue': 'oo', 'ui': 'oo',
+   'ch': 'ch', 'sh': 'sh', 'th': 'th', 'ph': 'f', 'gh': 'g', 'ck': 'k', 'qu': 'kw',
+   'ar': 'ah', 'er': 'uh', 'ir': 'uh', 'ur': 'uh', 'or': 'aw',
+   'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'y': 'ee'
+  };
+  var out = '', i = 0;
+  while (i < s.length) {
+   var hit = '';
+   var keys = ['augh', 'eigh', 'ough', 'aik', 'aire', 'tion', 'sion', 'cious', 'tious', 'ture',
+    'ai', 'ay', 'ea', 'ee', 'oa', 'oe', 'ou', 'ow', 'oi', 'oy', 'au', 'aw', 'ei', 'ey', 'ie', 'ue', 'ui',
+    'ch', 'sh', 'th', 'ph', 'gh', 'ck', 'qu', 'ar', 'er', 'ir', 'ur', 'or',
+    'a', 'e', 'i', 'o', 'u', 'y'];
+   for (var k = 0; k < keys.length; k++) {
+    if (s.indexOf(keys[k], i) === i) { hit = keys[k]; break; }
+   }
+   if (hit) { out += map[hit] + '-'; i += hit.length; }
+   else { out += s.charAt(i); i += 1; }
+  }
+  return str(w) && out.replace(/-+/g, '-').replace(/^-|-$/g, '');
  }
 
  /* The 4-stage British RP verifier run BEFORE synthesis in generateClips:
@@ -2067,44 +2256,93 @@
   var dictUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(w);
   global.fetch(dictUrl, { cache: 'no-store' }).then(function (res) { return res && res.ok ? res.json() : null; }, function () { return null; })
    .then(function (entries) {
+    if (!entries || !entries.length) {
+     /* v0.0.6.w: a dead dictionary still synthesizes — deterministic RP hint. */
+     result.stage = 'D';
+     result.quarantined = false;
+     result.rpSource = 'fallback';
+     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
+     result.ok = true;
+     finish();
+     return;
+    }
+    return entries;
+   })
+   .then(function (entries) {
+    /* v0.0.6.w — the SEPARATE-ENTRY LAW: dictionaryapi.dev often returns the
+       UK IPA text and the -uk.mp3 audio URL on DIFFERENT phonetics[] elements
+       (and the IPA on an entry with US audio). Scan EVERY entry: prefer a
+       phonetics[] item that carries -uk.mp3, else any non-US IPA text; the
+       -uk.mp3 URL is collected wherever it lives. */
     var uk = '';
+    var ukAudio = '';
+    var anyIpa = '';
     try {
      var ei, pi;
-     for (ei = 0; ei < (entries || []).length && !uk; ei++) {
+     for (ei = 0; ei < (entries || []).length; ei++) {
       var ph = (entries[ei] && entries[ei].phonetics) || [];
       for (pi = 0; pi < ph.length; pi++) {
-       if (str(ph[pi] && ph[pi].audio).indexOf('-uk.mp3') >= 0) { uk = str(ph[pi].text || ''); break; }
+       var pAudio = str(ph[pi] && ph[pi].audio);
+       var pText = str(ph[pi] && ph[pi].text || '');
+       if (pAudio.indexOf('-uk.mp3') >= 0 && !ukAudio) ukAudio = pAudio;
+       if (!uk) {
+        if (pAudio.indexOf('-uk.mp3') >= 0 && pText) { uk = pText; }
+        else if (!anyIpa && pText && pAudio.indexOf('-us.mp3') < 0) { anyIpa = pText; }
+       }
       }
+      var meanings = (entries[ei] && entries[ei].meanings) || [];
+      var defs = [];
+      try {
+       for (var mi = 0; mi < meanings.length; mi++) {
+        var ds = (meanings[mi] && meanings[mi].definitions) || [];
+        for (var di = 0; di < ds.length && defs.length < 2; di++) defs.push(str(ds[di] && ds[di].definition));
+       }
+      } catch (eD) {}
+      if (!result.defs && defs.length) result.defs = defs;
+      var posList = [];
+      try {
+       for (var mp = 0; mp < meanings.length; mp++) if (str(meanings[mp] && meanings[mp].partOfSpeech)) posList.push(str(meanings[mp].partOfSpeech));
+      } catch (eP2) {}
+      if (!result.pos && posList.length) result.pos = posList.slice(0, 2);
      }
     } catch (eP) {}
+    if (!uk && anyIpa) uk = anyIpa;
+    if (ukAudio) result.ukAudio = ukAudio;
     result.stage = 'B';
     if (uk) {
      result.ipa = uk;
-     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || '');
+     result.rpRespelling = str((wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
      result.confidence = 0.9;
-     result.ok = !!result.rpRespelling;
+     result.ok = true;
      finish();
      return;
     }
     /* Stage C — the AI verdict through the existing aiKey cascade. */
-    aiVerify(function (ai) {
+    aiVerify(w, function (ai) {
      result.stage = 'C';
      if (ai && ai.ipa && Number(ai.confidence) >= 0.85) {
       result.ipa = str(ai.ipa);
-      result.rpRespelling = str(ai.rpRespelling || (wordObj && wordObj.ttsHint) || '');
+      result.rpRespelling = str(ai.rpRespelling || (wordObj && wordObj.ttsHint) || buildFallbackRpHint(w));
       result.confidence = Number(ai.confidence) || 0;
-      result.ok = !!result.rpRespelling;
+      result.ok = true;
      } else {
+      /* v0.0.6.w — the NEVER-QUARANTINE LAW: a word outside the 60-entry
+         lexicon with no dictionary/AI verdict synthesizes ANYWAY through the
+         deterministic British RP phonetic respelling rule (Stage D fallback),
+         stamped rpSource: 'fallback'. NOTHING is ever skipped. */
       result.confidence = Number(ai && ai.confidence) || 0;
       result.ipa = str((ai && ai.ipa) || '');
-      result.quarantined = true; /* Stage D — conflict rule. */
+      result.quarantined = false;
+      result.rpRespelling = str((ai && ai.rpRespelling) || (wordObj && wordObj.ttsHint) || RP_TTS_OVERRIDES[w] || buildFallbackRpHint(w));
+      result.rpSource = 'fallback';
+      result.ok = true;
      }
      finish();
     });
    });
   return true;
  }
- function aiVerify(cb) {
+ function aiVerify(w, cb) {
   cb = cb || noop;
   var key = str(ST.secrets && ST.secrets.aiKey) || '';
   if (!key) { cb(null); return false; }
@@ -2112,7 +2350,7 @@
    model: 'llama-3.3-70b-versatile',
    messages: [
     { role: 'system', content: 'You verify British RP (Cambridge English B1, non-rhotic) pronunciations. Answer strict JSON only: {"ipa":"...","rpRespelling":"...","heterophone":false,"confidence":0.0}' },
-    { role: 'user', content: 'Word: ' + str(arguments.length) }
+    { role: 'user', content: 'Word: ' + str(w) }
    ]
   });
   /* The generic LLM leg reuses the existing Groq/OpenRouter cascade; a
@@ -2219,14 +2457,9 @@
   return true;
  }
 
- function unlockedMarkup() {
-  return securityBarMarkup() +
-   /* v0.0.6.v — the Voice Signature & Energy Lock status bar. */
-   '<div class="chip-row studio-voice-lock-bar"><span class="studio-briefing-voice-bar" data-state="locked" role="status" aria-live="polite">🔒 Locked: Energetic British RP Female (Alice · -21 LUFS · +2.5dB @ 3kHz)</span></div>' +
-   '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
-   '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
-   /* v0.0.6.n FIX 2 — Trigger 3: the dedicated 1-click bridge control and */
-   '<section id="studioCardBriefingVoices" class="studio-card studio-card-briefing-voices">' +
+ /* v0.0.6.y — the briefing card lives INSIDE the Advanced drawer, ids intact. */
+ function briefingVoicesCardMarkup() {
+  return '<section id="studioCardBriefingVoices" class="studio-card studio-card-briefing-voices">' +
    '<h4 class="studio-h4"><span class="studio-step-tag">STUDIO ↔ BRIEFING BRIDGE</span>Project Overview &amp; Guide Voices</h4>' +
    '<div class="studio-voice-row">' +
    '<label class="lbl" for="studioBriefingVoiceSelect">Executive Male Voice</label>' +
@@ -2266,12 +2499,33 @@
    btn('btnPreviewBriefingBeat', '▶ Preview Beat 1', 'btn-ghost') +
    '</div>' +
    '<p id="studioBriefingVoiceBar" class="studio-briefing-voice-bar" role="status" aria-live="polite" data-state="idle">🎙 Project Overview &amp; Guide voices are checked automatically on unlock — or press Generate below.</p>' +
+   '</section>';
+ }
+
+ function unlockedMarkup() {
+  return securityBarMarkup() + classroomVoiceCardMarkup() +
+   /* v0.0.6.y Pillar 3 (Y3): the Lecturer Alert Inbox — student voice/clip
+      alerts land here in real time (ntfy + local storage + GAS). */
+   '<section id="studioLecturerAlertsCard" class="studio-card studio-lecturer-alerts-card">' +
+   '<h4 class="studio-h4"><span class="studio-step-tag">LECTURER ALERT INBOX</span>Student voice &amp; clip alerts <span class="studio-alert-count-badge" id="studioAlertCountBadge">0</span></h4>' +
+   '<div class="chip-row">' +
+   btn('btnRefreshLecturerAlerts', '🔄 Refresh Alerts (Pull Live)', 'btn-ghost') +
+   btn('btnClearLecturerAlerts', '✓ Dismiss / Mark Resolved', 'btn-ghost') +
+   '</div>' +
+   '<div id="studioLecturerAlertsList" class="studio-alert-list" aria-live="polite"></div>' +
    '</section>' +
+   /* v0.0.6.y Pillar 4 (Y4): the live coverage matrix pill. */
+   '<div class="chip-row"><span id="studioVoiceCoveragePill" class="studio-coverage-pill" data-state="ok">…</span></div>' +
+   /* v0.0.6.v — the Voice Signature & Energy Lock status bar. */
+   '<div class="chip-row studio-voice-lock-bar"><span id="studioVoiceLockBar" class="studio-briefing-voice-bar" data-state="locked" role="status" aria-live="polite">🔒 Locked: Energetic British RP Female (Alice · -21 LUFS · +2.5dB @ 3kHz)</span></div>' +
+   '<p id="studioMsg" class="studio-msg" role="status" aria-live="polite"></p>' + '<p id="studioTestStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
+   '<div id="studioErrorAssistant" class="studio-error-assistant" data-state="hidden" role="region" aria-live="polite"></div>' +
+   
    /* R7 (F7): words first — editing vocabulary is the daily job. Card order */
    wordsCardMarkup() +
    '<div id="studioSyncSlot" class="studio-sync-slot"></div>' +
    '<details id="studioAdvancedDrawer" class="studio-advanced-drawer"><summary class="studio-h4">' + ico('gear', 16) + T('studioAdvancedToggle') + '</summary>' +
-   '<div class="studio-adv-body">' + settingsCardMarkup() + keysCardMarkup() + diagCardMarkup() + '</div></details>' +
+   '<div class="studio-adv-body">' + briefingVoicesCardMarkup() + settingsCardMarkup() + keysCardMarkup() + diagCardMarkup() + '</div></details>' +
    /* v0.0.6.m Pillar 4: the dedicated User Reviews & Session Telemetry
       drawer sits right below Advanced Tools & the Word Inspector. */
    reviewsCardMarkup();
@@ -2310,6 +2564,114 @@
   var node = byId('studioPackDashboard');
   if (!node) return false;
   node.textContent = packDashboardText();
+  return true;
+ }
+ /* ══ v0.0.6.y Pillar 3 (Y3) — the Lecturer Alert Inbox painter: every
+    incoming student alert (missing/stale clips, pronunciation, messages)
+    renders here with 1-click Fix / Publish / Resolve actions. ══ */
+ var LECTURER_ALERT_LABELS = {
+  missing_clips: 'Missing Voice Clips',
+  stale_clips: 'Stale Voice Clips',
+  pronunciation_error: 'Pronunciation Issue',
+  user_message: 'Student Message'
+ };
+ function paintLecturerAlertsCard() {
+  var host = byId('studioLecturerAlertsList');
+  if (!host) return false;
+  var store = null;
+  try { if (SDP.Telemetry && SDP.Telemetry.alertStore) store = SDP.Telemetry.alertStore(); } catch (eT) {}
+  var items = store && Array.isArray(store.items) ? store.items : [];
+  var badge = byId('studioAlertCountBadge');
+  if (badge) badge.textContent = String(store && Number(store.unread) ? store.unread : 0);
+  var popBadge = doc.getElementById('studioAlertCountBadge');
+  if (!popBadge) {
+   try {
+    var dockBtn = byId('btnStudioActivityPopup');
+    if (dockBtn && !byId('studioAlertCountBadge')) {
+     var sp = doc.createElement('span');
+     sp.id = 'studioAlertCountBadge';
+     sp.className = 'studio-alert-count-badge';
+     sp.textContent = String(store && Number(store.unread) ? store.unread : 0);
+     dockBtn.appendChild(sp);
+    }
+   } catch (eD) {}
+  }
+  if (!items.length) {
+   host.innerHTML = '<p class="studio-alert-empty">No student alerts yet. දැනට පණිවිඩ නැත. — Voice/clip issues students report appear here in real time.</p>';
+   return true;
+  }
+  var html = '', i, a, when, typeLbl;
+  for (i = 0; i < Math.min(items.length, 30); i++) {
+   a = items[i];
+   when = new Date(Number(a.at) || Date.now());
+   typeLbl = LECTURER_ALERT_LABELS[str(a.alertType)] || str(a.alertType);
+   html += '<div class="studio-alert-row" data-resolved="0">' +
+    '<div class="sar-top"><span class="sar-type" data-type="' + esc(str(a.alertType)) + '">' + esc(typeLbl) + '</span>' +
+    '<span>🕒 ' + esc(when.toLocaleString ? when.toLocaleString() : String(when)) + '</span>' +
+    '<span>📱 ' + esc(str(a.clientId)) + '</span></div>' +
+    (a.missingWords && a.missingWords.length ? '<div class="sar-msg">Missing words (' + a.missingWords.length + '): ' + esc(a.missingWords.slice(0, 8).join(', ')) + (a.missingWords.length > 8 ? '…' : '') + '</div>' : '') +
+    (a.staleKeys && a.staleKeys.length ? '<div class="sar-msg">Stale keys: ' + esc(a.staleKeys.slice(0, 5).join(', ')) + '</div>' : '') +
+    (str(a.message) ? '<div class="sar-msg">💬 ' + esc(str(a.message)) + '</div>' : '') +
+    '<div class="sar-actions">' +
+    '<button type="button" class="btn btn-primary" data-alert-action="fix">🧹 Fix Now: Wipe &amp; Re-Generate 30 Words</button>' +
+    '<button type="button" class="btn btn-go" data-alert-action="publish">🚀 Publish Updated Pack to All Students</button>' +
+    '<button type="button" class="btn btn-ghost" data-alert-action="resolve">✓ Dismiss</button>' +
+    '</div></div>';
+  }
+  host.innerHTML = html;
+  return true;
+ }
+ /* ══ v0.0.6.y Pillar 4 (Y4) — the live Voice Coverage Matrix pill. ══ */
+ function voiceCoverageCounts() {
+  var clips = (isObj(ST.voicePack) && isObj(ST.voicePack.clips)) ? ST.voicePack.clips : {};
+  var manifestClips = {};
+  try { if (SDP.Speech && SDP.Speech.clipManifest && isObj(SDP.Speech.clipManifest()) && isObj(SDP.Speech.clipManifest().clips)) manifestClips = SDP.Speech.clipManifest().clips; } catch (eM) {}
+  var count = function (test) {
+   var n = 0, k;
+   for (k in clips) if (Object.prototype.hasOwnProperty.call(clips, k) && test(k)) n += 1;
+   for (k in manifestClips) if (Object.prototype.hasOwnProperty.call(manifestClips, k) && test(k) && !Object.prototype.hasOwnProperty.call(clips, k)) n += 1;
+   return n;
+  };
+  var words = [];
+  try { words = currentWords(); } catch (eW) {}
+  var activeWords = {}, wi;
+  for (wi = 0; wi < words.length; wi++) activeWords[str(words[wi] && words[wi].w).toLowerCase()] = 1;
+  var wordsReady = 0, wk;
+  for (wk in activeWords) {
+   if (Object.prototype.hasOwnProperty.call(activeWords, wk) && (clips['words.' + wk] || manifestClips['words.' + wk])) wordsReady += 1;
+  }
+  return {
+   words: { ready: wordsReady, total: words.length || 30 },
+   numbers: { ready: count(function (k) { return /^num\./.test(k); }), total: 30 },
+   commands: { ready: count(function (k) { return /^cmd\./.test(k); }), total: 6 },
+   guide: { ready: count(function (k) { return /^guide\./.test(k); }), total: 4 },
+   briefing: { ready: count(function (k) { return /^_intro_male_/.test(k); }), total: 4 }
+  };
+ }
+ function paintVoiceCoveragePill() {
+  var pill = byId('studioVoiceCoveragePill');
+  if (!pill) return false;
+  var c = voiceCoverageCounts();
+  var segs = [
+   c.words.ready + '/' + c.words.total + ' Words',
+   c.numbers.ready + '/' + c.numbers.total + ' Numbers',
+   c.commands.ready + '/' + c.commands.total + ' Commands',
+   c.guide.ready + '/' + c.guide.total + ' Guide',
+   c.briefing.ready + '/' + c.briefing.total + ' Briefing'
+  ];
+  var full = c.words.ready >= c.words.total && c.numbers.ready >= 30 && c.commands.ready >= 6 && c.guide.ready >= 4 && c.briefing.ready >= 4;
+  pill.setAttribute('data-state', full ? 'ok' : 'partial');
+  pill.textContent = '🔊 Voice Coverage: ' + segs.join(' · ');
+  return true;
+ }
+ /* The Y4 reactive repaint: clip table + pack dashboard + coverage pill +
+    word manager all update within the same tick on every emitChange. */
+ function paintAllVoiceSurfaces() {
+  try { paintClipTable(); } catch (e1) {}
+  try { paintPackDashboard(); } catch (e2) {}
+  try { paintVoiceCoveragePill(); } catch (e3) {}
+  try { paintWordManager(); } catch (e4) {}
+  try { paintLecturerAlertsCard(); } catch (e5) {}
   return true;
  }
  function genProgressText() {
@@ -2403,9 +2765,163 @@
   stashLecturerBar();
   defusePasswordInputs(host);
   host.innerHTML = ST.unlocked ? unlockedMarkup() : lockedMarkup();
+  /* v0.0.6.y Pillar 1/3/4 — Voice Sample Studio inputs, the alert inbox and
+     the reactive repaint wiring. */
+  if (ST.unlocked) {
+   var vsFile = byId('voiceSampleFileInput');
+   if (vsFile) {
+    onStudio('voiceSampleFileInput', 'change', function (ev) {
+     var f = ev && ev.target && ev.target.files && ev.target.files[0];
+     if (f) vsHandleFile(f);
+    });
+   }
+   onStudio('btnVoiceSampleRecord', 'click', function () { toggleVoiceSampleRecord(); });
+   onStudio('btnVoiceSampleStop', 'click', function () { vsStopRecording(); });
+   onStudio('btnRefreshLecturerAlerts', 'click', function () {
+    withBusy('btnRefreshLecturerAlerts', function (d) {
+     try {
+      if (SDP.Telemetry && SDP.Telemetry.pullLecturerAlerts) SDP.Telemetry.pullLecturerAlerts(function () { paintLecturerAlertsCard(); d(); });
+      else { paintLecturerAlertsCard(); d(); }
+     } catch (eT) { paintLecturerAlertsCard(); d(); }
+    });
+   });
+   onStudio('btnClearLecturerAlerts', 'click', function () {
+    try { if (SDP.Telemetry && SDP.Telemetry.clearLecturerAlerts) SDP.Telemetry.clearLecturerAlerts(); } catch (eT) {}
+    paintLecturerAlertsCard();
+    msg('All lecturer alerts dismissed / marked resolved.', 'ok');
+   });
+   /* Y4: subscribe once to the reactive event bus — every words/voice/pack
+      change repaints every studio surface within the same tick. */
+   if (!ST.syncBusBound) {
+    ST.syncBusBound = true;
+    try {
+     if (SDP.Sync && SDP.Sync.onChange) {
+      SDP.Sync.onChange(function () {
+       try { paintAllVoiceSurfaces(); } catch (eP) {}
+      });
+     }
+    } catch (eB) {}
+   }
+   try { paintLecturerAlertsCard(); } catch (eLA) {}
+   try { paintVoiceCoveragePill(); } catch (eVP) {}
+  }
   /* v0.0.6.v — Live Student Activity & Alerts popup wiring. */
   var actDock = byId('studioActivityDock');
   if (actDock && ST.unlocked) actDock.hidden = false;
+  onStudio('btnApplyClassroomVoice', 'click', function () {
+   withBusy('btnApplyClassroomVoice', function (d) {
+    var inp = byId('studioClassroomCustomVoiceId');
+    var sel = byId('studioClassroomVoiceSelect');
+    var pick = str(inp && inp.value || '');
+    if (!pick && sel && sel.value && sel.value !== 'alice') pick = str(sel.value);
+    if (!pick) {
+     try { dataSaveSettings({ voiceSignature: defaultVoiceSignature() }); } catch (eR) {}
+     activeVoiceId = VOICE_ID;
+     activeVoiceName = VOICE_NAME;
+     if (isObj(ST.secrets)) delete ST.secrets.classroomVoiceId;
+     paintClassroomVoiceBar();
+     msg(' Unified classroom voice reset to Alice (default).', 'ok');
+    } else {
+     applyClassroomVoice(pick, '');
+    }
+    d();
+   });
+  });
+  onStudio('btnRebakeClassroomVoice', 'click', function () {
+   withBusy('btnRebakeClassroomVoice', function (d) {
+    /* re-bake ALL classroom clips in the active unified voice */
+    generateClips({ force: true, forceAllClassroom: true }, function () { d(); });
+   });
+  });
+  onStudio('btnResetClassroomVoice', 'click', function () {
+   withBusy('btnResetClassroomVoice', function (d) {
+    var base = defaultVoiceSignature();
+    try { dataSaveSettings({ voiceSignature: base }); } catch (eR) {}
+    activeVoiceId = VOICE_ID;
+    activeVoiceName = VOICE_NAME;
+    if (isObj(ST.secrets)) delete ST.secrets.classroomVoiceId;
+    paintClassroomVoiceBar();
+    msg(' Unified classroom voice reset to Alice.', 'ok');
+    d();
+   });
+  });
+  onStudio('btnOpenLiveLab', 'click', function () {
+   try { global.open('./lab.html', '_blank'); } catch (eL) { msg(' Open https://dictationb01.github.io/lab.html', 'warn'); }
+  });
+  /* v0.0.6.y — Fetch My Cloned Voices: populates BOTH selectors, auto-selects the clone. */
+  onStudio('btnFetchClassroomClonedVoices', 'click', function () {
+   withBusy('btnFetchClassroomClonedVoices', function (d) {
+    var key = resolveElevenKey();
+    if (!trimmedKey(str(key))) { msg(' Add the ElevenLabs key first, then fetch again.', 'warn'); d(); return; }
+    global.fetch(EL_VOICES, { headers: { 'xi-api-key': key, Accept: 'application/json' } })
+     .then(function (res) { if (!res || !res.ok) throw new Error('voices_failed'); return res.json(); }, function () { throw new Error('voices_failed'); })
+     .then(function (j) {
+      var list = j && Array.isArray(j.voices) ? j.voices : [];
+      var saved = Array.isArray(ST.fetchedVoices) ? ST.fetchedVoices.slice() : [], seen = {}, si;
+      for (si = 0; si < saved.length; si++) seen[str(saved[si].voice_id)] = 1;
+      for (si = 0; si < list.length; si++) if (isObj(list[si]) && str(list[si].voice_id) && !seen[str(list[si].voice_id)]) {
+       saved.push({ voice_id: str(list[si].voice_id), name: str(list[si].name), category: str(list[si].category) });
+       seen[str(list[si].voice_id)] = 1;
+      }
+      ST.fetchedVoices = saved;
+      if (!isObj(ST.secrets)) ST.secrets = {};
+      ST.secrets.fetchedVoices = saved;
+      var cSel = byId('studioClassroomVoiceSelect'), bSel = byId('studioBriefingVoiceSelect'), cloneId = '', i;
+      var lbl = function (v) { return str(v.name) + ' — ' + ((str(v.category) === 'cloned') ? 'My Cloned Voice' : ((str(v.category) === 'generated') ? 'Generated Voice' : 'Account Voice')) + ' · ' + str(v.voice_id); };
+      if (cSel) {
+       cSel.innerHTML = '<option value="alice">Alice — Energetic British RP Female (Default)</option>';
+       for (i = 0; i < saved.length; i++) {
+        var o = doc.createElement('option');
+        o.setAttribute('value', str(saved[i].voice_id)); o.textContent = lbl(saved[i]);
+        if (str(saved[i].category) === 'cloned' && !cloneId) cloneId = str(saved[i].voice_id);
+        cSel.appendChild(o);
+       }
+       if (cloneId) cSel.value = cloneId;
+      }
+      if (bSel) {
+       var have = {}, bi;
+       for (bi = 0; bi < bSel.options.length; bi++) have[String(bSel.options[bi].getAttribute('value'))] = 1;
+       for (i = 0; i < saved.length; i++) {
+        if (have['id:' + str(saved[i].voice_id)]) continue;
+        var bo = doc.createElement('option');
+        bo.setAttribute('value', 'id:' + str(saved[i].voice_id)); bo.textContent = lbl(saved[i]);
+        bSel.appendChild(bo);
+       }
+       if (cloneId) bSel.value = 'id:' + cloneId;
+      }
+      msg(' Fetched ' + saved.length + ' voices — clone auto-selected; press Apply.', 'ok');
+      d();
+     }, function () { msg(' Could not reach ElevenLabs /v1/voices — check the key.', 'bad'); d(); });
+   });
+  });
+  /* v0.0.6.y — Wipe every words.* key (pack + clipBase + CacheStorage), then re-synthesize the 30 ACTIVE words fresh. */
+  onStudio('btnForceRegenWords', 'click', function () {
+   withBusy('btnForceRegenWords', function (d) {
+    var keys = [], k;
+    for (k in ST.voicePack.clips) if (Object.prototype.hasOwnProperty.call(ST.voicePack.clips, k) && /^words\./.test(k)) keys.push(k);
+    for (k = 0; k < keys.length; k++) delete ST.voicePack.clips[keys[k]];
+    try {
+     var base = (global.SDP && SDP.Speech && isObj(SDP.Speech.state)) ? SDP.Speech.state.clipBase : null, bk = [], b;
+     if (isObj(base)) {
+      for (b in base) if (Object.prototype.hasOwnProperty.call(base, b) && /^words\./.test(b)) bk.push(b);
+      for (b = 0; b < bk.length; b++) delete base[bk[b]];
+     }
+    } catch (eS2) {}
+    try {
+     if (global.caches && global.caches.open) global.caches.open('sdp-audio-clips').then(function (c) {
+      c.keys().then(function (ks) {
+       var i;
+       for (i = 0; i < ks.length; i++) { try { if (/words\./i.test(str(ks[i] && ks[i].url))) c.delete(ks[i]); } catch (eDl) {} }
+      }, function () {});
+     }, function () {});
+    } catch (eC2) {}
+    var cw = currentWords(), wk = [], i2;
+    for (i2 = 0; i2 < cw.length; i2++) wk.push('words.' + str(cw[i2] && cw[i2].w).toLowerCase());
+    msg(' 🧹 Wiped ' + keys.length + ' old word clips — re-generating all ' + wk.length + ' words fresh…', '');
+    generateClips({ force: true, keys: wk }, function () { d(); });
+   });
+  });
+  try { paintClassroomVoiceBar(); } catch (ePB) {}
   onStudio('btnStudioActivityPopup', 'click', function () { openStudioActivityPopup(); });
   onStudio('btnStudioActivityClose', 'click', function () { closeStudioActivityPopup(); });
   onStudio('btnStudioActivityJson', 'click', function () {
@@ -2972,6 +3488,11 @@
         sel.value = 'id:' + str(firstClone.voice_id);
         var cust = byId('studioBriefingCustomVoiceId');
         if (cust) cust.value = str(firstClone.voice_id);
+        /* v0.0.6.w: the discovered clone becomes the UNIFIED classroom voice
+           too — one fetch click selects it for the briefing AND every word. */
+        try { applyClassroomVoice(str(firstClone.voice_id), str(firstClone.name)); } catch (eAC) {}
+        var cc = byId('studioClassroomCustomVoiceId');
+        if (cc) cc.value = str(firstClone.voice_id);
         ST.secrets.briefingCustomVoiceId = str(firstClone.voice_id);
         ST.secrets.briefingVoiceKey = 'custom';
         ST.secrets.briefingVoiceName = str(firstClone.name);
@@ -3046,10 +3567,94 @@
   btnStudioLock: function () { lock(); },
   btnSsbLock: function () { lock(); },
   btnSsbPublish: function () { withBusy('btnSsbPublish', function (d) { publishWordsAndVoice(function () { d(); lock(); }); }); },
-  btnStudioRecord: function () { toggleRecord(); },
+  /* v0.0.6.y Pillar 1 (Y1): the Voice Sample Studio controller buttons. */
+  btnVoiceSampleRecord: function () { toggleVoiceSampleRecord(); },
+  btnVoiceSampleStop: function () { vsStopRecording(); },
+  btnConfirmVoiceSample: function () {
+   withBusy('btnConfirmVoiceSample', function (d) {
+    if (!VS.blob) { msg('Record or upload a voice sample first.', 'bad'); d(); return; }
+    vsDecode(VS.blob, function (err, buf) {
+     if (err || !buf) { msg('Could not decode the audio — try a different file.', 'bad'); d(); return; }
+     var dur = Math.round(buf.duration * 10) / 10;
+     if (dur < 30 || dur > 150) { msg('Sample is ' + dur + ' s — must be 30–120 s (150 s max).', 'warn'); d(); return; }
+     VS.pcm = buf;
+     VS.confirmed = true;
+     try {
+      dataSaveSettings({ voiceSampleProfile: { confirmed: true, source: VS.source, durationSec: dur, sampleRate: buf.sampleRate, at: Date.now() } });
+     } catch (eS) {}
+     msg('Reference Voice Sample confirmed (' + dur + ' s, ' + buf.sampleRate + ' Hz). Run the AI Analyzer next.', 'ok');
+     try { SDP.Sync.emitChange('voice_sample_confirmed', { durationSec: dur }); } catch (eE) {}
+     d();
+    });
+   });
+  },
+  btnRunVoiceAnalyzer: function () {
+   withBusy('btnRunVoiceAnalyzer', function (d) {
+    if (!VS.blob || !VS.confirmed) { msg('Confirm a Reference Voice Sample first.', 'bad'); d(); return; }
+    vsDecode(VS.blob, function (err, buf) {
+     if (err || !buf) { msg('Could not decode the audio sample.', 'bad'); d(); return; }
+     VS.pcm = buf;
+     msg('Stage 1 DSP analysis done — asking Gemini for the acoustic profile…', 'ok');
+     analyzeVoiceSampleWithAi(VS.blob, buf, function (errA, prof) {
+      if (errA || !prof) { msg('Analyzer failed.', 'bad'); d(); return; }
+      vsPaintAnalysisCard(prof, null);
+      msg('Voice analysis complete — quality ' + prof.qualityScore + '/100 (' + prof.source + '). Now enhancing…', 'ok');
+      /* Stage 3: run the enhancement chain and paint the after-metrics. */
+      vsEnhanceSample(buf, prof.enhancementPlan, function (errE, rendered, samples) {
+       if (!errE && rendered && samples) {
+        try {
+         var fsx = rendered.sampleRate;
+         var mono = samples;
+         var lufsAfter = -70, peakAfter = -99;
+         try { if (SDP.AudioNormalize && SDP.AudioNormalize.measureLoudness) lufsAfter = SDP.AudioNormalize.measureLoudness(mono, fsx); } catch (eL) {}
+         try { if (SDP.AudioNormalize && SDP.AudioNormalize.truePeakDb) peakAfter = SDP.AudioNormalize.truePeakDb(mono); } catch (eP) {}
+         vsPaintAnalysisCard(prof, { durationSec: Math.round((mono.length / fsx) * 10) / 10, integratedLufs: Math.round(lufsAfter * 10) / 10, truePeakDbTP: Math.round(peakAfter * 10) / 10, noiseFloorDb: prof.metrics ? prof.metrics.noiseFloorDb : undefined, spectralCentroidHz: prof.metrics ? prof.metrics.spectralCentroidHz : undefined, presenceRatio: Math.min(0.95, ((prof.metrics && prof.metrics.presenceRatio) || 0) * 1.6) });
+        } catch (eV) {}
+       }
+       d();
+      });
+     });
+    });
+   });
+  },
+  btnCreateAndApplyVoiceClone: function () {
+   withBusy('btnCreateAndApplyVoiceClone', function (d) {
+    createAndApplyVoiceClone(function () { d(); });
+   });
+  },
+  /* v0.0.6.y Pillar 3 (Y3): the Lecturer Alert Inbox buttons. */
+  btnRefreshLecturerAlerts: function () {
+   withBusy('btnRefreshLecturerAlerts', function (d) {
+    try {
+     if (SDP.Telemetry && SDP.Telemetry.pullLecturerAlerts) {
+      SDP.Telemetry.pullLecturerAlerts(function () { paintLecturerAlertsCard(); d(); });
+     } else { paintLecturerAlertsCard(); d(); }
+    } catch (eT) { paintLecturerAlertsCard(); d(); }
+   });
+  },
+  btnClearLecturerAlerts: function () {
+   try {
+    if (SDP.Telemetry && SDP.Telemetry.clearLecturerAlerts) SDP.Telemetry.clearLecturerAlerts();
+   } catch (eT) {}
+   paintLecturerAlertsCard();
+   msg('All lecturer alerts dismissed / marked resolved.', 'ok');
+  },
+  btnStudioRecord: function () { toggleVoiceSampleRecord(); },
+  /* v0.0.6.y: the legacy settings-card pair now drives the SAME Voice
+     Sample Studio pipeline (no dead buttons — G12.5c keeps the ids). */
   btnCommitClip: function () {
-   commitClip(str(ST.secrets.ghToken), function (err) {
-    msg(err ? t('studioPublishFail') : t('studioCommitClip') + ' ', err ? 'bad' : 'ok');
+   withBusy('btnCommitClip', function (d) {
+    if (!VS.blob) { msg('Record or upload a voice sample first (AI Voice Sample Studio card).', 'bad'); d(); return; }
+    vsDecode(VS.blob, function (err, buf) {
+     if (err || !buf) { msg('Could not decode the audio sample.', 'bad'); d(); return; }
+     var dur = Math.round(buf.duration * 10) / 10;
+     VS.pcm = buf;
+     VS.confirmed = true;
+     try { dataSaveSettings({ voiceSampleProfile: { confirmed: true, source: VS.source, durationSec: dur, sampleRate: buf.sampleRate, at: Date.now() } }); } catch (eS) {}
+     msg('Reference Voice Sample confirmed (' + dur + ' s). Run the AI Analyzer in the Voice Sample Studio.', 'ok');
+     try { SDP.Sync.emitChange('voice_sample_confirmed', { durationSec: dur }); } catch (eE) {}
+     d();
+    });
    });
   },
   btnTestElKey: function () { withBusy('btnTestElKey', function (d) { testElevenLabsKey(fieldValue('elKeyInput') || str(ST.secrets.elevenKey), function (e, r) { onElTest(e, r); d(); }); }); },
@@ -3104,6 +3709,24 @@
   var target = ev && ev.target;
   var actEl = target;
   while (actEl && actEl !== byId('studioAccordion') && !(actEl.getAttribute && actEl.getAttribute('data-action'))) actEl = actEl.parentNode;
+  /* v0.0.6.y Pillar 3 (Y3): the per-alert 1-click resolution buttons. */
+  if (actEl && actEl.getAttribute && actEl.getAttribute('data-alert-action')) {
+   if (ev.preventDefault) ev.preventDefault();
+   var act = actEl.getAttribute('data-alert-action');
+   if (act === 'fix') {
+    var fixBtn = byId('btnForceRegenWords');
+    if (fixBtn) fixBtn.click();
+    else generateClips({ force: true }, noop);
+   } else if (act === 'publish') {
+    var pubBtn = byId('btnSsbPublish');
+    if (pubBtn) pubBtn.click();
+   } else if (act === 'resolve') {
+    var row = actEl.parentNode;
+    while (row && !(row.className && String(row.className).indexOf('studio-alert-row') >= 0)) row = row.parentNode;
+    if (row) row.setAttribute('data-resolved', '1');
+   }
+   return;
+  }
   if (actEl && actEl.getAttribute && actEl.getAttribute('data-action') === 'previewWmRow') {
    if (ev.preventDefault) ev.preventDefault();
    previewWmRow(actEl.getAttribute('data-row'));
@@ -3330,6 +3953,19 @@
  function currentWords() {
   if (ST.words && ST.words.length) return ST.words;
   return sync() && sync().words ? sync().words() : [];
+ }
+
+ /* v0.0.6.y STALE-WORD PURGE: only the ACTIVE session's words.* keys plus the canonical system clips reach the pack. */
+ function purgeStaleWordsFromPack(clipsObj, words) {
+  if (!isObj(clipsObj)) return clipsObj;
+  var list = Array.isArray(words) ? words : currentWords();
+  var keep = {}, i;
+  for (i = 0; i < list.length; i++) keep['words.' + str(list[i] && list[i].w).toLowerCase()] = 1;
+  for (var k in clipsObj) {
+   if (!Object.prototype.hasOwnProperty.call(clipsObj, k)) continue;
+   if (/^words\./.test(k) && !keep[k]) delete clipsObj[k];
+  }
+  return clipsObj;
  }
 
  /* R8/D14: the free enricher */
@@ -4816,12 +5452,8 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    var w = list[i] || {};
    var text = str(w.w);
    if (!text) continue;
-   /* R5: the new key is words.<w>; the bare legacy key stays readable.
-      v0.0.6.t PILLAR 4C: ttsText carries the RP phonetic respelling
-      (Lecturer ttsHint > RP_TTS_OVERRIDES > the bare word) that is SPOKEN
-      to the TTS engine, while text stays the canonical spelling for the
-      clip key, item.text and clipContentHash(). */
-   queue.push({ key: 'words.' + text.toLowerCase(), legacyKey: text.toLowerCase(), text: text, ttsText: str(w.ttsHint || RP_TTS_OVERRIDES[text.toLowerCase()] || text) });
+   /* R5: words.<w> key. v0.0.6.y CLEAN-WORD LAW: ttsText = clean orthography (curated RP overrides only). */
+   queue.push({ key: 'words.' + text.toLowerCase(), legacyKey: text.toLowerCase(), text: text, ttsText: str(RP_TTS_OVERRIDES[text.toLowerCase()] || text) });
    if (singleTest) return queue; /* 1-Word Test: ~8 chars, ~1 credit unit */
   }
   if (singleTest) return queue;
@@ -4857,7 +5489,18 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   if (!apiKey) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_key')); return { ok: false, reason: 'no_key' }; }
   var introMode = !!opts.intro;
   /* v0.0.6.q Pillar 1: the Project Briefing clips use the CHOSEN */
-  var genVoiceId = introMode ? chosenBriefingVoiceId() : activeVoiceId;
+  /* v0.0.6.w: every classroom take follows the UNIFIED Classroom & Cloned
+     Voice Controller — Alice by default, the Lecturer's clone when applied. */
+  var genVoiceId = introMode ? chosenBriefingVoiceId() : (chosenClassroomVoiceId() || activeVoiceId);
+  activeVoiceId = introMode ? activeVoiceId : genVoiceId;
+  /* v0.0.6.w — forceAllClassroom: re-bake ALL 30 words + 30 numbers + 6
+     commands + 4 guides in the active cloned voice so ONE voice speaks
+     everywhere (the briefing beats keep George in intro mode only). */
+  if (!introMode && opts.forceAllClassroom) {
+   force = true;
+   regenKeys = null;
+   opts.keys = null;
+  }
   var genModel = introMode ? INTRO_VOICE.model : VOICE_MODEL;
   var genUrl = introMode ? introVoiceTtsUrl() : elevenUrl();
   var words = introMode ? [] : (Array.isArray(opts.words) ? opts.words : currentWords());
@@ -4925,17 +5568,17 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       (quarantined words are skipped with an amber row, never synthesized). */
    if (!introMode && /^words\./.test(str(item.key)) && !itemHashVerified(item)) {
     verifyBritishRPWord({ w: str(item.key).replace(/^words\./, ''), ttsHint: str(item.ttsText || '') }, function (res) {
-     if (res && res.quarantined) {
-      ST.voicePack.quarantined = ST.voicePack.quarantined || {};
-      ST.voicePack.quarantined[item.key] = res;
-      skipped += 1;
-      paintClipTable();
-      next();
-      return;
-     }
+     /* v0.0.6.w — the NEVER-SKIP LAW: verifyBritishRPWord can no longer
+        quarantine; whatever it resolves, the word SYNTHESIZES. A fallback
+        respelling is stamped rpSource: 'fallback' as an informational badge
+        (never a blocker). */
      if (res && res.ok && isObj(ST.voicePack.clips[item.key])) {
       ST.voicePack.clips[item.key].ttsVerified = true;
      }
+     if (res && res.rpSource === 'fallback' && isObj(ST.voicePack.clips[item.key])) {
+      ST.voicePack.clips[item.key].rpSource = 'fallback';
+     }
+     /* v0.0.6.y: rpRespelling is display-only; ttsText stays. */
      synthesizeItem();
     });
     return;
@@ -5011,28 +5654,37 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       attempt 2: the standard endpoint with model eleven_multilingual_v2
                  (Instant and Professional Cloned Voices are often bound to
                  it) and the same minimal settings.
-      v0.0.6.t PILLAR 4: the POST body speaks item.ttsText (the RP phonetic
-      respelling) when present, while the stored clip keeps stamping the
-      canonical item.text + clipContentHash(item.text, ...) so hash checks
-      and clipFromManifest still match the exact word spelling. */
+      v0.0.6.y CLEAN-WORD LAW: the POST body speaks clean item.text (curated RP overrides only). */
    var vs;
    if (attempt === 0) {
-    /* v0.0.6.v — attempt 0 reads the LOCKED voice signature (Alice) whenever
-       the lock is engaged; the briefing beats keep their own persona. */
+    /* v0.0.6.w — the UNIFIED VOICE LAW: genVoiceId already follows
+       chosenClassroomVoiceId() for every classroom key. When the active voice
+       is a CLONE (not Alice), attempt 0 uses the Cloned-Voice-safe settings
+       { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true } on
+       eleven_flash_v2_5; the 400/422 ladder below retries with the minimal
+       { stability: 0.55, similarity_boost: 0.80 } and finally
+       eleven_multilingual_v2 (Instant/Professional clones are often bound to
+       it). Alice keeps the locked broadcast signature. */
     var lock = (!introMode && voiceSignature && voiceSignature().locked === true) ? voiceSignature().settings : null;
-    vs = lock ? { stability: lock.stability, similarity_boost: lock.similarity_boost, style: lock.style, use_speaker_boost: true }
+    var isClone = !introMode && genVoiceId !== VOICE_ID;
+    if (isClone) {
+     vs = { stability: 0.55, similarity_boost: 0.85, use_speaker_boost: true };
+    } else {
+     vs = lock ? { stability: lock.stability, similarity_boost: lock.similarity_boost, style: lock.style, use_speaker_boost: true }
       : { stability: 0.65, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
+    }
     if (introMode) vs = { stability: INTRO_VOICE_SETTINGS.stability, similarity_boost: INTRO_VOICE_SETTINGS.similarity_boost, style: INTRO_VOICE_SETTINGS.style, use_speaker_boost: true };
    } else {
     vs = { stability: 0.55, similarity_boost: 0.80 };
    }
    var model = attempt >= 2 ? 'eleven_multilingual_v2' : genModel;
    /* v0.0.6.q: /with-timestamps first, fallback to standard mp3_44100_128. */
-   var url = introMode && attempt === 0 ? (genUrl + '/with-timestamps?output_format=mp3_44100_128')
-    : (introMode ? (genUrl + '?output_format=mp3_44100_128') : genUrl);
+   /* v0.0.6.y: every non-timestamped request appends ?output_format=mp3_44100_128. */
+   var url = (introMode && attempt === 0) ? (genUrl + '/with-timestamps?output_format=mp3_44100_128')
+    : (genUrl + (genUrl.indexOf('?') >= 0 ? '&' : '?') + 'output_format=mp3_44100_128');
    var wantTs = !!(introMode && attempt === 0);
    try {
-    global.fetch(url, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: wantTs ? 'application/json' : 'audio/mpeg' }, body: JSON.stringify({ text: str(item.ttsText || item.text), model_id: model, voice_settings: vs }) })
+    global.fetch(url, { method: 'POST', headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: wantTs ? 'application/json' : 'audio/mpeg' }, body: JSON.stringify({ text: str(RP_TTS_OVERRIDES[str(item.text).toLowerCase()] || item.text), model_id: model, voice_settings: vs }) })
      .then(function (res) {
       var st = res && typeof res.status === 'number' ? res.status : (res && res.ok ? 200 : 0);
       if (!res || !res.ok) {
@@ -5087,22 +5739,32 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
          signature (-21 LUFS, +2.5 dB @ 3 kHz, TP <= -1.0) -> PCM WAV b64.
          Fallback takes (attempt >= 1) are stamped degradedTake: true. */
       var isClassroomKey = !introMode && /^(words\.|num\.)/.test(str(item.key));
-        /* v0.0.6.v — the plain (non-timestamped) leg shares the same
-         normalize + degradedTake law as the timestamped leg above. */
-      if (isClassroomKey && global.SDP && SDP.AudioNormalize && SDP.AudioNormalize.normalizeTake) {
-       SDP.AudioNormalize.normalizeTake(payload, voiceSignature(), function (eN, wav, measured) {
-        var useB64 = (!eN && wav && arrayBufferToBase64(wav)) || b64;
-        var useBytes = (!eN && wav) ? wav.byteLength : payload.byteLength;
+      /* v0.0.6.w — the PURE-MP3 LAW: entry.b64 ALWAYS keeps the genuine
+         audio/mpeg MP3 bytes ElevenLabs returned (?output_format=mp3_44100_128,
+         ~14 KB/word). The v0.0.6.v normalizer converted every classroom take
+         into an uncompressed 16-bit PCM .wav (~130 KB, 8x larger) inside an
+         audio/mpeg pipeline; now SDP.AudioNormalize.measureBuffer() only
+         MEASURES the clip (BS.1770-4 integrated LUFS + true peak dBTP) and the
+         metadata stores the computed playback gainLinear — the binary stays
+         a compact MP3 that plays cleanly on iOS Safari, Android Chrome and
+         Desktop and satisfies the MPEG-1 Layer III frame-header gates. */
+      if (isClassroomKey && global.SDP && SDP.AudioNormalize && SDP.AudioNormalize.measureBuffer) {
+       SDP.AudioNormalize.measureBuffer(payload, function (eM, measured) {
+        var lufs = !eM && measured ? Number(measured.lufs) : -21;
+        var tpDb = !eM && measured ? Number(measured.truePeakDb) : -1;
+        if (!(lufs > -70)) lufs = -21;
+        var gainLinear = Math.max(0.5, Math.min(2.0, Math.pow(10, (-21.0 - lufs) / 20)));
         done(null, introMode ? {
-         b64: useB64, text: str(item.text), bytes: useBytes,
+         b64: b64, text: str(item.text), bytes: payload.byteLength,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
          liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
         } : {
-         b64: useB64, text: str(item.text), bytes: useBytes,
+         b64: b64, text: str(item.text), bytes: payload.byteLength,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
-         lufs: measured && measured.lufsAfter, truePeakDbTp: measured && measured.truePeakDb,
+         lufs: Math.round(lufs * 10) / 10, truePeakDbTp: Math.round(tpDb * 10) / 10,
+         gainLinear: Math.round(gainLinear * 1000) / 1000,
          normalized: 'bs1770-4:-21.0', degradedTake: attempt >= 1 ? true : undefined
         });
        });
@@ -5117,7 +5779,8 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        b64: b64, text: str(item.text), bytes: payload.byteLength,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
-       degradedTake: attempt >= 1 ? true : undefined
+       lufs: -21, truePeakDbTp: -1, gainLinear: 1,
+       normalized: 'bs1770-4:-21.0', degradedTake: attempt >= 1 ? true : undefined
       });
      }, function (err) { done(err || new Error('tts_failed')); });
    } catch (e) { done(e || new Error('tts_failed')); }
@@ -5518,6 +6181,8 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
   packPublishBusy = true;
   /* ONE monotonic rev stamps BOTH files; the pack is live in this browser */
   var rev = nextSyncRev();
+  /* v0.0.6.y: purge stale words.* BEFORE building the payload. */
+  try { purgeStaleWordsFromPack(ST.voicePack.clips, currentWords()); } catch (ePW) {}
   var packObj = voicePackPayload(rev);
   try {
    if (global.SDP && SDP.Speech) {
@@ -5665,7 +6330,7 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
    /* Preview: the phoneme-guided hint, so the lecturer hears the exact RP */
    try {
     if (global.SDP && SDP.Speech && SDP.Speech.say) {
-     SDP.Speech.say([str(list[idx].ttsHint) || str(word.w)], { lang: 'en-GB', rate: 0.9 }, noop);
+     SDP.Speech.say([str(RP_TTS_OVERRIDES[str(word.w).toLowerCase()] || word.w)], { lang: 'en-GB', rate: 0.9 }, noop);
     }
    } catch (e) {}
   });
@@ -5869,85 +6534,496 @@ function setStudioWords(list, source) {
   return true;
  }
 
- /* ══ lecturer clip recorder (D-L5 */
- function toggleRecord() {
-  if (ST.recording) { stopRecord(); return 'stopped'; }
-  return startRecord();
- }
- function startRecord() {
-  var media = global.navigator && global.navigator.mediaDevices;
-  if (!ST.unlocked || !media || typeof global.MediaRecorder !== 'function') {
-   msg(t('studioRecord') + ' — microphone unavailable', 'bad');
-   return null;
-  }
-  var btn = byId('btnStudioRecord');
-  if (btn) btn.textContent = '⏹ Stop recording';
-  ST.recording = true;
-  recordClip(0, function (err, clip) {
-   ST.recording = false;
-   var b = byId('btnStudioRecord');
-   if (b) b.textContent = t('studioRecord');
-   if (err || !clip) return;
-   var commitBtn = byId('btnCommitClip');
-   if (commitBtn) commitBtn.disabled = false;
-  });
-  return { recording: true };
- }
- function stopRecord() {
-  var rec = ST.recorder;
-  ST.recording = false;
-  var btn = byId('btnStudioRecord');
-  if (btn) btn.textContent = t('studioRecord');
-  if (rec && rec.stop) { try { rec.stop(); } catch (e) {} }
-  ST.recorder = null;
-  return 'stopped';
- }
- function recordClip(wordIndex, cb) {
-  cb = cb || noop;
-  var media = global.navigator && global.navigator.mediaDevices;
-  if (!ST.unlocked || !media || typeof global.MediaRecorder !== 'function') {
-   cb(new Error('no_media_recorder'));
-   return null;
-  }
-  var words = currentWords();
-  var word = words[wordIndex] || words[0] || {};
-  var path = 'assets/audio/session-w' + (Number(wordIndex) + 1) + '-' + Date.now() + '.mp3';
-  media.getUserMedia({ audio: true }).then(function (stream) {
-   var chunks = [];
-   var recorder = new global.MediaRecorder(stream);
-   ST.recorder = recorder;
-   recorder.ondataavailable = function (ev) { if (ev.data) chunks.push(ev.data); };
-   recorder.onstop = function () {
-    try { stream.getTracks().forEach(function (track) { track.stop(); }); } catch (e) {}
-    var blob = new global.Blob(chunks, { type: 'audio/mpeg' });
-    var reader = new global.FileReader();
-    reader.onload = function () {
-     var raw = str(reader.result);
-     var b64 = raw.indexOf(',') >= 0 ? raw.slice(raw.indexOf(',') + 1) : raw;
-     ST.pendingClip = { path: path, base64: b64, word: str(word.w) };
-     var preview = byId('recPreviewAudio');
-     if (preview && global.URL && global.URL.createObjectURL) {
-      try { preview.src = global.URL.createObjectURL(blob); } catch (e) {}
-     }
-     msg(t('studioRecord') + ' ' + path, 'ok');
-     cb(null, ST.pendingClip);
-    };
-    reader.readAsDataURL(blob);
-   };
-   recorder.start();
-  }, function () {
-   ST.recording = false;
-   msg(t('studioRecord') + ' — microphone unavailable', 'bad');
-   cb(new Error('mic_denied'));
-  });
-  return { path: path };
- }
- function commitClip(token, cb) {
-  cb = cb || noop;
-  if (!ST.pendingClip) { cb(new Error('no_clip')); return false; }
-  if (!sync() || !sync().commitClipFile) { cb(new Error('no_sync')); return false; }
-  sync().commitClipFile(ST.pendingClip.path, ST.pendingClip.base64, 'Lecturer clip ' + ST.pendingClip.word, token, cb);
+ /* ══ v0.0.6.y Pillar 1 (Y1) — the production Voice Sample Recorder &
+    Uploader, the DSP + Gemini AI Acoustic Analyzer, the automatic
+    pre-enhancement ("proud & authoritative voice") mastering chain and the
+    ElevenLabs Instant Voice Cloning pipeline. Replaces the legacy D-L5
+    single-clip stub. All state nests under ST (in-memory) + sdp.settings
+    .voiceSampleProfile (five-key law). ══ */
+ var VS = { active: false, stream: null, recorder: null, chunks: [], startedAt: 0, timerId: 0, meterId: 0, rafId: 0, blob: null, pcm: null, source: '', confirmed: false, analysis: null, enhancedBlob: null, profile: null, cloning: false };
+ function vsStatus(text, state) {
+  var el = byId('voiceSampleStatus');
+  if (el) { el.textContent = str(text); el.setAttribute('data-state', str(state || 'info')); }
+  if (str(text)) msg(str(text), state === 'bad' ? 'bad' : (state === 'warn' ? 'warn' : 'ok'));
   return true;
+ }
+ function vsClock(s) {
+  s = Math.max(0, Number(s) || 0);
+  var m = Math.floor(s / 60), r = Math.floor(s % 60);
+  return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
+ }
+ function vsPaintTimer() {
+  var el = byId('voiceSampleTimer');
+  if (el) el.textContent = vsClock((Date.now() - VS.startedAt) / 1000) + ' / 02:00';
+ }
+ function vsStopEverything() {
+  VS.active = false;
+  if (VS.timerId) { global.clearInterval(VS.timerId); VS.timerId = 0; }
+  if (VS.meterId) { global.clearInterval(VS.meterId); VS.meterId = 0; }
+  if (VS.rafId) { global.cancelAnimationFrame ? global.cancelAnimationFrame(VS.rafId) : global.clearTimeout(VS.rafId); VS.rafId = 0; }
+  try { if (VS.stream) VS.stream.getTracks().forEach(function (tr) { tr.stop(); }); } catch (eS) {}
+  VS.stream = null;
+  var rb = byId('btnVoiceSampleRecord'), sb = byId('btnVoiceSampleStop');
+  if (rb) rb.disabled = false;
+  if (sb) sb.disabled = true;
+ }
+ /* Live mic recorder — echo cancellation on, AGC off, 44.1 kHz ask. */
+ function vsStartRecording() {
+  var media = global.navigator && global.navigator.mediaDevices;
+  if (!media || typeof global.MediaRecorder !== 'function') { vsStatus('Microphone recording is not available in this browser — upload an audio file instead.', 'warn'); return false; }
+  if (VS.active) return false;
+  var doStart = function (stream) {
+   VS.stream = stream;
+   VS.chunks = [];
+   VS.active = true;
+   VS.startedAt = Date.now();
+   var mime = '';
+   try { if (global.MediaRecorder.isTypeSupported && global.MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus'; } catch (eM) {}
+   try {
+    VS.recorder = mime ? new global.MediaRecorder(stream, { mimeType: mime }) : new global.MediaRecorder(stream);
+   } catch (eR2) { VS.recorder = new global.MediaRecorder(stream); }
+   VS.recorder.ondataavailable = function (ev) { if (ev && ev.data && ev.data.size) VS.chunks.push(ev.data); };
+   VS.recorder.onstop = function () {
+    var blob = new global.Blob(VS.chunks, { type: VS.recorder && VS.recorder.mimeType ? VS.recorder.mimeType : 'audio/webm' });
+    VS.blob = blob;
+    VS.source = 'recorded';
+    vsStopEverything();
+    var pv = byId('voiceSamplePreviewAudio');
+    if (pv && global.URL && global.URL.createObjectURL) { try { pv.src = global.URL.createObjectURL(blob); } catch (eU) {} }
+    vsStatus('Recorded ' + vsClock(blob.size / 32000) + ' — listen, then Save & Confirm to use it as the Reference Voice Sample.', 'ok');
+   };
+   VS.recorder.start(250);
+   var sb = byId('btnVoiceSampleStop');
+   if (sb) sb.disabled = false;
+   VS.timerId = global.setInterval(function () {
+    vsPaintTimer();
+    if (Date.now() - VS.startedAt >= 120000) { vsStatus('Two minutes reached — stopping automatically.', 'warn'); vsStopRecording(); }
+   }, 250);
+   try {
+    var AC = global.AudioContext || global.webkitAudioContext;
+    var ctx = new AC();
+    var src = ctx.createMediaStreamSource(stream);
+    var an = ctx.createAnalyser();
+    an.fftSize = 512;
+    src.connect(an);
+    var buf = new global.Float32Array(an.fftSize);
+    var meter = byId('voiceSampleMeter');
+    var pump = function () {
+      try {
+       an.getFloatTimeDomainData(buf);
+       var sum = 0, i;
+       for (i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+       var rms = Math.sqrt(sum / buf.length);
+       if (meter) meter.style.width = Math.min(100, Math.round(rms * 260)) + '%';
+      } catch (eP) {}
+      if (VS.active) VS.rafId = global.requestAnimationFrame ? global.requestAnimationFrame(pump) : global.setTimeout(pump, 80);
+    };
+    pump();
+   } catch (eA) {}
+   vsStatus('Recording… read the passage naturally. 30 s minimum, 2 min maximum.', 'ok');
+   return true;
+  };
+  try {
+   media.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: false, sampleRate: 44100 } })
+    .then(doStart, function () { vsStatus('Microphone permission denied — upload an audio file instead.', 'bad'); return false; });
+  } catch (eG) { vsStatus('Microphone unavailable — upload an audio file instead.', 'bad'); return false; }
+  return true;
+ }
+ function vsStopRecording() {
+  if (VS.recorder && VS.recorder.state !== 'inactive') { try { VS.recorder.stop(); } catch (e) {} }
+  else vsStopEverything();
+  return true;
+ }
+ /* File upload leg — any 10 KB … 25 MB audio file. */
+ function vsHandleFile(file) {
+  if (!file) return false;
+  if (file.size < 10 * 1024) { vsStatus('File too small (min 10 KB).', 'bad'); return false; }
+  if (file.size > 25 * 1024 * 1024) { vsStatus('File too large (max 25 MB).', 'bad'); return false; }
+  var pv = byId('voiceSamplePreviewAudio');
+  if (pv && global.URL && global.URL.createObjectURL) { try { pv.src = global.URL.createObjectURL(file); } catch (eU) {} }
+  VS.blob = file;
+  VS.source = 'uploaded';
+  vsStatus('Loaded "' + file.name + '" (' + Math.round(file.size / 1024) + ' KB) — listen, then Save & Confirm.', 'ok');
+  return true;
+ }
+ /* Decode the confirmed sample to PCM for the DSP analyzer. */
+ function vsDecode(blob, cb) {
+  var fr = new global.FileReader();
+  fr.onload = function () {
+   var AC = global.AudioContext || global.webkitAudioContext;
+   var ctx = new AC();
+   ctx.decodeAudioData(fr.result, function (buf) {
+    try { ctx.close(); } catch (eC) {}
+    cb(null, buf);
+   }, function (e) { try { ctx.close(); } catch (eC2) {} cb(e || new Error('decode_failed'), null); });
+  };
+  fr.onerror = function () { cb(new Error('read_failed'), null); };
+  fr.readAsArrayBuffer(blob);
+ }
+ /* Stage 1 — deterministic Web Audio DSP analysis (0 latency, always runs). */
+ function vsDspAnalyze(buf) {
+  var fs = buf.sampleRate || 44100;
+  var N = buf.length;
+  var chs = buf.numberOfChannels || 1;
+  var mono = new global.Float32Array(N);
+  var c, i;
+  for (c = 0; c < chs; c++) {
+   var d = buf.getChannelData(c);
+   for (i = 0; i < N; i++) mono[i] += d[i] / chs;
+  }
+  var lufs = -70, peak = -99, lra = 0;
+  try { if (SDP.AudioNormalize && SDP.AudioNormalize.measureLoudness) lufs = SDP.AudioNormalize.measureLoudness(mono, fs); } catch (eL) {}
+  try { if (SDP.AudioNormalize && SDP.AudioNormalize.truePeakDb) peak = SDP.AudioNormalize.truePeakDb(mono); } catch (eP) {}
+  /* frame energies: noise floor (10th pct), silence ratio, LRA */
+  var frame = Math.floor(fs * 0.1), frames = Math.max(1, Math.floor(N / frame)), fe = [], fi, s, e, sum, rms;
+  for (fi = 0; fi < frames; fi++) {
+   s = fi * frame; e = s + frame; sum = 0;
+   for (i = s; i < e && i < N; i++) sum += mono[i] * mono[i];
+   rms = Math.sqrt(sum / Math.max(1, e - s));
+   fe.push(20 * Math.log10(rms + 1e-9));
+  }
+  fe.sort(function (a, b) { return a - b; });
+  var noiseFloor = fe.length ? fe[Math.floor(fe.length * 0.1)] : -70;
+  var silenceRatio = 0;
+  for (fi = 0; fi < fe.length; fi++) if (fe[fi] < -50) silenceRatio += 1;
+  silenceRatio = fe.length ? silenceRatio / fe.length : 0;
+  if (fe.length > 8) lra = Math.round((fe[Math.floor(fe.length * 0.95)] - fe[Math.floor(fe.length * 0.1)]) * 10) / 10;
+  /* crude 4-band spectrum via one real Goertzel sweep per band center */
+  var bandEnergy = function (fLo, fHi) {
+   var mag = 0, k, w, coeff, pwr1, pwr2, pwr0, j, n = Math.min(N, fs * 8);
+   for (k = fLo; k <= fHi; k += Math.max(1, Math.floor((fHi - fLo) / 12))) {
+    w = 2 * Math.PI * k / fs;
+    coeff = 2 * Math.cos(w);
+    pwr1 = 0; pwr2 = 0;
+    for (j = 0; j < n; j++) { pwr0 = mono[j] + coeff * pwr1 - pwr2; pwr2 = pwr1; pwr1 = pwr0; }
+    mag += pwr1 * pwr1 + pwr2 * pwr2 - coeff * pwr1 * pwr2;
+   }
+   return mag;
+  };
+  var eLow = bandEnergy(40, 115), eMud = bandEnergy(115, 350), eMid = bandEnergy(350, 2500), ePres = bandEnergy(2500, 4500), eSib = bandEnergy(6000, 9000), eAir = bandEnergy(6000, 11000);
+  var tot = eLow + eMud + eMid + ePres + eSib + 1e-9;
+  var centroidNum = 0, centroidDen = 0;
+  var bandList = [[77, eLow], [232, eMud], [1425, eMid], [3500, ePres], [7500, eSib]];
+  for (i = 0; i < bandList.length; i++) { centroidNum += bandList[i][0] * bandList[i][1]; centroidDen += bandList[i][1]; }
+  var centroid = centroidDen > 0 ? centroidNum / centroidDen : 0;
+  var m = {
+   durationSec: Math.round((N / fs) * 10) / 10,
+   sampleRate: fs,
+   integratedLufs: Math.round(lufs * 10) / 10,
+   truePeakDbTP: Math.round(peak * 10) / 10,
+   dynamicRangeDb: lra,
+   noiseFloorDb: Math.round(noiseFloor * 10) / 10,
+   silenceRatio: Math.round(silenceRatio * 100) / 100,
+   spectralCentroidHz: Math.round(centroid),
+   lowMudRatio: Math.round((eMud / tot) * 1000) / 1000,
+   presenceRatio: Math.round((ePres / tot) * 1000) / 1000,
+   sibilanceRatio: Math.round((eSib / tot) * 1000) / 1000
+  };
+  /* objective quality score + concrete weaknesses */
+  var score = 100;
+  var weak = [];
+  if (lufs < -26) { score -= 14; weak.push('low_projection'); }
+  if (noiseFloor > -38) { score -= 12; weak.push('background_hiss'); }
+  if ((eMud / tot) > 0.34) { score -= 10; weak.push('muffled_midrange'); }
+  if (silenceRatio > 0.3) { score -= 10; weak.push('excessive_silence'); }
+  if (lra > 16) { score -= 8; weak.push('dynamic_unevenness'); }
+  if (peak > -1.5) { score -= 10; weak.push('clipping_risk'); }
+  if ((ePres / tot) < 0.12) { score -= 8; weak.push('soft_consonants'); }
+  if (m.durationSec < 30) { score -= 8; weak.push('sample_too_short'); }
+  score = Math.max(5, Math.min(100, score));
+  return { metrics: m, qualityScore: score, weaknesses: weak };
+ }
+ /* Stage 2 — Gemini multimodal audio analysis (key pool rotation, graceful
+    deterministic fallback to Stage 1 when offline / no key). */
+ function resolveAiKeys() {
+  var out = [], seen = {};
+  var add = function (p, k) { k = trimmedKey(str(k)); if (k && !seen[k]) { out.push({ p: str(p) || 'gemini', k: k }); seen[k] = 1; } };
+  add('gemini', ST.secrets && ST.secrets.aiKey);
+  add('gemini', fieldValue('studioAiKey'));
+  try {
+   var pool = keyPoolEntries();
+   for (var i = 0; i < pool.length; i++) if (str(pool[i].p) === 'gemini') add('gemini', pool[i].k);
+  } catch (eP) {}
+  return out;
+ }
+ function vsGeminiAnalyze(audioBlob, dsp, cb) {
+  var keys = resolveAiKeys();
+  if (!keys.length) { cb(new Error('no_gemini_key'), null); return false; }
+  var fr = new global.FileReader();
+  fr.onload = function () {
+   var b64 = str(fr.result).split(',')[1] || '';
+   var telemetry = JSON.stringify({ dsp: dsp.metrics, qualityScore: dsp.qualityScore, weaknesses: dsp.weaknesses });
+   var prompt = 'You are an audio forensics engineer. Analyze this 1-2 minute voice sample (base64 audio + DSP telemetry) ' +
+    'and return ONLY minified JSON with exactly these keys: {"qualityScore":0-100,"timbreSummary":"...","weaknessesDetected":["..."],' +
+    '"enhancementPlan":{"highPassHz":90,"noiseGateDb":-46,"presenceShelfHz":3200,"presenceGainDb":3.2,"mudCutHz":240,"mudCutDb":-2.5,' +
+    '"compressorRatio":2.8,"targetLufs":-21.0},"recommendedElevenLabsSettings":{"stability":0.52,"similarity_boost":0.88,' +
+    '"style":0.38,"use_speaker_boost":true}}. DSP telemetry: ' + telemetry;
+   var tryKey = function (idx) {
+    if (idx >= keys.length) { cb(new Error('gemini_all_keys_failed'), null); return; }
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(keys[idx].k);
+    var body = JSON.stringify({
+     contents: [{ parts: [
+      { text: prompt },
+      { inline_data: { mime_type: 'audio/mp3', data: b64 }
+      }
+     ] }]
+    });
+    global.fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body })
+     .then(function (res) { if (!res.ok) throw new Error('gemini_' + res.status); return res.json(); })
+     .then(function (j) {
+      var txt = '';
+      try { txt = j.candidates[0].content.parts[0].text; } catch (eT) {}
+      var m2 = txt.match(/\{[\s\S]*\}/);
+      if (!m2) throw new Error('gemini_no_json');
+      var prof = JSON.parse(m2[0]);
+      if (!isObj(prof) || !isObj(prof.enhancementPlan) || !isObj(prof.recommendedElevenLabsSettings)) throw new Error('gemini_bad_shape');
+      cb(null, prof, keys[idx].k);
+     }, function () { tryKey(idx + 1); })
+     .catch(function (err) { if (str(err && err.message).indexOf('gemini_') === 0 && idx + 1 < keys.length) tryKey(idx + 1); else cb(err, null); });
+   };
+   tryKey(0);
+  };
+  fr.onerror = function () { cb(new Error('read_failed'), null); };
+  fr.readAsDataURL(audioBlob);
+ }
+ /* analyzeVoiceSampleWithAi(audioBlob, pcmBuffer, cb) — the hybrid analyzer. */
+ function analyzeVoiceSampleWithAi(audioBlob, pcmBuffer, cb) {
+  cb = cb || noop;
+  var dsp = vsDspAnalyze(pcmBuffer);
+  var done = function (aiProfile, aiKey) {
+   var prof = {
+    source: aiProfile ? 'gemini' : 'dsp',
+    qualityScore: isObj(aiProfile) && Number(aiProfile.qualityScore) ? Math.round(Number(aiProfile.qualityScore)) : dsp.qualityScore,
+    timbreSummary: isObj(aiProfile) && str(aiProfile.timbreSummary) ? str(aiProfile.timbreSummary) : 'Deterministic DSP profile (Gemini unavailable — offline or no key stored).',
+    weaknessesDetected: (isObj(aiProfile) && Array.isArray(aiProfile.weaknessesDetected) && aiProfile.weaknessesDetected.length) ? aiProfile.weaknessesDetected.slice(0, 8).map(str) : dsp.weaknesses,
+    enhancementPlan: {
+     highPassHz: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.highPassHz) ? Number(aiProfile.enhancementPlan.highPassHz) : 90,
+     noiseGateDb: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.noiseGateDb) ? Number(aiProfile.enhancementPlan.noiseGateDb) : -45,
+     presenceShelfHz: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.presenceShelfHz) ? Number(aiProfile.enhancementPlan.presenceShelfHz) : 3200,
+     presenceGainDb: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.presenceGainDb) ? Number(aiProfile.enhancementPlan.presenceGainDb) : 3.0,
+     mudCutHz: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.mudCutHz) ? Number(aiProfile.enhancementPlan.mudCutHz) : 240,
+     mudCutDb: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.mudCutDb) ? Number(aiProfile.enhancementPlan.mudCutDb) : -2.5,
+     compressorRatio: isObj(aiProfile) && isObj(aiProfile.enhancementPlan) && Number(aiProfile.enhancementPlan.compressorRatio) ? Number(aiProfile.enhancementPlan.compressorRatio) : 2.8,
+     targetLufs: -21.0
+    },
+    recommendedElevenLabsSettings: {
+     stability: isObj(aiProfile) && isObj(aiProfile.recommendedElevenLabsSettings) && Number(aiProfile.recommendedElevenLabsSettings.stability) ? Number(aiProfile.recommendedElevenLabsSettings.stability) : 0.52,
+     similarity_boost: isObj(aiProfile) && isObj(aiProfile.recommendedElevenLabsSettings) && Number(aiProfile.recommendedElevenLabsSettings.similarity_boost) ? Number(aiProfile.recommendedElevenLabsSettings.similarity_boost) : 0.88,
+     style: isObj(aiProfile) && isObj(aiProfile.recommendedElevenLabsSettings) && Number(aiProfile.recommendedElevenLabsSettings.style) ? Number(aiProfile.recommendedElevenLabsSettings.style) : 0.38,
+     use_speaker_boost: true
+    },
+    metrics: dsp.metrics,
+    dspWeaknesses: dsp.weaknesses,
+    dspQualityScore: dsp.qualityScore,
+    aiKeyUsed: aiKey ? 'yes' : 'no',
+    analyzedAt: Date.now()
+   };
+   VS.analysis = prof;
+   cb(null, prof);
+  };
+  vsGeminiAnalyze(audioBlob, dsp, function (err, aiProf, key) {
+   if (err) { try {
+    if (global.SDP && SDP.Diagnostics) SDP.Diagnostics.log('voice_ai_fallback', { reason: str(err && err.message) });
+   } catch (eD) {} }
+   done(err ? null : aiProf, err ? null : key);
+  });
+  return true;
+ }
+ /* Stage 3 — the automatic pre-enhancement mastering chain, rendered with an
+    OfflineAudioContext (never a live AudioContext — R5 law). */
+ function vsEnhanceSample(pcmBuffer, plan, cb) {
+  cb = cb || noop;
+  try {
+   var fs = pcmBuffer.sampleRate || 44100;
+   var dur = pcmBuffer.duration || 1;
+   var OAC = global.OfflineAudioContext;
+   if (!OAC) { cb(new Error('no_offline_audio'), null, pcmBuffer); return false; }
+   var ctx = new OAC(1, Math.max(1, Math.ceil(dur * fs)), fs);
+   var src = ctx.createBufferSource();
+   src.buffer = pcmBuffer;
+   var nodes = [src];
+   /* 1. high-pass: kill mic rumble */
+   var hp = ctx.createBiquadFilter();
+   hp.type = 'highpass';
+   hp.frequency.value = Math.max(60, Math.min(120, Number(plan.highPassHz) || 90));
+   hp.Q.value = 0.7;
+   nodes.push(hp);
+   /* 2. low-mid mud cut */
+   var mud = ctx.createBiquadFilter();
+   mud.type = 'peaking';
+   mud.frequency.value = Math.max(180, Math.min(320, Number(plan.mudCutHz) || 240));
+   mud.Q.value = 1.1;
+   mud.gain.value = Math.max(-4, Math.min(0, Number(plan.mudCutDb) || -2.5));
+   nodes.push(mud);
+   /* 3. "proud & clear" presence shelf + air */
+   var pres = ctx.createBiquadFilter();
+   pres.type = 'highshelf';
+   pres.frequency.value = Math.max(2800, Math.min(3600, Number(plan.presenceShelfHz) || 3200));
+   pres.Q.value = 0.9;
+   pres.gain.value = Math.max(2.0, Math.min(3.5, Number(plan.presenceGainDb) || 3.0));
+   nodes.push(pres);
+   var air = ctx.createBiquadFilter();
+   air.type = 'highshelf';
+   air.frequency.value = 7500;
+   air.gain.value = 1.5;
+   nodes.push(air);
+   /* 4. broadcast compressor (DynamicsCompressor) */
+   var comp = ctx.createDynamicsCompressor();
+   comp.threshold.value = -18;
+   comp.ratio.value = Math.max(2, Math.min(4, Number(plan.compressorRatio) || 2.8));
+   comp.attack.value = 0.008;
+   comp.release.value = 0.12;
+   nodes.push(comp);
+   var dst = ctx.destination;
+   for (var i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1]);
+   nodes[nodes.length - 1].connect(dst);
+   src.start(0);
+   ctx.startRendering().then(function (rendered) {
+    /* 5. BS.1770-4 normalize to -21 LUFS in-place on the mono samples */
+    var out = rendered.getChannelData(0);
+    var lufsNow = -70;
+    try { if (SDP.AudioNormalize && SDP.AudioNormalize.measureLoudness) lufsNow = SDP.AudioNormalize.measureLoudness(out, fs); } catch (eL) {}
+    var target = Number(plan.targetLufs) || -21;
+    var gainDb = target - lufsNow;
+    var gain = Math.pow(10, gainDb / 20);
+    var peak = 0, j;
+    for (j = 0; j < out.length; j++) { out[j] = out[j] * gain; if (Math.abs(out[j]) > peak) peak = Math.abs(out[j]); }
+    if (peak > 0.891) { var lim = 0.891 / peak; for (j = 0; j < out.length; j++) out[j] *= lim; }
+    cb(null, rendered, out);
+   }, function () { cb(new Error('render_failed'), null, null); });
+   return true;
+  } catch (e) { cb(e, null, null); return false; }
+ }
+ /* Paint the Voice Analysis & Enhancement Scorecard (Sinhala + English). */
+ function vsPaintAnalysisCard(prof, after) {
+  var host = byId('studioVoiceAnalysisCard');
+  if (!host) return false;
+  if (!isObj(prof)) { host.hidden = true; return false; }
+  var m = prof.metrics || {};
+  var am = after || {};
+  var rows = '';
+  var row = function (label, before, afterV, unit) { return '<div class="studio-va-row"><span>' + esc(str(label)) + '</span><span>' + esc(str(before)) + (afterV !== undefined && afterV !== '' ? ' → <strong>' + esc(str(afterV)) + '</strong>' : '') + ' ' + esc(str(unit || '')) + '</span></div>'; };
+  rows += row('Duration / Sample rate', m.durationSec + ' s', am.durationSec !== undefined ? am.durationSec + ' s' : '', '');
+  rows += row('Integrated loudness (LUFS)', m.integratedLufs, am.integratedLufs !== undefined ? am.integratedLufs : '', 'LUFS');
+  rows += row('True peak (dBTP)', m.truePeakDbTP, am.truePeakDbTP !== undefined ? am.truePeakDbTP : '', 'dBTP');
+  rows += row('Noise floor', m.noiseFloorDb, am.noiseFloorDb !== undefined ? am.noiseFloorDb : '', 'dB');
+  rows += row('Spectral centroid', m.spectralCentroidHz + ' Hz', am.spectralCentroidHz !== undefined ? am.spectralCentroidHz + ' Hz' : '', '');
+  rows += row('Presence band (2.5–4.5 kHz)', Math.round((m.presenceRatio || 0) * 100) + '%', am.presenceRatio !== undefined ? Math.round(am.presenceRatio * 100) + '%' : '', '');
+  rows += row('Analyzer engine', prof.source === 'gemini' ? 'Gemini 2.5 Flash + DSP' : 'Deterministic DSP (offline fallback)', '', '');
+  var weakHtml = '';
+  var i, wlabels = { low_projection: 'Low projection / energy', background_hiss: 'Background hiss', muffled_midrange: 'Muffled low-mid', excessive_silence: 'Excessive silence', dynamic_unevenness: 'Dynamic unevenness', clipping_risk: 'Clipping risk', soft_consonants: 'Soft consonant projection', sample_too_short: 'Sample shorter than 30 s' };
+  var wl = prof.weaknessesDetected || [];
+  for (i = 0; i < wl.length; i++) weakHtml += '<span class="studio-va-badge' + (after ? ' studio-va-fixed' : '') + '">' + esc(wlabels[wl[i]] || str(wl[i])) + (after ? ' — fixed' : '') + '</span>';
+  var el = prof.recommendedElevenLabsSettings || {};
+  host.innerHTML =
+   '<h5 class="studio-h4" style="margin:0 0 4px;">📋 Voice Analysis &amp; Enhancement Scorecard · හඬ විශ්ලේෂණ පත්‍රය</h5>' +
+   '<p class="studio-hint">' + esc(prof.timbreSummary || '') + '</p>' +
+   '<div class="studio-va-row"><span>Quality Score · ගුණාත්මක ලකුණ</span><span class="studio-va-score">' + esc(String(prof.qualityScore)) + ' / 100' + '</span></div>' +
+   rows +
+   (weakHtml ? '<div style="margin-top:6px;">' + weakHtml + '</div>' : '<p class="studio-hint" style="margin-top:6px;">No weaknesses detected. දෝෂ හමු නොවීය.</p>') +
+   '<p class="studio-hint" style="margin-top:6px;">Locked ElevenLabs voice_settings — stability ' + esc(String(el.stability)) + ' · similarity_boost ' + esc(String(el.similarity_boost)) + ' · style ' + esc(String(el.style)) + ' · use_speaker_boost ' + (el.use_speaker_boost ? 'true' : 'false') + ' · target ' + esc(String((prof.enhancementPlan && prof.enhancementPlan.targetLufs) || -21)) + ' LUFS</p>';
+  host.hidden = false;
+  return true;
+ }
+ /* 1-click: create the ElevenLabs Instant Voice Clone from the enhanced
+    sample, lock it, and re-synthesize the 30 session words. */
+ function createAndApplyVoiceClone(cb) {
+  cb = cb || noop;
+  if (VS.cloning) { msg('Voice clone already in progress…', 'warn'); cb(new Error('busy')); return false; }
+  if (!VS.confirmed || !VS.blob) { msg('Confirm a Reference Voice Sample first (record/upload → Save & Confirm).', 'bad'); cb(new Error('no_sample')); return false; }
+  var key = resolveElevenKey();
+  if (!trimmedKey(str(key))) { msg('Add an ElevenLabs API key first (Keys & Quota card or the key pool).', 'bad'); cb(new Error('no_key')); return false; }
+  VS.cloning = true;
+  msg('Uploading the enhanced voice sample to ElevenLabs Instant Voice Cloning…', 'ok');
+  vsDecode(VS.blob, function (errDec, pcm) {
+   var plan = (VS.analysis && VS.analysis.enhancementPlan) || {};
+   var go = function (pcmBuf) {
+    var file = VS.enhancedBlob || VS.blob;
+    var fd = new global.FormData();
+    fd.append('name', 'SDP Classroom Clone ' + new Date().toISOString().slice(0, 10));
+    fd.append('description', ((global.SDP && SDP.version) || ''));
+    fd.append('remove_background_noise', 'true');
+    var fname = 'reference-sample.' + (VS.source === 'recorded' ? 'webm' : 'mp3');
+    try { fd.append('files', file, fname); } catch (eF) { fd.append('files', file); }
+    global.fetch('https://api.elevenlabs.io/v1/voices/add', { method: 'POST', headers: { 'xi-api-key': key }, body: fd })
+     .then(function (res) { if (!res.ok) return res.text().then(function (t) { throw new Error('ivc_' + res.status + '_' + str(t).slice(0, 120)); }); return res.json(); })
+     .then(function (j) {
+      var vid = str(j && j.voice_id);
+      if (!vid) throw new Error('ivc_no_voice_id');
+      var elSet = (VS.analysis && VS.analysis.recommendedElevenLabsSettings) || { stability: 0.52, similarity_boost: 0.88, style: 0.38, use_speaker_boost: true };
+      var sig = {
+       voiceId: vid, voiceName: 'My Cloned Voice', modelId: VOICE_MODEL, cloned: true, locked: true,
+       settings: elSet, lufsTarget: -21, truePeakMax: -1.0,
+       presenceShelfHz: (plan.presenceShelfHz || 3200), presenceGainDb: (plan.presenceGainDb || 3.0)
+      };
+      try { dataSaveSettings({ voiceSignature: sig }); } catch (eS) {}
+      try { dataSaveSettings({ voiceSampleProfile: { voiceId: vid, qualityScore: (VS.analysis && VS.analysis.qualityScore) || null, source: VS.analysis ? VS.analysis.source : 'dsp', at: Date.now(), plan: plan } }); } catch (eSp) {}
+      if (!isObj(ST.secrets)) ST.secrets = {};
+      var known = Array.isArray(ST.fetchedVoices) ? ST.fetchedVoices : [];
+      var dup = false, fi;
+      for (fi = 0; fi < known.length; fi++) if (str(known[fi].voice_id) === vid) dup = true;
+      if (!dup) known.unshift({ voice_id: vid, name: 'My Cloned Voice (SDP)', category: 'cloned' });
+      ST.fetchedVoices = known;
+      ST.secrets.fetchedVoices = known;
+      var sel = byId('studioClassroomVoiceSelect');
+      if (sel) {
+       var o = doc.createElement('option');
+       o.setAttribute('value', vid);
+       o.textContent = 'My Cloned Voice (SDP) · ' + vid;
+       sel.appendChild(o);
+       sel.value = vid;
+      }
+      var inp = byId('studioClassroomCustomVoiceId');
+      if (inp) inp.value = vid;
+      paintClassroomVoiceBar();
+      try { SDP.Sync.emitChange('voice_clone_applied', { voiceId: vid }); } catch (eE) {}
+      msg('Voice clone created: ' + vid + ' — now wiping old word clips and re-synthesizing the 30 words…', 'ok');
+      VS.cloning = false;
+      /* clean wipe of the old word clips, then fresh 30-word synthesis */
+      try {
+       var wk = [], words = currentWords(), wi;
+       for (wi = 0; wi < words.length; wi++) wk.push('words.' + str(words[wi].w).toLowerCase());
+       if (SDP.Speech && SDP.Speech.purgeStaleClipsEverywhere) SDP.Speech.purgeStaleClipsEverywhere({ purgeVoiceMismatch: true, purgeStaleRev: true });
+      } catch (eP2) {}
+      generateClips({ force: true, keys: (function () { var a = [], w2 = currentWords(), k2; for (k2 = 0; k2 < w2.length; k2++) a.push('words.' + str(w2[k2].w).toLowerCase()); return a; })() }, function () {
+       try { SDP.Sync.emitChange('voice_pack_updated', {}); } catch (eE2) {}
+       cb(null, vid);
+      });
+     })
+     .catch(function (err) {
+      VS.cloning = false;
+      var why = str(err && err.message);
+      if (/ivc_401|ivc_429/.test(why) && rotateElevenKey('ivc')) {
+       msg('Key rotated — retrying the voice clone once…', 'warn');
+       VS.cloning = false;
+       global.setTimeout(function () { createAndApplyVoiceClone(cb); }, 300);
+       return;
+      }
+      msg('Instant Voice Cloning failed: ' + why.slice(0, 140), 'bad');
+      cb(err);
+     });
+   };
+   if (errDec || !pcm) { go(null); return; }
+   vsEnhanceSample(pcm, plan, function (errEnh, rendered, samples) {
+    if (!errEnh && rendered && samples) {
+     try {
+      if (SDP.AudioNormalize && SDP.AudioNormalize.encodeWav) {
+       var ab = SDP.AudioNormalize.encodeWav(samples, rendered.sampleRate);
+       VS.enhancedBlob = new global.Blob([ab], { type: 'audio/wav' });
+       var pv = byId('voiceSamplePreviewAudio');
+       if (pv && global.URL && global.URL.createObjectURL) { try { pv.src = global.URL.createObjectURL(VS.enhancedBlob); } catch (eU) {} }
+      }
+     } catch (eW) {}
+    }
+    go(rendered || null);
+   });
+  });
+  return true;
+ }
+ /* The six Voice Sample Studio buttons + the upload input. */
+ function toggleVoiceSampleRecord() {
+  if (VS.active) return vsStopRecording();
+  return vsStartRecording();
  }
 
  /* ══ D-L6: the studio must catch up */
@@ -6105,10 +7181,34 @@ function setStudioWords(list, source) {
   testElevenLabsKey: testElevenLabsKey,
   testGitHubToken: testGitHubToken,
   refreshQuota: refreshQuota,
-  recordClip: recordClip,
-  toggleRecord: toggleRecord,
-  stopRecord: stopRecord,
-  commitClip: commitClip,
+  /* v0.0.6.y Pillar 1 (Y1): the Voice Sample Studio & AI clone pipeline. */
+  toggleVoiceSampleRecord: toggleVoiceSampleRecord,
+  vsStopRecording: vsStopRecording,
+  vsDspAnalyze: vsDspAnalyze,
+  analyzeVoiceSampleWithAi: analyzeVoiceSampleWithAi,
+  vsEnhanceSample: vsEnhanceSample,
+  createAndApplyVoiceClone: createAndApplyVoiceClone,
+  vsHandleFile: vsHandleFile,
+  voiceSampleState: function () { return { source: VS.source, confirmed: VS.confirmed, hasBlob: !!VS.blob, analysis: VS.analysis }; },
+  /* v0.0.6.y Pillar 3 (Y3): the Lecturer Alert Inbox painter. */
+  paintLecturerAlertsCard: paintLecturerAlertsCard,
+  vsPaintAnalysisCard: vsPaintAnalysisCard,
+  paintVoiceCoveragePill: paintVoiceCoveragePill,
+  /* v0.0.6.y Pillar 4 (Y4): legacy alias — recordClip() now confirms the
+     reference voice sample instead of writing a fake assets/audio path. */
+  recordClip: function (idx, cb) {
+   cb = cb || noop;
+   cb(VS.confirmed ? null : new Error('confirm_voice_sample_first'), VS.confirmed ? { confirmed: true, source: VS.source } : null);
+   return VS.confirmed;
+  },
+  toggleRecord: toggleVoiceSampleRecord,
+  stopRecord: vsStopRecording,
+  commitClip: function (token, cb) {
+   cb = cb || noop;
+   if (!VS.confirmed) { cb(new Error('no_clip')); return false; }
+   createAndApplyVoiceClone(function (err) { cb(err, !err); });
+   return true;
+  },
   elevenUrl: elevenUrl,
   voiceId: VOICE_ID,
   voiceName: VOICE_NAME,
@@ -6137,6 +7237,11 @@ function setStudioWords(list, source) {
   refreshEditor: refreshEditor,
   /* D12/D18: busy state guard for view */
   isBusy: function () { return !!(ST.generating || ST.publishing || ST.enriching); },
+  /* v0.0.6.w exports — the unified classroom & cloned voice controller. */
+  chosenClassroomVoiceId: chosenClassroomVoiceId,
+  chosenClassroomVoiceName: chosenClassroomVoiceName,
+  applyClassroomVoice: applyClassroomVoice,
+  buildFallbackRpHint: buildFallbackRpHint,
   /* v0.0.6.v exports */
   defaultVoiceSignature: defaultVoiceSignature,
   voiceSignature: voiceSignature,

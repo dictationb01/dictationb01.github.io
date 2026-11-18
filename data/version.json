@@ -2,18 +2,17 @@
   "ver": 36,
   "appVersion": "0.0.6.v",
   "version": "0.0.6.v",
-  "buildDate": "2026-11-17",
+  "buildDate": "2026-11-18",
   "schema": 36,
-  "settingsRev": 60,
-  "session": "12",
-  "title": "Session 12 - Places and Buildings",
-  "updatedAt": "2026-11-17T09:00:00.000Z",
-  "syncRev": 1797000000009,
+  "settingsRev": 61,
+  "session": "14",
+  "title": "Session 14 - Places: Town & City; Services",
+  "updatedAt": "2026-11-18T02:52:47.012Z",
+  "syncRev": 1797000000010,
   "payloadFiles": [
     "data/session.json",
     "data/config.json",
     "data/elevenlabs-audio.json",
     "data/version.json"
-  ],
-  "wordsRev": 1797000000009
+  ]
 }

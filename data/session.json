@@ -293,8 +293,8 @@
       {
         "w": "mobile phone",
         "p": "/ˈmɒbɪl ˈfɒn/",
-        "pos": "n.",
-        "m": "A mobile phone.",
+        "pos": "noun.",
+        "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
         "si": "ජංගම දුරකථනය",
         "s": "We saw a mobile phone near the station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
@@ -585,8 +585,8 @@
         {
           "w": "mobile phone",
           "p": "/ˈmɒbɪl ˈfɒn/",
-          "pos": "n.",
-          "m": "A mobile phone.",
+          "pos": "noun.",
+          "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
           "si": "ජංගම දුරකථනය",
           "s": "We saw a mobile phone near the station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
@@ -896,10 +896,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.6.z",
-  "updatedAt": "2026-11-19T09:46:47.044Z",
+  "updatedAt": "2026-11-19T09:47:33.592Z",
   "version": "0.0.6.z",
   "buildDate": "2026-11-18",
-  "settingsRev": 67,
+  "settingsRev": 68,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1208,7 +1208,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000016,
+  "syncRev": 1797000000017,
   "words": [
     {
       "w": "communications",
@@ -1483,8 +1483,8 @@
     {
       "w": "mobile phone",
       "p": "/ˈmɒbɪl ˈfɒn/",
-      "pos": "n.",
-      "m": "A mobile phone.",
+      "pos": "noun.",
+      "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
       "si": "ජංගම දුරකථනය",
       "s": "We saw a mobile phone near the station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"

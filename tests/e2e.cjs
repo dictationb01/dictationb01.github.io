@@ -63,8 +63,8 @@ async function newPage(browser, origin, opts) {
   opts = opts || {};
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.addInitScript(MOCK);
-  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.6.z');
-        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.6.z' })); } catch (e) {} });
+  if (opts.guideSeen) await ctx.addInitScript(() => { try { localStorage.setItem('sdp.guide_seen', '0.0.7.a');
+        localStorage.setItem('sdp.settings', JSON.stringify({ briefingSeen: '0.0.7.a' })); } catch (e) {} });
   if (opts.settings) await ctx.addInitScript((s) => { try { localStorage.setItem('sdp.settings', JSON.stringify(s)); } catch (e) {} }, opts.settings);
   const page = await ctx.newPage();
   const errors = [];
@@ -79,7 +79,7 @@ async function newPage(browser, origin, opts) {
 }
 
 /* appliedSettingsRev pins this pacing against a classSettings adoption (R11.2). */
-const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99, briefingSeen: '0.0.6.z' };
+const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdvance: true, rate: 1, volume: 1, lang: 'en', theme: 'dark', langResetV001e: true, defaultsResetV001f: true, appliedSettingsRev: 99, briefingSeen: '0.0.7.a' };
 
 (async function main() {
   const server = await start({ root: ROOT });
@@ -137,10 +137,10 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     await page.evaluate(() => { document.getElementById('btnGuideClose').click(); });
     await page.waitForTimeout(150);
     const afterGuide = await page.evaluate(() => localStorage.getItem('sdp.guide_seen'));
-    check('G7.1d closing the guide records the visit', afterGuide === '0.0.6.z', afterGuide);
+    check('G7.1d closing the guide records the visit', afterGuide === '0.0.7.a', afterGuide);
     const briefingStamp = await page.evaluate(() => localStorage.getItem('sdp.settings'));
     check('G7.1d2 the briefing completion is stamped inside sdp.settings',
-      /"briefingSeen":"0\.0\.6\.z"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
+      /"briefingSeen":"0\.0\.7\.a"/.test(briefingStamp || ''), (briefingStamp || '').slice(0, 60));
 
     /* ── 2. credits: on Home and in About, never floating ─────────────── */
     // contract: docs/ARCHITECTURE_MAP.md §R7 attribution placement
@@ -243,7 +243,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       };
     });
     check('G7.3a Start opens the cockpit', cockpit.screen === 'screen-player', cockpit.screen);
-    check('G7.3b the cockpit shows progress and the word class (v0.0.6.z Z5: denominator is the live bank size)',
+    check('G7.3b the cockpit shows progress and the word class (v0.0.7.a Z5: denominator is the live bank size)',
       /^1 \/ \d+$/.test(cockpit.progress) && cockpit.pos.length >= 1, JSON.stringify(cockpit));
     // contract: no spoilers — the target word may only appear after Finish
     check('G7.3c the target word is never printed during the beat', cockpit.inDom === false, cockpit.word);
@@ -285,7 +285,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       index: SDP.Engine.config().index,
       progress: document.getElementById('cockpitProgress').textContent
     }));
-    check('G7.3i Next moves to word two', nextWord.index === 1 && nextWord.progress === '2 / 30', JSON.stringify(nextWord));
+    check('G7.3i Next moves to word two', nextWord.index === 1 && nextWord.progress === '2 / 31', JSON.stringify(nextWord));
     await page.click('#btnPrev');
     await page.waitForTimeout(200);
     const prevIndex = await page.evaluate(() => SDP.Engine.config().index);
@@ -320,8 +320,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       pct: document.getElementById('scorePct').textContent
     }));
     check('G7.4a Finish opens the self-check panel', res.visible === true);
-    check('G7.4b every word of the session appears in the table', res.rows === 30, res.rows);
-    check('G7.4c the default score is a full 30 / 30 (100%)', res.score === '30 / 30' && res.pct === '100%', res.score + ' ' + res.pct);
+    check('G7.4b every word of the session appears in the table', res.rows === 31, res.rows);
+    check('G7.4c the default score is a full 30 / 30 (100%)', res.score === '31 / 31' && res.pct === '100%', res.score + ' ' + res.pct);
 
     const marked = await page.evaluate(async () => {
       const buttons = Array.from(document.querySelectorAll('#resultsTable [data-mark="missed"]')).slice(0, 6);
@@ -334,13 +334,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         progress: JSON.parse(localStorage.getItem('sdp.progress'))
       };
     });
-    check('G7.4d six missed words read 24 / 30 and 80%', marked.score === '24 / 30' && marked.pct === '80%', marked.score + ' ' + marked.pct);
+    check('G7.4d six missed words read 24 / 30 and 81%', marked.score === '25 / 31' && marked.pct === '81%', marked.score + ' ' + marked.pct);
     check('G7.4e missed rows are visually flagged', marked.missedRows === 6, marked.missedRows);
     check('G7.4f weakWords is saved for the retry button', marked.progress.weakWords.length === 6, JSON.stringify(marked.progress.weakWords));
-    check('G7.4g Home accuracy now reads 80%', await page.evaluate(async () => {
+    check('G7.4g Home accuracy now reads 81%', await page.evaluate(async () => {
       document.getElementById('tab-home').click();
       await new Promise((r) => setTimeout(r, 120));
-      return document.getElementById('statAccuracy').textContent === '80%';
+      return document.getElementById('statAccuracy').textContent === '81%';
     }));
     await page.evaluate(() => { document.getElementById('tab-player').click(); });
 
@@ -380,7 +380,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       progress: document.getElementById('cockpitProgress').textContent
     }));
     check('G7.5d Enter advances to the next word with a cleared input',
-      advanced.index === 1 && advanced.cleared === '' && advanced.progress === '2 / 30', JSON.stringify(advanced));
+      advanced.index === 1 && advanced.cleared === '' && advanced.progress === '2 / 31', JSON.stringify(advanced));
     await page.evaluate(() => SDP.Engine.finish());
     await page.waitForTimeout(400);
     const typedRow = await page.evaluate(() => {
@@ -401,11 +401,11 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     const savedTo = path.join('/tmp', 'g7-backup.json');
     await download.saveAs(savedTo);
     const backup = JSON.parse(fs.readFileSync(savedTo, 'utf8'));
-    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.6\.z\.json/.test(download.suggestedFilename()), download.suggestedFilename());
+    check('G7.6a the backup downloads with the version in its name', /smart-dictation-backup-0\.0\.7\.a\.json/.test(download.suggestedFilename()), download.suggestedFilename());
     check('G7.6b the backup carries progress, settings and provenance',
       ['app', 'schema', 'exportedAt', 'progress', 'settings', 'appVersion'].every((k) => k in backup), Object.keys(backup).join(','));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — backups pin the current build
-    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.6.z', backup.appVersion);
+    check('G7.6c the backup pins the running appVersion', backup.appVersion === '0.0.7.a', backup.appVersion);
     fs.unlinkSync(savedTo);
 
     /* ── 7. the transparency pair is reachable ────────────────────────── */

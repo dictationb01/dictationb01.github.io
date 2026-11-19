@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "ver": 64,
+  "ver": 65,
   "session": {
     "no": "14",
     "day": "Thursday",
@@ -26,7 +26,7 @@
         "pos": "noun.",
         "m": "The act or fact of communicating anything; transmission.",
         "si": "සන්නිවේදන",
-        "s": "communication of a secret",
+        "s": "Satellite communications failed during the storm.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
       },
       {
@@ -215,7 +215,7 @@
         "pos": "verb.",
         "m": "To put up to hang.",
         "si": "ප්රමාද කරන්න",
-        "s": "I hung up my wash on the line.",
+        "s": "Please do not hang up the phone.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
       },
       {
@@ -300,13 +300,14 @@
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
       }
     ],
-    "wordCount": 31
+    "wordCount": 31,
+    "wordCountMode": "custom"
   },
   "lists": [
     {
       "id": "list_session_8_feelings",
       "name": "Session 8 - Personal Feelings, Opinions & Experiences (Adj)",
-      "version": "0.0.6.z",
+      "version": "0.0.7.a",
       "published": true,
       "session": "Session 8",
       "date": "2026-10-29",
@@ -318,7 +319,7 @@
           "pos": "noun.",
           "m": "The act or fact of communicating anything; transmission.",
           "si": "සන්නිවේදන",
-          "s": "communication of a secret",
+          "s": "Satellite communications failed during the storm.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
         },
         {
@@ -507,7 +508,7 @@
           "pos": "verb.",
           "m": "To put up to hang.",
           "si": "ප්රමාද කරන්න",
-          "s": "I hung up my wash on the line.",
+          "s": "Please do not hang up the phone.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
         },
         {
@@ -895,11 +896,11 @@
   ],
   "announcement": null,
   "comments": [],
-  "appVersion": "0.0.6.z",
+  "appVersion": "0.0.7.a",
   "updatedAt": "2026-11-19T09:49:25.175Z",
-  "version": "0.0.6.z",
+  "version": "0.0.7.a",
   "buildDate": "2026-11-18",
-  "settingsRev": 70,
+  "settingsRev": 71,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -999,7 +1000,7 @@
   "voice": "Amy",
   "lockedVoice": "Amy",
   "updatedAtMs": 1793448000000,
-  "schema": 64,
+  "schema": 65,
   "pastSessions": [
     {
       "no": "7",
@@ -1208,7 +1209,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000019,
+  "syncRev": 1797000000020,
   "words": [
     {
       "w": "communications",
@@ -1216,7 +1217,7 @@
       "pos": "noun.",
       "m": "The act or fact of communicating anything; transmission.",
       "si": "සන්නිවේදන",
-      "s": "communication of a secret",
+      "s": "Satellite communications failed during the storm.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
     },
     {
@@ -1405,7 +1406,7 @@
       "pos": "verb.",
       "m": "To put up to hang.",
       "si": "ප්රමාද කරන්න",
-      "s": "I hung up my wash on the line.",
+      "s": "Please do not hang up the phone.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
     },
     {
@@ -1491,6 +1492,6 @@
     }
   ],
   "versionFamily": "9.0.0",
-  "wordsRev": 1797000000013,
+  "wordsRev": 1797000000020,
   "wordCount": 31
 }

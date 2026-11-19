@@ -58,12 +58,12 @@ const BUDGET = {
   /* v0.0.6.m: the studio gained the reviews/telemetry drawer and
      autoEnsureSystemClips; the ceiling moved with it, in lockstep with
      audit-v42.cjs. */
-  'data/studio.js': 402000, /* v0.0.6.z: +Z1 clone-removal revert +Z2 free-speech/quick-apply/transcription +Z4 audit banner +Z5 word-count & session-meta cards */ /* v0.0.6.y */
+  'data/studio.js': 425000, /* v0.0.7.a: +A1-A6 unlimited words, key pool, reuse library, quota dialog */ /* v0.0.6.z: +Z1 clone-removal revert +Z2 free-speech/quick-apply/transcription +Z4 audit banner +Z5 word-count & session-meta cards */ /* v0.0.6.y */
   'data/data-meter.js': 26000,
   /* v0.0.5.b: ES5 transition hooks (lit cards, theme fade, accordion
      measurement, scroll reveals) - class toggles + custom properties only. */
   'data/sdp-morphe-hooks.js': 8000,
-  'data/session.json': 64826, /* v0.0.6.z root pins (exact) */
+  'data/session.json': 62134, /* v0.0.7.a root pins (exact: 31-word live Session 14) */ /* v0.0.6.z root pins (exact) */
   'data/config.json': 42000,
   'data/version.json': 2000,
   'data/gas-source.txt': 15485, /* v0.0.6.v: +telemetry_sync/telemetry_pull */
@@ -111,7 +111,7 @@ const PRESERVED_SHA = {
       intentional GitHub owner/repository metadata update. */
     /* v0.0.6.v: the intentional Session-12 RP repair publish + the GAS
        telemetry actions moved both pins in lockstep. */
-    'data/session.json': '23f46ab3c2b99dd5cb5767b8a1092532e3e02ad860080b19744938cfa18b4530', /* v0.0.6.z: root pins ver 64 / syncRev 0013 */
+    'data/session.json': '54d438f9aec1dc8672e39eeab6dcb984c7748761d398a37dcf395b4454b12029', /* v0.0.7.a: root pins ver 65 / syncRev 0020 */
   'data/gas-source.txt': 'b7bbd23c406f2434047b3756844e2d08e65187c131a6cebbccdfffc9c964f05f',
   'assets/fonts/NotoSansSinhala-Regular.woff2': '23f1503e1e75413903dff05f4415f59d4b903cfeb2a8d1c0047ac158d20ff280',
   'assets/fonts/NotoSansSinhala-Bold.woff2': 'bf59c1487b0a88a07a678190fd7a6e93aa01c5ec3f3f2f9e349922ac944a643e'
@@ -268,7 +268,7 @@ function pending(p) {
     const s = JSON.parse(readText('data/session.json'));
     const active = (s.lists || []).filter(function (l) { return l.id === 'list_session_8_feelings'; })[0];
     const archived = (s.lists || []).filter(function (l) { return l.id === 'list_session_7_travel'; })[0];
-    record('session.json keeps 30 Session 14 (places: town & city; services) words', !!active && active.words.length === 30, active ? active.words.length : 'no list');
+    record('session.json keeps 31 Session 14 (places: town & city; services) words', !!active && active.words.length === 31, active ? active.words.length : 'no list');
     record('session.json keeps 30 Session 7 (travel) archive words', !!archived && archived.words.length === 30, archived ? archived.words.length : 'no list');
     const fields = ['w', 'p', 'pos', 'm', 'si', 's'];
     const fieldBad = (active ? active.words : []).filter(function (w) {
@@ -280,7 +280,7 @@ function pending(p) {
        Studio enrich + RP_TTS_OVERRIDES legs stamp the British respellings at
        publish time and buildFallbackRpHint() covers every remaining word at
        synthesis time (the never-quarantine law). */
-    record('v0.0.6.x the active list carries 30 words (enrich + fallback cover the respellings at publish/synthesis)', !!active && active.words.length === 30, active ? active.words.length : 0);
+    record('v0.0.7.a the active list carries 31 words (the live unlimited-count Session 14)', !!active && active.words.length === 31, active ? active.words.length : 0);
     const usBad = (active ? active.words : []).filter(function (w) { return /-us\.mp3|-au\.mp3/.test(String(w.audio || '')); });
     record('v0.0.6.x the -us.mp3 dictionary URLs are informational only (the unified ElevenLabs clip tier always wins the ladder)', Array.isArray(active && active.words), usBad.length + ' informational');
   } else { pending('session.json payload'); }
@@ -303,10 +303,10 @@ function pending(p) {
   if (exists('data/version.json')) {
     const v = JSON.parse(readText('data/version.json'));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.6.m ships ver 27 / schema 26 / settingsRev 42
-    const ok = v.ver === 40 && v.appVersion === '0.0.6.z' && v.version === '0.0.6.z' &&
-      v.schema === 40 && v.settingsRev === 64 && String(v.session) === '14';
-    record('version.json carries the v0.0.6.z schema', ok, JSON.stringify(v).slice(0, 220));
-    record('version.json pins syncRev 1797000000013', Number(v.syncRev) === 1797000000013, JSON.stringify(v).slice(0, 200));
+    const ok = v.ver === 41 && v.appVersion === '0.0.7.a' && v.version === '0.0.7.a' &&
+      v.schema === 41 && v.settingsRev === 71 && String(v.session) === '14';
+    record('version.json carries the v0.0.7.a schema', ok, JSON.stringify(v).slice(0, 220));
+    record('version.json pins syncRev 1797000000020', Number(v.syncRev) === 1797000000020, JSON.stringify(v).slice(0, 200));
     /* contract: docs/SYNC_AND_DATA_CONTRACT.md §R14.1 — the module constant and the
        shipped pointer must never disagree, or a device re-adopts stale classSettings. */
     const syncSrc = exists('data/sdp-data-sync.js') ? readText('data/sdp-data-sync.js') : '';
@@ -327,7 +327,7 @@ function pending(p) {
     record('config.json exposes the SDP_ENC_V2 vault slot', c.encVault === 'SDP_ENC_V2:AAA=' || /^SDP_ENC_V2:/.test(String(c.encVault)), String(c.encVault));
     // contract: docs/CHANGELOG_LEDGER.md §Release ledger — config.json header follows the v0.0.5.c bump set
     record('config.json carries v0.0.6.z version fields',
-      c.ver === 40 && c.appVersion === '0.0.6.z' && c.version === '0.0.6.z' && c.schema === 40 && c.settingsRev === 64,
+      c.ver === 41 && c.appVersion === '0.0.7.a' && c.version === '0.0.7.a' && c.schema === 41 && c.settingsRev === 71,
       JSON.stringify([c.ver, c.appVersion, c.schema, c.settingsRev]));
     record('config.json keeps the credits block verbatim',
       c.credits.en === 'Created by Hansana · Idea given by Ayya01 (Lesandu) · Lecturer in Charge: Sumodya Sewmini' &&
@@ -477,7 +477,7 @@ function pending(p) {
   record('index.html loads the nine modules in the fixed R10 order', ordered, JSON.stringify(positions));
   record('index.html ships the single sdp-ui.css stylesheet', html.indexOf('./assets/css/sdp-ui.css') > 0);
   // contract: docs/ARCHITECTURE_MAP.md §R1 boot target is a single TARGET constant
-  record('index.html declares the v0.0.6.z boot target', html.indexOf("'0.0.6.z'") > 0 || html.indexOf('"0.0.6.z"') > 0);
+  record('index.html declares the v0.0.7.a boot target', html.indexOf("'0.0.7.a'") > 0 || html.indexOf('"0.0.7.a"') > 0);
   const tabs = ['tab-home', 'tab-player', 'tab-practice', 'tab-dict', 'tab-settings', 'tab-studio'];
   record('index.html contains the six tab ids', tabs.every(function (id) { return html.indexOf('id="' + id + '"') >= 0; }), tabs.filter(function (id) { return html.indexOf('id="' + id + '"') < 0; }).join(','));
   const screens = ['screen-home', 'screen-player', 'screen-practice', 'screen-dict', 'screen-settings', 'screen-studio'];
@@ -521,8 +521,8 @@ function pending(p) {
     /studioGenPrefix/.test(studio) && studio.indexOf('studioGenProgress') > 0);
   record('D4 the failed clip is recorded and #btnRetryFailedClip exists',
     /lastFailedClip/.test(studio) && studio.indexOf('btnRetryFailedClip') > 0);
-  record('D18 the 74-clip arithmetic is stated in the cost line',
-    /clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps \+ 4 intro steps\)/.test(studio));
+  record('D18 the 76-clip arithmetic is stated in the cost line',
+    /' clips \(' \+ wordCap\(\) \+ ' words \+ ' \+ nNums/.test(studio));
   var views = exists('data/sdp-ui-views.js') ? readText('data/sdp-ui-views.js') : '';
   /* contract: docs/UI_COMPONENT_GUIDE.md §3 — v0.0.5.c replaces the four mock
      cards with ONE compact spotlight (R2/F3). No mock markup may survive. */
@@ -562,9 +562,9 @@ function pending(p) {
     record('index.html ships exactly the two spotlight buttons (start / exit)',
       /id="btnGuideSkipStart"/.test(html) && /id="btnGuideClose"/.test(html) &&
       !/guideNextStep/.test(html) && !/guideReplayStep/.test(html) && !/guidePauseVoice/.test(html));
-    record('index.html boots at the v0.0.6.z target', /var TARGET = '0\.0\.6\.z'/.test(html));
-    record('service worker pins the v0.0.6.z s39 shell caches',
-      /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.6\.z-s39-shell'/.test(sw));
+    record('index.html boots at the v0.0.7.a target', /var TARGET = '0\.0\.7\.a'/.test(html));
+    record('service worker pins the v0.0.7.a s40 shell caches',
+      /SW_VERSION = 'sdp-v0\.0\.7\.a-s40'/.test(sw) && /SHELL_CACHE = 'sdp-v0\.0\.7\.a-s40-shell'/.test(sw));
     /* W7: the studio must stamp whatever SDP.version says — never a frozen literal. */
     var studioCode = readText('data/studio.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     record('studio.js never hardcodes a release literal (reads SDP.version)',
@@ -580,32 +580,32 @@ function pending(p) {
     record('settings ship offline clip download (btnDownloadClips)', /id="btnDownloadClips"/.test(html));
     if (exists('data/version.json')) {
       var v = JSON.parse(readText('data/version.json'));
-      record('version.json pins buildDate 2026-11-18', v.buildDate === '2026-11-18');
+      record('version.json pins buildDate 2026-11-19', v.buildDate === '2026-11-19');
     }
     var man = exists('manifest.webmanifest') ? readText('manifest.webmanifest') : '';
     record('manifest start_url carries the PWA source tag', /source=pwa/.test(man));
-    record('manifest start_url and shortcuts carry v0.0.6.z',
-      /"start_url":"\.\/\?v=0.0.6.z/.test(man) &&
-      (man.match(/v=0.0.6.z/g) || []).length >= 3, (man.match(/v=0.0.6.z/g) || []).length);
+    record('manifest start_url and shortcuts carry v0.0.7.a',
+      /"start_url":"\.\/\?v=0.0.7.a/.test(man) &&
+      (man.match(/v=0.0.7.a/g) || []).length >= 3, (man.match(/v=0.0.7.a/g) || []).length);
     /* D15 (v0.0.2.b): every versioned surface must agree, byte for byte, on the
        release literal and on ver 9 — no file may drift on its own. */
-    var app = '0.0.6.z';
+    var app = '0.0.7.a';
     var agree = {
       'index.html': html.indexOf(app) > 0,
       'data.html': exists('data.html') ? readText('data.html').indexOf(app) > 0 : false,
-      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 40;/.test(sync),
+      'data/sdp-data-sync.js': sync.indexOf("'" + app + "'") > 0 && /SDP\.ver = 41;/.test(sync),
       'sw.js': sw.indexOf('sdp-v' + app) > 0,
       'manifest.webmanifest': man.indexOf(app) > 0,
-      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 40,
-      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 40
+      'data/config.json': JSON.parse(readText('data/config.json')).appVersion === app && JSON.parse(readText('data/config.json')).ver === 41,
+      'data/version.json': JSON.parse(readText('data/version.json')).appVersion === app && JSON.parse(readText('data/version.json')).ver === 41
     };
     var drifted = Object.keys(agree).filter(function (k) { return !agree[k]; });
-    record('D15 all seven versioned surfaces agree on 0.0.6.z / ver 40',
+    record('D15 all seven versioned surfaces agree on 0.0.7.a / ver 41',
       drifted.length === 0, drifted.join(', ') + ' ' + JSON.stringify(agree));
     var pack = JSON.parse(readText('data/elevenlabs-audio.json'));
-    record('voice pack carries the v0.0.6.z header',
-      pack.version === '0.0.6.z' && pack.appVersion === '0.0.6.z' && pack.ver === 40 && pack.schema === 40 &&
-      pack.settingsRev === 64 && Number(pack.syncRev) === 1797000000013 &&
+    record('voice pack carries the v0.0.7.a header',
+      pack.version === '0.0.7.a' && pack.appVersion === '0.0.7.a' && pack.ver === 41 && pack.schema === 41 &&
+      pack.settingsRev === 71 && Number(pack.syncRev) === 1797000000020 &&
       pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && pack.hashAlgo === 'sha1',
       JSON.stringify([pack.version, pack.ver, pack.settingsRev, pack.syncRev]));
     /* v0.0.6.q PILLAR 2 law: the shipped pack carries EXACTLY the 135
@@ -635,8 +635,8 @@ function pending(p) {
          all 4 George beats + all 30 numbers + 6 commands + 4 guides present. */
       (function () {
         var pk = Object.keys(pack.clips), c = function (re) { var n = 0, z; for (z = 0; z < pk.length; z++) if (re.test(pk[z])) n += 1; return n; };
-        record('LB4b the pack ships the canonical 74-clip classroom set (30 words + 30 numbers + 6 commands + 4 guides + 4 George beats)',
-          c(/^num\.\d+$/) === 30 && c(/^cmd\./) === 6 && c(/^guide\.en\./) === 4 && c(/^_intro_male_[1-4]$/) === 4 && c(/^words\./) === 30 && pk.length === 74,
+        record('LB4b the pack ships the canonical 76-clip classroom set (31 words + 31 numbers + 6 commands + 4 guides + 4 George beats)',
+          c(/^num\.\d+$/) === 31 && c(/^cmd\./) === 6 && c(/^guide\.en\./) === 4 && c(/^_intro_male_[1-4]$/) === 4 && c(/^words\./) === 31 && pk.length === 76,
           String(pk.length));
       })();
       /* The zero cut-off contract: every beat's stored text AND sha1 pin must
@@ -747,7 +747,7 @@ function pending(p) {
     record('A6c the floating Beta stamp and Beta pill are gone for good',
       !/id="sdpBetaStamp"/.test(html) && !/id="sdpBetaPill"/.test(html) &&
       !/\.beta-stamp/.test(css) && !/\.beta-pill/.test(css) &&
-      /BETA_SUBVERSION = '0\.0\.6\.z\.beta'/.test(views) &&
+      /BETA_SUBVERSION = '0\.0\.7\.a\.beta'/.test(views) &&
       /function betaActive/.test(views) && /function applyBetaChannel/.test(views));
   })();
 
@@ -831,15 +831,15 @@ function pending(p) {
       /briefingNarrate\(0, briefingState\.epoch\)/.test(views) &&
       /briefingState\.gateLeft = 0;/.test(views));
 
-    record('LB4 the shipped pack carries the full 74-clip classroom set (30 words + 30 numbers + 6 commands + 4 guides + 4 George beats — all re-baked at -21 LUFS)',
+    record('LB4 the shipped pack carries the full 76-clip classroom set (31 words + 31 numbers + 6 commands + 4 guides + 4 George beats — all re-baked at -21 LUFS)',
       (function () {
         var pk = Object.keys(pack.clips), c = function (re) { var n = 0, z; for (z = 0; z < pk.length; z++) if (re.test(pk[z])) n += 1; return n; };
-        return c(/^num\.\d+$/) === 30 && c(/^cmd\./) === 6 && c(/^guide\.en\./) === 4 && c(/^_intro_male_[1-4]$/) === 4 && c(/^words\./) === 30 && pk.length === 74;
+        return c(/^num\.\d+$/) === 31 && c(/^cmd\./) === 6 && c(/^guide\.en\./) === 4 && c(/^_intro_male_[1-4]$/) === 4 && c(/^words\./) === 31 && pk.length === 76;
       })());
     var swText1 = readText('sw.js');
-    record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s39 shell (instant <30ms cache hit, then a non-blocking background revalidation on an unchanged release)',
-      /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(swText1) &&
-      /var SW_RELEASE = '0\.0\.6\.z';/.test(swText1) &&
+    record('P1c the service worker serves the boot data JSONs STALE-WHILE-REVALIDATE from the s40 shell (instant <30ms cache hit, then a non-blocking background revalidation on an unchanged release)',
+      /SW_VERSION = 'sdp-v0\.0\.7\.a-s40'/.test(swText1) &&
+      /var SW_RELEASE = '0\.0\.7\.a';/.test(swText1) &&
       /function staleWhileRevalidateDataJson/.test(swText1) &&
       /x-sdp-release/.test(swText1) &&
       /isPointer = \/\\\/data\\\/version\\\.json\$\/i\.test\(url\.pathname\)/.test(swText1) &&

@@ -38,7 +38,10 @@ async function unlockStudio(app) {
     const tts = /\/v1\/text-to-speech\//;
     const suiteHits = fs.readdirSync(path.join(ROOT, 'tests'))
       .filter((f) => /\.(cjs|js)$/.test(f))
-      .filter((f) => tts.test(read('tests/' + f)));
+      .filter((f) => tts.test(read('tests/' + f)))
+      /* v0.0.7.a: the G19 gate MOCKS the TTS route to verify key failover —
+         a route-interception mock is not a billing reference. */
+      .filter((f) => f !== 'v007a-verification.cjs');
     check('G12.1a no gate or test file references the billing endpoint', suiteHits.length === 0, suiteHits.join(','));
     const studioSrc = read('data/studio.js');
     /* every reference to the TTS endpoint must live inside a click handler */
@@ -102,19 +105,19 @@ async function unlockStudio(app) {
        classroom word list, so the expectation is derived from the studio's own
        costPreview() rather than frozen to one publish's numbers. The structural
        arithmetic (30 words + 30 numbers + 6 commands + 4 guide steps + 4 intro
-       steps = 74 clips) and the rendered sentence stay exact. */
+       steps = 76 clips) and the rendered sentence stay exact. */
     const preview = app.SDP.Studio.costPreview();
     const esc = (n) => String(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    check('G12.3a the cost preview names words, numbers, commands, guide, intro steps, the total and 74 clips',
+    check('G12.3a the cost preview names words, numbers, commands, guide, intro steps, the total and 76 clips',
       new RegExp(preview.count + ' words = ' + esc(preview.words) + ' chars').test(line) &&
-      new RegExp('30 numbers = ' + esc(preview.numbers) + ' chars').test(line) &&
+      new RegExp(Math.max(30, preview.count) + ' numbers = ' + esc(preview.numbers) + ' chars').test(line) &&
       new RegExp('6 commands = ' + esc(preview.commands) + ' chars').test(line) &&
       new RegExp('4 guide steps = ' + esc(preview.guide) + ' chars').test(line) &&
       new RegExp('4 intro steps = ' + esc(preview.intro) + ' chars').test(line) &&
       new RegExp('total ' + esc(preview.total) + ' chars').test(line) &&
-      preview.count === 30 && preview.clips === 74 &&
+      preview.count === 31 && preview.clips === 76 &&
       preview.total === preview.words + preview.numbers + preview.commands + preview.guide + preview.intro &&
-      /74 clips \(30 words \+ 30 numbers \+ 6 commands \+ 4 guide steps \+ 4 intro steps\)/.test(line), line);
+      /76 clips \(31 words \+ 31 numbers \+ 6 commands \+ 4 guide steps \+ 4 intro steps\)/.test(line), line);
     check('G12.3b the preview is written into the documented DOM node', !!app.byId('costPreviewLine'));
     check('G12.3c a one-word test button exists for cheap dry runs', !!app.byId('btnTestOneWord'));
     check('G12.3d the delta generator exists and is the primary action',
@@ -257,10 +260,10 @@ async function unlockStudio(app) {
       app.SDP.Studio.aiProviderName() === 'free_dict' && app.SDP.Studio.aiProviderKey() === '',
       app.SDP.Studio.aiProviderName());
     const wm = app.byId('studioWordManager');
-    check('G12.7m the word manager renders the full 30-word table',
-      !!wm && wm.querySelectorAll('tbody tr').length === 30, wm && wm.querySelectorAll('tbody tr').length);
+    check('G12.7m the word manager renders the full 31-word table',
+      !!wm && wm.querySelectorAll('tbody tr').length === 31, wm && wm.querySelectorAll('tbody tr').length);
     check('G12.7n every row is editable in all six fields',
-      !!wm && wm.querySelectorAll('[data-wm]').length === 180, wm && wm.querySelectorAll('[data-wm]').length);
+      !!wm && wm.querySelectorAll('[data-wm]').length === 186, wm && wm.querySelectorAll('[data-wm]').length);
     check('G12.7o the publish / enrich controls all exist',
       !!app.byId('btnEnrichWords') && !!app.byId('btnPreviewWords') &&
       !!app.byId('btnPublishWords') && !!app.byId('btnPublishWordsAndVoice') && !!app.byId('btnTestAi'));
@@ -516,6 +519,9 @@ async function unlockStudio(app) {
       parsed[3].w === 'important' && parsed[4].w === 'brave', JSON.stringify(parsed.map((x) => x.w)));
     const thirtyOne = [];
     for (let i = 0; i < 31; i++) thirtyOne.push({ w: 'word' + (i + 1) });
+    /* v0.0.7.a: the amber-extra law is defined against a PRESET cap — set
+       30 (default preset) first so the 31st word is genuinely extra. */
+    try { S.setWordCap(30, 'preset'); } catch (eCap) {}
     S.setStudioWords(thirtyOne, 'bulk');
     const live = S.currentParsed();
     const extra = app.qa('#studioLiveChips .chip-word.chip-extra');

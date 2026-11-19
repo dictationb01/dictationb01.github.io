@@ -96,13 +96,20 @@ jobs:
       - name: G18 · v0.0.6.z seven-pillar release verification gate
         run: node tests/v006z-verification.cjs
 
+      # v0.0.7.a: the studio-UX / unlimited-words / key-pool / reuse gate —
+      # clean Words-First studio layout, 5-to-infinity word counts with full
+      # lock/unlock/reload persistence, multi-key pool pre-flight + failover,
+      # the permanent 0-credit clip library, and zero false publish banners.
+      - name: G19 · v0.0.7.a studio UX, unlimited words, key pool & reuse gate
+        run: node tests/v007a-verification.cjs
+
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock
         run: |
           node -e '
             const fs=require("fs"),c=require("crypto");
             const want={
-              "data/session.json":"23f46ab3","data/gas-source.txt":"b7bbd23c",
+              "data/session.json":"54d438f9","data/gas-source.txt":"b7bbd23c",
               "assets/fonts/NotoSansSinhala-Regular.woff2":"23f1503e",
               "assets/fonts/NotoSansSinhala-Bold.woff2":"bf59c148"};
             let bad=0;

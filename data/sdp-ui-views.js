@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.6.z';
+    return '0.0.7.a';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -985,7 +985,7 @@
       try { if (SDP.Studio && SDP.Studio.paintQuickButton) SDP.Studio.paintQuickButton(); } catch (e2) {}
     }
     if (target === 'player') {
-      /* v0.0.6.z Z4: a deep link or tab tap onto the player can never bypass
+      /* v0.0.7.a Z4: a deep link or tab tap onto the player can never bypass
          the strict Dictation Mode lock — the overlay paints every time. */
       paintDictationLockOverlay();
       renderBoardJumper();
@@ -1002,7 +1002,7 @@
     return 'home';
   }
 
-  /* ══ v0.0.6.z Z4 — the strict Dictation Mode lock overlay ══
+  /* ══ v0.0.7.a Z4 — the strict Dictation Mode lock overlay ══
      Painted whenever Engine.studioLocked() is true (or the explicit value
      arrives from setStudioLocked). Bilingual lock card; both buttons resolve:
      ↩ Return to Lecturer Studio opens the studio tab; 🔒 Lock Studio &
@@ -1229,7 +1229,7 @@
   /* VOX-07: the first Start of a session speaks a condensed two-step English… */
   var sessionState = { introShown: false };
   function startDictation(mode) {
-    /* v0.0.6.z Z4 — #btnStart can never start a session while the strict
+    /* v0.0.7.a Z4 — #btnStart can never start a session while the strict
        Dictation Mode lock is armed; the bilingual overlay paints instead. */
     if ((function () { try { return !!(SDP.Engine && SDP.Engine.studioLocked && SDP.Engine.studioLocked()); } catch (e) { return false; } })()) {
       paintDictationLockOverlay(true);
@@ -3004,7 +3004,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.6.z.beta';
+  var BETA_SUBVERSION = '0.0.7.a.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -4483,7 +4483,7 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
-    /* v0.0.6.z Z4: the lock overlay buttons arm on boot. */
+    /* v0.0.7.a Z4: the lock overlay buttons arm on boot. */
     bindDictationLockOverlay();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
     setText(byId('sdpVerPill'), 'v' + APP_VERSION); /* v0.0.6.m: pill lives in the About card */
@@ -4768,7 +4768,7 @@
     toggleLang: toggleLang,
     toggleTheme: toggleTheme,
     showTab: showTab,
-    /* v0.0.6.z Z4 — the strict Dictation Mode lock overlay painter. */
+    /* v0.0.7.a Z4 — the strict Dictation Mode lock overlay painter. */
     paintDictationLockOverlay: paintDictationLockOverlay,
     /* R6: showScreen is the documented alias of the one router (D10). */
     showScreen: showTab,

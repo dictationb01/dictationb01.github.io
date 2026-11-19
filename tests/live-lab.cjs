@@ -105,7 +105,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         title: document.getElementById('sessionTitle').textContent,
         toast: document.getElementById('sdpDataToast').textContent
       }));
-      check('G8.1a with every external host dead the 30-word bank still loads', state.words === 30, state.words);
+      check('G8.1a with every external host dead the 30-word bank still loads', state.words === 31, state.words);
       /* v0.0.6.v: the title must equal the LOCAL payload title (session.json
          .session.title || version.json .title — the app's own derivation). */
       const localTitle = (() => {
@@ -146,9 +146,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         active: document.querySelector('.screen.active') ? document.querySelector('.screen.active').id : '',
         cards: document.querySelectorAll('#dictList .dict-card').length
       }));
-      check('G8.2a an offline reload keeps the word bank usable', offline.words === 30, offline.words);
+      check('G8.2a an offline reload keeps the word bank usable', offline.words === 31, offline.words);
       check('G8.2b an offline reload lands on Home', offline.active === 'screen-home', offline.active);
-      await page.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 30, null, { timeout: 15000 }).catch(() => {});
+      await page.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 31, null, { timeout: 15000 }).catch(() => {});
       const startable = await page.evaluate(async () => {
         document.getElementById('btnStart').click();
         await new Promise((r) => setTimeout(r, 400));
@@ -200,7 +200,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           state: document.getElementById('beatStateText').textContent
         };
       });
-      check('G8.3b taps stay responsive while a relay hangs', responsive.ms < 2500 && responsive.cards === 30, JSON.stringify(responsive));
+      check('G8.3b taps stay responsive while a relay hangs', responsive.ms < 2500 && responsive.cards === 31, JSON.stringify(responsive));
       check('G8.3c dictation begins despite the hung relay', responsive.screen === 'screen-player' && !/Ready/.test(responsive.state), JSON.stringify(responsive));
       check('G8.3d a hung relay raises no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
       await ctx.close();
@@ -244,7 +244,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     // contract: docs/SYNC_AND_DATA_CONTRACT.md §R4 corruption policy
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, { settings: FAST });
-      await page.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 30, null, { timeout: 10000 });
+      await page.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 31, null, { timeout: 10000 });
       const survived = await page.evaluate(async () => {
         document.getElementById('btnStart').click();
         await new Promise((r) => setTimeout(r, 500));
@@ -299,7 +299,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         return route.abort();
       });
       await pageA.goto(server.origin + '/index.html', { waitUntil: 'domcontentloaded' });
-      await pageA.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 30, null, { timeout: 10000 });
+      await pageA.waitForFunction(() => window.SDP && SDP.Sync && SDP.Sync.wordCount() === 31, null, { timeout: 10000 });
       await pageA.evaluate(() => new Promise((resolve) => { SDP.Studio.unlock('78987898', () => resolve()); }));
       const unlocked = await pageA.evaluate(() => SDP.Studio.isUnlocked());
       check('G8.6a the lecturer unlocks the studio with the bootstrap PIN 78987898', unlocked === true, unlocked);

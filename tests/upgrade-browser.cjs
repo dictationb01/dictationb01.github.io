@@ -13,7 +13,7 @@ const { start } = require('./static-server.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const STALE = 'sdp-v60-9.0.0.4';
-const SHELL = 'sdp-v0.0.6.z-s39-shell';
+const SHELL = 'sdp-v0.0.7.a-s40-shell';
 const YOUDAO = 'sdp-youdao-v1';
 const CLIPS = 'sdp-audio-clips';
 
@@ -89,7 +89,7 @@ async function launch() {
         '/data/sdp-morphe-hooks.js',
         '/data/version.json', '/data/config.json', '/data/session.json',
         '/assets/fonts/NotoSansSinhala-Regular.woff2', '/assets/fonts/NotoSansSinhala-Bold.woff2',
-        '/manifest.webmanifest', '/data/sdp-audio-normalize.js', '/data/sdp-telemetry.js', '/data/sdp-selfheal.js']
+        '/manifest.webmanifest', '/data/sdp-audio-normalize.js', '/data/sdp-telemetry.js', '/data/sdp-selfheal.js', '/data/sdp-live-lab.js']
         .every((p) => activated.shellNames.indexOf(p) >= 0),
       activated.shellNames.join(','));
     const preservedY = await page.evaluate(async (names) => {

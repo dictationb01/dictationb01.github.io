@@ -86,7 +86,7 @@
   wordStartAt: 0,
   rapidSkipCount: 0,
   wordsCompletedCount: 0,
-  /* v0.0.6.z Z4 — the strict Dictation Mode lock state (set by the Studio's
+  /* v0.0.7.a Z4 — the strict Dictation Mode lock state (set by the Studio's
      Lock Studio & Unlock Dictation flow). While true, start()/pause()/retry/
      new-session are refused and the bilingual lock overlay is painted. */
   studioLocked: false,
@@ -235,7 +235,13 @@
    that word. The strip never invents a word count: it uses E.items.length. */
  function paintProgressStrip() {
   var host = byId('sessionPills');
-  var total = E.items.length || 30;
+  /* v0.0.7.a A1: before Start, the map mirrors the LIVE bank (Sync words /
+     the published session wordCount) — never a hard 30. */
+  var total = E.items.length;
+  if (!total) {
+   try { if (SDP.Sync && SDP.Sync.words) total = SDP.Sync.words().length; } catch (eW) {}
+   if (!total) total = 30;
+  }
   var i, pill;
   if (host && host.querySelectorAll) {
    pill = host.querySelectorAll('.word-pill');
@@ -255,7 +261,7 @@
    }
   }
   /* Phase 5: the single-line cockpit header (WORD #01 / N).
-     v0.0.6.z Z5: the denominator is the LIVE item count, never a fixed 30. */
+     v0.0.7.a Z5: the denominator is the LIVE item count, never a fixed 30. */
   setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + ' / ' + (E.items.length || 30));
   /* v0.0.5.c: an ICON-first deck — the dual-tone SVG is the button, the
     caption beside it carries the word. aria-label keeps it accessible. */
@@ -1387,7 +1393,7 @@
   try {
    if (SDP.Diagnostics) SDP.Diagnostics.log('session_telemetry', sessionTelemetry());
   } catch (e) {}
-  /* v0.0.6.z PILLAR 6 (Z6) — REAL telemetry: the finished run now writes the
+  /* v0.0.7.a PILLAR 6 (Z6) — REAL telemetry: the finished run now writes the
      full sessionEnd record into the append-only five-key ledger with REAL
      values (words completed, score, missed words, the audio tier that
      actually spoke the beats, and the worst beat lag) instead of leaving the
@@ -1427,7 +1433,7 @@
   return out;
  }
 
- /* v0.0.6.z PILLAR 4 (Z4) — studioLocked() / setStudioLocked(): the strict
+ /* v0.0.7.a PILLAR 4 (Z4) — studioLocked() / setStudioLocked(): the strict
     Dictation Mode lock. Locked = the lecturer has armed the classroom lock
     (Studio: Lock Studio & Unlock Dictation); every start surface refuses and
     the bilingual overlay is painted. The lock survives the Studio surface
@@ -1489,7 +1495,7 @@
 
  function start(opts) {
   opts = opts || {};
-  /* v0.0.6.z PILLAR 4 (Z4) — the strict Dictation Mode lock: while the
+  /* v0.0.7.a PILLAR 4 (Z4) — the strict Dictation Mode lock: while the
      lecturer has locked the Studio, no session can start from any surface
      (cold cockpit, retry, board jumper, ?tab=player deep link). */
   if (studioLocked()) return false;
@@ -1497,7 +1503,7 @@
   if (opts.mode) E.mode = opts.mode === 'typing' ? 'typing' : 'paper';
   if (opts.writeSecs) E.writeSecs = Math.max(3, Number(opts.writeSecs));
   var words = opts.words && opts.words.length ? opts.words : (SDP.Sync && SDP.Sync.words ? SDP.Sync.words() : []);
-  /* v0.0.6.z Pillar 2 (Y2): the pre-start voice readiness audit — NEVER
+  /* v0.0.7.a Pillar 2 (Y2): the pre-start voice readiness audit — NEVER
      blocks the session; it only purges stale clips and paints the bilingual
      warning banner so dictation can run cleanly on the RP fallback. */
   try {

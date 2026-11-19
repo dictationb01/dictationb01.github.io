@@ -1,11 +1,11 @@
-/* data/sdp-live-lab.js — v4.0.0 (v0.0.6.z) — window.SDP.LiveLab (strict ES5).
+/* data/sdp-live-lab.js — v4.0.0 (v0.0.7.a) — window.SDP.LiveLab (strict ES5).
  * Powers the real-time stations of lab.html through REAL browser APIs only
  * (AudioContext.decodeAudioData, <audio> playback, live fetch) — zero mocks.
  * v4.0 (Z3): the pack spectral/LUFS broadcast-signature consistency check
  * (44.1 kHz / mono / -21 LUFS family), the Station 2 ElevenLabs low-credit
  * 1-word verifier with exact HTTP status + root cause + remediation, and the
  * free-speech voice-sample analyzer (no fixed passage).
- * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (v4.0, v0.0.6.z). */
+ * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (v4.0, v0.0.7.a). */
 (function (global) {
   'use strict';
 
@@ -164,7 +164,7 @@
     var host = byId('labClipTableBody');
     if (!host) return false;
     setTxt('labPackStatus', 'Loading live /data/elevenlabs-audio.json …');
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'no-store' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack || !isObj(pack.clips)) { setTxt('labPackStatus', '✗ pack unavailable (offline?)'); record('S1', 'manifest loads', false, 'fetch failed'); return; }
@@ -235,7 +235,7 @@
   }
 
   function playKey(key) {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -251,7 +251,7 @@
   }
 
   function testAllWordsSequentially() {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.6.z', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -443,7 +443,7 @@
     LAB.report = {
       lab: 'SDP Real-Time Live Voice & Clone Lab',
       labVersion: '4.0.0',
-      appVersion: (global.SDP && SDP.version) || '0.0.6.z',
+      appVersion: (global.SDP && SDP.version) || '0.0.7.a',
       at: new Date().toISOString(),
       href: str(global.location && global.location.href),
       viewport: (global.innerWidth || 0) + 'x' + (global.innerHeight || 0),
@@ -575,7 +575,7 @@
   /* v2.0 — the LIVE 1-CLICK BATCH WORD SYNTHESIS & REPAIR TOOL: tests, wipes
      and re-synthesizes ALL 30 active session words right here with live
      per-word progress and real <audio> playback (clean orthography, the
-     v0.0.6.z clean-word law; ?output_format=mp3_44100_128 on every call). */
+     v0.0.7.a clean-word law; ?output_format=mp3_44100_128 on every call). */
   function labBatchRepairWords() {
     var key = labKey();
     var out = byId('labBatchStatus');
@@ -587,7 +587,7 @@
     var words = [];
     try { if (global.SDP && SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
     if (words.length) { labBatchRun(words, key); return true; }
-    global.fetch('./data/session.json?v=0.0.6.z', { cache: 'no-store' })
+    global.fetch('./data/session.json?v=0.0.7.a', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (s) {
         if (s && Array.isArray(s.words) && s.words.length) labBatchRun(s.words, key);
@@ -908,7 +908,7 @@
       return true;
     }
 
-  /* ══ v0.0.6.z — Live Lab v3.0 Station 2B: the Voice Sample AI Analyzer
+  /* ══ v0.0.7.a — Live Lab v3.0 Station 2B: the Voice Sample AI Analyzer
      sandbox (upload / record / built-in reference simulation) and Station
      3B: the stale-clip purge + clip-free fallback + lecturer alert
      simulator. Both stations run the REAL app modules — zero mocks. ══ */

@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.6.z';
+  SDP.version = '0.0.7.a';
   SDP.build = '2026-11-18';
-  SDP.ver = 40; /* v0.0.6.z */
+  SDP.ver = 41; /* v0.0.7.a */
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.6.z'; /* v0.0.6.z */
-  var SCHEMA = 39;
-  var SETTINGS_REV = 64; /* v0.0.6.z */
+  var APP_VERSION = '0.0.7.a'; /* v0.0.7.a */
+  var SCHEMA = 41;
+  var SETTINGS_REV = 71; /* v0.0.7.a */
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1869,7 +1869,13 @@
     var list = pickActiveList(ses, cfg, ver);
     state.list = list;
     state.listId = list ? str(list.id) : str(cfg.listId);
-    state.words = list ? list.words.slice(0, 30).map(normalizeWord) : [];
+    /* v0.0.7.a A1 — the boot word-cap follows the PUBLISHED session
+       (session.wordCount / wordCountMode), never a hard 30. A 31-word or
+       55-word custom session loads in full on every student device; the
+       historical 30 remains the default only when nothing was published. */
+    var bootCap = Number(ses.session && ses.session.wordCount) || Number(ses.wordCount) || 0;
+    if (!bootCap || bootCap < 5) bootCap = 30;
+    state.words = list ? list.words.slice(0, bootCap).map(normalizeWord) : [];
     /* v0.0.4.b BUG-4: a stale sdp.session draft from an older word list must
        never resurrect its old words when a new session payload arrives. */
     try {

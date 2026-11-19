@@ -141,7 +141,7 @@ async function bootSettings(page, settings) {
       await page.click('#tab-dict');
       await page.waitForTimeout(150);
       const cards = await page.evaluate(() => document.querySelectorAll('#dictList .dict-card').length);
-      check('G5.4a the Words tab renders all 30 cards immediately', cards === 30, cards);
+      check('G5.4a the Words tab renders all 31 cards immediately', cards === 31, cards);
       const cardFields = await page.evaluate(() => {
         const first = document.querySelector('#dictList .dict-card');
         return {
@@ -582,7 +582,7 @@ async function bootSettings(page, settings) {
       const tag = flag || '(clean url)';
       const wantsBeta = flag === '?beta' || flag === '#beta';
       check('G5.13a ' + tag + ' the governed Beta channel state matches the URL',
-        main.betaActive === wantsBeta && main.betaSub === '0.0.6.z.beta',
+        main.betaActive === wantsBeta && main.betaSub === '0.0.7.a.beta',
         JSON.stringify(main));
       check('G5.13a2 ' + tag + ' the Beta channel replays the Project Briefing',
         main.briefingOpen === wantsBeta, JSON.stringify(main));
@@ -594,7 +594,7 @@ async function bootSettings(page, settings) {
         !/Beta|Creator Note|Guide|Synced|Lecturer Admin|v0\.0\.6/.test(main.headerText),
         JSON.stringify(main));
       check('G5.13c ' + tag + ' the relocated triggers live inside the About card',
-        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.6.z', JSON.stringify(main));
+        main.aboutTools && main.aboutRelocated && main.verPill === 'v0.0.7.a', JSON.stringify(main));
       check('G5.13d ' + tag + ' the release fixes are live on the main UI', main.fixLive, JSON.stringify(main));
       await context.close();
     }
@@ -630,7 +630,7 @@ async function bootSettings(page, settings) {
           label: document.getElementById('btnPlayPause').getAttribute('aria-label')
         }));
         check('G5.14b [' + tag + '] one ring tap on a cold Dictation tab starts Word #1',
-          started.active === true && started.paused === false && started.items === 30 && started.phase === 'listening',
+          started.active === true && started.paused === false && started.items === 31 && started.phase === 'listening',
           JSON.stringify(started));
         const probePlaying = await page.evaluate(() => {
           const tb = document.getElementById('tabbar');

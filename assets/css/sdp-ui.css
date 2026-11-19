@@ -2979,3 +2979,57 @@ html[data-theme='dark'] .studio-alert-row { background: rgba(120, 53, 15, 0.25);
 .studio-action-audit-banner[data-state='bad'] { border-color: #DC2626; background: #FEF2F2; color: #991B1B; }
 .studio-action-audit-banner[data-state='warn'] { border-color: #B45309; background: #FFFBEB; color: #92400E; }
 .studio-action-audit-banner .btn { margin-left: auto; }
+
+/* ── v0.0.7.a A4 · the clean studio layout layer ────────────────────────── */
+/* Drawer A/B share the Advanced drawer's calm chrome so all three fold
+   uniformly below the two daily cards. */
+.studio-drawer {
+  border: 1px solid var(--stroke); border-radius: var(--radius);
+  margin: 4px 0 14px; background: var(--bg-sunken);
+}
+.studio-drawer > summary {
+  cursor: pointer; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; gap: 8px; padding: 14px 16px; list-style: none;
+}
+.studio-drawer > summary::-webkit-details-marker { display: none; }
+.studio-drawer > summary::after { content: '▾'; margin-left: auto; color: var(--text-muted); }
+.studio-drawer:not([open]) > summary::after { content: '▸'; }
+.studio-drawer[open] > summary { border-bottom: 1px solid var(--stroke); }
+.studio-drawer-body { padding: 6px 8px 8px; }
+/* Drawer B only auto-opens when unread alerts exist — otherwise a quiet chevron. */
+.studio-alerts-drawer[data-unread='0'] > summary .studio-alert-count-badge { background: var(--bg-sunken); color: var(--text-muted); }
+/* Compact status pills row: key-pool chip (A2) + coverage pill side by side. */
+.studio-status-pills { align-items: center; gap: 8px; }
+.studio-key-pool-chip {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  border: 1.5px solid var(--stroke); border-radius: 999px; padding: 5px 12px;
+  font-size: 12.5px; font-weight: 700; cursor: pointer; background: var(--bg-sunken);
+}
+.studio-key-pool-chip[data-state='ready'] { border-color: #059669; background: #ECFDF5; color: #065F46; }
+.studio-key-pool-chip[data-state='low'] { border-color: #B45309; background: #FFFBEB; color: #92400E; }
+.studio-key-pool-chip[data-state='empty'] { border-color: #DC2626; background: #FEF2F2; color: #991B1B; }
+/* Session Card #2: the stepper + topic chips. */
+.studio-stepper-row { align-items: end; }
+.studio-stepper { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.studio-stepper .studio-stepper-value { width: 84px; text-align: center; font-weight: 800; }
+.studio-topic-chips { flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
+.studio-topic-chip { border-radius: 999px; padding: 4px 12px; font-size: 12px; }
+/* The words card's count row keeps the custom input inline with the select. */
+.studio-word-count-row .input[type='number'] { max-width: 150px; }
+.studio-word-count-custom:disabled { opacity: 0.45; }
+
+/* ── v0.0.7.a A2 · quota dialog + key-pool chip states ──────────────────── */
+.studio-quota-dialog {
+  border: 1.5px solid #B45309; border-radius: var(--radius);
+  background: #FFFBEB; padding: 12px 16px; margin: 8px 0;
+}
+.studio-quota-dialog[hidden] { display: none; }
+.studio-quota-dialog .studio-h4 { color: #92400E; margin: 0 0 6px; }
+.studio-quota-dialog #studioQuotaDetail { color: #78350F; margin: 0 0 10px; }
+/* v0.0.7.a A3 · the ♻️/⚡ clip-reuse counter under the word-count pill. */
+.studio-reuse-counter {
+  font-size: 12.5px; font-weight: 700; margin: 2px 0 8px;
+  padding: 5px 10px; border-radius: 8px; display: inline-block;
+  border: 1px dashed var(--stroke); color: var(--text-muted); background: var(--bg-sunken);
+}
+.studio-reuse-counter[data-missing='0'] { border-color: #059669; color: #065F46; background: #ECFDF5; border-style: solid; }

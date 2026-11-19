@@ -793,9 +793,9 @@
   "voiceModel": "eleven_flash_v2_5",
   "generatedAt": "2026-11-17T00:00:00.000Z",
   "buildDate": "2026-11-18",
-  "updatedAt": "2026-11-19T16:20:13.097Z",
+  "updatedAt": "2026-11-19T16:20:56.443Z",
   "versionFamily": "0.0.1",
-  "manifestSource": "raw",
+  "manifestSource": "origin",
   "persona": "British English female educator (Alice-class)",
   "hashAlgo": "sha1",
   "briefingVoice": {

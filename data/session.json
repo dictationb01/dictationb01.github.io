@@ -26,7 +26,7 @@
         "pos": "noun.",
         "m": "The act or fact of communicating anything; transmission.",
         "si": "සන්නිවේදන",
-        "s": "communication of a secret",
+        "s": "Modern communications like email and video calls make life faster.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
       },
       {
@@ -35,7 +35,7 @@
         "pos": "noun.",
         "m": "The organization of knowledge for practical purposes.",
         "si": "තාක්ෂණය",
-        "s": "The story was very technology to read.",
+        "s": "Technology has changed the way we study English.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=technology"
       },
       {
@@ -44,8 +44,8 @@
         "pos": "noun.",
         "m": "A way or means of approaching or entering; an entrance; a passage.",
         "si": "ප්රවේශය",
-        "s": "an access of territory",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=access"
+        "s": "You need a password to get access to the website.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/access-1-us.mp3"
       },
       {
         "w": "blogger",
@@ -53,7 +53,7 @@
         "pos": "noun.",
         "m": "A contributor to a blog (from weblog) or online journal.",
         "si": "බ්ලොග්කරු",
-        "s": "We saw a blogger near the station.",
+        "s": "She is a famous food blogger with thousands of readers.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=blogger"
       },
       {
@@ -62,16 +62,16 @@
         "pos": "noun.",
         "m": "A mechanical or electronic device that performs mathematical calculations.",
         "si": "කැල්කියුලේටරය",
-        "s": "We saw a calculator near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=calculator"
+        "s": "Can I use a calculator in the maths exam?",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/calculator-us.mp3"
       },
       {
         "w": "cell phone",
-        "p": "/ˈkel ˈfɒn/",
+        "p": "/ˈsel ˌfəʊn/",
         "pos": "noun.",
-        "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the party-to-party call connection.",
+        "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the.",
         "si": "ජංගම දුරකථනය",
-        "s": "We saw a cell phone near the station.",
+        "s": "Call me on my cell phone when you arrive at the bus station.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cell%20phone"
       },
       {
@@ -80,7 +80,7 @@
         "pos": "noun.",
         "m": "A person employed to perform computations; one who computes.",
         "si": "පරිගණකය",
-        "s": "We saw a computer near the station.",
+        "s": "He saves all his homework on the computer.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/computer-uk.mp3"
       },
       {
@@ -90,7 +90,7 @@
         "m": "The act of connecting.",
         "si": "සම්බන්ධතාවය",
         "s": "My headache has no connection with me going out last night.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=connection"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/connection-us.mp3"
       },
       {
         "w": "delete",
@@ -98,12 +98,12 @@
         "pos": "noun.",
         "m": "A key that may be pressed to delete something (such as text or files) from a computer.",
         "si": "මකා දමන්න",
-        "s": "We saw a delete near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=delete"
+        "s": "Press this button to delete the wrong letter.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/delete-us.mp3"
       },
       {
         "w": "dial up",
-        "p": "/ˈdɪæl ˈʌp/",
+        "p": "/ˌdaɪ.əl ˈʌp/",
         "pos": "verb.",
         "m": "To telephone, to call on the telephone.",
         "si": "අමතන්න",
@@ -117,7 +117,7 @@
         "m": "A digital option.",
         "si": "ඩිජිටල්",
         "s": "He moved to digital for the first time, using a Sony camera.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=digital"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/digital-us.mp3"
       },
       {
         "w": "camera",
@@ -125,16 +125,16 @@
         "pos": "noun.",
         "m": "A device for taking still or moving pictures or photographs.",
         "si": "කැමරාව",
-        "s": "We saw a camera near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=camera"
+        "s": "She took a beautiful photo of the temple with her camera.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/camera-us.mp3"
       },
       {
         "w": "disc/disk",
-        "p": "/ˈdɪskdɪsk/",
-        "pos": "n.",
-        "m": "A disc/disk.",
+        "p": "/dɪsk/",
+        "pos": "noun.",
+        "m": "A flat round object that stores computer information, music or other data.",
         "si": "තැටිය / තැටිය",
-        "s": "We saw a disc/disk near the station.",
+        "s": "Save your work on a disc/disk before you turn off the computer.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disc%2Fdisk"
       },
       {
@@ -144,7 +144,7 @@
         "m": "A file transfer to the local computer.",
         "si": "බාගත කරන්න",
         "s": "The download took longer than I expected.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=download"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/download-us.mp3"
       },
       {
         "w": "drag",
@@ -153,16 +153,16 @@
         "m": "Resistance of the air (or some other fluid) to something moving through it.",
         "si": "ඇදගෙන යන්න",
         "s": "When designing cars, manufacturers have to take drag into consideration.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drag"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drag-us.mp3"
       },
       {
         "w": "electronic",
         "p": "/ɪˌlɛkˈtɹɒn.ɪk/",
         "pos": "adjective.",
-        "m": ": Of or pertaining to an electron or electrons.",
+        "m": "Of or pertaining to an electron or electrons.",
         "si": "ඉලෙක්ට්රොනික",
-        "s": "electronic music",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=electronic"
+        "s": "My grandmother enjoys electronic music on the radio.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/electronic-us.mp3"
       },
       {
         "w": "email",
@@ -171,16 +171,16 @@
         "m": "A system for transferring messages from one computer to another, usually through a network.",
         "si": "ඊමේල්",
         "s": "He sent me his details via email.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=email"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/email-1-us.mp3"
       },
       {
         "w": "engaged",
         "p": "/ɛnˈɡeɪdʒd/",
         "pos": "verb.",
-        "m": "(heading) To interact socially.",
+        "m": "To interact socially.",
         "si": "යෙදී ඇත",
-        "s": "The story was very engaged to read.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=engaged"
+        "s": "Sorry, the line is engaged — I will call again later.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/engaged-us.mp3"
       },
       {
         "w": "envelope",
@@ -188,7 +188,7 @@
         "pos": "noun.",
         "m": "A paper or cardboard wrapper used to enclose small, flat items, especially letters, for mailing.",
         "si": "ලියුම් කවරය",
-        "s": "We saw a envelope near the station.",
+        "s": "Put the letter in an envelope before you post it.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/envelope-1-uk.mp3"
       },
       {
@@ -197,8 +197,8 @@
         "pos": "noun.",
         "m": "The act of equipping, or the state of being equipped, as for a voyage or expedition.",
         "si": "උපකරණ",
-        "s": "We saw a equipment near the station.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=equipment"
+        "s": "Our new classroom has a lot of modern equipment.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/equipment-us.mp3"
       },
       {
         "w": "file",
@@ -207,25 +207,25 @@
         "m": "A collection of papers collated and archived together.",
         "si": "ගොනුව",
         "s": "I'm going to delete these unwanted files to free up some disk space.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=file"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/file-us.mp3"
       },
       {
         "w": "hang up",
-        "p": "/ˈhæŋ ˈʌp/",
+        "p": "/ˌhæŋ ˈʌp/",
         "pos": "verb.",
         "m": "To put up to hang.",
         "si": "ප්රමාද කරන්න",
-        "s": "I hung up my wash on the line.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hang%20up"
+        "s": "Don't hang up — I still need to tell you something!",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
       },
       {
         "w": "hardware",
         "p": "/ˈhɑːdˌwɛə/",
         "pos": "noun.",
-        "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object. Also such equipment as sold as stock by a store of the same name, e.g. hardware store.",
+        "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object.",
         "si": "දෘඪාංග",
-        "s": "military hardware",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hardware"
+        "s": "The shop sells computer hardware such as keyboards and printers.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hardware-us.mp3"
       },
       {
         "w": "headline",
@@ -238,11 +238,11 @@
       },
       {
         "w": "homepage",
-        "p": "/ˈhɒmepæɡ/",
+        "p": "/ˈhəʊm.peɪdʒ/",
         "pos": "noun.",
         "m": "The main or first page of a web site or set of hyperlinked documents.",
         "si": "මුල් පිටුව",
-        "s": "We saw a homepage near the station.",
+        "s": "The class homepage shows this week's vocabulary list.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=homepage"
       },
       {
@@ -258,10 +258,10 @@
         "w": "internet",
         "p": "/ˈɪntəˌnɛt/",
         "pos": "noun.",
-        "m": "Any set of computer networks that communicate using the Internet Protocol. (An intranet.)",
+        "m": "Any set of computer networks that communicate using the Internet Protocol.",
         "si": "අන්තර්ජාලය",
-        "s": "Do you have internet at your place?  My internet is down and I want to check my email.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=internet"
+        "s": "Do you have internet at your place? My internet is down and I want to check my email.",
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/internet-us.mp3"
       },
       {
         "w": "invention",
@@ -270,33 +270,33 @@
         "m": "Something invented.",
         "si": "නව නිපැයුම්",
         "s": "I'm afraid there was no burglar. It was all the housekeeper's invention.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=invention"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/invention-us.mp3"
       },
       {
         "w": "keyboard",
-        "p": "/ˈkiːbɔːd/",
+        "p": "/ˈkiː.bɔːd/",
         "pos": "noun.",
-        "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+        "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
         "si": "යතුරු පුවරුව",
-        "s": "We saw a keyboard near the station.",
+        "s": "The 'E' key on my keyboard is broken.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
       },
       {
         "w": "machine",
-        "p": "/məˈʃin/",
+        "p": "/məˈʃiːn/",
         "pos": "noun.",
-        "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
+        "m": "A piece of equipment that uses power, such as electricity, to do a job.",
         "si": "යන්ත්රය",
-        "s": "I called you earlier, but all I got was the machine.",
+        "s": "This machine makes very good tea in the morning.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
       },
       {
         "w": "mobile phone",
-        "p": "/ˈmɒbɪl ˈfɒn/",
+        "p": "/ˌməʊ.baɪl ˈfəʊn/",
         "pos": "noun.",
-        "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
+        "m": "A telephone you can carry with you and use anywhere.",
         "si": "ජංගම දුරකථනය",
-        "s": "We saw a mobile phone near the station.",
+        "s": "I called you on my mobile phone, but you did not answer.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
       }
     ],
@@ -319,7 +319,7 @@
           "pos": "noun.",
           "m": "The act or fact of communicating anything; transmission.",
           "si": "සන්නිවේදන",
-          "s": "communication of a secret",
+          "s": "Modern communications like email and video calls make life faster.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
         },
         {
@@ -328,7 +328,7 @@
           "pos": "noun.",
           "m": "The organization of knowledge for practical purposes.",
           "si": "තාක්ෂණය",
-          "s": "The story was very technology to read.",
+          "s": "Technology has changed the way we study English.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=technology"
         },
         {
@@ -337,8 +337,8 @@
           "pos": "noun.",
           "m": "A way or means of approaching or entering; an entrance; a passage.",
           "si": "ප්රවේශය",
-          "s": "an access of territory",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=access"
+          "s": "You need a password to get access to the website.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/access-1-us.mp3"
         },
         {
           "w": "blogger",
@@ -346,7 +346,7 @@
           "pos": "noun.",
           "m": "A contributor to a blog (from weblog) or online journal.",
           "si": "බ්ලොග්කරු",
-          "s": "We saw a blogger near the station.",
+          "s": "She is a famous food blogger with thousands of readers.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=blogger"
         },
         {
@@ -355,16 +355,16 @@
           "pos": "noun.",
           "m": "A mechanical or electronic device that performs mathematical calculations.",
           "si": "කැල්කියුලේටරය",
-          "s": "We saw a calculator near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=calculator"
+          "s": "Can I use a calculator in the maths exam?",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/calculator-us.mp3"
         },
         {
           "w": "cell phone",
-          "p": "/ˈkel ˈfɒn/",
+          "p": "/ˈsel ˌfəʊn/",
           "pos": "noun.",
-          "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the party-to-party call connection.",
+          "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the.",
           "si": "ජංගම දුරකථනය",
-          "s": "We saw a cell phone near the station.",
+          "s": "Call me on my cell phone when you arrive at the bus station.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cell%20phone"
         },
         {
@@ -373,7 +373,7 @@
           "pos": "noun.",
           "m": "A person employed to perform computations; one who computes.",
           "si": "පරිගණකය",
-          "s": "We saw a computer near the station.",
+          "s": "He saves all his homework on the computer.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/computer-uk.mp3"
         },
         {
@@ -383,7 +383,7 @@
           "m": "The act of connecting.",
           "si": "සම්බන්ධතාවය",
           "s": "My headache has no connection with me going out last night.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=connection"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/connection-us.mp3"
         },
         {
           "w": "delete",
@@ -391,12 +391,12 @@
           "pos": "noun.",
           "m": "A key that may be pressed to delete something (such as text or files) from a computer.",
           "si": "මකා දමන්න",
-          "s": "We saw a delete near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=delete"
+          "s": "Press this button to delete the wrong letter.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/delete-us.mp3"
         },
         {
           "w": "dial up",
-          "p": "/ˈdɪæl ˈʌp/",
+          "p": "/ˌdaɪ.əl ˈʌp/",
           "pos": "verb.",
           "m": "To telephone, to call on the telephone.",
           "si": "අමතන්න",
@@ -410,7 +410,7 @@
           "m": "A digital option.",
           "si": "ඩිජිටල්",
           "s": "He moved to digital for the first time, using a Sony camera.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=digital"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/digital-us.mp3"
         },
         {
           "w": "camera",
@@ -418,16 +418,16 @@
           "pos": "noun.",
           "m": "A device for taking still or moving pictures or photographs.",
           "si": "කැමරාව",
-          "s": "We saw a camera near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=camera"
+          "s": "She took a beautiful photo of the temple with her camera.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/camera-us.mp3"
         },
         {
           "w": "disc/disk",
-          "p": "/ˈdɪskdɪsk/",
-          "pos": "n.",
-          "m": "A disc/disk.",
+          "p": "/dɪsk/",
+          "pos": "noun.",
+          "m": "A flat round object that stores computer information, music or other data.",
           "si": "තැටිය / තැටිය",
-          "s": "We saw a disc/disk near the station.",
+          "s": "Save your work on a disc/disk before you turn off the computer.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disc%2Fdisk"
         },
         {
@@ -437,7 +437,7 @@
           "m": "A file transfer to the local computer.",
           "si": "බාගත කරන්න",
           "s": "The download took longer than I expected.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=download"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/download-us.mp3"
         },
         {
           "w": "drag",
@@ -446,16 +446,16 @@
           "m": "Resistance of the air (or some other fluid) to something moving through it.",
           "si": "ඇදගෙන යන්න",
           "s": "When designing cars, manufacturers have to take drag into consideration.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drag"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drag-us.mp3"
         },
         {
           "w": "electronic",
           "p": "/ɪˌlɛkˈtɹɒn.ɪk/",
           "pos": "adjective.",
-          "m": ": Of or pertaining to an electron or electrons.",
+          "m": "Of or pertaining to an electron or electrons.",
           "si": "ඉලෙක්ට්රොනික",
-          "s": "electronic music",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=electronic"
+          "s": "My grandmother enjoys electronic music on the radio.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/electronic-us.mp3"
         },
         {
           "w": "email",
@@ -464,16 +464,16 @@
           "m": "A system for transferring messages from one computer to another, usually through a network.",
           "si": "ඊමේල්",
           "s": "He sent me his details via email.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=email"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/email-1-us.mp3"
         },
         {
           "w": "engaged",
           "p": "/ɛnˈɡeɪdʒd/",
           "pos": "verb.",
-          "m": "(heading) To interact socially.",
+          "m": "To interact socially.",
           "si": "යෙදී ඇත",
-          "s": "The story was very engaged to read.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=engaged"
+          "s": "Sorry, the line is engaged — I will call again later.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/engaged-us.mp3"
         },
         {
           "w": "envelope",
@@ -481,7 +481,7 @@
           "pos": "noun.",
           "m": "A paper or cardboard wrapper used to enclose small, flat items, especially letters, for mailing.",
           "si": "ලියුම් කවරය",
-          "s": "We saw a envelope near the station.",
+          "s": "Put the letter in an envelope before you post it.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/envelope-1-uk.mp3"
         },
         {
@@ -490,8 +490,8 @@
           "pos": "noun.",
           "m": "The act of equipping, or the state of being equipped, as for a voyage or expedition.",
           "si": "උපකරණ",
-          "s": "We saw a equipment near the station.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=equipment"
+          "s": "Our new classroom has a lot of modern equipment.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/equipment-us.mp3"
         },
         {
           "w": "file",
@@ -500,25 +500,25 @@
           "m": "A collection of papers collated and archived together.",
           "si": "ගොනුව",
           "s": "I'm going to delete these unwanted files to free up some disk space.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=file"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/file-us.mp3"
         },
         {
           "w": "hang up",
-          "p": "/ˈhæŋ ˈʌp/",
+          "p": "/ˌhæŋ ˈʌp/",
           "pos": "verb.",
           "m": "To put up to hang.",
           "si": "ප්රමාද කරන්න",
-          "s": "I hung up my wash on the line.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hang%20up"
+          "s": "Don't hang up — I still need to tell you something!",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
         },
         {
           "w": "hardware",
           "p": "/ˈhɑːdˌwɛə/",
           "pos": "noun.",
-          "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object. Also such equipment as sold as stock by a store of the same name, e.g. hardware store.",
+          "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object.",
           "si": "දෘඪාංග",
-          "s": "military hardware",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hardware"
+          "s": "The shop sells computer hardware such as keyboards and printers.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hardware-us.mp3"
         },
         {
           "w": "headline",
@@ -531,11 +531,11 @@
         },
         {
           "w": "homepage",
-          "p": "/ˈhɒmepæɡ/",
+          "p": "/ˈhəʊm.peɪdʒ/",
           "pos": "noun.",
           "m": "The main or first page of a web site or set of hyperlinked documents.",
           "si": "මුල් පිටුව",
-          "s": "We saw a homepage near the station.",
+          "s": "The class homepage shows this week's vocabulary list.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=homepage"
         },
         {
@@ -551,10 +551,10 @@
           "w": "internet",
           "p": "/ˈɪntəˌnɛt/",
           "pos": "noun.",
-          "m": "Any set of computer networks that communicate using the Internet Protocol. (An intranet.)",
+          "m": "Any set of computer networks that communicate using the Internet Protocol.",
           "si": "අන්තර්ජාලය",
-          "s": "Do you have internet at your place?  My internet is down and I want to check my email.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=internet"
+          "s": "Do you have internet at your place? My internet is down and I want to check my email.",
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/internet-us.mp3"
         },
         {
           "w": "invention",
@@ -563,33 +563,33 @@
           "m": "Something invented.",
           "si": "නව නිපැයුම්",
           "s": "I'm afraid there was no burglar. It was all the housekeeper's invention.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=invention"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/invention-us.mp3"
         },
         {
           "w": "keyboard",
-          "p": "/ˈkiːbɔːd/",
+          "p": "/ˈkiː.bɔːd/",
           "pos": "noun.",
-          "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+          "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
           "si": "යතුරු පුවරුව",
-          "s": "We saw a keyboard near the station.",
+          "s": "The 'E' key on my keyboard is broken.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
         },
         {
           "w": "machine",
-          "p": "/məˈʃin/",
+          "p": "/məˈʃiːn/",
           "pos": "noun.",
-          "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
+          "m": "A piece of equipment that uses power, such as electricity, to do a job.",
           "si": "යන්ත්රය",
-          "s": "I called you earlier, but all I got was the machine.",
+          "s": "This machine makes very good tea in the morning.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
         },
         {
           "w": "mobile phone",
-          "p": "/ˈmɒbɪl ˈfɒn/",
+          "p": "/ˌməʊ.baɪl ˈfəʊn/",
           "pos": "noun.",
-          "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
+          "m": "A telephone you can carry with you and use anywhere.",
           "si": "ජංගම දුරකථනය",
-          "s": "We saw a mobile phone near the station.",
+          "s": "I called you on my mobile phone, but you did not answer.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
         }
       ]
@@ -897,10 +897,10 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.7.b",
-  "updatedAt": "2026-11-20T02:39:43.753Z",
+  "updatedAt": "2026-11-20T02:41:35.891Z",
   "version": "0.0.7.b",
   "buildDate": "2026-11-18",
-  "settingsRev": 73,
+  "settingsRev": 74,
   "keyboard": {
     "engine": "native system keyboard only (type=text, single-space IME buffer reset)",
     "suggestions": "The single-space IME sentinel reduces suggestions; keyboard behavior varies by device",
@@ -1209,7 +1209,7 @@
   "modelId": "eleven_flash_v2_5",
   "repoOwner": "dictationb01",
   "repoName": "dictationb01.github.io",
-  "syncRev": 1797000000022,
+  "syncRev": 1797000000023,
   "words": [
     {
       "w": "communications",
@@ -1217,7 +1217,7 @@
       "pos": "noun.",
       "m": "The act or fact of communicating anything; transmission.",
       "si": "සන්නිවේදන",
-      "s": "communication of a secret",
+      "s": "Modern communications like email and video calls make life faster.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=communications"
     },
     {
@@ -1226,7 +1226,7 @@
       "pos": "noun.",
       "m": "The organization of knowledge for practical purposes.",
       "si": "තාක්ෂණය",
-      "s": "The story was very technology to read.",
+      "s": "Technology has changed the way we study English.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=technology"
     },
     {
@@ -1235,8 +1235,8 @@
       "pos": "noun.",
       "m": "A way or means of approaching or entering; an entrance; a passage.",
       "si": "ප්රවේශය",
-      "s": "an access of territory",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=access"
+      "s": "You need a password to get access to the website.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/access-1-us.mp3"
     },
     {
       "w": "blogger",
@@ -1244,7 +1244,7 @@
       "pos": "noun.",
       "m": "A contributor to a blog (from weblog) or online journal.",
       "si": "බ්ලොග්කරු",
-      "s": "We saw a blogger near the station.",
+      "s": "She is a famous food blogger with thousands of readers.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=blogger"
     },
     {
@@ -1253,16 +1253,16 @@
       "pos": "noun.",
       "m": "A mechanical or electronic device that performs mathematical calculations.",
       "si": "කැල්කියුලේටරය",
-      "s": "We saw a calculator near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=calculator"
+      "s": "Can I use a calculator in the maths exam?",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/calculator-us.mp3"
     },
     {
       "w": "cell phone",
-      "p": "/ˈkel ˈfɒn/",
+      "p": "/ˈsel ˌfəʊn/",
       "pos": "noun.",
-      "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the party-to-party call connection.",
+      "m": "A portable, wireless telephone, which changes antenna connections seamlessly during travel from one radio reception cell to another without losing the.",
       "si": "ජංගම දුරකථනය",
-      "s": "We saw a cell phone near the station.",
+      "s": "Call me on my cell phone when you arrive at the bus station.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=cell%20phone"
     },
     {
@@ -1271,7 +1271,7 @@
       "pos": "noun.",
       "m": "A person employed to perform computations; one who computes.",
       "si": "පරිගණකය",
-      "s": "We saw a computer near the station.",
+      "s": "He saves all his homework on the computer.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/computer-uk.mp3"
     },
     {
@@ -1281,7 +1281,7 @@
       "m": "The act of connecting.",
       "si": "සම්බන්ධතාවය",
       "s": "My headache has no connection with me going out last night.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=connection"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/connection-us.mp3"
     },
     {
       "w": "delete",
@@ -1289,12 +1289,12 @@
       "pos": "noun.",
       "m": "A key that may be pressed to delete something (such as text or files) from a computer.",
       "si": "මකා දමන්න",
-      "s": "We saw a delete near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=delete"
+      "s": "Press this button to delete the wrong letter.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/delete-us.mp3"
     },
     {
       "w": "dial up",
-      "p": "/ˈdɪæl ˈʌp/",
+      "p": "/ˌdaɪ.əl ˈʌp/",
       "pos": "verb.",
       "m": "To telephone, to call on the telephone.",
       "si": "අමතන්න",
@@ -1308,7 +1308,7 @@
       "m": "A digital option.",
       "si": "ඩිජිටල්",
       "s": "He moved to digital for the first time, using a Sony camera.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=digital"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/digital-us.mp3"
     },
     {
       "w": "camera",
@@ -1316,16 +1316,16 @@
       "pos": "noun.",
       "m": "A device for taking still or moving pictures or photographs.",
       "si": "කැමරාව",
-      "s": "We saw a camera near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=camera"
+      "s": "She took a beautiful photo of the temple with her camera.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/camera-us.mp3"
     },
     {
       "w": "disc/disk",
-      "p": "/ˈdɪskdɪsk/",
-      "pos": "n.",
-      "m": "A disc/disk.",
+      "p": "/dɪsk/",
+      "pos": "noun.",
+      "m": "A flat round object that stores computer information, music or other data.",
       "si": "තැටිය / තැටිය",
-      "s": "We saw a disc/disk near the station.",
+      "s": "Save your work on a disc/disk before you turn off the computer.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=disc%2Fdisk"
     },
     {
@@ -1335,7 +1335,7 @@
       "m": "A file transfer to the local computer.",
       "si": "බාගත කරන්න",
       "s": "The download took longer than I expected.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=download"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/download-us.mp3"
     },
     {
       "w": "drag",
@@ -1344,16 +1344,16 @@
       "m": "Resistance of the air (or some other fluid) to something moving through it.",
       "si": "ඇදගෙන යන්න",
       "s": "When designing cars, manufacturers have to take drag into consideration.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=drag"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/drag-us.mp3"
     },
     {
       "w": "electronic",
       "p": "/ɪˌlɛkˈtɹɒn.ɪk/",
       "pos": "adjective.",
-      "m": ": Of or pertaining to an electron or electrons.",
+      "m": "Of or pertaining to an electron or electrons.",
       "si": "ඉලෙක්ට්රොනික",
-      "s": "electronic music",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=electronic"
+      "s": "My grandmother enjoys electronic music on the radio.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/electronic-us.mp3"
     },
     {
       "w": "email",
@@ -1362,16 +1362,16 @@
       "m": "A system for transferring messages from one computer to another, usually through a network.",
       "si": "ඊමේල්",
       "s": "He sent me his details via email.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=email"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/email-1-us.mp3"
     },
     {
       "w": "engaged",
       "p": "/ɛnˈɡeɪdʒd/",
       "pos": "verb.",
-      "m": "(heading) To interact socially.",
+      "m": "To interact socially.",
       "si": "යෙදී ඇත",
-      "s": "The story was very engaged to read.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=engaged"
+      "s": "Sorry, the line is engaged — I will call again later.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/engaged-us.mp3"
     },
     {
       "w": "envelope",
@@ -1379,7 +1379,7 @@
       "pos": "noun.",
       "m": "A paper or cardboard wrapper used to enclose small, flat items, especially letters, for mailing.",
       "si": "ලියුම් කවරය",
-      "s": "We saw a envelope near the station.",
+      "s": "Put the letter in an envelope before you post it.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/envelope-1-uk.mp3"
     },
     {
@@ -1388,8 +1388,8 @@
       "pos": "noun.",
       "m": "The act of equipping, or the state of being equipped, as for a voyage or expedition.",
       "si": "උපකරණ",
-      "s": "We saw a equipment near the station.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=equipment"
+      "s": "Our new classroom has a lot of modern equipment.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/equipment-us.mp3"
     },
     {
       "w": "file",
@@ -1398,25 +1398,25 @@
       "m": "A collection of papers collated and archived together.",
       "si": "ගොනුව",
       "s": "I'm going to delete these unwanted files to free up some disk space.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=file"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/file-us.mp3"
     },
     {
       "w": "hang up",
-      "p": "/ˈhæŋ ˈʌp/",
+      "p": "/ˌhæŋ ˈʌp/",
       "pos": "verb.",
       "m": "To put up to hang.",
       "si": "ප්රමාද කරන්න",
-      "s": "I hung up my wash on the line.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hang%20up"
+      "s": "Don't hang up — I still need to tell you something!",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hang%20up-au.mp3"
     },
     {
       "w": "hardware",
       "p": "/ˈhɑːdˌwɛə/",
       "pos": "noun.",
-      "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object. Also such equipment as sold as stock by a store of the same name, e.g. hardware store.",
+      "m": "Fixtures, equipment, tools and devices used for general-purpose construction and repair of a structure or object.",
       "si": "දෘඪාංග",
-      "s": "military hardware",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=hardware"
+      "s": "The shop sells computer hardware such as keyboards and printers.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/hardware-us.mp3"
     },
     {
       "w": "headline",
@@ -1429,11 +1429,11 @@
     },
     {
       "w": "homepage",
-      "p": "/ˈhɒmepæɡ/",
+      "p": "/ˈhəʊm.peɪdʒ/",
       "pos": "noun.",
       "m": "The main or first page of a web site or set of hyperlinked documents.",
       "si": "මුල් පිටුව",
-      "s": "We saw a homepage near the station.",
+      "s": "The class homepage shows this week's vocabulary list.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=homepage"
     },
     {
@@ -1449,10 +1449,10 @@
       "w": "internet",
       "p": "/ˈɪntəˌnɛt/",
       "pos": "noun.",
-      "m": "Any set of computer networks that communicate using the Internet Protocol. (An intranet.)",
+      "m": "Any set of computer networks that communicate using the Internet Protocol.",
       "si": "අන්තර්ජාලය",
-      "s": "Do you have internet at your place?  My internet is down and I want to check my email.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=internet"
+      "s": "Do you have internet at your place? My internet is down and I want to check my email.",
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/internet-us.mp3"
     },
     {
       "w": "invention",
@@ -1461,33 +1461,33 @@
       "m": "Something invented.",
       "si": "නව නිපැයුම්",
       "s": "I'm afraid there was no burglar. It was all the housekeeper's invention.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=invention"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/invention-us.mp3"
     },
     {
       "w": "keyboard",
-      "p": "/ˈkiːbɔːd/",
+      "p": "/ˈkiː.bɔːd/",
       "pos": "noun.",
-      "m": "(etc.) A set of keys used to operate a typewriter, computer etc.",
+      "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
       "si": "යතුරු පුවරුව",
-      "s": "We saw a keyboard near the station.",
+      "s": "The 'E' key on my keyboard is broken.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
     },
     {
       "w": "machine",
-      "p": "/məˈʃin/",
+      "p": "/məˈʃiːn/",
       "pos": "noun.",
-      "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
+      "m": "A piece of equipment that uses power, such as electricity, to do a job.",
       "si": "යන්ත්රය",
-      "s": "I called you earlier, but all I got was the machine.",
+      "s": "This machine makes very good tea in the morning.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
     },
     {
       "w": "mobile phone",
-      "p": "/ˈmɒbɪl ˈfɒn/",
+      "p": "/ˌməʊ.baɪl ˈfəʊn/",
       "pos": "noun.",
-      "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
+      "m": "A telephone you can carry with you and use anywhere.",
       "si": "ජංගම දුරකථනය",
-      "s": "We saw a mobile phone near the station.",
+      "s": "I called you on my mobile phone, but you did not answer.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
     }
   ],

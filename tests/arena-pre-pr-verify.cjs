@@ -3,7 +3,7 @@
 /* G13 — tests/arena-pre-pr-verify.cjs — the v0.0.6.u MANDATORY PRE-PR GATE.
  *
  * Arena.ai MUST run this single ruthless real-browser diagnostic BEFORE
- * opening or updating any Pull Request on dictationb01/dictationb01.github.io
+ * opening or updating any Pull Request on dictationb1/dictationb1.github.io
  * and fix every FAIL before the PR exists:
  *
  *   node tests/arena-pre-pr-verify.cjs
@@ -124,9 +124,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
     const clips = pack.clips;
     const classroom = Object.keys(clips).filter((k) => k.indexOf('_') !== 0);
     const george = ['_intro_male_1', '_intro_male_2', '_intro_male_3', '_intro_male_4'];
-    check('T3a the pack carries the v0.0.7.c header (ver 42 / schema 42 / settingsRev 76 / syncRev 1797000000025)',
-      pack.version === '0.0.7.c' && pack.ver === 43 && pack.schema === 43 &&
-      pack.settingsRev === 76 && Number(pack.syncRev) === 1797000000025,
+    check('T3a the pack carries the v0.0.7.d header (ver 42 / schema 42 / settingsRev 76 / syncRev 1797000000026)',
+      pack.version === '0.0.7.d' && pack.ver === 44 && pack.schema === 44 &&
+      pack.settingsRev === 77 && Number(pack.syncRev) === 1797000000026,
       JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
     check('T3b the live v0.0.7.a pack ships the full 74-clip canonical set (30 words + 30 num + 6 cmd + 4 guide + 4 George beats)',
       Object.keys(clips).length === 76 &&
@@ -244,9 +244,9 @@ async function coldBriefingRun(browser, origin, sampleMs) {
       await context.addInitScript(() => {
         window.__SDP_NO_LIVE__ = true;
         try {
-          localStorage.setItem('sdp.guide_seen', '0.0.7.c');
+          localStorage.setItem('sdp.guide_seen', '0.0.7.d');
           localStorage.setItem('sdp.settings', JSON.stringify({
-            briefingSeen: '0.0.7.c', guideAutoPlay: false, appliedSettingsRev: 99,
+            briefingSeen: '0.0.7.d', guideAutoPlay: false, appliedSettingsRev: 99,
             langResetV001e: true, defaultsResetV001f: true, mode: 'paper', lang: 'en'
           }));
         } catch (e) {}

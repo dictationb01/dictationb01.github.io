@@ -1,18 +1,1 @@
-{
-  "ver": 43,
-  "appVersion": "0.0.7.c",
-  "version": "0.0.7.c",
-  "buildDate": "2026-11-20",
-  "schema": 43,
-  "settingsRev": 76,
-  "session": "14",
-  "title": "Session 14 - Communications & Technology",
-  "updatedAt": "2026-11-20T05:20:00.000Z",
-  "syncRev": 1797000000025,
-  "payloadFiles": [
-    "data/session.json",
-    "data/config.json",
-    "data/elevenlabs-audio.json",
-    "data/version.json"
-  ]
-}
+{"ver":44,"appVersion":"0.0.7.d","version":"0.0.7.d","buildDate":"2026-11-20","schema":44,"settingsRev":77,"session":"14","title":"Session 14 - Communications & Technology","updatedAt":"2026-11-20T12:30:00.000Z","syncRev":1797000000026,"payloadFiles":["data/session.json","data/config.json","data/elevenlabs-audio.json","data/version.json"]}

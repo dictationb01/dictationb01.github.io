@@ -58,7 +58,7 @@
     try { host = String(global.location && global.location.hostname || ''); } catch (e) {}
     var m = host.match(/^([a-z0-9-]+)\.github\.io$/i);
     if (m) return m[1];
-    try { return String((settings().repoOwner) || 'dictationb01'); } catch (e) { return 'dictationb01'; }
+    try { return String((settings().repoOwner) || 'dictationb1'); } catch (e) { return 'dictationb1'; }
   }
 
   function telemetryTopic() { return 'https://ntfy.sh/sdp_' + owner() + '_telemetry_v1'; }

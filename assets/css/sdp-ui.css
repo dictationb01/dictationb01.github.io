@@ -257,7 +257,7 @@ body[data-lang='si'] #btnLang .lang-off, body[data-lang='si'] #guideLangPill .la
 .screen { display: none; }
 .screen.active { display: block; }
 #sdpScreens { padding: 12px clamp(10px, 3vw, 28px) calc(var(--tabbar-h) + 26px); max-width: 1180px; margin: 0 auto; }
-/* v0.0.7.c (BUG-05): every scroll target clears the sticky app header. */
+/* v0.0.7.d (BUG-05): every scroll target clears the sticky app header. */
 .screen, .dict-card, .word-pill, #sessionPills .word-pill { scroll-margin-top: calc(var(--header-h) + 14px); }
 .screen-title {
   font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
@@ -1895,7 +1895,7 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
 /* ══ v0.0.6.e — Human-UX layer: burst ring, reveal card, capsule, squircles ══ */
 .board-jumper-drawer{display:none !important}
 .ring-tap-overlay{position:absolute;inset:0;display:grid;place-items:start center;padding-top:12px;pointer-events:none;opacity:0}
-/* v0.0.7.c (BUG-05): the burst glyph lives in the NORTH of the ring — the
+/* v0.0.7.d (BUG-05): the burst glyph lives in the NORTH of the ring — the
    00 s readout owns the centre and the two can never overlap again. */
 .ring-tap-overlay svg{width:42px;height:42px}
 .ring-tap-overlay.is-bursting{animation:sdpRingBurst .45s cubic-bezier(.2,.75,.3,1) forwards}
@@ -1910,7 +1910,7 @@ html[lang='si'] .tab { font-size: 11px; line-height: 1.4; }
 .cockpit.reveal-open .paused-banner,
 .cockpit.reveal-open .beat-phase-pill,
 .cockpit.reveal-open .ring-under { display: none; }
-/* v0.0.7.c (BUG-05): while the reveal card is open, the four bottom action
+/* v0.0.7.d (BUG-05): while the reveal card is open, the four bottom action
    buttons (Repeat · Hint · Mode · Check) and the Prev/Next/Pause/Replay
    captions stay visible, aligned and clickable on every viewport. */
 .cockpit.reveal-open .orbital { row-gap: 2px; padding-top: 0; }

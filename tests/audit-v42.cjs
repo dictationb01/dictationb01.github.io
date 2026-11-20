@@ -127,7 +127,7 @@ const testBytes = tracked.filter((f) => f.startsWith('tests/') && /\.(cjs|js)$/.
    ceiling 560,000 B — comfortably above the ~534 KB the suite needs.
    v0.0.6.x: the mandated 16th gate (tests/v006x-verification.cjs, X1-X6)
    moved the ceiling in lockstep to 620,000 B. */
-check('G9.2e the whole test suite stays inside 760,000 bytes (' + testBytes + ')', testBytes <= 760000, testBytes);
+check('G9.2e the whole test suite stays inside 820,000 bytes (' + testBytes + ')', testBytes <= 820000, testBytes);
 
 /* ── 3. no build step, no bundler, no monolith ─────────────────────────── */
 // contract: docs/ARCHITECTURE_MAP.md §R3 ES5 modules

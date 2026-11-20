@@ -3582,7 +3582,7 @@
    });
   });
   onStudio('btnOpenLiveLab', 'click', function () {
-   try { global.open('./lab.html', '_blank'); } catch (eL) { msg(' Open https://dictationb01.github.io/lab.html', 'warn'); }
+   try { global.open('./lab.html', '_blank'); } catch (eL) { msg(' Open https://dictationb1.github.io/lab.html', 'warn'); }
   });
   /* v0.0.7.a — Fetch My Cloned Voices: populates BOTH selectors, auto-selects the clone. */
   onStudio('btnFetchClassroomClonedVoices', 'click', function () {

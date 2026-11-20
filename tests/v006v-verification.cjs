@@ -48,7 +48,7 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     /repo: function \(\) \{ return Sync\.repoFromOrigin\(\); \}/.test(sync) &&
     /sync_origin_healed/.test(sync) && /attemptFetch\(url, false\);/.test(sync),
     'delegation + heal');
-  check('V1c the ntfy state topics are dictationb01-owned (sdp_dictationb1_state_v8 + telemetry_v1 via the telemetry module)',
+  check('V1c the ntfy state topics are dictationb1-owned (sdp_dictationb1_state_v8 + telemetry_v1 via the telemetry module)',
     config.live && /ntfy\.sh\/sdp_dictationb1_state_v8/.test(String(config.live.state)) &&
     /_telemetry_v1/.test(readText('data/sdp-telemetry.js')),
     JSON.stringify(config.live || {}));
@@ -62,7 +62,7 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     /* jsdom's location.hostname is not configurable — exercise the hostname
        branch through a fresh JSDOM whose URL is the real Pages origin. */
     const { JSDOM } = require('jsdom');
-    const dom2 = new JSDOM('<!doctype html><html><body></body></html>', { url: 'https://dictationb01.github.io/', runScripts: 'outside-only' });
+    const dom2 = new JSDOM('<!doctype html><html><body></body></html>', { url: 'https://dictationb1.github.io/', runScripts: 'outside-only' });
     const w2 = dom2.window;
     const vm2 = require('node:vm');
     const ctx2 = dom2.getInternalVMContext();
@@ -75,13 +75,13 @@ function readJSON(rel) { return JSON.parse(readText(rel)); }
     w2.navigator = w2.navigator || {};
     try { vm2.runInContext(readText('data/sdp-data-sync.js'), ctx2, { filename: 'sdp-data-sync.js' }); } catch (e) {}
     const repo = w2.SDP && w2.SDP.Sync ? w2.SDP.Sync.repo() : null;
-    check('V1e live: repo() on dictationb01.github.io derives owner dictationb01 / source hostname',
-      repo && repo.owner === 'dictationb01' && repo.source === 'hostname' && repo.name === 'dictationb01.github.io',
+    check('V1e live: repo() on dictationb1.github.io derives owner dictationb1 / source hostname',
+      repo && repo.owner === 'dictationb1' && repo.source === 'hostname' && repo.name === 'dictationb1.github.io',
       JSON.stringify(repo));
     dom2.window.close();
     const repo2 = app.SDP.Sync.repo();
-    check('V1f live: on a non-github-io host the config derivation answers (dictationb01)',
-      repo2 && repo2.owner === 'dictationb01' && (repo2.source === 'config-url' || repo2.source === 'config-fallback'),
+    check('V1f live: on a non-github-io host the config derivation answers (dictationb1)',
+      repo2 && repo2.owner === 'dictationb1' && (repo2.source === 'config-url' || repo2.source === 'config-fallback'),
       JSON.stringify(repo2));
     app.close();
   }

@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.7.c';
+  SDP.version = '0.0.7.d';
   SDP.build = '2026-11-20';
-  SDP.ver = 43; /* v0.0.7.c */
+  SDP.ver = 44; /* v0.0.7.d */
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.7.c'; /* v0.0.7.c */
+  var APP_VERSION = '0.0.7.d'; /* v0.0.7.d */
   var SCHEMA = 42;
-  var SETTINGS_REV = 76; /* v0.0.7.c */
+  var SETTINGS_REV = 77; /* v0.0.7.d */
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1135,7 +1135,7 @@
         'PRIVACY\r\n' +
         '  Reviews were encrypted on the student device before storage; keys, PINs and\r\n' +
         '  personal identifiers are never written to this archive.\r\n' +
-        '  — Hansana, creator of Smart Dictation Player (github.com/dictationb01)\r\n';
+        '  — Hansana, creator of Smart Dictation Player (github.com/dictationb1)\r\n';
     }
   };
 
@@ -2481,8 +2481,8 @@
       var um = str(cfg.repoContentsUrl || '').match(/repos\/([^\/]+)\/([^\/]+)\//);
       if (um) return { owner: um[1], name: um[2], source: 'config-url' };
       return {
-        owner: str(cfg.repoOwner || 'dictationb01'),
-        name: str(cfg.repoName || 'dictationb01.github.io'),
+        owner: str(cfg.repoOwner || 'dictationb1'),
+        name: str(cfg.repoName || 'dictationb1.github.io'),
         source: 'config-fallback'
       };
     },

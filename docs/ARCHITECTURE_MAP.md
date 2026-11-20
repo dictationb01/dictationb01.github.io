@@ -784,7 +784,7 @@ G8 39/0 · G9 47/0 · G10 38/0 · G11 74/0 · G12 103/0 — **764 assertions,
 
 `lab.html` (≤ 28,000 B) + `data/sdp-live-lab.js` (≤ 38,000 B, strict ES5,
 `window.SDP.LiveLab`) live at the repository root so they share the exact
-https://dictationb01.github.io origin with the app — real-time direct access to
+https://dictationb1.github.io origin with the app — real-time direct access to
 the live `localStorage` (sdp.settings / sdp.session / sdp.progress), the
 `sdp-audio-clips` + `sdp-v0.0.6.w-s36-shell` CacheStorage, the Service Worker
 registration, the Studio vault keys and the live `/data/*.json` payloads.

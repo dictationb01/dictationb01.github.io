@@ -21,9 +21,9 @@
  * masked by a stale cache. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.7.c-s42'; /* v0.0.7.c */
-var SHELL_CACHE = 'sdp-v0.0.7.c-s42-shell'; /* v0.0.7.c */
-var SW_RELEASE = '0.0.7.c';
+var SW_VERSION = 'sdp-v0.0.7.d-s43'; /* v0.0.7.d */
+var SHELL_CACHE = 'sdp-v0.0.7.d-s43-shell'; /* v0.0.7.d */
+var SW_RELEASE = '0.0.7.d';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';

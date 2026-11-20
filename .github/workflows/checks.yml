@@ -79,6 +79,9 @@ jobs:
       - name: G12 · credit-saver delta, 34-clip pack and locked-studio zero-widget proof
         run: node tests/studio-safety.cjs
 
+      - name: G22 · v0.0.7.d dictationb1 migration verification gate
+        run: node tests/v007d-verification.cjs
+
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Lab Environment - spacious overview, Studio-Briefing bridge, cache purge, karaoke, mic-release, feedback (Step 13b)
         run: node tests/briefing-feedback-lab.cjs
@@ -119,8 +122,11 @@ jobs:
       # bilingual data, C5 dynamic counts + reveal/caption/burst/scroll UI
       # laws, C6 the unified Live Lab (Station 7), C7 attribution. Verified
       # live at desktop 1280 + mobile 375x812 + lab.html.
-      - name: G21 · v0.0.7.c unified release verification gate
+      - name: G21 · v0.0.7.d unified release verification gate
         run: node tests/v007c-verification.cjs
+
+      - name: G22 · v0.0.7.d dictationb1 migration verification gate
+        run: node tests/v007d-verification.cjs
 
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock
@@ -128,7 +134,7 @@ jobs:
           node -e '
             const fs=require("fs"),c=require("crypto");
             const want={
-              "data/session.json":"9cd5594a","data/gas-source.txt":"b7bbd23c",
+              "data/session.json":"d3ce4cdf","data/gas-source.txt":"b7bbd23c",
               "assets/fonts/NotoSansSinhala-Regular.woff2":"23f1503e",
               "assets/fonts/NotoSansSinhala-Bold.woff2":"bf59c148"};
             let bad=0;

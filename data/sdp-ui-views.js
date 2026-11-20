@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.7.b';
+    return '0.0.7.c';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -37,13 +37,13 @@
   var STRINGS_EN = {
     appName: 'Smart Dictation',
     guideBtn: '? Guide',
-    tabHome: 'Home', tabPlayer: 'Dictation', tabPractice: 'Practice', tabWords: '30 Words', tabSettings: 'Settings',
-    homeTitle: 'Smart Dictation', homeSub: 'Listen, write, and check 30 B1 words with your class.',
-    startDictation: 'Start Dictation (Word #1 to #30)', howToUse: 'How to Use',
+    tabHome: 'Home', tabPlayer: 'Dictation', tabPractice: 'Practice', tabWords: 'Words', tabSettings: 'Settings',
+    homeTitle: 'Smart Dictation', homeSub: 'Listen, write, and check {N} B1 words with your class.',
+    startDictation: 'Start Dictation (Word #1 to #{N})', howToUse: 'How to Use',
     paperMode: 'Paper', typingMode: 'Typing', resumeSession: 'Continue where you stopped',
     statMastered: 'Mastered', statAccuracy: 'Accuracy', statStreak: 'Day streak',
     quickPractice: 'Quick practice', flashcards: 'Flashcards', quiz: '4-Choice Quiz', listening: 'Listening Drill',
-    flashcardsSub: 'Flip through all 30 words', quizSub: 'Pick the right meaning', listeningSub: 'Hear it, then choose', weakWordsSub: 'Retry the ones you missed',
+    flashcardsSub: 'Flip through all {N} words', quizSub: 'Pick the right meaning', listeningSub: 'Hear it, then choose', weakWordsSub: 'Retry the ones you missed',
     weakWords: 'Weak Words', mastered: 'Mastered', announcements: 'Class announcement',
     creditsLine: 'Lecturer in Charge: Ms. Sumodya Sewmini · Creator: Hansana · Concept: Ayya01 (Lesandu)',
     creditsPill: 'CREDITS GOES TO Hansana',
@@ -56,6 +56,25 @@
     pronVariantsBadge: 'UK pronunciations accepted', hintLength: 'letters',
     offlineBanner: 'Running in Offline Mode (No Internet / Mobile Data)', offlineBannerSub: 'Cached audio & sessions active',
     offlineBannerHelp: 'Get Help', offlineBackOnline: 'Back online',
+    /* v0.0.7.c (BUG-01/BUG-05): probe-verified offline law + dynamic counts + deck caps. */
+    offlineRetry: 'Retry Connection', offlineProbePending: 'Checking your connection…',
+    updateTimedOut: 'Check timed out — the connection is too slow. Tap again to retry.',
+    homeReadyLoading: 'Loading the class word list…',
+    capPause: 'Pause', capResume: 'Resume', capStart: 'Start',
+    /* v0.0.7.c (BUG-03): provider key tests + the word-record schema gate. */
+    studioVerifyGroq: 'Test Groq Key', studioVerifyGemini: 'Test Gemini Key',
+    studioVerifyHttpOk: 'key valid', studioVerifyHttp401: 'invalid key',
+    studioVerifyHttp403: 'permission / quota denied', studioVerifyHttp429: 'rate limited — rotate the key pool',
+    studioVerifyHttp5xx: 'provider error — retry later', studioVerifyHttpOther: 'unexpected response',
+    studioVerifyNoKey: 'Paste the AI key first',
+    studioVerifyNetErr: 'Network / CORS error — the request never reached the provider. Check the internet and retry.',
+    studioWordsInvalidTitle: 'Publish blocked — fix these words first:',
+    studioWordsIssueW: 'missing word', studioWordsIssueDup: 'duplicate word',
+    studioWordsIssueSi: 'missing Sinhala meaning',
+    studioWordsIssueM: 'English meaning missing or truncated',
+    studioWordsIssueP: 'missing IPA', studioWordsIssuePos: 'missing part of speech',
+    studioWordsIssueS: 'missing example sentence', studioWordsIssueSNoWord: 'example does not contain the word',
+    tapFlipBack: 'Tap the card to flip back',
     studioAutoLockIn: 'Auto-locking Studio in', studioAutoLockHint: '— tap anywhere to stay unlocked',
     studioPublishLockOk: 'Published, synced & locked — students can start dictation now.',
     studioGuideBtn: '📘 Studio Guide', studioGuideTitle: 'Lecturer Studio Guide',
@@ -64,7 +83,7 @@
     resultsTitle: 'Self-Check & Results', colYourWord: 'Your word', colCorrectWord: 'Correct word', colMark: 'Mark',
     markCorrect: 'Correct', markMissed: 'Missed', markAll: 'Mark all correct', toggleMissed: 'Toggle missed',
     btnRetryMissed: 'Retry missed words', btnNewSession: 'Start new session',
-    filterAll: 'All 30', searchWords: 'Search words', noWordsFound: 'No words found',
+    filterAll: 'All {N}', searchWords: 'Search words', noWordsFound: 'No words found',
     tapToFlip: 'Tap the card to see the meaning', nextCard: 'Next card', prevCard: 'Previous card',
     chooseMeaning: 'Choose the correct meaning', listenAndChoose: 'Listen and choose the correct word',
     weakWordsOnly: 'Weak words only', correctPick: 'Correct!', wrongPick: 'Not quite',
@@ -86,7 +105,7 @@
     studioTitle: '6 · Lecturer Studio & admin vault', studioLocked: 'Enter the lecturer PIN to open the studio.',
     studioChangePin: 'Change PIN',
     /* Table B additions — UI labels, badges, presets and studio controls */
-    dictTitle: '30-Word Session View · #01–#30', dictSearchPh: 'Search 30 words (English, Sinhala, IPA)...',
+    dictTitle: '{N}-Word Session View · #01–#{P}', dictSearchPh: 'Search {N} words (English, Sinhala, IPA)...',
     syncBadgeSynced: 'Synced',
     syncShortSyncing: 'Syncing…',
     lecturerSyncBar: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',
@@ -116,8 +135,8 @@
     voiceLockLabel: 'Voice Persona Lock',
     voiceLockUnified: 'British Female Professor (Unified 25–35 UK)',
     voiceLockCustom: 'Follow Individual Tier Source',
-    downloadClips: ' Download All 30 Word Audio Clips for Offline Use',
-    downloadClipsDone: 'Cached 30 of 30 audio clips for offline use',
+    downloadClips: ' Download All {N} Word Audio Clips for Offline Use',
+    downloadClipsDone: 'Cached {A} of {N} audio clips for offline use',
     studioFirstTime: 'First-Time Studio Setup: Set Your 4–8 Digit Lecturer PIN + API Keys',
     studioTestEl: 'Test ElevenLabs Key',
     studioTestGh: 'Test GitHub Token',
@@ -147,9 +166,9 @@
     /* ── v0.0.1.c Table B: Guide 2.0, Home journey, Smart Board bar, Studio ── */
     guideTapToStart: ' Tap anywhere to start the voice guide',
     homeJourney1: 'Listen & write',
-    homeJourney2: 'Check your 30 words',
+    homeJourney2: 'Check your {N} words',
     homeJourney3: 'Train weak words',
-    homeReadyBadge: 'Session 8 ready · 30 words',
+    homeReadyBadge: 'Session {S} ready · {N} words',
     modePaperFull: ' Write in Exercise Book (Paper)',
     modeTypingFull: 'Type on Screen',
     voiceGuideBtn: ' Interactive Voice Guide',
@@ -195,10 +214,10 @@
     studioTestAi: 'Test Free AI / Dictionary Engine',
     studioAiNoKey: '1: Built-in Free Oxford/Wikimedia Dictionary + Sinhala Translator (100% Free — No API Key Needed)',
     studioOneClick: ' Generate 74 British Professor Voices & Sync All Devices',
-    studioBulkWords: 'Paste or type up to 30 words (one per line, or comma separated)',
+    studioBulkWords: 'Paste or type the session words (one per line, or comma separated)',
     studioEnrich: 'Auto-Fill IPA, English & Sinhala Meanings (Free AI / Dictionary)',
     studioWordManager: 'Word manager — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: ' Auto-Enrich & Publish 30 Words',
+    studioPublishWordsVoice: ' Auto-Enrich & Publish the Words',
     studioSyncSettings: ' Save & Sync Classroom Settings to All Devices',
     studioMasterSteps: 'Setup progress',
     studioEnriching: 'Enriching',
@@ -222,19 +241,19 @@
     /* ── v0.0.2.a (D5–D16): 6-tab shell, 1-2-3 Home, tactile cues, Guide 3.0 ── */
     tabStudio: 'Lecturer',
     homeStep1Tag: 'STEP 1', homeStep2Tag: 'STEP 2', homeStep3Tag: 'STEP 3',
-    homeWordsTitle: 'Check & Study All 30 Session Words in Order #1–#30',
+    homeWordsTitle: 'Check & Study All {N} Session Words in Order #1–#{P}',
     homeWordsSub: 'Every word in class order with its British IPA, Sinhala meaning and example sentence.',
-    homeWordsBtn: ' Open the 30-Word List (#1–#30)',
-    resumeMetaIdle: 'Paused at Word #1 of 30',
+    homeWordsBtn: ' Open the {N}-Word List (#1–#{P})',
+    resumeMetaIdle: 'Paused at Word #1 of {N}',
     startOver: 'Start Over from Word #1',
     cueStep1: 'STEP 1 — PRESS HERE',
     cuePlayer: 'PAUSE OR RESUME HERE',
     cueDict: 'TAP A WORD TO LISTEN',
     cueStudio: 'ENTER YOUR PIN',
-    settingsLecturerActive: ' Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words',
+    settingsLecturerActive: ' Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit the Word List',
     openStudioBtn: ' Open Lecturer Admin Studio',
     studioScreenTitle: ' Lecturer Admin Studio',
-    studioScreenSub: 'Unlock with the lecturer PIN \u2014 paste 30 words, check the session number, then broadcast to every classroom device.',
+    studioScreenSub: 'Unlock with the lecturer PIN \u2014 paste the class words, check the session number, then broadcast to every classroom device.',
     lecturerAdminLocked: ' Lecturer Admin', lecturerAdminUnlocked: ' Lecturer Admin',
     btnReplay: ' Replay Word',
     btnPauseDictation: '⏸ Pause Dictation',
@@ -243,13 +262,13 @@
     listenCarefully: 'Listen Carefully (Repeat ', writeInBook: 'Write Word #',
     inYourBook: ' in Your Book! (', countdownTail: 's countdown)',
     pausedAtWord: 'Dictation Paused at Word #', pausedResumeTail: ' — Press Resume Below',
-    resumeMetaLine: 'Paused at Word #', ofWord: ' of 30 · Repeat ', secondsLeft: 's left',
-    progressWord: 'Word #', progressOf: ' of 30',
+    resumeMetaLine: 'Paused at Word #', ofWord: ' of {N} · Repeat ', secondsLeft: 's left',
+    progressWord: 'Word #', progressOf: ' of {N}',
     /* Phase 5 (v0.0.4.a): the one-line cockpit header and the symbol deck. */
-    progressWordUpper: 'WORD #', progressOf30: ' / 30', repeatOf: ' of ', writeSecsBadge: 's Write',
+    progressWordUpper: 'WORD #', progressOf30: ' / {N}', repeatOf: ' of ', writeSecsBadge: 's Write',
     capPrev: 'Prev', capPlay: 'Pause', capReplay: 'Replay', capNext: 'Next',
     capRepeat: 'Repeat', capHint: 'Hint', capMode: 'Mode', capFinish: 'Check',
-    pillsDrawer: 'Jump to Word 1–30 ▾',
+    pillsDrawer: 'Jump to Word 1–{N} ▾',
     markCorrectWord: ' Correct', markWeakWord: ' Needs Practice', btnStartDictation: '▶ Start Dictation',
     studioRetryNone: 'No failed clip to retry — every clip is already saved.',
     studioRetryOne: 'Retry the failed clip',
@@ -262,8 +281,8 @@
     studioRetryFailed: 'Retry missing clips',
     studioOneClick34: ' Generate 74 British Professor Voices & Sync All Devices',
     studioSaveOnly: ' Save Keys to Vault Only',
-    studioPublishWordsVoice34: ' Auto-Enrich & Publish 30 Words',
-    studioOneClickFull: 'Publish & Sync 30 Words',
+    studioPublishWordsVoice34: ' Auto-Enrich & Publish the Words',
+    studioOneClickFull: 'Publish & Sync the Words',
     studioWordsRecognized: 'Words Recognized',
     studioWordModified: 'Word(s) Modified',
     studioClickBroadcast: 'click Broadcast to Auto-Enrich & Sync',
@@ -276,7 +295,7 @@
     pillListening: 'Listening · Repeat',
     pillWriting: 'Write the word ·',
     pillFinishWarn: 'Finish writing ·',
-    studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #30 in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
+    studioBroadcast34: ' Broadcast Current Pacing & Settings (Fast Exam 5s · 2×) to All Classroom Devices',    guideCard3Tag: '3 of 4 — Check Words #1 to #{N} in Order', guideCard4Tag: '4 of 4 — Automatic Classroom Sync & Lecturer Admin',
     guideSkipStartNow: '▶ Click Start Dictation Now',
     /* R2 (v0.0.4.a): the compact spotlight — four clean spoken sentences. */
     guideSpotlight1: 'Press Start Dictation to begin.',
@@ -319,10 +338,10 @@
     studioOfflineBody: 'Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.',
     sessionNoLabel: 'Session No', sessionTitleLabel: 'Session Topic / Title',
     pasteWords: '📋 Paste', clearWords: '🧹 Clear', confirmWords: '✓ Confirm Edited Words',
-    liveChipsLabel: 'Live word chips', helperReady: '✓ 30 / 30 words ready',
+    liveChipsLabel: 'Live word chips', helperReady: '✓ all word clips ready',
     helperOver: '{n} words detected (need 30) — tap ⇄ on a split word to merge it, or tap ✕ to remove an extra word',
     studioStep1: 'STEP 1 · ONE-TIME SETUP', studioStep2: 'STEP 2 · PASTE 30 WORDS', studioStep3: 'STEP 3 · BROADCAST TO CLASS',
-    helperUnder: '{n} / 30 words — add {need} more',
+    helperUnder: '{n} words ready — add {need} more',
     wordsConfirmedOk: '✓ Words confirmed — ready to Broadcast', wordsCleared: 'Word editor cleared',
     chipMergeLabel: 'Merge with next word', chipRemoveLabel: 'Remove word',
     apiCreditsExhausted: '⚠️ API Credits Exhausted — Please Enter a New API Key in Advanced Tools',
@@ -394,13 +413,13 @@
   var STRINGS_SI = {
     appName: 'Smart Dictation',
     guideBtn: '? උපදෙස්',
-    tabHome: 'මුල් පිටුව', tabPlayer: 'ඩික්ටේෂන්', tabPractice: 'අභ්‍යාස', tabWords: 'වචන 30', tabSettings: 'සැකසුම්',
-    homeTitle: 'Smart Dictation', homeSub: 'ඔබේ පන්තියේ B1 වචන 30 අසමින් ලියන්න, පසුව පරීක්ෂා කරන්න.',
+    tabHome: 'මුල් පිටුව', tabPlayer: 'ඩික්ටේෂන්', tabPractice: 'අභ්‍යාස', tabWords: 'වචන', tabSettings: 'සැකසුම්',
+    homeTitle: 'Smart Dictation', homeSub: 'ඔබේ පන්තියේ B1 වචන {N} අසමින් ලියන්න, පසුව පරීක්ෂා කරන්න.',
     startDictation: 'ඩික්ටේෂන් අරඹන්න (#1–#30)', howToUse: 'භාවිතා කරන ආකාරය',
     paperMode: 'පොතේ ලිවීම', typingMode: 'ටයිප් කිරීම', resumeSession: 'නැවතැත්වූ තැනින් ඉදිරියට',
     statMastered: 'ප්‍රගුණ කළ වචන', statAccuracy: 'නිවැරදිභාවය', statStreak: 'දින පෙළ',
     quickPractice: 'ක්ෂණික අභ්‍යාස', flashcards: 'ෆ්ලෑෂ් කාඩ්', quiz: 'බහුවරණ ප්‍රශ්න', listening: 'ශ්‍රවණ අභ්‍යාස',
-    flashcardsSub: 'වචන 30 ම පෙරළන්න', quizSub: 'නිවැරදි අර්ථය තෝරන්න', listeningSub: 'අහන්න, එතැනින් තෝරන්න', weakWordsSub: 'මඟ හැරි ඒවා නැවත අභ්‍යාස කරන්න',
+    flashcardsSub: 'වචන {N} ම පෙරළන්න', quizSub: 'නිවැරදි අර්ථය තෝරන්න', listeningSub: 'අහන්න, එතැනින් තෝරන්න', weakWordsSub: 'මඟ හැරි ඒවා නැවත අභ්‍යාස කරන්න',
     weakWords: 'දුර්වල වචන', mastered: 'ප්‍රගුණ කළ', announcements: 'පන්ති දැනුම්දීම',
     creditsLine: 'නිර්මාණය: Hansana · අදහස: Ayya01 (Lesandu) · භාරකාර කථිකාචාර්ය: Ms. Sumodya Sewmini',
     creditsPill: 'CREDITS GOES TO Hansana',
@@ -412,7 +431,22 @@
     hintSentence: 'උදාහරණ වාක්‍යය', playAudio: 'හඬ වාදනය',
     pronVariantsBadge: 'බ්‍රිතාන්‍ය උච්චාරණ පිළිගනී', hintLength: 'අකුරු',
     offlineBanner: 'ඕෆ්ලයින් මාදිලියෙන් ක්‍රියාත්මක වේ (මොබයිල් ඩේටා නොමැත)', offlineBannerSub: 'සුරැකි හඬ පට භාවිත වේ',
-    offlineBannerHelp: 'උපකාර ලබා ගන්න', offlineBackOnline: 'නැවත සම්බන්ධ විය',
+    offlineBannerHelp: 'උපකාර ලබාගන්න', offlineBackOnline: 'නැවත සම්බන්ධ විය', offlineRetry: 'නැවත සම්බන්ධ වීමට උත්සාහ කරන්න', offlineProbePending: 'සම්බන්ධතාව පරීක්ෂා වෙමින්…',
+    updateTimedOut: 'පරීක්ෂාව කල් ඉක්මවීය — සම්බන්ධතාව මන්දගාමීයි. නැවත උත්සාහ කරන්න.',
+    homeReadyLoading: 'පන්ති වචන ලැයිස්තුව පූරණය වෙමින්…',
+    capPause: 'නවත්වන්න', capResume: 'දිගටම', capStart: 'ආරම්භ',
+    studioVerifyGroq: 'Groq යතුර පරීක්ෂා කරන්න', studioVerifyGemini: 'Gemini යතුර පරීක්ෂා කරන්න',
+    studioVerifyHttpOk: 'යතුර වලංගුයි', studioVerifyHttp401: 'වලංගු නොවන යතුරකි',
+    studioVerifyHttp403: 'අවසරය / කෝටාව ප්‍රතික්ෂේපිතයි', studioVerifyHttp429: 'සීමාව ඉක්මවා ඇත — යතුරු තොගය මාරු කරන්න',
+    studioVerifyHttp5xx: 'සේවාදායක දෝෂයකි — පසුව නැවත උත්සාහ කරන්න', studioVerifyHttpOther: 'අනපේක්ෂිත පිළිතුරකි',
+    studioVerifyNoKey: 'පළමුව AI යතුර අලවන්න',
+    studioVerifyNetErr: 'ජාල / CORS දෝෂයකි — ඉල්ලීම සේවාදායකයට ළඟා වූයේ නැත. අන්තර්ජාලය පරීක්ෂා කර නැවත උත්සාහ කරන්න.',
+    studioWordsInvalidTitle: 'පළ කිරීම අවහිරයි — පළමුණු වචන නිවැරදි කරන්න:',
+    studioWordsIssueW: 'වචනය නොමැත', studioWordsIssueDup: 'පුනරාවර්තිත වචනයකි',
+    studioWordsIssueSi: 'සිංහල තේරුම නොමැත',
+    studioWordsIssueM: 'ඉංග්‍රීසි තේරුම නොමැත හෝ අසම්පූර්ණයි',
+    studioWordsIssueP: 'IPA උච්චාරණය නොමැත', studioWordsIssuePos: 'වචන වර්ගය නොමැත',
+    studioWordsIssueS: 'උදාහරණ වාක්‍යය නොමැත', studioWordsIssueSNoWord: 'උදාහරණයේ වචනය අඩංගු නොවේ',
     studioAutoLockIn: 'ස්ටූඩියෝව තත්පර', studioAutoLockHint: '— නොවැසී සිටීමට ඕනෑම තැනක ස්පර්ශ කරන්න…',
     studioPublishLockOk: 'පළ කර සමමුහූර්ත කර අගුලු ලෑවා — ශිෂ්‍යයන්ට දැන් ඩික්ටේෂන් ආරම්භ කළ හැක.',
     studioGuideBtn: '📘 ස්ටූඩියෝ මාර්ගෝපදේශය', studioGuideTitle: 'කථිකාචාර්ය ස්ටූඩියෝ මාර්ගෝපදේශය',
@@ -421,8 +455,8 @@
     resultsTitle: 'ස්වයං පරීක්ෂාව සහ ප්‍රතිඵල', colYourWord: 'ඔබ ලියූ වචනය', colCorrectWord: 'නිවැරදි වචනය', colMark: 'ලකුණු කිරීම',
     markCorrect: 'නිවැරදි', markMissed: 'වැරදි', markAll: 'සියල්ල නිවැරදි', toggleMissed: 'ලකුණු මාරු කරන්න',
     btnRetryMissed: 'වැරදි නැවත ලියන්න', btnNewSession: 'නව වාරයක්',
-    filterAll: 'සියල්ල 30', searchWords: 'වචන සොයන්න', noWordsFound: 'වචන හමු නොවීය',
-    tapToFlip: 'තේරුම බැලීමට කාඩ්පත ස්පර්ශ කරන්න', nextCard: 'ඊළඟ', prevCard: 'පෙර',
+    filterAll: 'සියල්ල {N}', searchWords: 'වචන සොයන්න', noWordsFound: 'වචන හමු නොවීය',
+    tapToFlip: 'තේරුම බැලීමට කාඩ්පත ස්පර්ශ කරන්න', tapFlipBack: 'කාඩ්පත නැවත හැරවීමට තට්ටු කරන්න', nextCard: 'ඊළඟ', prevCard: 'පෙර',
     chooseMeaning: 'නිවැරදි තේරුම තෝරන්න', listenAndChoose: 'අසා නිවැරදි වචනය තෝරන්න',
     weakWordsOnly: 'දුර්වල වචන පමණක්', correctPick: 'නිවැරදි!', wrongPick: 'වැරදි',
     setPacing: '1 · ඩික්ටේෂන් වේගය සහ ආකාරය', modeLabel: 'ආකාරය', writeTime: 'ලිවීමට කාලය', repeats: 'වචන පුනරාවර්තන',
@@ -443,7 +477,7 @@
     studioTitle: '6 · කථිකාචාර්ය ස්ටුඩියෝ සහ පරිපාලන බඳුන', studioLocked: 'ස්ටුඩියෝ විවෘත කිරීමට කථිකාචාර්ය PIN ඇතුළත් කරන්න.',
     studioChangePin: 'PIN වෙනස් කරන්ඕ.',
     /* Table B additions — Sinhala UI labels, badges, presets and studio controls */
-    dictTitle: 'වචන 30 ලැයිස්තුව · #01–#30', dictSearchPh: 'වචන 30 සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
+    dictTitle: 'වචන {N} ලැයිස්තුව · #01–#{P}', dictSearchPh: 'වචන {N} සොයන්න (ඉංග්‍රීසි, සිංහල, උච්චාරණය)...',
     syncBadgeSynced: 'සමමුහුර්තයි',
     syncShortSyncing: 'සමමුහුර්ත වෙමින්…',
     lecturerSyncBar: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපකරණවලට විකාශනය කරන්න',
@@ -473,8 +507,8 @@
     voiceLockLabel: 'හඬ අගුල (Voice Lock)',
     voiceLockUnified: 'බ්‍රිතාන්‍ය කාන්තා කථිකාචාර්ය හඬ (ඒකාබදද්ධ 25–35 UK)',
     voiceLockCustom: 'තෝරාගත් හඬ මූලාශ්‍රය අනුව',
-    downloadClips: ' හඬපට 30 බාගන්න (නොබැඳි)',
-    downloadClipsDone: 'වචන 30න් 30ම නොබැඳි භාවිතයට සුරැකිණි',
+    downloadClips: ' හඬපට {N} බාගන්න (නොබැඳි)',
+    downloadClipsDone: 'වචන {N}න් {A}ම නොබැඳි භාවිතයට සුරැකිණි',
     studioFirstTime: 'පළමු වරට ස්ටුඩියෝ පිහිටුවීම: ඉලක්කම් 4–8 කථිකාචාර්ය PIN අංකය සහ API යතුරු ඇතුළත් කරන්න',
     studioTestEl: 'ElevenLabs යතුර පරීක්ෂා කරන්න',
     studioTestGh: 'GitHub යතුර පරීක්ෂා කරන්න',
@@ -504,9 +538,9 @@
     /* ── v0.0.1.c Table B (සිංහල) ── */
     guideTapToStart: ' හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
     homeJourney1: 'අසා ලියන්න',
-    homeJourney2: 'වචන 30 පරීක්ෂා කරන්න',
+    homeJourney2: 'වචන {N} පරීක්ෂා කරන්න',
     homeJourney3: 'දුර්වල වචන පුහුණු වන්න',
-    homeReadyBadge: '8 වන වාරය සූදානම් · වචන 30',
+    homeReadyBadge: '{S} වන වාරය සූදානම් · වචන {N}',
     modePaperFull: ' පොතේ ලිවීම',
     modeTypingFull: 'තිරයේ ටයිප් කිරීම',
     voiceGuideBtn: ' හඬ උපදෙස්',
@@ -544,7 +578,7 @@
     pauseReasonUser: 'ඔබ නැවැත්වීමට ස්පර්ශ කළා',
     guideAutoplayBanner: ' හඬ උපදෙස් ආරම්භ කිරීමට ඕනෑම තැනක ස්පර්ශ කරන්න',
     studioCardKeys: 'පියවර 1 — API යතුරු සහ හඬපට 34 පැකේජය',
-    studioCardWords: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
+    studioCardWords: 'පියවර 2 — වචන සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioCardSettings: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
     studioLockLecturer: 'කථිකාචාර්ය ප්‍රකාරය අගුළු දමන්න',
     studioAiProvider: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම',
@@ -552,10 +586,10 @@
     studioTestAi: 'නොමිලේ AI / ශබ්දකෝෂ එන්ජිම පරීක්ෂා කරන්න',
     studioAiNoKey: '1: ඉදිකළ නොමිලේ Oxford/Wikimedia ශබ්දකෝෂය සහ සිංහල පරිවර්තකය (100% නොමිලේ — යතුරක් අවශ්‍ය නැත)',
     studioOneClick: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
-    studioBulkWords: 'වචන 30 දක්වා අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
+    studioBulkWords: 'වාරයේ වචන අලවන්න හෝ ලියන්න (එක් පේළියකට එකක් හෝ කොමාවෙන් වෙන් කර)',
     studioEnrich: 'IPA, ඉංග්‍රීසි සහ සිංහල අර්ථ ස්වයංක්‍රීයව පුරවන්න (නොමිලේ AI / ශබ්දකෝෂය)',
     studioWordManager: 'වචන කළමනාකරු — # · w · p · pos · m · si · s',
-    studioPublishWordsVoice: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
+    studioPublishWordsVoice: ' හඬ සාදා වචන සියලු උපාංග වෙත පළ කරන්න',
     studioSyncSettings: ' පන්ති සැකසුම් සියලු උපාංග වෙත සුරකා සමමුහුර්ත කරන්න',
     studioMasterSteps: 'සැකසුම් ප්‍රගතිය',
     studioEnriching: 'පුරවමින්',
@@ -579,10 +613,10 @@
     /* ── v0.0.2.a (සිංහල) ── */
     tabStudio: 'කථිකාචාර්ය',
     homeStep1Tag: 'පියවර 1', homeStep2Tag: 'පියවර 2', homeStep3Tag: 'පියවර 3',
-    homeWordsTitle: 'වචන 30 ම #1–#30 අනුපිළිවෙලින් පරීක්ෂා කර අධ්‍යයනය කරන්න',
+    homeWordsTitle: 'වචන {N} ම #1–#{P} අනුපිළිවෙලින් පරීක්ෂා කර අධ්‍යයනය කරන්න',
     homeWordsSub: 'සෑම වචනයක්ම පන්ති අනුපිළිවෙලින්, බ්‍රිතාන්‍ය උච්චාරණය, සිංහල තේරුම සහ උදාහරණ වාක්‍යය සමඟ.',
-    homeWordsBtn: ' වචන 30 ලැයිස්තුව විවෘත කරන්න',
-    resumeMetaIdle: 'වචන #1 දී නවතා ඇත (වචන 30 න්)',
+    homeWordsBtn: ' වචන {N} ලැයිස්තුව විවෘත කරන්න',
+    resumeMetaIdle: 'වචන #1 දී නවතා ඇත (වචන {N} න්)',
     startOver: '↺ #1 සිට නැවත අරඹන්න',
     cueStep1: 'පියවර 1 — මෙතැන ඔබන්න',
     cuePlayer: 'මෙතැනින් නවතන්න හෝ දිගටම යන්න',
@@ -591,7 +625,7 @@
     settingsLecturerActive: ' කථිකාචාර්ය ප්‍රකාරය සක්‍රීයයි — විකාශනයට ස්ටූඩියෝව විවෘත කරන්න',
     openStudioBtn: ' ස්ටූඩියෝව විවෘත කරන්න',
     studioScreenTitle: ' කථිකාචාර්ය පරිපාලන ස්ටූඩියෝව',
-    studioScreenSub: 'කථිකාචාර්ය PIN එකෙන් විවෘත කරන්න \u2014 වචන 30 අලවන්න, සැසියේ අංකය පරීක්ෂා කර, සියලුම පන්ති උපාංගවලට විකාශනය කරන්න.',
+    studioScreenSub: 'කථිකාචාර්ය PIN එකෙන් විවෘත කරන්න \u2014 පන්ති වචන අලවන්න, සැසියේ අංකය පරීක්ෂා කර, සියලුම පන්ති උපාංගවලට විකාශනය කරන්න.',
     lecturerAdminLocked: ' කථිකාචාර්ය පරිපාලනය', lecturerAdminUnlocked: ' කථිකාචාර්ය පරිපාලනය',
     btnReplay: ' නැවත අසන්න',
     btnPauseDictation: '⏸ නවතන්න',
@@ -600,17 +634,17 @@
     listenCarefully: 'හොඳින් අසන්න (වාරය ', writeInBook: 'වචන #',
     inYourBook: ' ඔබේ පොතේ ලියන්න! (', countdownTail: ' තත්පර ගණන්)',
     pausedAtWord: 'වචන #', pausedResumeTail: ' දී ඩික්ටේෂන් නවතා ඇත — පහතින් දිගටම යන්න ඔබන්න',
-    resumeMetaLine: 'වචන # දී නවතා ඇත · ඉතිරි ', ofWord: ' / 30 · වාරය ', secondsLeft: ' තත්පර',
-    progressWord: 'වචන #', progressOf: ' / 30',
-    progressWordUpper: 'වචන #', progressOf30: ' / 30', repeatOf: ' න් ', writeSecsBadge: 'තත් ලියන්න',
+    resumeMetaLine: 'වචන # දී නවතා ඇත · ඉතිරි ', ofWord: ' / {N} · වාරය ', secondsLeft: ' තත්පර',
+    progressWord: 'වචන #', progressOf: ' / {N}',
+    progressWordUpper: 'වචන #', progressOf30: ' / {N}', repeatOf: ' න් ', writeSecsBadge: 'තත් ලියන්න',
     capPrev: 'පෙර', capPlay: 'නවත්වන්න', capReplay: 'නැවත', capNext: 'ඊළඟ',
     capRepeat: 'පුනරාවර්තනය', capHint: 'ඉඟිය', capMode: 'ක්‍රමය', capFinish: 'පරීක්ෂාව',
-    pillsDrawer: 'වචන 1–30 යන්න ▾',
+    pillsDrawer: 'වචන 1–{N} යන්න ▾',
     markCorrectWord: ' නිවැරදි', markWeakWord: ' පුහුණුව අවශ්‍යයි', btnStartDictation: '▶ ඩික්ටේෂන් අරඹන්න',
     studioRetryNone: 'නැවත උත්සාහ කිරීමට අසාර්ථක ක්ලිපයක් නැත — සියලු ක්ලිප සුරකිනු ලැබීය.',
     studioRetryOne: '↻ අසාර්ථක වූ ක්ලිපය පමණක් නැවත උත්සාහ කරන්න',
     studioStep1Head: 'පියවර 1 — API යතුරු සහ හඬපට 34 උත්පාදකය',
-    studioStep2Head: 'පියවර 2 — වචන 30 සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
+    studioStep2Head: 'පියවර 2 — වචන සංස්කාරකය සහ නොමිලේ AI ස්වයං පිරවීම',
     studioStep3Head: 'පියවර 3 — පන්ති සැකසුම් විකාශනය සහ PIN ආරක්ෂාව',
     studioPackVault: 'බඳුන: සුරකින ලදී ', studioPackGithub: 'GitHub: සම්බන්ධයි ', studioPackClips: 'හඬ පැකේජය: ',
     studioClipsUnit: '/හඬපට 74', studioGenPrefix: 'හඬපට සාදමින් ',
@@ -618,8 +652,8 @@
     studioRetryFailed: ' ඉතිරි හඬපට පමණක් නැවත උත්සාහ කරන්න',
     studioOneClick34: ' බ්‍රිතාන්‍ය මහාචාර්ය හඬ 70 සාදා සියලු උපාංග සමමුහුර්ත කරන්න',
     studioSaveOnly: ' යතුරු බඳුනේ පමණක් සුරකින්න',
-    studioPublishWordsVoice34: ' හඬ සාදා වචන 30 සියලු උපාංග වෙත පළ කරන්න',
-    studioOneClickFull: 'වචන 30 පළ කර සමමුහුර්ත කරන්න',
+    studioPublishWordsVoice34: ' හඬ සාදා වචන සියලු උපාංග වෙත පළ කරන්න',
+    studioOneClickFull: 'වචන පළ කර සමමුහුර්ත කරන්න',
     studioWordsRecognized: 'වචන හඳුනාගත්',
 
     studioWordModified: 'වචන(ග) වෙනස් කර ඇත',
@@ -633,7 +667,7 @@
     pillListening: '🎧 සවන් දෙන්න · පුනරාවර්තනය',
     pillWriting: '✍️ වචනය ලියන්න ·',
     pillFinishWarn: '⏳ ලිවීම අවසන් කරන්න ·',
-    studioBroadcast34: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #30 දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
+    studioBroadcast34: ' වර්තමාන වේග සැකසුම් (විභාග 5 තත් · 2×) සියලු පන්ති උපාංගවලට විකාශනය කරන්න',    guideCard3Tag: '4 න් 3 — වචන #1 සිට #{N} දක්වා පිළිවෙලින් පරීක්ෂා කරන්න', guideCard4Tag: '4 න් 4 — ස්වයංක්‍රීය පන්ති සමමුහුර්තය සහ කථිකාචාර්ය පරිපාලනය',
     guideSkipStartNow: '▶ දැන් Start Dictation ඔබන්න',
     guideSpotlight1: 'ඩික්ටේෂන් ආරම්භ කිරීමට පහළ ඇති ▶ Start Dictation බොත්තම ඔබන්න.',
     guideSpotlight2: 'සෑම වචනයක්ම දෙවරක් අසන්න, පසුව තත්පර පහක් තුළ ලියන්න.',
@@ -676,7 +710,7 @@
     pasteWords: '📋 අලවන්න', clearWords: '🧹 හිස් කරන්න', confirmWords: '✓ වචන තහවුර කරන්න',
     liveChipsLabel: 'වචන චිප', helperReady: '✓ 30 / 30 වචන සූදානම්',
     helperOver: '{n} වචන හමු විය (අවශ්‍ය 30) — ඉවත් කිරීමට ✕ හෝ ඒකාංශ කිරීමට ⇄ ස්පර්ශ කරන්න',
-    studioStep1: 'පියවර 1 · එක් වරක් සැකසීම', studioStep2: 'පියවර 2 · වචන 30 අලවන්න', studioStep3: 'පියවර 3 · පන්තියට විකාශනය',
+    studioStep1: 'පියවර 1 · එක් වරක් සැකසීම', studioStep2: 'පියවර 2 · වචන අලවන්න', studioStep3: 'පියවර 3 · පන්තියට විකාශනය',
     helperUnder: '{n} / 30 වචන — තව {need}ක් එකතු කරන්න',
     wordsConfirmedOk: '✓ වචන තහවුරු කළා — විකාශනයට සූදානම්', wordsCleared: 'වචන සංස්කාරකය හිස් කළා',
     chipMergeLabel: 'ඊළඟ වචනය සමඟ ඒකාංශ කරන්න', chipRemoveLabel: 'වචනය ඉවත් කරන්න',
@@ -732,7 +766,7 @@
     fabReviewNote: '🔒 සෑම සමාලෝචනයක්ම අන්ත සිට අන්තට කේතනය කර ඇත — කියවිය හැකි කිසිවක් ඔබේ උපාංගයෙන් පිටතට නොයයි.',
     fabBadge: 'ගැටලුවක් දැක්කාද? කියන්න',
     fabFaqAudio: '🔇 හඬක් නැති වුණා, නැතහොත් යන්ත්‍ර සේවක කටහඬක් ඇහුණාද?',
-    fabFaqAudioA: 'සාරාංශය මත ඕනෑම තැනක එක් තට්ටුවක් කරන්න — අලුත් බ්‍රව්සර් සැසියක ඔබේ පළමු තට්ටුව වන තුරු හඬ අඟහරි වේ, එබැවින් සාරාංශය එයට රැඳී සිටියි. දුරකථනයේ නිශ්ශබ්ද ස්විචය සහ ශබ්ද ප්‍රමාණයද පරීක්ෂා කරන්න. බ්‍රිතාන්‍ය පිරිමි හඬ ක්ලිප් සහ වචන 30 ක්ලිප් එක් වරක් පූරණය වූ පසු ඕෆ්ලයින් වැඩ කරයි.',
+    fabFaqAudioA: 'සාරාංශය මත ඕනෑම තැනක එක් තට්ටුවක් කරන්න — අලුත් බ්‍රව්සර් සැසියක ඔබේ පළමු තට්ටුව වන තුරු හඬ අඟහරි වේ, එබැවින් සාරාංශය එයට රැඳී සිටියි. දුරකථනයේ නිශ්ශබ්ද ස්විචය සහ ශබ්ද ප්‍රමාණයද පරීක්ෂා කරන්න. බ්‍රිතාන්‍ය පිරිමි හඬ ක්ලිප් සහ සියලු වචන ක්ලිප් එක් වරක් පූරණය වූ පසු ඕෆ්ලයින් වැඩ කරයි.',
     fabFaqPacing: '⏳ වචන ඉතා ඉක්මන් හෝ මන්දගාමීද?',
     fabFaqPacingA: 'ධාවක තිරයේ “මන්දගාමී” බොත්තම තට්ටු කරන්න (0.72 වේගය), නැතහොත් සැකසුම් → වේගයෙන් ලිවීමේ තත්පර (3–60), පුනරාවර්තන (1/2/3) සහ වචන අතර විරාමය සකසන්න. කඩදාසි ප්‍රකාරයේ පෙරනිමිය කියවීම් දෙකක් සහ තත්පර පහක ලිවීමේ කාලයකි.',
     fabFaqPaper: '📝 කඩදාසි ප්‍රකාරය සහ ටයිප් කිරීමේ ප්‍රකාරය?',
@@ -753,6 +787,50 @@
     if (value === undefined) value = STRINGS_EN[key];
     if (value === undefined) return fallback === undefined ? key : fallback;
     return value;
+  }
+  /* v0.0.7.c (BUG-05): {N} total words · {P} zero-padded total · {S} session
+     no · {A} auxiliary count — every word-count string is templated, painted
+     from the LIVE bank, and can never go stale again. */
+  function fmtN(template, n, p, a) {
+    return String(template)
+      .replace('{N}', String(n === undefined ? 0 : n))
+      .replace('{P}', String(p === undefined ? n : p))
+      .replace('{A}', String(a === undefined ? n : a));
+  }
+  function liveTotal() {
+    var n = 0;
+    try { n = Number(SDP.Sync && SDP.Sync.wordCount ? SDP.Sync.wordCount() : 0) || 0; } catch (e) { n = 0; }
+    if (!n) n = words().length || 0;
+    return n;
+  }
+  function setLabel(host, text) {
+    if (!host) return false;
+    var inner = host.querySelector ? host.querySelector('.i18n-label') : null;
+    setText(inner || host, text);
+    return true;
+  }
+  function paintWordCounts() {
+    var n = liveTotal(), p = pad2(n), i;
+    setText(byId('homeSub'), fmtN(t('homeSub', 'Listen, write, and check {N} B1 words with your class.'), n));
+    setText(byId('btnStart'), fmtN(t('startDictation', 'Start Dictation (Word #1 to #{N})'), n));
+    setText(byId('homeWordsTitle'), fmtN(t('homeWordsTitle', 'Check & Study All {N} Session Words in Order #1–#{P}'), n, p));
+    setLabel(byId('btnHomeWords'), fmtN(t('homeWordsBtn', ' Open the {N}-Word List (#1–#{P})'), n, p));
+    setText(byId('homeJourney2'), fmtN(t('homeJourney2', 'Check your {N} words'), n));
+    setText(byId('flashcardsSub'), fmtN(t('flashcardsSub', 'Flip through all {N} words'), n));
+    setText(byId('dictTitle'), fmtN(t('dictTitle', '{N}-Word Session View · #01–#{P}'), n, p));
+    var ds = byId('dictSearch');
+    if (ds) ds.placeholder = fmtN(t('dictSearchPh', 'Search {N} words (English, Sinhala, IPA)...'), n);
+    var fa = doc.querySelector ? doc.querySelector('.pill[data-filter="all"]') : null;
+    if (fa) setText(fa, fmtN(t('filterAll', 'All {N}'), n));
+    setText(byId('pillsDrawerToggle'), fmtN(t('pillsDrawer', 'Jump to Word 1–{N} ▾'), n));
+    setText(byId('boardJumperToggle'), fmtN(t('pillsDrawer', 'Jump to Word 1–{N} ▾'), n));
+    setText(byId('resumeMeta'), fmtN(t('resumeMetaIdle', 'Paused at Word #1 of {N}'), n));
+    setLabel(byId('btnDownloadClips'), fmtN(t('downloadClips', ' Download All {N} Word Audio Clips for Offline Use'), n));
+    var tabLabel = doc.querySelector ? doc.querySelector('#tab-dict [data-i18n="tabWords"]') : null;
+    if (tabLabel) setText(tabLabel, (lang === 'si' ? 'වචන (' : 'Words (') + n + ')');
+    var dcd = byId('btnDownloadClips');
+    if (dcd) { /* keep aria in sync for screen readers */ dcd.setAttribute('aria-label', fmtN(t('downloadClips', ' Download All {N} Word Audio Clips for Offline Use'), n)); }
+    return true;
   }
   function settings() {
     try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', lang: 'en', theme: 'light' }; }
@@ -825,6 +903,7 @@
       }
     }
     if (SDP.Studio && SDP.Studio.onLangChange) { try { SDP.Studio.onLangChange(); } catch (e) {} }
+    paintWordCounts();
     return lang;
   }
   function toggleLang() { return applyLang(lang === 'en' ? 'si' : 'en'); }
@@ -1010,6 +1089,9 @@
     }
     renderBoardBar();
     if (target === 'player' && SDP.Engine && SDP.Engine.refreshEls) SDP.Engine.refreshEls();
+    /* v0.0.7.c (BUG-05): every tab switch lands at the top of the screen —
+       a heading can never sit clipped underneath the sticky app header. */
+    try { if (global.scrollTo) global.scrollTo(0, 0); } catch (eSc) {}
     return target;
   }
   function currentTab() {
@@ -1071,10 +1153,12 @@
   function renderHome() {
     var s = stats();
     var bank = words().length;
-    var total = bank || 30;
-    /* An empty bank is a real state (first run offline): say so. */
+    var total = bank || liveTotal();
+    /* v0.0.7.c (BUG-01 #3): an empty bank before boot settles is a LOADING
+       state, never a false 'no word list' — bankEmpty only tells the truth
+       after the boot attempt finished (onDataReady set dataSettled). */
     var empty = byId('bankEmpty');
-    if (empty) empty.hidden = bank > 0;
+    if (empty) empty.hidden = bank > 0 || !dataSettled();
     var start = byId('btnStart');
     if (start) {
       start.disabled = bank === 0;
@@ -1102,7 +1186,7 @@
     var cfg = {};
     try { cfg = SDP.Engine && SDP.Engine.config ? (SDP.Engine.config() || {}) : {}; } catch (e) { cfg = {}; }
     var draftIndex = enginePaused ? Number(cfg.index || 0) : (draft && typeof draft.index === 'number' ? draft.index : 0);
-    var bankCount = bank || 30;
+    var bankCount = bank || liveTotal();
     var repeatsTotal = Math.max(1, Number(cfg.repeats || (draft && draft.repeats) || (settings().repeats) || 2));
     var repeatsDone = Math.max(0, Number(enginePaused ? cfg.repeatsDone : (draft && draft.repeatsDone) || 0));
     var repeatsShown = Math.min(repeatsTotal, repeatsDone + 1);
@@ -1112,7 +1196,7 @@
       banner.hidden = !resumable;
       if (resumable) {
         banner.setAttribute('data-state', (enginePaused || draftPaused) ? 'paused' : 'draft');
-        setText(byId('resumeText'), t('resumeMetaLine') + (draftIndex + 1) + t('ofWord') +
+        setText(byId('resumeText'), t('resumeMetaLine') + (draftIndex + 1) + fmtN(t('ofWord'), liveTotal()) +
           repeatsShown + ' of ' + repeatsTotal + ' · ' + secondsLeft + t('secondsLeft'));
         setText(byId('resumeMeta'), resumable ? t('resumePaused') : t('resumeMetaIdle'));
       }
@@ -1137,6 +1221,7 @@
     if (ann) ann.hidden = !annText;
     setText(byId('homeAnnText'), annText);
     paintModePills();
+    paintWordCounts();
   }
   /* D15: Home Step-2 previews #01..#03 in strict class order. */
   function paintHomeWordsPreview() {
@@ -1192,19 +1277,22 @@
     return true;
   }
 
-  /* P5: "Session 8 ready · 30 words" — the student knows the bank is loaded… */
+  /* P5 + v0.0.7.c (BUG-01 #3): the readiness badge. Before the boot settles
+     it is an honest LOADING state — never a false 'Session 8 ready · 0 words'
+     flash; afterwards it paints the live session number and word count. */
   function paintReadiness(bank) {
     var badge = byId('homeReadyBadge');
     if (!badge) return false;
     var count = Number(bank);
     if (isNaN(count)) count = boardWordCount();
-    var sessionNo = '8';
-    try { sessionNo = str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8'); } catch (e) { sessionNo = '8'; }
-    var label = t('homeReadyBadge')
-      .replace('Session 8', 'Session ' + sessionNo)
-      .replace('8 වන වාරය', sessionNo + ' වන වාරය')
-      .replace('30 words', count + ' words')
-      .replace('වචන 30', 'වචන ' + count);
+    if (!dataSettled() && count <= 0) {
+      badge.textContent = t('homeReadyLoading', 'Loading the class word list…');
+      badge.setAttribute('data-ready', 'loading');
+      return true;
+    }
+    var sessionNo = '';
+    try { sessionNo = str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : ''); } catch (e) { sessionNo = ''; }
+    var label = fmtN(t('homeReadyBadge', 'Session {S} ready · {N} words').replace('{S}', sessionNo || '—'), count);
     badge.textContent = label;
     badge.setAttribute('data-ready', count > 0 ? 'true' : 'false');
     return true;
@@ -1702,8 +1790,9 @@
         '</article>';
     }
     var dictEmpty = byId('dictEmpty');
-    if (dictEmpty) dictEmpty.hidden = list.length > 0;
+    if (dictEmpty) dictEmpty.hidden = list.length > 0 || !dataSettled();
     host.innerHTML = shown ? html : (list.length ? '<p class="dict-empty">' + esc(t('noWordsFound')) + '</p>' : '');
+    paintWordCounts();
     return shown;
   }
   /* D14:  /  write sdp.progress.mastered / weakWords and repaint. */
@@ -1830,7 +1919,7 @@
         ? '<div class="prac-word si">' + esc(word.si) + '</div><div class="prac-mini">' + esc(word.m) + '</div>'
         : '<div class="prac-word">' + esc(word.w) + '</div><div class="prac-mini">/' + esc(str(word.p).replace(/^\/+|\/+$/g, '')) + '/ · ' + esc(word.pos) + '</div>';
       html += '<div class="prac-card" data-prac-act="flip" role="button" tabindex="0">' + face +
-        '<div class="prac-mini">' + esc(t('tapToFlip')) + '</div></div>' +
+        '<div class="prac-mini">' + esc(t(practice.flipped ? 'tapFlipBack' : 'tapToFlip')) + '</div></div>' +
         '<div class="prac-actions">' +
         '<button type="button" class="btn btn-sm" data-prac-act="say">' + esc(t('listen')) + '</button>' +
         '<button type="button" class="btn btn-sm" data-prac-act="next">' + esc(t('nextCard')) + '</button>' +
@@ -2287,9 +2376,8 @@
     if (state.state === 'synced') {
       /* ENG-06: no version or session literal lives in the string tables — the… */
       var base = t('syncBadgeSynced');
-      label = lang === 'si'
-        ? base + ' · ' + session + ' වන වාරය · v' + APP_VERSION
-        : base + ' · Session ' + session + ' · v' + APP_VERSION;
+      var sessSeg = session ? (lang === 'si' ? ' · ' + session + ' වන වාරය' : ' · Session ' + session) : '';
+      label = base + sessSeg + ' · v' + APP_VERSION;
     } else if (state.state === 'offline') {
       label = t('syncBadgeOffline');
     } else if (state.state === 'update') {
@@ -2319,13 +2407,17 @@
     var hasErr = (result !== undefined && !!err) || !res.ok;
     if (hasErr) {
       paintSyncBadge({ state: res.error === 'no_fetch' ? 'offline' : 'error', session: syncSessionNo() });
-      /* v0.0.7.b B7: a failed network probe on the 30 s tick keeps the
-         Offline Mode banner up even when navigator.onLine still lies. */
-      if (res.error === 'no_fetch' || res.error === 'timeout') { try { paintOfflineBanner(true); } catch (eO) {} }
+      /* v0.0.7.c (BUG-01): a single failed tick NEVER latches Offline Mode.
+         The banner follows the probe-verified state only, and only after two
+         consecutive unreachable ticks (a full 50 s window) does the probe
+         even run — one slow pointer on mobile data is not 'offline'. */
+      if (res.error === 'no_fetch' || res.error === 'timeout') { try { noteSyncFailed(); } catch (eO) {} }
       return;
     }
-    /* a real answer from the network proves connectivity — clear the banner. */
-    try { paintOfflineBanner(false); } catch (eO2) {}
+    /* a real answer from the network proves connectivity — clear the banner
+       AND the Lecturer Studio blind together (the v0.0.7.b bug: the studio
+       stayed blinded forever after one bad probe, even fully back online). */
+    try { noteSyncReachable(); } catch (eO2) {}
     if (res.appVersionChanged) {
       paintSyncBadge({ state: 'update', session: res.session || syncSessionNo() });
       return;
@@ -2333,39 +2425,64 @@
     paintSyncBadge({ state: 'synced', session: res.session || syncSessionNo() });
   }
   function syncSessionNo() {
-    var n = '8';
-    try { if (SDP.Sync && SDP.Sync.sessionNo) n = SDP.Sync.sessionNo() || '8'; } catch (e) {}
+    /* v0.0.7.c (BUG-01 #3): no literal Session-8 fallback — an unknown
+       session stays empty instead of flashing a wrong number. */
+    var n = '';
+    try { if (SDP.Sync && SDP.Sync.sessionNo) n = SDP.Sync.sessionNo() || ''; } catch (e) {}
     return str(n);
   }
   function checkForUpdate() {
     setUpdateStatus(t('updateChecking'), '');
-    try {
-      SDP.Sync.checkForUpdates(function (err, result) {
-        var res = (result && typeof result === 'object') ? result : ((err && typeof err === 'object' && 'ok' in err) ? err : {});
-        var failed = (result !== undefined && !!err) || !res.ok;
-        if (failed) {
-          var state = (res && res.error === 'no_fetch') ? 'offline' : 'error';
-          paintSyncBadge({ state: state, session: syncSessionNo() });
-          setUpdateStatus(state === 'offline' ? t('syncBadgeOffline') : t('syncBadgeRetry'), state === 'offline' ? '' : 'bad');
-          return;
-        }
-        if (res.appVersionChanged) {
-          paintSyncBadge({ state: 'update', session: res.session || syncSessionNo(), appVersion: res.appVersion });
-          setUpdateStatus(t('syncBadgeUpdate'), 'ok');
-          return;
-        }
-        if (res.updated) {
-          paintSyncBadge({ state: 'synced', session: res.session || syncSessionNo() });
-          setUpdateStatus(t('updateFound') + ' · Session ' + str(res.session), 'ok');
-          onDataReady();
-          return;
-        }
-        paintSyncBadge({ state: 'synced', session: res.session || syncSessionNo() });
-        setUpdateStatus(t('updateNone'), '');
-      });
-    } catch (e) {
+    /* v0.0.7.c (BUG-01 #2): the manual check can NEVER hang — a hard 8 s
+       deadline always lands a deterministic success / up-to-date / error
+       status plus a toast, whatever the network does underneath. */
+    var settledUpd = false;
+    var deadlineUpd = global.setTimeout(function () {
+      if (settledUpd) return;
+      settledUpd = true;
       paintSyncBadge({ state: 'error', session: syncSessionNo() });
-      setUpdateStatus(t('syncBadgeRetry'), 'bad');
+      setUpdateStatus(t('updateTimedOut', 'Check timed out — the connection is too slow. Tap again to retry.'), 'bad');
+      showToast(t('updateTimedOut', 'Check timed out — the connection is too slow. Tap again to retry.'));
+      try { noteSyncFailed(); } catch (eD) {}
+    }, 8000);
+    var finishUpd = function (err, result) {
+      if (settledUpd) return;
+      settledUpd = true;
+      global.clearTimeout(deadlineUpd);
+      var res = (result && typeof result === 'object') ? result : ((err && typeof err === 'object' && 'ok' in err) ? err : {});
+      var failed = (result !== undefined && !!err) || !res.ok;
+      if (failed) {
+        var offlineish = res.error === 'no_fetch' || res.error === 'timeout' || res.error === 'raw_timeout' || res.error === 'raw_unavailable';
+        var state = offlineish ? 'offline' : 'error';
+        paintSyncBadge({ state: state, session: syncSessionNo() });
+        setUpdateStatus(offlineish ? t('syncBadgeOffline') : t('syncBadgeRetry'), offlineish ? '' : 'bad');
+        showToast(offlineish ? t('syncBadgeOffline') : t('syncBadgeRetry'));
+        /* probe-verified only: a failed fetch alone never paints Offline. */
+        if (offlineish) { try { noteSyncFailed(); } catch (eF) {} }
+        return;
+      }
+      try { noteSyncReachable(); } catch (eR) {}
+      if (res.appVersionChanged) {
+        paintSyncBadge({ state: 'update', session: res.session || syncSessionNo(), appVersion: res.appVersion });
+        setUpdateStatus(t('syncBadgeUpdate'), 'ok');
+        showToast(t('syncBadgeUpdate'));
+        return;
+      }
+      if (res.updated) {
+        paintSyncBadge({ state: 'synced', session: res.session || syncSessionNo() });
+        setUpdateStatus(t('updateFound') + ' · Session ' + str(res.session), 'ok');
+        showToast(t('updateFound') + ' · Session ' + str(res.session));
+        onDataReady();
+        return;
+      }
+      paintSyncBadge({ state: 'synced', session: res.session || syncSessionNo() });
+      setUpdateStatus(t('updateNone'), '');
+      showToast(t('updateNone'));
+    };
+    try {
+      SDP.Sync.checkForUpdates(function (err, result) { finishUpd(err, result); });
+    } catch (e) {
+      finishUpd(e, null);
     }
   }
 
@@ -2427,7 +2544,7 @@
     /* v0.0.6.c (F2): the 1-30 chips live inside a CLOSED drawer; the summary
        pill carries the live word so the numbers never clutter the cockpit. */
     var toggle = byId('boardJumperToggle');
-    if (toggle) setText(toggle, t('pillsDrawer', 'Jump to Word 1–30 ▾').replace('▾', '▾'));
+    if (toggle) setText(toggle, fmtN(t('pillsDrawer', 'Jump to Word 1–{N} ▾'), liveTotal()));
     var drawer = byId('boardJumperDrawer');
     if (drawer && drawer.removeAttribute) drawer.setAttribute('data-count', String(count));
     return count;
@@ -2655,7 +2772,7 @@
       drawer.hidden = !open;
       if (toggle) {
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        toggle.textContent = t('pillsDrawer', 'Jump to Word 1–30 ▾');
+        toggle.textContent = fmtN(t('pillsDrawer', 'Jump to Word 1–{N} ▾'), liveTotal());
       }
     });
     on('btnLang', 'click', toggleLang);
@@ -2903,6 +3020,13 @@
     }
     return true;
   }
+  /* v0.0.7.c (BUG-01 #3): boot-settled latch — the honest loading state for
+     the readiness badge and the empty-bank copy. */
+  var dataBootSettled = false;
+  function dataSettled(value) {
+    if (value === true) dataBootSettled = true;
+    return dataBootSettled;
+  }
   function onNetChange() {
     var off = isOfflineNow();
     paintStudioOffline(off);
@@ -2923,6 +3047,8 @@
      version.json: a failed probe keeps the banner up; a success clears it
      the instant real connectivity returns. ══ */
   var offlineProbeBusy = false;
+  var offlineStrikes = 0;
+  var offlineVisible = false;
   function probeConnectivity(cb) {
     cb = cb || function () {};
     if (typeof global.fetch !== 'function') { cb(false); return false; }
@@ -2930,9 +3056,13 @@
     var finish = function (ok) { if (!done) { done = true; cb(ok); } };
     try {
       global.fetch('./data/version.json?probe=' + Date.now(), { cache: 'no-store' })
-        .then(function (r) { finish(!!(r && r.ok)); }, function () { finish(false); });
+        /* v0.0.7.c (BUG-01): ANY HTTP answer (200 … 404) proves the origin is
+           reachable — only a network error or a timeout is 'offline'. */
+        .then(function (r) { finish(!!r); }, function () { finish(false); });
     } catch (e) { finish(false); return false; }
-    global.setTimeout(function () { finish(false); }, 6000);
+    /* v0.0.7.c: the probe gets a real 8 s window (was 6 s, racing the service
+       worker's own 10 s network-first window and losing on slow mobile data). */
+    global.setTimeout(function () { finish(false); }, 8000);
     return true;
   }
   function paintOfflineBanner(show) {
@@ -2945,22 +3075,49 @@
       setText(byId('obSub'), t('offlineBannerSub', 'Cached audio & sessions active'));
       var hb = byId('btnOfflineHelp');
       if (hb) setText(hb, t('offlineBannerHelp', 'Get Help'));
+      var rb = byId('btnOfflineRetry');
+      if (rb) setText(rb, t('offlineRetry', 'Retry Connection'));
     }
+    offlineVisible = !!show;
     return true;
+  }
+  function applyProbeResult(ok, announceOnline) {
+    offlineProbeBusy = false;
+    paintOfflineBanner(!ok);
+    /* v0.0.7.c (BUG-01): the banner and the Lecturer Studio blind ALWAYS
+       move together — a reachable origin unblinds the studio instantly. */
+    paintStudioOffline(!ok);
+    if (ok) {
+      offlineStrikes = 0;
+      if (announceOnline && offlineVisible) { try { showToast(t('offlineBackOnline', 'Back online')); } catch (e) {} }
+      offlineVisible = false;
+    }
   }
   function refreshOfflineState(announceOnline) {
     var off = isOfflineNow();
-    if (off) { onNetChange(); return true; }
+    if (off) { offlineStrikes = 0; onNetChange(); return true; }
     /* navigator claims online — verify with a probe so "no mobile data"
        keeps the banner visible. */
     if (offlineProbeBusy) return true;
     offlineProbeBusy = true;
-    probeConnectivity(function (ok) {
-      offlineProbeBusy = false;
-      paintOfflineBanner(!ok);
-      paintStudioOffline(!ok);
-      if (ok && announceOnline) { try { showToast(t('offlineBackOnline', 'Back online')); } catch (e) {} }
-    });
+    try { setText(byId('obSub'), t('offlineProbePending', 'Checking your connection…')); } catch (eP) {}
+    probeConnectivity(function (ok) { applyProbeResult(ok, announceOnline); });
+    return true;
+  }
+  /* v0.0.7.c (BUG-01): the 25 s sync tick alone can never flip the app into
+     Offline Mode. A failed tick counts ONE strike; two consecutive failures
+     escalate to a probe-verified decision, and any success clears everything
+     instantly. One slow pointer read on mobile data is not 'offline'. */
+  function noteSyncReachable() {
+    offlineStrikes = 0;
+    paintOfflineBanner(false);
+    paintStudioOffline(false);
+    offlineVisible = false;
+    return true;
+  }
+  function noteSyncFailed() {
+    offlineStrikes += 1;
+    if (offlineStrikes >= 2 && !offlineProbeBusy) refreshOfflineState(false);
     return true;
   }
   /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys… */
@@ -3046,6 +3203,7 @@
   }
 
   function onDataReady(err) {
+    dataSettled(true);
     renderHome();
     renderBoardBar();
     renderWords();
@@ -3109,7 +3267,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.7.b.beta';
+  var BETA_SUBVERSION = '0.0.7.c.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -4603,8 +4761,10 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
-    /* v0.0.7.b B7: the Offline Mode banner paints its boot state and the
-       banner's Get Help button opens the Student Troubleshooting Guide. */
+    /* v0.0.7.b B7 + v0.0.7.c (BUG-01): the Offline Mode banner paints its
+       boot state; the Get Help button opens the Student Troubleshooting
+       Guide and the Retry Connection button re-probes immediately — a
+       transient probe failure can always be cleared by hand. */
     try {
       paintOfflineBanner(isOfflineNow());
       var obHelp = byId('btnOfflineHelp');
@@ -4613,6 +4773,14 @@
         obHelp.addEventListener('click', function () {
           try { if (SDP.SelfHeal && SDP.SelfHeal.showTroubleshoot) { SDP.SelfHeal.showTroubleshoot('offline'); return; } } catch (e) {}
           try { if (SDP.SelfHeal && SDP.SelfHeal.show) SDP.SelfHeal.show('manual', { via: 'offline_banner' }); } catch (e2) {}
+        }, false);
+      }
+      var obRetry = byId('btnOfflineRetry');
+      if (obRetry && !obRetry._sdpBound) {
+        obRetry._sdpBound = true;
+        obRetry.addEventListener('click', function () {
+          offlineStrikes = 0;
+          refreshOfflineState(true);
         }, false);
       }
     } catch (eOB) {}
@@ -4635,7 +4803,9 @@
     renderPractice();
     renderGuideSteps();
     renderSettings();
-    paintSyncBadge({ state: 'synced', session: str(SDP.Sync && SDP.Sync.sessionNo ? SDP.Sync.sessionNo() : '8') });
+    /* v0.0.7.c (BUG-01 #3): no literal-8 'synced' badge before the boot
+       settles — the badge stays honest until real data arrives. */
+    paintSyncBadge({ state: 'synced', session: syncSessionNo() });
     /* v0.0.6.m Pillar 1: a brand-new visitor gets the Project Briefing first;
        the student guide follows the moment the briefing closes. Returning
        students (any guide_seen stamp) are never interrupted again.

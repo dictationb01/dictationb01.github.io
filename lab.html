@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<title>🔬 Live Lab v4.0 · Real-Time Voice &amp; Clone Lab · Smart Dictation 0.0.7.b</title>
+<title>🔬 Live Lab · Real-Time Voice &amp; Clone Lab · Smart Dictation</title>
 <style>
 :root{--ink:#0F172A;--mut:#64748B;--bg:#F1F5F9;--card:#FFFFFF;--line:#E2E8F0;--ok:#059669;--warn:#B45309;--bad:#DC2626;--acc:#0EA5E9}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -57,7 +57,7 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
 </head>
 <body>
 <header class="lab-head">
- <h1>🔬 Live Lab v4.0 — Real-Time Voice &amp; Clone Lab — Smart Dictation <span id="labVerPill">0.0.7.b</span></h1>
+ <h1>🔬 Live Lab — Real-Time Voice &amp; Clone Lab — Smart Dictation <span id="labVerPill">0.0.7.c</span></h1>
  <p>https://dictationb01.github.io/lab.html · live AudioContext · real &lt;audio&gt; playback · real fetch — zero mocks · CREDITS GOES TO Hansana · Ms. Sumodya Sewmini · Ayya01 (Lesandu)</p>
  <span id="labScoreBadge" data-state="pass">✓ ALL PASS</span>
  <span class="score" style="margin-left:10px"><span id="labScorePass">0</span> PASS · <span id="labScoreWarn">0</span> WARN · <span id="labScoreFail">0</span> FAIL</span>
@@ -72,7 +72,7 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
  <div class="btnrow">
   <button id="btnLabLoadPack" class="lab-btn" type="button">📦 Load &amp; Decode All Clips</button>
   <button id="btnLabWordsOnly" class="lab-btn" type="button">🔤 Words.* Only</button>
-  <button id="btnLabTestAllWords" class="lab-btn" type="button">🔊 Test All 30 Words Sequentially (Fast Audit)</button>
+  <button id="btnLabTestAllWords" class="lab-btn" type="button">🔊 Test All Words Sequentially (Fast Audit)</button>
  </div>
  <p class="status" id="labPackHeaderInfo">—</p>
  <p class="status" id="labPackStatus">idle</p>
@@ -132,19 +132,19 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
 
 <section class="card">
  <h2><span class="st">STATION 3</span>Live Studio New-Word Synthesis &amp; British RP Pipeline Tester</h2>
- <p class="hint">The Live 1-Click Batch Word Synthesis &amp; Repair tool below tests, wipes and re-synthesizes all 30 words with live progress. Type any test word (e.g. cathedral, pharmacy, harbour) and trace the live 4-stage pipeline: (A) CAMBRIDGE_B1_RP_LEXICON → (B) dictionaryapi.dev live UK IPA + -uk.mp3 (separate-entry law) → (C) live AI RP verification → (D) the deterministic British RP fallback (never quarantined) → (E) the live ElevenLabs POST body + real MP3 synthesis + real &lt;audio&gt; playback + CacheStorage hydration.</p>
+ <p class="hint">The Live 1-Click Batch Word Synthesis &amp; Repair tool below tests, wipes and re-synthesizes every session word with live progress. Type any test word (e.g. cathedral, pharmacy, harbour) and trace the live 4-stage pipeline: (A) CAMBRIDGE_B1_RP_LEXICON → (B) dictionaryapi.dev live UK IPA + -uk.mp3 (separate-entry law) → (C) live AI RP verification → (D) the deterministic British RP fallback (never quarantined) → (E) the live ElevenLabs POST body + real MP3 synthesis + real &lt;audio&gt; playback + CacheStorage hydration.</p>
  <div class="btnrow">
   <input id="labTestWord" class="lab-input" type="text" value="cathedral" placeholder="test word (cathedral, pharmacy, harbour…)">
   <button id="btnLabRunRp" class="lab-btn lab-btn--go" type="button">▶ Run Live RP Pipeline Trace</button>
-  <button id="btnLabBatchRepairWords" class="lab-btn lab-btn--go" type="button">🧹 1-Click Batch Word Synthesis &amp; Repair (All 30 Words)</button>
+  <button id="btnLabBatchRepairWords" class="lab-btn lab-btn--go" type="button">🧹 1-Click Batch Word Synthesis &amp; Repair (All Session Words)</button>
  </div>
- <p class="status" id="labBatchStatus">idle — wipes the old words.* clips, then re-synthesizes all 30 active session words live (clean spelling, mp3_44100_128) with per-word progress and playback.</p>
+ <p class="status" id="labBatchStatus">idle — wipes the old words.* clips, then re-synthesizes every active session word live (clean spelling, mp3_44100_128) with per-word progress and playback.</p>
  <div id="labRpTrace"></div>
 </section>
 
 <section class="card">
  <h2><span class="st">STATION 4</span>Live Cross-Tab &amp; Voice-Mode Consistency Verifier</h2>
- <p class="hint">Probes the live app (same-origin iframe) and verifies voiceLock / voiceSource / activeVoiceId consistency across Dictation, 30 Words, Practice and Settings — and that Settings › Project Briefing opens on demand while boot keeps #briefingModal hidden.</p>
+ <p class="hint">Probes the live app (same-origin iframe) and verifies voiceLock / voiceSource / activeVoiceId consistency across Dictation, the Words list, Practice and Settings — and that Settings › Project Briefing opens on demand while boot keeps #briefingModal hidden.</p>
  <div class="btnrow"><button id="btnLabCrossTab" class="lab-btn" type="button">🔗 Probe Live App Consistency</button></div>
  <div id="labCrossTab"></div>
  <iframe id="labAppProbe" title="Live app probe" loading="lazy"></iframe>
@@ -162,10 +162,20 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
 </section>
 
 <section class="card">
+ <h2><span class="st">STATION 7</span>v0.0.7.c Unified Release Verification (5 Probes)</h2>
+ <p class="hint">Verifies THIS release live in the browser: (1) Version Lockstep — the Lab pill, SDP.version, data/version.json and the service-worker cache all carry the ONE unified v0.0.7.c / s42 stamp; (2) Online Probe Accuracy — a reachable data/version.json can never mean Offline Mode (no false offline banner, Studio never falsely blinded); (3) the 76/76 −21 LUFS unified audio family gate (genuine MP3 · ≥512 bytes · 44.1 kHz · mono · −23.5…−19.0 LUFS); (4) Bilingual Data Integrity — every active word carries a complete English meaning, a real Sinhala meaning, IPA, part of speech and a matching example; (5) the Dynamic Count Gate — zero stale hardcoded “30” strings while the session word count differs.</p>
+ <div class="btnrow">
+  <button id="btnLabRunStation7" class="lab-btn lab-btn--go" type="button">🧪 Run v0.0.7.c Release Verification</button>
+ </div>
+ <p class="status" id="labS7Status">idle — click to verify this release, or run the full suite below (Station 7 is included).</p>
+ <div id="labS7Trace"></div>
+</section>
+
+<section class="card">
  <h2><span class="st">STATION 6</span>1-Click Full Real-Time Diagnostic Run &amp; Report Exporter</h2>
  <p class="hint">Runs every station automatically, paints the PASS / WARN / FAIL scorecard, and exports the full live telemetry as .json or .zip to share anytime.</p>
  <div class="btnrow">
-  <button id="btnLabRunAll" class="lab-btn lab-btn--go" type="button">🚀 Run Full Live Diagnostic Suite (All 6 Stations)</button>
+  <button id="btnLabRunAll" class="lab-btn lab-btn--go" type="button">🚀 Run Full Live Diagnostic Suite (All 7 Stations)</button>
   <button id="btnLabDownloadJson" class="lab-btn" type="button">⬇ Download Full Live Lab Report (.json)</button>
   <button id="btnLabDownloadZip" class="lab-btn" type="button">⬇ Download Full Live Lab Report (.zip)</button>
  </div>
@@ -182,7 +192,17 @@ footer.lab-foot{max-width:1080px;margin:12px auto 0;color:var(--mut);font-size:1
 <script src="./data/sdp-live-lab.js" defer></script>
 <script>
 window.addEventListener('DOMContentLoaded', function () {
- try { if (window.SDP && SDP.version) document.getElementById('labVerPill').textContent = SDP.version; } catch (e) {}
+ /* v0.0.7.c unified version law: the pill carries the ONE progressive app
+    version, read live from data/version.json (fallback SDP.version). The
+    Live Lab never ships an independent version string again. */
+ try {
+   var paint = function (v) { if (v) document.getElementById('labVerPill').textContent = v; };
+   if (window.SDP && SDP.version) paint(SDP.version);
+   fetch('./data/version.json?t=' + Date.now(), { cache: 'no-store' })
+     .then(function (r) { return r && r.ok ? r.json() : null; })
+     .then(function (j) { if (j && j.appVersion) paint(j.appVersion); })
+     .catch(function () {});
+ } catch (e) {}
  try { if (window.SDP && SDP.LiveLab) { SDP.LiveLab.station1(false); SDP.LiveLab.station5(); } } catch (e2) {}
 });
 </script>

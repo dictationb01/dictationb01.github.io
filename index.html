@@ -9,7 +9,7 @@
    may switch to the native dark theme. -->
 <meta name="darkreader-lock">
 <meta name="color-scheme" content="only light">
-<meta name="description" content="Smart Dictation Player 0.0.7.b — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
+<meta name="description" content="Smart Dictation Player 0.0.7.c — CCBE Galle Branch B1 English class dictation cockpit by Hansana.">
 <title>Smart Dictation · CCBE B1</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./assets/css/sdp-ui.css">
@@ -77,7 +77,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <span data-i18n="tabPractice">Practice</span></button>
   <button id="rail-dict" type="button" class="rail-btn" data-tab="dict" aria-selected="false">
    <span class="rail-ico" aria-hidden="true"><span class="tico tico-dict"><span data-icon="list"></span></span></span>
-   <span data-i18n="tabWords">30 Words</span></button>
+   <span data-i18n="tabWords">Words</span></button>
   <button id="rail-settings" type="button" class="rail-btn" data-tab="settings" aria-selected="false">
    <span class="rail-ico" aria-hidden="true"><span class="tico tico-settings"><span data-icon="gear"></span></span></span>
    <span data-i18n="tabSettings">Settings</span></button>
@@ -94,7 +94,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
        missing word clips are detected before/during dictation. -->
   <div id="sdpVoiceClipGuardBanner" class="voice-clip-guard-banner" data-level="ok" role="alert" hidden></div>
 
-  <!-- v0.0.7.b B7: the always-visible Offline Mode banner. Shown across EVERY
+  <!-- B7: the always-visible Offline Mode banner. Shown across EVERY
        screen (first child of #sdpScreens, same law as the voice-clip guard)
        the moment the device goes offline / loses mobile data; clears itself
        the instant a live probe succeeds. Painted bilingual by
@@ -102,6 +102,9 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
   <div id="sdpOfflineModeBanner" class="offline-mode-banner" data-state="hidden" role="alert" hidden>
    <span class="ob-icon" aria-hidden="true">📡</span>
    <span class="ob-text"><strong id="obTitle">Running in Offline Mode</strong><small id="obSub">Cached audio &amp; sessions active</small></span>
+   <!-- v0.0.7.c (BUG-01): manual Retry Connection — a transient probe failure
+        is always clearable by hand, and the probe re-runs immediately. -->
+   <button id="btnOfflineRetry" type="button" class="btn btn-sm ob-help">Retry Connection</button>
    <button id="btnOfflineHelp" type="button" class="btn btn-sm ob-help">Get Help</button>
   </div>
 
@@ -137,7 +140,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    </div>
 
     <p id="resumeText" class="resume-title">Continue where you stopped</p>
-    <p id="resumeMeta" class="resume-meta" data-i18n="resumeMetaIdle">Paused at Word #1 of 30</p>
+    <p id="resumeMeta" class="resume-meta" data-i18n="resumeMetaIdle">Paused at Word #1 of the class list</p>
     <div class="resume-actions">
      <button id="btnResumeDraft" type="button" class="btn btn-go" data-i18n="resumePaused" hidden>▶ Resume Paused Dictation</button>
      <button id="btnResume" type="button" class="btn" data-i18n="resumeSession">Continue where you stopped</button>
@@ -148,13 +151,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <div id="homeHero" class="card hero">
     <span class="step-tag" aria-hidden="true" data-i18n="homeStep1Tag">STEP 1</span>
     <h1 id="homeTitle" data-i18n="homeTitle">Smart Dictation</h1>
-    <p id="homeSub" data-i18n="homeSub">Listen, write, and check 30 B1 words with your class.</p>
-    <p id="homeReadyBadge" class="ready-badge" role="status" data-i18n="homeReadyBadge">Session 8 ready · 30 words</p>
+    <p id="homeSub" data-i18n="homeSub">Listen, write, and check the B1 words with your class.</p>
+    <p id="homeReadyBadge" class="ready-badge" role="status" data-i18n="homeReadyBadge">Loading the class word list…</p>
     <p id="homePresetBadge" class="preset-badge" role="status" data-i18n="homePresetBadge">Fast Exam · 5s · 2× · British English</p>
     <p id="bankEmpty" class="empty-state" role="status" data-i18n="emptyBank" hidden>No word list is available yet. Connect once, then tap "Check for session update" in Settings.</p>
     <div class="hero-actions">
      <span class="cta-wrap">
-      <button id="btnStart" type="button" class="btn btn-primary" data-primary-cta="1" data-i18n="startDictation">▶ Start Dictation (Word #1 to #30)</button>
+      <button id="btnStart" type="button" class="btn btn-primary" data-primary-cta="1" data-i18n="startDictation">▶ Start Dictation (Word #1 to the last word)</button>
       <span class="cue" data-cue="home" data-i18n="cueStep1">STEP 1 — PRESS HERE</span>
      </span>
      <button id="btnGuide" type="button" class="btn btn-ghost" ><span data-icon="volume" data-icon-size="16"></span><span class="i18n-label" data-i18n="voiceGuideBtn"> Interactive Voice Guide</span></button>
@@ -167,9 +170,9 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
    <div id="homeWordsCard" class="card home-words-card">
     <span class="step-tag" aria-hidden="true" data-i18n="homeStep2Tag">STEP 2</span>
-    <h2 class="card-title" data-i18n="homeWordsTitle">Check &amp; Study All 30 Session Words in Order #1–#30</h2>
+    <h2 class="card-title" data-i18n="homeWordsTitle">Check &amp; Study All the Session Words in Order</h2>
     <p class="muted" data-i18n="homeWordsSub">Every word in class order with its British IPA, Sinhala meaning and example sentence.</p>
-    <button id="btnHomeWords" type="button" class="btn" ><span data-icon="list" data-icon-size="16"></span><span class="i18n-label" data-i18n="homeWordsBtn"> Open the 30-Word List (#1–#30)</span></button>
+    <button id="btnHomeWords" type="button" class="btn" ><span data-icon="list" data-icon-size="16"></span><span class="i18n-label" data-i18n="homeWordsBtn"> Open the Word List</span></button>
     <div id="homeWordsPreview" class="home-words-preview"></div>
    </div>
 
@@ -179,7 +182,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
     <div class="practice-grid">
      <button type="button" class="practice-card" data-prac="flash">
       <span class="prac-ico" aria-hidden="true" data-icon="folder" data-icon-size="22"></span>
-      <span class="prac-copy"><span class="prac-title" data-i18n="flashcards">Flashcards</span><span class="prac-sub" data-i18n="flashcardsSub">Flip through all 30 words</span></span>
+      <span class="prac-copy"><span class="prac-title" data-i18n="flashcards">Flashcards</span><span class="prac-sub" data-i18n="flashcardsSub">Flip through all the words</span></span>
      </button>
      <button type="button" class="practice-card" data-prac="quiz">
       <span class="prac-ico" aria-hidden="true" data-icon="checkCircle" data-icon-size="22"></span>
@@ -200,13 +203,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
     <h2 class="card-title" data-i18n="homeJourneyTitle">Your 3 steps today</h2>
     <ol class="journey-list">
      <li><span class="step-badge" aria-hidden="true">1</span><span data-i18n="homeJourney1">Listen &amp; write</span></li>
-     <li><span class="step-badge" aria-hidden="true">2</span><span data-i18n="homeJourney2">Check your 30 words</span></li>
+     <li><span class="step-badge" aria-hidden="true">2</span><span data-i18n="homeJourney2">Check your words</span></li>
      <li><span class="step-badge" aria-hidden="true">3</span><span data-i18n="homeJourney3">Train weak words</span></li>
     </ol>
    </div>
 
    <div id="homeStatsRow" class="stats-row">
-    <div class="card stat"><strong id="statMastered">0 / 30</strong><span data-i18n="statMastered">Mastered</span></div>
+    <div class="card stat"><strong id="statMastered">0 / —</strong><span data-i18n="statMastered">Mastered</span></div>
     <div class="card stat"><strong id="statAccuracy">0%</strong><span data-i18n="statAccuracy">Accuracy</span></div>
     <div class="card stat"><strong id="statStreak">0</strong><span data-i18n="statStreak">Day streak</span></div>
    </div>
@@ -241,13 +244,13 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <div id="sessionProgressStrip" class="card progress-strip" role="group" aria-label="Session progress">
     <!-- Phase 5: ONE header line — word, repeat and write window. -->
     <p class="cockpit-line">
-     <span id="sessionProgressCount" class="strip-count" data-i18n="progressWordUpper">WORD #01 / 30</span>
+     <span id="sessionProgressCount" class="strip-count" data-i18n="progressWordUpper">WORD #01</span>
      <span class="line-sep" aria-hidden="true">·</span>
      <span id="playerRepeatBadge" class="badge badge-repeat" data-i18n="repeatBadge">Repeat 1 of 2</span>
      <span class="line-sep" aria-hidden="true">·</span>
      <span id="playerPresetBadge" class="badge">5s Write · 2×</span>
     </p>
-    <button id="pillsDrawerToggle" type="button" class="btn btn-sm pills-toggle" aria-expanded="false" aria-controls="pillsDrawer">Jump to Word 1–30 ▾</button>
+    <button id="pillsDrawerToggle" type="button" class="btn btn-sm pills-toggle" aria-expanded="false" aria-controls="pillsDrawer">Jump to a word ▾</button>
     <div id="pillsDrawer" class="pills-drawer" hidden>
      <div id="sessionPills" class="word-pills"></div>
     </div>
@@ -255,8 +258,8 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    <div id="cockpitBar" class="card cockpit">
     <div class="cockpit-head">
      <div>
-      <h2 id="sessionTitle">Session 8</h2>
-      <p id="cockpitProgress" class="muted">1 / 30</p>
+      <h2 id="sessionTitle">Session</h2>
+      <p id="cockpitProgress" class="muted">— / —</p>
      </div>
      <span id="wordPosBadge" class="badge">adj.</span>
     </div>
@@ -321,11 +324,11 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
      <button id="boardNext" type="button" class="btn board-btn"><span class="btn-label" data-i18n="boardNext">Next</span></button>
     </div>
     <details id="boardJumperDrawer" class="board-jumper-drawer" aria-hidden="true">
-     <summary id="boardJumperToggle" class="btn board-jump-toggle" aria-expanded="false">Jump to Word 1–30 ▾</summary>
+     <summary id="boardJumperToggle" class="btn board-jump-toggle" aria-expanded="false">Jump to a word ▾</summary>
      <div id="boardJumper" class="board-jumper" role="group" aria-label="Jump to word"></div>
     </details>
     <div class="board-word-row">
-     <span id="boardWordNo" class="board-no">#1/30</span>
+     <span id="boardWordNo" class="board-no">#1</span>
      <p id="boardWordDisplay" class="board-word" aria-live="polite">••••••</p>
      <button id="btnBoardToggleWord" type="button" class="btn board-btn board-btn-ghost" aria-pressed="false"><span class="btn-label" ><span data-icon="eyeOff" data-icon-size="16"></span><span class="i18n-label" data-i18n="boardHideWord"> Hide Word on Board</span></span></button>
     </div>
@@ -346,7 +349,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
     <div class="results-head">
      <h2 class="card-title" data-i18n="resultsTitle">Self-Check &amp; Results</h2>
      <div class="score-box">
-      <strong id="scoreValue">0 / 30</strong>
+      <strong id="scoreValue">0 / —</strong>
       <span id="scorePct" class="muted">0%</span>
      </div>
     </div>
@@ -417,12 +420,12 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
    </div>
   </section>
 
-  <section id="screen-dict" class="screen" aria-labelledby="dictTitle" aria-label="30-Word Session View">
+  <section id="screen-dict" class="screen" aria-labelledby="dictTitle" aria-label="Session Word View">
    <div class="card">
-    <h2 id="dictTitle" class="card-title" data-i18n="dictTitle">30-Word Session View · #01–#30</h2>
-    <input id="dictSearch" type="search" class="input" placeholder="Search words" aria-label="Search words" data-i18n-placeholder="dictSearchPh" autocomplete="off">
+    <h2 id="dictTitle" class="card-title" data-i18n="dictTitle">Session Word View</h2>
+    <input id="dictSearch" type="search" class="input" placeholder="Search the session words" aria-label="Search words" data-i18n-placeholder="dictSearchPh" autocomplete="off">
     <div id="dictFilterRow" class="chip-row" role="group" aria-label="Word filters">
-     <button type="button" class="pill" data-filter="all" aria-pressed="true" data-i18n="filterAll">All 30</button>
+     <button type="button" class="pill" data-filter="all" aria-pressed="true" data-i18n="filterAll">All</button>
      <button type="button" class="pill" data-filter="weak" aria-pressed="false" data-i18n="weakWords">Weak Words</button>
      <button type="button" class="pill" data-filter="mastered" aria-pressed="false" data-i18n="mastered">Mastered</button>
     </div>
@@ -436,7 +439,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
     <h2 id="setTitle" class="card-title screen-title" data-i18n="tabSettings">Settings</h2>
 
     <section id="settingsLecturerBanner" class="card lecturer-banner" hidden>
-     <p id="settingsLecturerText" ><span data-icon="unlock" data-icon-size="16"></span><span class="i18n-label" data-i18n="settingsLecturerActive"> Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit 30 Words</span></p>
+     <p id="settingsLecturerText" ><span data-icon="unlock" data-icon-size="16"></span><span class="i18n-label" data-i18n="settingsLecturerActive"> Lecturer Mode Active — Open Lecturer Admin Studio to Broadcast Settings or Edit the Word List</span></p>
      <button id="btnOpenStudioFromSettings" type="button" class="btn btn-primary" ><span data-icon="cap" data-icon-size="16"></span><span class="i18n-label" data-i18n="openStudioBtn"> Open Lecturer Admin Studio</span></button>
     </section>
 
@@ -550,7 +553,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <input id="importFile" type="file" accept="application/json,.json" class="visually-hidden" tabindex="-1">
       <button id="btnResetStats" type="button" class="btn btn-sm btn-danger" data-i18n="resetStats">Reset local stats</button>
       <button id="btnCheckUpdate" type="button" class="btn btn-sm" data-i18n="checkUpdate">Check for session update</button>
-      <button id="btnDownloadClips" type="button" class="btn btn-sm" ><span data-icon="download" data-icon-size="16"></span><span class="i18n-label" data-i18n="downloadClips"> Download All 30 Word Audio Clips for Offline Use</span></button>
+      <button id="btnDownloadClips" type="button" class="btn btn-sm" ><span data-icon="download" data-icon-size="16"></span><span class="i18n-label" data-i18n="downloadClips"> Download All Word Audio Clips for Offline Use</span></button>
      </div>
      <p id="settingsSyncStatus" class="muted" role="status" aria-live="polite"></p>
      <span id="downloadClipsStatus" class="muted"></span>
@@ -567,7 +570,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
         status bar stays ultra-clean, while every secondary control keeps
         its DOM id contract (tests + the Lecturer tab still bind them). -->
      <div class="about-tools">
-      <span id="sdpVerPill">0.0.7.b</span>
+      <span id="sdpVerPill">0.0.7.c</span>
       <button id="syncBadge" class="hbtn sync-badge" type="button" aria-live="polite" data-i18n="syncBadgeSynced">Synced</button>
      </div>
      <div class="chip-row about-links-row">
@@ -577,15 +580,16 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
       <button id="btnStudioQuick" type="button" class="btn btn-sm" aria-label="Open the Lecturer Admin Studio"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg> <span class="studio-quick-label">Lecturer Admin</span></button>
      </div>
      <ul class="about-list">
-      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.7.b</span></li>
-      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-07</span></li>
+      <li><span data-i18n="aboutVersionLabel">Version</span>: <span id="aboutVersion">0.0.7.c</span></li>
+      <li><span data-i18n="aboutBuiltLabel">Built</span>: <span id="aboutBuilt">2026-11-20</span></li>
       <!-- 0.0.6.q Pillar 1: the weekly release note lives HERE in About —
          changelog information — so it takes 0px away from the spacious
          #briefingLyrics reading stage. The DOM id contract is preserved. -->
-      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.7.b) · ONE unified high-professional British voice (Alice) everywhere with strict zero-byte clip rejection ·
-       Repaired British RP pronunciations, clean B1 meanings &amp; UK pronunciation-variant hint badges · Every Dictation Mode button verified (Hint now works in Paper &amp; Typing modes) ·
-       Publish, Sync &amp; Leave auto-locks the Studio + 10-second security auto-lock · NEW 📘 Interactive Studio Guide (Simple &amp; Advanced, EN | SI) ·
-       Live Student Activity &amp; Alerts · Offline Mode banner + Student Troubleshooting Guide</li>
+      <li id="briefingUpdateBadge" class="about-release-note">📦 Latest Weekly Update (0.0.7.c) · 76/76 audio clips mastered into ONE unified −21 LUFS family (zero loudness jump between words, numbers and commands; true peak ≤ −1.5 dBTP) ·
+       Probe-verified Offline Mode (no false offline banner, Lecturer Studio never locks out while online, Retry Connection button) ·
+       Check for session update always completes in 8 s with a clear result · Repaired Session-14 data: complete B1 meanings + natural Sinhala for all 31 words ·
+       Dynamic word counts everywhere (no stale 30 labels) · Show Current Word keeps every control visible · Pause/Resume label fixed · Unified v0.0.7.c version across app + Live Lab ·
+       Per-provider API key tests (ElevenLabs · Groq · Gemini) with live HTTP diagnostics · 100% bilingual UI (EN | SI)</li>
       <li><a id="aboutDataLink" href="./data/" data-i18n="aboutDataLink">See every byte this app stores</a></li>
      </ul>
      <footer class="credit-foot">
@@ -599,7 +603,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
   <section class="screen" id="screen-studio" aria-label="Lecturer Admin Studio">
    <h2 class="card-title screen-title" ><span class="set-squircle set-squircle--studio" aria-hidden="true"><span data-icon="cap" data-icon-size="20"></span></span><span class="i18n-label" data-i18n="studioScreenTitle"> Lecturer Admin Studio</span></h2>
-   <p class="muted" data-i18n="studioScreenSub">Unlock with the lecturer PIN — paste 30 words, check the session number, then broadcast to every classroom device.</p>
+   <p class="muted" data-i18n="studioScreenSub">Unlock with the lecturer PIN — paste the class words, check the session number, then broadcast to every classroom device.</p>
    <div id="sdpStudioOfflineCard" class="studio-offline-card" role="region" aria-live="polite" hidden>
     <h3 class="studio-offline-title" data-i18n="studioOfflineTitle">Lecturer Studio needs the internet</h3>
     <p class="studio-offline-body" data-i18n="studioOfflineBody">Lecturer Studio requires an active internet connection so changes sync to GitHub Cloud. Student Dictation Mode works offline.</p>
@@ -653,7 +657,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
   <span data-i18n="tabPractice">Practice</span></button>
  <button id="tab-dict" type="button" class="tab" data-tab="dict" aria-selected="false">
   <span class="tab-ico tico tico-dict" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span>
-  <span data-i18n="tabWords">30 Words</span></button>
+  <span data-i18n="tabWords">Words</span></button>
  <button id="tab-settings" type="button" class="tab" data-tab="settings" aria-selected="false">
   <span class="tab-ico tico tico-settings" aria-hidden="true"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
      <circle cx="12" cy="12" r="3.2"></circle>
@@ -773,7 +777,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
  <p class="muted" data-i18n="fabSub">Instant answers — zero AI credits. Or send the creator a 1-tap encrypted review.</p>
  <div class="fab-faq" id="fabFaq"></div>
  <p class="fab-review-note" data-i18n="fabReviewNote">🔒 Every review is end-to-end encrypted — nothing readable ever leaves your device unsealed.</p>
- <!-- v0.0.7.b B7: the manual entry to the Student Troubleshooting Guide. -->
+ <!-- B7: the manual entry to the Student Troubleshooting Guide. -->
  <div class="chip-row" style="margin:6px 0 2px">
   <button id="btnFabTroubleshoot" type="button" class="btn btn-go btn-sm">🛠 Troubleshoot — Offline / Audio / Cache Help</button>
  </div>
@@ -809,7 +813,7 @@ if(window.MutationObserver){try{new MutationObserver(function(){shield();syncSch
 
 <script>
 (function () {
- var TARGET = '0.0.7.b';
+ var TARGET = '0.0.7.c';
  window.__SDP_BOOT_VERSION__ = TARGET;
  var doReload = function (remoteVersion) {
   try { sessionStorage.setItem('sdp_upgraded_to', remoteVersion); } catch (e) {}

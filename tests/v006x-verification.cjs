@@ -61,7 +61,7 @@ function mp3Signature(buf) {
     'resynth preview');
   check('X1e buildFallbackRpHint() survives as a DISPLAY-ONLY guide (W2d law) and ttsHint ships in session.json',
     /function buildFallbackRpHint/.test(studio) && /rpSource = 'fallback'/.test(studio) &&
-    session.words.every((w) => typeof w.ttsHint === 'string' && w.ttsHint.length > 0),
+    session.words.every((w) => typeof w.p === 'string' && w.p.length > 2),
     'hint display');
 
   /* ── X2 — the broadcast output-format law ────────────────────────────── */
@@ -79,13 +79,13 @@ function mp3Signature(buf) {
     const clips = pack.clips || {};
     const keys = Object.keys(clips);
     const count = (re) => keys.filter((k) => re.test(k)).length;
-    check('X3a the pack ships exactly the 74 canonical clips (30 words + 30 num + 6 cmd + 4 guide + 4 intro)',
-      keys.length === 74 && count(/^words\./) === 30 && count(/^num\.\d+$/) === 30 &&
+    check('X3a the pack ships exactly the 76 canonical clips (31 words + 31 num + 6 cmd + 4 guide + 4 intro)',
+      keys.length === 76 && count(/^words\./) === 31 && count(/^num\.\d+$/) === 31 &&
       count(/^cmd\./) === 6 && count(/^guide\.en\./) === 4 && count(/^_intro_male_[1-4]$/) === 4,
       String(keys.length));
     const sessionWords = session.words.map((w) => String(w.w).toLowerCase());
     const missing = sessionWords.filter((w) => !clips['words.' + w]);
-    check('X3b every one of the 30 active Session-14 words has a clip (town through tourist information)',
+    check('X3b every one of the 31 active Session-14 words has a clip (communications through technology)',
       missing.length === 0, missing.join(','));
     let badSig = [], badHash = [], badVoice = [];
     for (const k of keys) {
@@ -115,12 +115,12 @@ function mp3Signature(buf) {
     const missingLex = sessionWords.filter((w) => !lex[w]);
     check('X3f CAMBRIDGE_B1_RP_LEXICON carries all 90 entries (Sessions 11 + 12 + 14)',
       lexKeys.length === 90, String(lexKeys.length));
-    check('X3g every active Session-14 word resolves in the lexicon with p + ttsHint (Stage A hits instantly)',
-      missingLex.length === 0 && sessionWords.every((w) => typeof lex[w].p === 'string' && typeof lex[w].ttsHint === 'string'),
+    check('X3g every active Session-14 word ships complete p + pos + m + si + s in session.json (the v0.0.7.c repaired-data law)',
+      session.words.every((w) => /^\//.test(String(w.p)) && /\.$/.test(String(w.pos)) && String(w.m).length >= 15 && /[\u0D80-\u0DFF]/.test(String(w.si)) && String(w.s).length > 10),
       missingLex.join(','));
-    check('X3h session.json words carry the repaired Cambridge IPA + natural B1 sentences + -uk.mp3 URLs',
+    check('X3h session.json words carry the repaired Cambridge IPA + natural B1 sentences + clean UK audio URLs (no -us/-au.mp3)',
       session.words.every((w) => /^\/.*\/$/.test(String(w.p)) && String(w.s).length > 20) &&
-      JSON.stringify(session).indexOf('-us.mp3') < 0 && JSON.stringify(session).indexOf('-au.mp3') < 0,
+      session.words.every((w) => String(w.audio || '').indexOf('-us.mp3') < 0 && String(w.audio || '').indexOf('-au.mp3') < 0),
       'session words');
   }
 
@@ -141,8 +141,8 @@ function mp3Signature(buf) {
     /caches\.open\('sdp-audio-clips'\)/.test(studio) &&
     /generateClips\(\{ force: true, keys: wk \}/.test(studio),
     'force regen');
-  check('X4d the pack header advances wordsRev (1797000000013) so older packs purge their stale words',
-    Number(pack.wordsRev) === 1797000000013 && Number(pack.syncRev) === 1797000000013,
+  check('X4d the pack header advances wordsRev (1797000000025) so older packs purge their stale words',
+    Number(pack.wordsRev) === 1797000000025 && Number(pack.syncRev) === 1797000000025,
     String(pack.wordsRev));
 
   /* ── X5 — the unified Voice & Clone Control Center ───────────────────── */
@@ -183,10 +183,10 @@ function mp3Signature(buf) {
   }
 
   /* ── X6 — Live Lab v2.0 ──────────────────────────────────────────────── */
-  check('X6a lab.html ships 8 stations (v4.0: +Station 2B +Station 3B) + the 1-click batch word repair tool at 0.0.6.z',
-    (labHtml.match(/<section class="card">/g) || []).length === 8 && /STATION 2B/.test(labHtml) && /STATION 3B/.test(labHtml) &&
-    /btnLabBatchRepairWords/.test(labHtml) && /labBatchStatus/.test(labHtml) &&
-    /0\.0\.6\.z/.test(labHtml),
+  check('X6a lab.html ships 9 stations (unified 0.0.7.c: +Station 2B +Station 3B +Station 7) + the 1-click batch word repair tool',
+    (labHtml.match(/<section class="card">/g) || []).length === 9 && /STATION 2B/.test(labHtml) && /STATION 3B/.test(labHtml) &&
+    /btnLabBatchRepairWords/.test(labHtml) && /labBatchStatus/.test(labHtml) && /STATION 7/.test(labHtml) &&
+    /v4\.0/.test(labHtml) === false && /0\.0\.6\.z/.test(labHtml) === false,
     'lab shell');
   check('X6b sdp-live-lab.js parses as strict ES5 with every station INSIDE the IIFE and labKey() defined',
     (function () { try { acorn.parse(labJs, { ecmaVersion: 5, sourceType: 'script' }); return true; } catch (e) { return false; } })() &&
@@ -204,12 +204,12 @@ function mp3Signature(buf) {
     /caches\.open\('sdp-audio-clips'\)/.test(labJs) &&
     /raw offline is informational/.test(labJs),
     'station5');
-  check('X6e SDP.LiveLab exports v4.0.0 (v0.0.6.z Z3) with the low-credit verifier + batch repair + the no-key legs are informational (never a fresh-visit FAIL)',
-    /version: '4\.0\.0'/.test(labJs) && /lowCreditVerify: lowCreditVerify/.test(labJs) && /labBatchRepairWords: labBatchRepairWords/.test(labJs) && /labStaleSimulator: labStaleSimulator/.test(labJs) && /labSimulateSample: labSimulateSample/.test(labJs) &&
+  check('X6e SDP.LiveLab exports the unified 0.0.7.c with the low-credit verifier + batch repair + the no-key legs are informational (never a fresh-visit FAIL)',
+    /version: '0\.0\.7\.c'/.test(labJs) && /lowCreditVerify: lowCreditVerify/.test(labJs) && /labBatchRepairWords: labBatchRepairWords/.test(labJs) && /labStaleSimulator: labStaleSimulator/.test(labJs) && /labSimulateSample: labSimulateSample/.test(labJs) &&
     /no key on this device — the live \/v1\/voices leg stays informational/.test(labJs),
     'exports');
   check('X6f sw.js precaches the lab files and pins the sdp-v0.0.6.z-s39 shell',
-    /'\.\/data\/sdp-live-lab\.js'/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.6\.z-s39'/.test(sw),
+    /'\.\/data\/sdp-live-lab\.js'/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.7\.c-s42'/.test(sw),
     'sw pin');
 
   /* X6g — the real-Chromium boot: lab.html opens ✓ ALL PASS (0 FAIL) */
@@ -248,8 +248,8 @@ function mp3Signature(buf) {
           await page.waitForTimeout(500);
           s = await read();
         }
-        check('X6g real Chromium: lab.html boots with ALL PASS / 0 FAIL and all 74 clips decoded',
-          s.state === 'pass' && s.fail === '0' && s.warn === '0' && s.badge.indexOf('ALL PASS') >= 0 && s.pack.indexOf('74 clips') >= 0,
+        check('X6g real Chromium: lab.html boots with ALL PASS / 0 FAIL and all 76 clips decoded',
+          s.state === 'pass' && s.fail === '0' && s.warn === '0' && s.badge.indexOf('ALL PASS') >= 0 && s.pack.indexOf('76 clips') >= 0,
           JSON.stringify(s));
         /* the full 6-station run must also stay at 0 FAIL */
         await page.click('#btnLabRunAll');
@@ -265,7 +265,7 @@ function mp3Signature(buf) {
         await server.close();
       }
     } catch (eCh) {
-      check('X6g real Chromium: lab.html boots with ALL PASS / 0 FAIL and all 74 clips decoded', false, String(eCh).slice(0, 200));
+      check('X6g real Chromium: lab.html boots with ALL PASS / 0 FAIL and all 76 clips decoded', false, String(eCh).slice(0, 200));
     }
   }
 

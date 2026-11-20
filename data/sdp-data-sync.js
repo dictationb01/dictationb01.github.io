@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.7.a';
-  SDP.build = '2026-11-18';
-  SDP.ver = 41; /* v0.0.7.a */
+  SDP.version = '0.0.7.b';
+  SDP.build = '2026-11-19';
+  SDP.ver = 42; /* v0.0.7.b */
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.7.a'; /* v0.0.7.a */
-  var SCHEMA = 41;
-  var SETTINGS_REV = 71; /* v0.0.7.a */
+  var APP_VERSION = '0.0.7.b'; /* v0.0.7.b */
+  var SCHEMA = 42;
+  var SETTINGS_REV = 72; /* v0.0.7.b */
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1780,6 +1780,10 @@
       clip: trim(w.clip),
       ttsHint: trim(w.ttsHint)
     };
+    /* v0.0.7.b B2: the UK pronunciation-variant hints survive normalization. */
+    if (Array.isArray(w.pronunciationVariants) && w.pronunciationVariants.length > 1) {
+      word.pronunciationVariants = w.pronunciationVariants.slice(0, 4);
+    }
     var lexKey = str(word.w).trim().toLowerCase();
     var L = CAMBRIDGE_B1_RP_LEXICON[lexKey];
     if (L && isObj(L.d)) {

@@ -1432,6 +1432,8 @@
    if (env && v.stash) v.stash(ST.secrets);
    ST.message = ''; ST.messageState = '';
    mount();
+   engageAutoLock(); /* v0.0.7.b B4: every unlock path arms the security net */
+   try { if (SDP.StudioGuide && SDP.StudioGuide.maybeAutoPrompt) SDP.StudioGuide.maybeAutoPrompt(); } catch (eG2) {}
    paintLecturerBar();
    /* v0.0.6.t PILLAR 3F: the redundant fire-and-forget loadVoicePack(noop)
       is GONE — it raced the real loadVoicePack() below with a second
@@ -1459,7 +1461,7 @@
     try {
      var tele = (global.SDP && SDP.Telemetry && SDP.Telemetry.ledger) ? SDP.Telemetry.ledger() : null;
      var led = null;
-     try { led = (sync().settings() || {}).telemetryLedger || null; } catch (eLed) {}
+     try { led = dataSettings().telemetryLedger || null; } catch (eLed) {}
      var hasData = (tele && (tele.sessions.length || tele.incidents.length)) || (led && led.users && led.users.length);
      var dock = byId('studioActivityDock');
      if (dock) dock.hidden = false;
@@ -1527,6 +1529,9 @@
     clearVaultLock();
     ST.message = ''; ST.messageState = '';
     mount();
+    /* v0.0.7.b B4: every unlock engages the 10-second security auto-lock. */
+    engageAutoLock();
+    try { if (SDP.StudioGuide && SDP.StudioGuide.maybeAutoPrompt) SDP.StudioGuide.maybeAutoPrompt(); } catch (eG3) {}
     /* D4: #lecturerSyncBar appears */
     paintLecturerBar();
     /* SYNC-11: the committed clips must load (v0.0.6.t PILLAR 3F: ONE load,
@@ -1633,6 +1638,14 @@
 
  /* R5: lock always drops in-memory */
  function lock(keepStash) {
+  /* v0.0.7.b B4: locking clears EVERY transient surface — busy spinners,
+     the activity popup, the Studio guide and the auto-lock countdown —
+     so a manual Lock can never land in a stuck state. */
+  try { clearBusy(); } catch (eBusy) {}
+  try { closeStudioActivityPopup(); } catch (eA) {}
+  try { if (SDP.StudioGuide && SDP.StudioGuide.close) SDP.StudioGuide.close(true); } catch (eG) {}
+  try { cancelAutoLockCountdown(true); } catch (eC) {}
+  try { armIdleAutoLock(false); } catch (eI) {}
   /* v0.0.5.c Path D: locking the vault silences every voice — the TTS queue */
   try { if (SDP.Speech && SDP.Speech.stop) SDP.Speech.stop(); } catch (e) {}
   try { if (global.speechSynthesis && global.speechSynthesis.cancel) global.speechSynthesis.cancel(); } catch (e) {}
@@ -1661,6 +1674,7 @@
   if (!isObj(secrets)) return false;
   ST.secrets = secrets;
   ST.unlocked = true;
+  engageAutoLock(); /* v0.0.7.b B4: the same-tab stash restore is a full unlock */
   ST.bootstrapMode = !isRealEnvelope(configEnvelope());
   ST.message = t('studioRestored');
   ST.messageState = 'ok';
@@ -2231,14 +2245,9 @@
  /* ══ v0.0.7.a PILLAR A4 — the SMART SESSION DETAILS CARD (Card #2, directly
     below the Dictation Words card): Session Number stepper (−/value/+1 Next
     Session), the Day dropdown (auto-derived from the picked Date), the
-    Topic input with one-tap B1 quick-pick chips, Branch and Class info.
-    Every change repaints the live display line instantly — no tedious
-    manual typing. සැසිය විස්තර දැන් එක් ක්ලික් එකකින්. ══ */
- var B1_TOPIC_CHIPS = [
-  'Family & Friends', 'Work & Jobs', 'Travel & Transport', 'Places: Town & City',
-  'Education & School', 'Health & Body', 'Food & Dining', 'Shopping & Money',
-  'Weather & Seasons', 'Free Time & Hobbies', 'Technology & Gadgets', 'Feelings & Opinions'
- ];
+    clean Topic input (v0.0.7.b B4: the 12 recommendation chips are gone),
+    Branch and Class info. Every change repaints the live display line
+    instantly — no tedious manual typing. සැසිය විස්තර දැන් එක් ක්ලික් එකකින්. ══ */
  function dayFromIsoDate(isoDate) {
   var m = str(isoDate || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return '';
@@ -2252,13 +2261,6 @@
   html += '<option value=""' + (!selectedDay ? ' selected' : '') + '>— pick day —</option>';
   for (i = 0; i < days.length; i++) html += '<option value="' + days[i] + '"' + (selectedDay === days[i] ? ' selected' : '') + '>' + days[i] + '</option>';
   return html + '</select>';
- }
- function topicChipsMarkup() {
-  var html = '<div id="studioTopicChips" class="chip-row studio-topic-chips" role="group" aria-label="Quick-pick B1 topics">', i;
-  for (i = 0; i < B1_TOPIC_CHIPS.length; i++) {
-   html += '<button type="button" class="btn btn-sm btn-ghost studio-topic-chip" data-topic="' + esc(B1_TOPIC_CHIPS[i]) + '" aria-label="Set topic ' + esc(B1_TOPIC_CHIPS[i]) + '">' + esc(B1_TOPIC_CHIPS[i]) + '</button>';
-  }
-  return html + '</div>';
  }
  function sessionMetaCardMarkup() {
   var s = {};
@@ -2281,12 +2283,11 @@
    btn('btnSessionNoPlus', '+1 Next Session', 'btn-primary', 'aria-label="Advance to next session number"') +
    '</div>' +
    '</div>' +
-   /* Topic / Title + quick-pick chips */
+   /* Topic / Title — clean input, no recommendation chips (v0.0.7.b B4) */
    '<div class="studio-session-row">' +
    '<label class="lbl" for="studioMetaTitle">Session Topic / Title</label>' +
    '<input id="studioMetaTitle" class="input" type="text" maxlength="80" value="' + esc(title) + '">' +
    '</div>' +
-   topicChipsMarkup() +
    /* Date + Day dropdown (auto-synced from date) */
    '<div class="studio-session-row">' +
    '<label class="lbl" for="studioMetaDate">Date (auto-sets the day)</label>' +
@@ -2346,12 +2347,15 @@
  /* D18: three outcome cards under */
  /* D19: compact sub-label, no */
  function securityBarMarkup() {
-  /* v0.0.6.b (S4): the high-visibility Lecturer Mode bar — Lock or Publish */
+  /* v0.0.6.b (S4): the high-visibility Lecturer Mode bar — Lock or Publish.
+     v0.0.7.b B5: the 📘 Studio Guide button (Simple | Advanced interactive
+     spotlight tour, EN | SI) rides at the right of the bar. */
   return '<div id="studioSecurityBar" class="studio-security-bar" role="region" aria-live="polite">' +
    '<span class="ssb-badge">' + ico('unlock', 16) + T('ssbUnlocked') + '</span>' +
    '<span class="studio-mode-pill">Lecturer Mode Unlocked</span>' +
    btn('btnSsbPublish', t('guardPublish'), 'btn-primary', 'data-primary-cta="1"', 'upload') +
    btn('btnSsbLock', t('studioLockLecturer'), 'btn-ghost', '', 'lock') +
+   btn('btnStudioGuide', t('studioGuideBtn', '📘 Studio Guide'), 'btn-ghost') +
    '</div>';
  }
 
@@ -2380,10 +2384,14 @@
    '<label class="lbl" for="studioClassroomVoiceSelect">Classroom Voice</label>' +
    '<select id="studioClassroomVoiceSelect" class="input studio-voice-select" aria-label="Classroom Voice">' + opts + '</select>' +
    '</div>' +
-   '<div class="chip-row">' +
-   '<input id="studioClassroomCustomVoiceId" class="input studio-voice-custom" type="text" value="' + esc(chosenClassroomVoiceId() === VOICE_ID ? '' : chosenClassroomVoiceId()) + '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Paste Cloned ElevenLabs Voice ID…">' +
-   btn('btnFetchClassroomClonedVoices', '🔄 Fetch My Cloned Voices', 'btn-ghost') +
-   '</div>' +
+	  '<div class="chip-row">' +
+	  '<input id="studioClassroomCustomVoiceId" class="input studio-voice-custom" type="text" value="' + esc(chosenClassroomVoiceId() || VOICE_ID) + '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" placeholder="Paste Cloned ElevenLabs Voice ID…">' +
+	  btn('btnFetchClassroomClonedVoices', '🔄 Fetch My Cloned Voices', 'btn-ghost') +
+	  '</div>' +
+	  /* v0.0.7.b B1: the canonical Default Voice ID is always visible and
+	     pre-filled — the whole app speaks this one unified high-
+	     professional British voice (Alice) until a cloned voice is applied. */
+	  '<p class="studio-hint">📌 Default Voice ID (unified): <code>' + VOICE_ID + '</code> · Alice · eleven_flash_v2_5 — pre-filled above; every new word clip is generated in this voice.</p>' +
    '<div class="chip-row">' +
    btn('btnApplyClassroomVoice', '✅ Apply Selected / Cloned Voice to App', 'btn-primary') +
    btn('btnForceRegenWords', '🧹 Wipe Old Word Clips &amp; Re-Generate 30 Words Fresh', 'btn-ghost') +
@@ -2674,9 +2682,17 @@
   if (!popup) return false;
   var users = (ledgerData && ledgerData.users) || [];
   var sum = byId('studioActivitySummary');
-  var totalSessions = 0, i;
-  for (i = 0; i < users.length; i++) totalSessions += (users[i].sessions || []).length;
-  if (sum) sum.textContent = totalSessions + ' Student Session' + (totalSessions === 1 ? '' : 's') + ' Recorded · ' + users.length + ' Total Unique User' + (users.length === 1 ? '' : 's') + ' 🔔';
+  var totalSessions = 0, activeNow = 0, i, j;
+  var cutoff = Date.now() - 15 * 60 * 1000;
+  for (i = 0; i < users.length; i++) {
+   totalSessions += (users[i].sessions || []).length;
+   for (j = 0; j < (users[i].sessions || []).length; j++) {
+    if (Number(users[i].sessions[j].endedAt || 0) >= cutoff) { activeNow += 1; break; }
+   }
+  }
+  if (sum) sum.textContent = '🟢 ' + activeNow + ' Active (last 15 min) · ' + totalSessions + ' Session' + (totalSessions === 1 ? '' : 's') + ' Recorded · ' + users.length + ' Unique Student' + (users.length === 1 ? '' : 's') + ' 🔔';
+  var wordTotal = 30;
+  try { if (sync() && sync().words) wordTotal = (sync().words() || []).length || 30; } catch (eWT) {}
   var tbody = popup.querySelector('#studioActivityTable tbody');
   if (tbody) {
    var rows = '';
@@ -2685,15 +2701,24 @@
     var last = (u.sessions && u.sessions.length) ? u.sessions[u.sessions.length - 1] : null;
     var visits = (u.sessions || []).length;
     var dwell = 0;
-    var j;
     for (j = 0; j < (u.sessions || []).length; j++) dwell += Number(u.sessions[j].dwellSec || 0);
+    /* v0.0.7.b B6: the full mobile device telemetry — class · OS · browser ·
+       screen size · network — captured privacy-safe by Telemetry. */
+    var dev = 'unknown';
+    if (last && last.device) {
+     dev = last.device.class + ' · ' + (last.device.os || '?') + ' · ' + (last.device.browser || '?') +
+      (last.device.screen ? ' · ' + last.device.screen : '') + ' · ' + (last.device.net || '?') +
+      (last.device.online === false ? ' · offline' : '');
+    }
+    var reactions = (last && Array.isArray(last.reactions) && last.reactions.length) ? last.reactions.slice(0, 6).join(' ') : '—';
     rows += '<tr><td>' + esc(str(u.clientId).slice(0, 12)) + '</td>' +
-     '<td>' + esc(last && last.device ? (last.device.class + ' · ' + last.device.net) : 'unknown') + '</td>' +
+     '<td>' + esc(dev) + '</td>' +
      '<td>' + visits + '</td>' +
      '<td>' + Math.round(dwell / 60) + ' min</td>' +
-     '<td>' + (last ? (last.wordsCompleted + '/30') : '—') + '</td>' +
+     '<td>' + (last ? (last.wordsCompleted + '/' + wordTotal) : '—') + '</td>' +
      '<td>' + (last ? (last.score + '%') : '—') + '</td>' +
      '<td>' + esc(last && last.missedWords ? last.missedWords.slice(0, 6).join(', ') : '—') + '</td>' +
+     '<td>' + esc(reactions) + '</td>' +
      '<td>' + (last ? (last.lagMs + ' ms') : '—') + '</td></tr>';
    }
    tbody.innerHTML = rows;
@@ -2715,22 +2740,52 @@
   if (popup.classList) popup.classList.add('is-open');
   return true;
  }
+ /* v0.0.7.b B6 — LIVE auto-refresh: while the activity popup is open it
+    re-pulls the telemetry ledger AND the lecturer alerts every 10 s, so
+    student completions and errors appear in real time. */
+ var activityRefreshTimer = 0;
+ function refreshStudioActivity() {
+  try {
+   var led = dataSettings().telemetryLedger || null;
+   paintStudioActivityPopup(led);
+  } catch (eP) {}
+  try {
+   if (SDP.Telemetry && SDP.Telemetry.pullTelemetryLedger) {
+    SDP.Telemetry.pullTelemetryLedger(function () {
+     try { paintStudioActivityPopup(sync().settings().telemetryLedger || null); } catch (eS) {}
+    });
+   }
+  } catch (eL2) {}
+  try {
+   if (SDP.Telemetry && SDP.Telemetry.pullLecturerAlerts) {
+    SDP.Telemetry.pullLecturerAlerts(function () { paintLecturerAlertsCard(); });
+   }
+  } catch (eA) {}
+  return true;
+ }
  function openStudioActivityPopup() {
   var fetchLedger = (global.SDP && SDP.Telemetry && SDP.Telemetry.pullTelemetryLedger) || null;
+  /* v0.0.7.b B6 FIX: read the ledger through the robust Data accessor —
+     the legacy sync().settings() path silently returned null here, which
+     is exactly why the Studio "did not reliably receive live student
+     activity". */
   var local = null;
-  try { local = (sync() && sync().settings ? (sync().settings().telemetryLedger || null) : null); } catch (eL) {}
+  try { local = (dataSettings().telemetryLedger || null); } catch (eL) {}
   paintStudioActivityPopup(local);
   if (fetchLedger) {
    fetchLedger(function () {
     var led = null;
-    try { led = sync().settings().telemetryLedger || null; } catch (eS) {}
+    try { led = dataSettings().telemetryLedger || null; } catch (eS) {}
     paintStudioActivityPopup(led || local);
    });
   }
+  if (activityRefreshTimer) { try { global.clearInterval(activityRefreshTimer); } catch (eT) {} }
+  activityRefreshTimer = global.setInterval(refreshStudioActivity, 10000);
   return true;
  }
  function closeStudioActivityPopup() {
   var popup = byId('studioActivityPopup');
+  if (activityRefreshTimer) { try { global.clearInterval(activityRefreshTimer); } catch (eT) {} activityRefreshTimer = 0; }
   if (!popup) return false;
   popup.hidden = true;
   popup.setAttribute('aria-hidden', 'true');
@@ -2961,10 +3016,19 @@
   var clips = (isObj(ST.voicePack) && isObj(ST.voicePack.clips)) ? ST.voicePack.clips : {};
   var manifestClips = {};
   try { if (SDP.Speech && SDP.Speech.clipManifest && isObj(SDP.Speech.clipManifest()) && isObj(SDP.Speech.clipManifest().clips)) manifestClips = SDP.Speech.clipManifest().clips; } catch (eM) {}
+  /* v0.0.7.b B1 — the HONEST COVERAGE LAW: a clip counts as READY only
+     when its payload is REAL. A zero-byte (bytes:0), empty-b64 or
+     sub-512-byte entry is MISSING, never Ready, so the pill can never lie
+     to the lecturer again while the player silently falls back. */
+  var validAt = function (k) {
+   if (Object.prototype.hasOwnProperty.call(clips, k)) return isPlayableClipEntry(clips[k]);
+   if (Object.prototype.hasOwnProperty.call(manifestClips, k)) return isPlayableClipEntry(manifestClips[k]);
+   return false;
+  };
   var count = function (test) {
    var n = 0, k;
-   for (k in clips) if (Object.prototype.hasOwnProperty.call(clips, k) && test(k)) n += 1;
-   for (k in manifestClips) if (Object.prototype.hasOwnProperty.call(manifestClips, k) && test(k) && !Object.prototype.hasOwnProperty.call(clips, k)) n += 1;
+   for (k in clips) if (Object.prototype.hasOwnProperty.call(clips, k) && test(k) && isPlayableClipEntry(clips[k])) n += 1;
+   for (k in manifestClips) if (Object.prototype.hasOwnProperty.call(manifestClips, k) && test(k) && isPlayableClipEntry(manifestClips[k]) && !Object.prototype.hasOwnProperty.call(clips, k)) n += 1;
    return n;
   };
   var words = [];
@@ -2973,7 +3037,7 @@
   for (wi = 0; wi < words.length; wi++) activeWords[str(words[wi] && words[wi].w).toLowerCase()] = 1;
   var wordsReady = 0, wk;
   for (wk in activeWords) {
-   if (Object.prototype.hasOwnProperty.call(activeWords, wk) && (clips['words.' + wk] || manifestClips['words.' + wk])) wordsReady += 1;
+   if (Object.prototype.hasOwnProperty.call(activeWords, wk) && validAt('words.' + wk)) wordsReady += 1;
   }
   return {
    words: { ready: wordsReady, total: words.length || 30 },
@@ -3196,16 +3260,8 @@
    });
    onStudio('studioMetaDay', 'change', function () { paintSessionMetaCard(); });
    onStudio('studioMetaBranch', 'input', function () { paintSessionMetaCard(); });
-   /* Topic quick-pick chips: 1 tap sets "Session <N> - <Topic>". */
-   onStudio('studioTopicChips', 'click', function (ev) {
-    var t = ev && ev.target && ev.target.getAttribute ? ev.target.getAttribute('data-topic') : null;
-    if (!t) return;
-    var no = str(fieldValue('studioMetaNo') || liveSessionNo() || '1');
-    var ti = byId('studioMetaTitle');
-    if (ti) ti.value = 'Session ' + no + ' - ' + t;
-    syncSessionMirrors();
-    msg('Topic set: Session ' + no + ' - ' + t, 'ok');
-   });
+   /* v0.0.7.b B4: the 12 topic quick-pick chips are gone — the Session
+      Topic input stays clean; the lecturer types or pastes any topic. */
    onStudio('btnApplySessionMeta', 'click', function () {
     withBusy('btnApplySessionMeta', function (d) {
      var no = str(fieldValue('studioMetaNo') || '').trim();
@@ -4162,11 +4218,29 @@
   btnLockStudio: function () { lock(); },
   btnStudioLock: function () { lock(); },
   btnSsbLock: function () { lock(); },
-  /* v0.0.7.a A4: Publish & Sync now STAYS in Studio — the old handler
-     auto-locked the studio after every publish (H16), forcing a re-PIN on
-     every cycle. Locking is an explicit, dedicated action
-     (🔒 Lock Studio & Unlock Dictation / btnSsbLock). */
-  btnSsbPublish: function () { withBusy('btnSsbPublish', function (d) { publishWordsAndVoice(function () { d(); }); }); },
+  /* v0.0.7.b B5: the interactive Studio Guide (Simple | Advanced chooser). */
+  btnStudioGuide: function () {
+   try { if (SDP.StudioGuide && SDP.StudioGuide.open) { SDP.StudioGuide.open('chooser'); return; } } catch (e) {}
+   msg('The Studio Guide is not available in this build.', 'warn');
+  },
+  /* v0.0.7.b B4 — PUBLISH, SYNC & LEAVE: the button now does exactly what
+     its name promises. On verified success it (1) releases the classroom
+     dictation lock so students can start at once, (2) LOCKS Lecturer Admin
+     Studio (no unlocked Studio is ever left behind — students can never
+     reach it), and (3) returns the lecturer to the main app. A failed
+     publish keeps the Studio open and shows the exact reason. */
+  btnSsbPublish: function () {
+   withBusy('btnSsbPublish', function (d) {
+    publishWordsAndVoice(function (err) {
+     d();
+     if (err) return; /* publishReason() already messaged the failure */
+     try { releaseDictationForStudents(); } catch (eR) {}
+     try { lock(); } catch (eL) {}
+     try { if (SDP.Views && SDP.Views.showScreen) SDP.Views.showScreen('home'); } catch (eT) {}
+     try { if (SDP.Views && SDP.Views.showToast) SDP.Views.showToast(t('studioPublishLockOk', 'Published, synced & locked — students can start dictation now.')); } catch (eTo) {}
+    });
+   });
+  },
   /* v0.0.7.a Pillar 1 (Y1): the Voice Sample Studio controller buttons. */
   btnVoiceSampleRecord: function () { toggleVoiceSampleRecord(); },
   btnVoiceSampleStop: function () { vsStopRecording(); },
@@ -4595,6 +4669,116 @@
  }
  bindAutoLock();
 
+ /* ══ v0.0.7.b B4 — THE 10-SECOND SECURITY AUTO-LOCK ══
+    If the lecturer navigates away from the Studio tab/screen, minimises the
+    browser, or simply stops interacting while unlocked, a visible countdown
+    starts: "🔒 Auto-locking Studio in 10s… — tap anywhere to stay unlocked".
+    No return/interaction within 10 seconds ⇒ Lecturer Admin Studio locks
+    ITSELF, so students can never reach an unprotected Studio. Any real
+    interaction (tap / click / key / scroll) cancels the countdown and
+    re-arms the idle clock. Gates may disable it with
+    window.__SDP_AUTOLOCK__ = false (same law as __SDP_ALLOW_AUTOGEN). */
+ function autoLockEnabled() {
+  try { return global.__SDP_AUTOLOCK__ !== false; } catch (e) { return true; }
+ }
+ var autoLock = { idleTimer: 0, countdownTimer: 0, left: 0, bound: false };
+ function ensureAutoLockBanner() {
+  var host = byId('studioAutoLockCountdown');
+  if (host) return host;
+  try {
+   host = doc.createElement('div');
+   host.id = 'studioAutoLockCountdown';
+   host.className = 'studio-autolock-countdown';
+   host.setAttribute('role', 'alert');
+   host.hidden = true;
+   (doc.body || doc.documentElement).appendChild(host);
+  } catch (e) { host = null; }
+  return host;
+ }
+ function paintAutoLockCountdown() {
+  var host = byId('studioAutoLockCountdown') || ensureAutoLockBanner();
+  if (!host) return false;
+  var on = autoLock.left > 0;
+  host.hidden = !on;
+  if (on) host.textContent = '🔒 ' + t('studioAutoLockIn', 'Auto-locking Studio in') + ' ' + autoLock.left + 's… ' + t('studioAutoLockHint', '— tap anywhere to stay unlocked');
+  return true;
+ }
+ function startAutoLockCountdown() {
+  if (!autoLockEnabled() || !ST.unlocked || autoLock.countdownTimer) return false;
+  ensureAutoLockBanner();
+  autoLock.left = 10;
+  paintAutoLockCountdown();
+  autoLock.countdownTimer = global.setInterval(function () {
+   autoLock.left -= 1;
+   if (autoLock.left <= 0) {
+    cancelAutoLockCountdown(true);
+    if (ST.unlocked) { try { lock(); } catch (e) {} }
+    return;
+   }
+   paintAutoLockCountdown();
+  }, 1000);
+  return true;
+ }
+ function cancelAutoLockCountdown(silent) {
+  if (autoLock.countdownTimer) { try { global.clearInterval(autoLock.countdownTimer); } catch (e) {} autoLock.countdownTimer = 0; }
+  autoLock.left = 0;
+  paintAutoLockCountdown();
+  if (!silent && ST.unlocked) armIdleAutoLock(true);
+  return true;
+ }
+ function armIdleAutoLock(on) {
+  if (!on) {
+   if (autoLock.idleTimer) { try { global.clearTimeout(autoLock.idleTimer); } catch (e) {} autoLock.idleTimer = 0; }
+   return false;
+  }
+  if (!autoLockEnabled() || !ST.unlocked) return false;
+  if (autoLock.idleTimer) { try { global.clearTimeout(autoLock.idleTimer); } catch (e) {} }
+  /* 10 seconds of silence arms the visible 10-second countdown. */
+  autoLock.idleTimer = global.setTimeout(function () {
+   autoLock.idleTimer = 0;
+   if (ST.unlocked) startAutoLockCountdown();
+  }, 10000);
+  return true;
+ }
+ function studioScreenActive() {
+  try { var el = byId('screen-studio'); return !!(el && el.className && (' ' + el.className + ' ').indexOf(' active ') >= 0); } catch (e) { return true; }
+ }
+ function onAutoLockActivity() {
+  if (!autoLockEnabled() || !ST.unlocked) return false;
+  if (autoLock.countdownTimer) cancelAutoLockCountdown();
+  /* navigating to a NON-studio screen while unlocked starts the countdown
+     at once (the Studio DOM stays unlocked in the background otherwise). */
+  if (!studioScreenActive()) { startAutoLockCountdown(); return true; }
+  armIdleAutoLock(true);
+  return true;
+ }
+ function bindAutoLockEvents() {
+  if (autoLock.bound) return false;
+  autoLock.bound = true;
+  var d = doc, evts = ['pointerdown', 'click', 'keydown', 'touchstart', 'input', 'change'], i;
+  for (i = 0; i < evts.length; i++) {
+   try { d.addEventListener(evts[i], onAutoLockActivity, true); } catch (e) {}
+  }
+  try { global.addEventListener('scroll', onAutoLockActivity, true); } catch (e2) {}
+  /* leaving the tab / minimising starts the visible countdown at once */
+  try { d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'hidden' && ST.unlocked && autoLockEnabled()) startAutoLockCountdown(); }, false); } catch (e3) {}
+  try { global.addEventListener('blur', function () { if (ST.unlocked && autoLockEnabled()) startAutoLockCountdown(); }, false); } catch (e4) {}
+  return true;
+ }
+ /* called from every unlock path: engage the security net */
+ function engageAutoLock() {
+  try { bindAutoLockEvents(); } catch (eB) {}
+  try { armIdleAutoLock(true); } catch (eA) {}
+  return true;
+ }
+ /* v0.0.7.b B4: leaving the Studio releases the classroom dictation lock so
+    students can start dictating at once — the strict overlay lifts. */
+ function releaseDictationForStudents() {
+  try { if (SDP.Engine && SDP.Engine.setStudioLocked) SDP.Engine.setStudioLocked(false); } catch (e) {}
+  try { if (SDP.Views && SDP.Views.paintDictationLockOverlay) SDP.Views.paintDictationLockOverlay(false); } catch (e2) {}
+  return true;
+ }
+
  function currentWords() {
   if (ST.words && ST.words.length) return ST.words;
   return sync() && sync().words ? sync().words() : [];
@@ -4620,8 +4804,22 @@
   } catch (eL) { return {}; }
  }
  function isValidClipEntry(entry) {
+  /* v0.0.7.b B1 — the ZERO-BYTE LAW: any entry whose recorded payload is
+     smaller than 512 bytes (the live words.mobile phone bytes:0 bug) is a
+     corrupted or never-generated clip and is NEVER valid, no matter what
+     its b64 field claims. Empty/undecodable b64 fails below as before. */
+  if (isObj(entry) && entry.bytes !== undefined && entry.bytes !== null && entry.bytes !== '') {
+   if ((Number(entry.bytes) || 0) < 512) return false;
+  }
   var b64 = isObj(entry) ? str(entry.b64) : str(entry);
   return !!(b64 && b64.length > 1400 && str(b64).indexOf('UklGR') !== 0);
+ }
+ /* v0.0.7.b B1: an entry is playable when it is a REAL payload — a valid
+    b64 clip OR an explicit url. Used by every ready/missing count so a
+    zero-byte clip can never be reported as Ready. */
+ function isPlayableClipEntry(entry) {
+  if (isObj(entry) && str(entry.url)) return true;
+  return isValidClipEntry(entry);
  }
  function clipLibrarySaveEntry(key, entry) {
   /* only words.* clips enter the library — never system clips */
@@ -4951,10 +5149,73 @@ function priorIPAFor(w) {
   return 'We saw a ' + word + ' near the station.';
  }
  
+ /* ══ v0.0.7.b B2 — THE CLEAN-DATA LAW: every enrichment input (dictionary
+    API, LLM row, prior record) passes these sanitizers, so Wiktionary junk
+    ("(etc.)", "(An intranet.)", "(heading)", leading ':', spelling-as-
+    phonetics, doubled-spelling IPA, examples without the exact word) can
+    never reach a student again. ══ */
+ function sanitizeMeaningText(m, word) {
+  var t = str(m);
+  if (!t) return '';
+  t = t.replace(/^\s*\(etc\.?\)\s*,?\s*/i, '');
+  t = t.replace(/^\s*\(heading\)\s*,?\s*/i, '');
+  t = t.replace(/^\s*[:;]\s*/, '');
+  t = t.replace(/\s*\((?:An?|The)\s+[a-z][^)]{2,40}\.\)\s*$/i, '');
+  t = t.replace(/\s*\((?:see|cf\.?)[^)]*\)\s*$/i, '');
+  t = t.replace(/,\s*etc\.?\s*$/i, '.');
+  t = t.replace(/\s+etc\.?\s*$/i, '.');
+  t = t.replace(/\s*\((?:An?|The)\s+[a-z][^)]{2,40}\.\)/i, ''); /* inline cross-refs too */
+  t = t.replace(/\s{2,}/g, ' ').replace(/^\s+|\s+$/g, '');
+  if (t.length > 160) {
+   var cut = t.indexOf('. ', 30);
+   if (cut > 30 && cut < 160) t = t.slice(0, cut + 1);
+   else t = t.slice(0, 157).replace(/\s+\S*$/, '') + '.';
+  }
+  return t;
+ }
+ function sanitizeExampleSentence(s, word) {
+  var t = str(s);
+  if (!t) return '';
+  t = t.replace(/^\s*\(etc\.?\)\s*/i, '').replace(/\s{2,}/g, ' ').replace(/^\s+|\s+$/g, '');
+  var hasWord = str(word) ? (t.toLowerCase().indexOf(str(word).toLowerCase()) >= 0) : true;
+  var sentenceLike = /[.!?]$/.test(t) || t.split(' ').length >= 6;
+  if (!hasWord || !sentenceLike || t.length > 140) return ''; /* caller falls back to a template that DOES contain the word */
+  return t;
+ }
+ function sanitizeBritishIPA(p, word) {
+  var t = str(p).replace(/\s{2,}/g, ' ').replace(/^\s+|\s+$/g, '');
+  if (!t) return '';
+  if (t.indexOf('/') !== 0) t = '/' + t.replace(/^\/+|\/+$/g, '') + '/';
+  var bare = t.replace(/^\/+|\/+$/g, '');
+  var wl = str(word).toLowerCase().replace(/[^a-z]/g, '');
+  if (wl && bare.toLowerCase().replace(/[^a-z]/g, '').indexOf(wl + wl) >= 0) return ''; /* "/ˈdɪskdɪsk/" doubled-spelling artifact */
+  if (('/' + wl + '/') === t.toLowerCase()) return ''; /* spelling-as-phonetics placeholder */
+  return t;
+ }
+ /* v0.0.7.b B2 — words with 2+ accepted British RP pronunciations carry a
+    pronunciationVariants hint so students see both valid forms. */
+ var PRONUNCIATION_VARIANTS = {
+  'either': ['/ˈaɪ.ðər/', '/ˈiː.ðər/'],
+  'neither': ['/ˈnaɪ.ðər/', '/ˈniː.ðər/'],
+  'schedule': ['/ˈʃedʒ.uːl/', '/ˈskedʒ.uːl/'],
+  'data': ['/ˈdeɪ.tə/', '/ˈdɑː.tə/'],
+  'often': ['/ˈɒf.ən/', '/ˈɒf.tən/'],
+  'privacy': ['/ˈprɪv.ə.si/', '/ˈpraɪ.və.si/'],
+  'garage': ['/ˈɡær.ɑːʒ/', '/ˈɡær.ɪdʒ/'],
+  'controversy': ['/ˈkɒn.trə.vɜː.si/', '/kənˈtrɒv.ə.si/'],
+  'mobile': ['/ˈməʊ.baɪl/', '/ˌməʊ.baɪl/'],
+  'mobile phone': ['/ˌməʊ.baɪl ˈfəʊn/', '/ˈməʊ.baɪl ˈfəʊn/'],
+  'route': ['/ruːt/', '/raʊt/'],
+  'vitamin': ['/ˈvɪt.ə.mɪn/', '/ˈvaɪ.tə.mɪn/'],
+  'status': ['/ˈsteɪ.təs/', '/ˈstæt.əs/'],
+  'economic': ['/ˌiː.kəˈnɒm.ɪk/', '/ˌek.əˈnɒm.ɪk/'],
+  'envelope': ['/ˈen.və.ləʊp/', '/ˈɒn.və.ləʊp/'],
+  'direct': ['/daɪˈrekt/', '/dɪˈrekt/']
+ };
  function mergeEnrichRecord(word, prior, provided) {
   var base = fallbackEnrich(word, prior);
   var p = isObj(provided) ? provided : {};
-  var ipaIn = str(p.p) || base.p;
+  var ipaIn = sanitizeBritishIPA(str(p.p) || base.p, word);
   /* v0.0.6.a: a spelling-as-phonetics placeholder is worthless in a B1 class; */
   if (ipaIn === '/' + str(word) + '/') ipaIn = '';
   /* v0.0.6.d (D2): never carry the OLD word's POS/meaning/sentence onto a */
@@ -4964,16 +5225,19 @@ function priorIPAFor(w) {
    /* No LLM row landed: the analyzer owns POS, and the generic fallbacks */
    if (stalePrior) { base.pos = guessPartOfSpeech(str(word)); base.m = ''; base.s = ''; }
   }
-  var mIn = str(p.m);
-  var sIn = str(p.s);
+  var mIn = sanitizeMeaningText(str(p.m), word);
+  var sIn = sanitizeExampleSentence(str(p.s), word);
   var siIn = str(p.si);
+  /* v0.0.7.b B2: keep (or stamp) the UK pronunciation-variant hints. */
+  var pv = PRONUNCIATION_VARIANTS[str(word).toLowerCase()] ||
+   (isObj(prior) && Array.isArray(prior.pronunciationVariants) && prior.pronunciationVariants.length > 1 ? prior.pronunciationVariants : null);
   var out = {
    w: str(word),
    p: ipaIn || offlineIPA(str(word)) || transcribeBritishIPA(str(word)),
    pos: posIn || base.pos,
-   m: mIn || (stalePrior ? b1Definition(str(word), base.pos) : base.m),
+   m: mIn || (stalePrior ? b1Definition(str(word), base.pos) : sanitizeMeaningText(base.m, word)),
    si: siIn || (stalePrior ? '' : base.si),
-   s: sIn || (stalePrior ? b1Example(str(word), base.pos) : base.s),
+   s: sIn || (stalePrior ? b1Example(str(word), base.pos) : sanitizeExampleSentence(base.s, word) || b1Example(str(word), base.pos)),
    audio: str(prior && prior.audio) || base.audio,
    exampleSi: str(p.exampleSi) || base.exampleSi,
    /* v0.0.6.u Step A: every enriched word carries its British RP phonetic
@@ -4983,6 +5247,7 @@ function priorIPAFor(w) {
    ttsHint: str(p.ttsHint) || RP_TTS_OVERRIDES[str(word).toLowerCase()] || str(prior && prior.ttsHint) || '',
    enrichSource: str(p.enrichSource) || str(prior && prior.enrichSource) || base.enrichSource
   };
+  if (pv && pv.length > 1) out.pronunciationVariants = pv;
   return out;
  }
  function fetchJsonSafe(url, timeoutMs, cb) {
@@ -5128,10 +5393,10 @@ function priorIPAFor(w) {
    if (pending > 0) return;
    var out = mergeEnrichRecord(w, prior, {});
    if (dict) {
-    if (dict.p) out.p = dict.p;
+    if (dict.p) { var pD = sanitizeBritishIPA(dict.p, w); if (pD) out.p = pD; }
     if (dict.pos) out.pos = dict.pos;
-    if (dict.m) out.m = dict.m;
-    if (dict.s) out.s = dict.s;
+    if (dict.m) out.m = sanitizeMeaningText(dict.m, w) || out.m;
+    if (dict.s) { var sD = sanitizeExampleSentence(dict.s, w); if (sD) out.s = sD; }
     /* D11/D12: never discard a known human */
     if (dict.audio) out.audio = str(dict.audio);
    }
@@ -5159,7 +5424,12 @@ function priorIPAFor(w) {
   return true;
  }
  function llmPrompt(words) {
-  return 'You are a vocabulary assistant for a Sri Lankan B1 English class. ' + 'Return STRICT JSON only, no prose: {"words":[{"w":"spelling","p":"IPA","pos":"adj.","m":"short English definition","si":"Sinhala meaning","s":"one simple B1 example sentence"}]} ' + 'for exactly these words: ' + words.join(', ');
+  /* v0.0.7.b B2 — the AUTHORITATIVE BRITISH VALIDATION PROMPT: Cambridge/
+     Oxford learner-dictionary standards for a Sri Lankan B1 class. */
+  return 'You are an authoritative British English editor (Cambridge / Oxford learner dictionary) for a Sri Lankan B1 English class. ' +
+   'Return STRICT JSON only, no prose: {"words":[{"w":"exact spelling","p":"British RP IPA with syllable dots, e.g. /ˌməʊ.baɪl ˈfəʊn/","pos":"noun./verb./adjective./adv.","m":"ONE concise factually-accurate B1 definition (max 15 words)","si":"short accurate Sinhala meaning","s":"ONE natural B1 example sentence that CONTAINS the exact word"}]} ' +
+   'Rules: non-rhotic British RP pronunciation only; the definition must give the most common MODERN B1 sense (e.g. computer = an electronic machine, never "a person who computes"); no bracketed notes, no "(etc.)", no cross-references, no archaic senses; the example sentence must contain the exact word form and end with a full stop; never invent facts. ' +
+   'for exactly these words: ' + words.join(', ');
  }
  function parseJsonLoose(text) {
   var t = str(text).replace(/```json/gi, '```').replace(/```/g, '').replace(/^\s+|\s+$/g, '');
@@ -6355,8 +6625,10 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
  function clipExists(key) {
   var entry = packedSystemClip(key);
   if (!entry) return false;
-  if (typeof entry === 'string') return !!entry;
-  return !!(str(entry.b64) || str(entry.url));
+  /* v0.0.7.b B1: presence is NOT existence — a zero-byte / empty-b64 /
+     sub-512-byte entry is MISSING, never Ready (the live bytes:0 bug). */
+  if (typeof entry === 'string') return isValidClipEntry(entry);
+  return isPlayableClipEntry(entry);
  }
  function buildQueue(words, singleTest) {
   var list = (Array.isArray(words) ? words : currentWords()).slice(0, wordCap()); /* v0.0.7.a Z5 */
@@ -6560,7 +6832,13 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
      tierLimited = true;
      skipped = Math.max(skipped, queue.length - made.length);
      index = queue.length;
-     var w = T('studioElTierWarn'); ST.tierWarn = w;
+     /* v0.0.7.b B1 — the POOL DIAGNOSTIC LAW: an all-keys-failed batch ends
+        with an explicit per-pool report so the lecturer sees exactly how
+        many configured ElevenLabs keys were tried and why the last one
+        refused (never a silent mismatched-voice fallback). */
+     var poolN = elevenKeyPool().length || 1;
+     var w = T('studioElTierWarn') + ' · ' + (rotationsThisItem + 1) + '/' + poolN + ' pool key' + (poolN > 1 ? 's' : '') + ' tried — last error: ' + quotaError(err);
+     ST.tierWarn = w;
      msg(' ' + w, 'warn'); testStatus(' ' + w, 'warn');
      finish(null); return;
     }
@@ -6680,6 +6958,16 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
       if (!payload) throw new Error('empty_audio');
       var b64 = arrayBufferToBase64(payload);
       if (!b64) throw new Error('encode_failed');
+      /* v0.0.7.b B1 ROOT-CAUSE FIX — capture the REAL payload size BEFORE the
+         normalizer decodes it. SDP.AudioNormalize.measureBuffer() hands the
+         ArrayBuffer to AudioContext.decodeAudioData(), which DETACHES it, so
+         reading payload.byteLength inside the async callback always returned
+         0. That is the true origin of the live "bytes: 0" corruption: every
+         freshly synthesized word take was stamped bytes:0, the B1 zero-byte
+         law then classified it MISSING (so a lecturer who just generated all
+         31 clips still saw them all as Missing) and clipLibrarySaveEntry()
+         refused to snapshot it, which broke the A3 0-credit reuse library. */
+      var payloadBytes = Number(payload.byteLength || payload.length || 0) || 0;
       /* v0.0.6.v — the broadcast normalizer: words and num takes (NEVER the
          _intro_male_* beats, NEVER cmd.*) decode -> normalize to the locked
          signature (-21 LUFS, +2.5 dB @ 3 kHz, TP <= -1.0) -> PCM WAV b64.
@@ -6701,12 +6989,12 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
         if (!(lufs > -70)) lufs = -21;
         var gainLinear = Math.max(0.5, Math.min(2.0, Math.pow(10, (-21.0 - lufs) / 20)));
         done(null, introMode ? {
-         b64: b64, text: str(item.text), bytes: payload.byteLength,
+         b64: b64, text: str(item.text), bytes: payloadBytes,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
          liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
         } : {
-         b64: b64, text: str(item.text), bytes: payload.byteLength,
+         b64: b64, text: str(item.text), bytes: payloadBytes,
          at: Date.now(), voiceId: genVoiceId, modelId: genModel,
          hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
          lufs: Math.round(lufs * 10) / 10, truePeakDbTp: Math.round(tpDb * 10) / 10,
@@ -6717,12 +7005,12 @@ function introVoiceTtsUrl() { return 'https://api.elevenlabs.io/v1/text-to-speec
        return;
       }
       done(null, introMode ? {
-       b64: b64, text: str(item.text), bytes: payload.byteLength,
+       b64: b64, text: str(item.text), bytes: payloadBytes,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
        liveEleven: true, weekStamp: currentWeeksSinceStart(), provenance: 'elevenlabs-live', voiceName: chosenBriefingVoiceName()
       } : {
-       b64: b64, text: str(item.text), bytes: payload.byteLength,
+       b64: b64, text: str(item.text), bytes: payloadBytes,
        at: Date.now(), voiceId: genVoiceId, modelId: genModel,
        hashAlgo: HASH_ALGO, hash: clipContentHash(item.text, genVoiceId, genModel),
        lufs: -21, truePeakDbTp: -1, gainLinear: 1,
@@ -8171,6 +8459,8 @@ function setStudioWords(list, source) {
  }
  /* D11: stash/restore input values */
  function onLangChange() {
+  /* v0.0.7.b B5: the interactive guide re-renders in the new language. */
+  try { if (SDP.StudioGuide && SDP.StudioGuide.onLangChange) SDP.StudioGuide.onLangChange(); } catch (eG) {}
   if (!ST.unlocked) return false;
   var ids = ['elKeyInput','ghTokenInput','studioGasUrl','studioAiKey','studioAiProvider','studioBulkWords','studioWords'];
   var s = {}, i, n;
@@ -8214,6 +8504,13 @@ function setStudioWords(list, source) {
   paintStudioActionAuditBanner: paintStudioActionAuditBanner,
   armClassroomLock: function () { return setStudioLockArm(); },
   lock: lock,
+  /* v0.0.7.b B4 test hooks (G20): drive the 10-second security auto-lock
+     deterministically — start the visible countdown, cancel it, read state. */
+  __testAutoLock: {
+   start: startAutoLockCountdown,
+   cancel: cancelAutoLockCountdown,
+   state: function () { return { left: autoLock.left, idle: !!autoLock.idleTimer, counting: !!autoLock.countdownTimer }; }
+  },
   isUnlocked: isUnlocked,
   allowAutoGen: allowAutoGen,
   /* v0.0.6.d (D2): the five-field re-enrichment rule, exposed for the */

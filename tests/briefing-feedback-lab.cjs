@@ -160,7 +160,7 @@ const LAB_STUB = () => {
     if (self.__labSrc !== srcNow) { self.__labSrc = srcNow; self.__labT = 0; self.__labClock = false; try { clearInterval(self.__labTimer); } catch (e0) {} }
     if (!self.__labClock) {
       self.__labClock = true;
-      /* v0.0.7.a: every play() starts a FRESH media clock — a real <audio>
+      /* v0.0.7.b: every play() starts a FRESH media clock — a real <audio>
          element re-loading a source plays from 0:00 even when the URL is
          byte-identical (the lab injects the same fixture b64 into all 4
          briefing beats). Keeping the stale __labT made beats 2-4 fire
@@ -336,10 +336,10 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         stage2.welcomeGone === true && stage2.overviewVisible === true, JSON.stringify(stage2));
       check(`LAB1b2(${vp.tag}) narration starts at Paragraph 1, Word 1 (Beat 1 rendered, "Welcome" first, karaoke already painting — the direct open narrates inside the click gesture)`,
         stage2.beats === 4 && stage2.beat1WordCount > 0 && /^Welcome/.test(stage2.beat1Word1 || '') &&
-        /0\.0\.7\.a/.test(stage2.verPill), JSON.stringify(stage2));
+        /0\.0\.7\.b/.test(stage2.verPill), JSON.stringify(stage2));
       check(`LAB1b3(${vp.tag}) the shared <audio> stays un-muted through the on-demand narration (muted false)`,
         stage2.audioUnlocked === true || stage2.audioMuted === false, JSON.stringify({ audioUnlocked: stage2.audioUnlocked }));
-      /* ── v0.0.7.a LAB1m — the PARAGRAPH-1 COMPLETION GATE, observed
+      /* ── v0.0.7.b LAB1m — the PARAGRAPH-1 COMPLETION GATE, observed
          LIVE from the moment Stage 2 begins narrating: while Paragraph 1 is
          still speaking (beat1Done === false) BOTH footer buttons stay
          disabled — the CTA shows the countdown then the
@@ -522,9 +522,9 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           })(),
           stamped: (function () { try { return JSON.parse(localStorage.getItem('sdp.settings') || '{}').briefingSeen; } catch (e) { return null; } })()
         }));
-        check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.7.a)',
+        check('LAB1o ▶ Start Dictation → ALWAYS hands over to the Step-by-Step Voice User Guide (Step 1 of 4, briefing stamped 0.0.7.b)',
           stage3.briefingClosed === true && stage3.guideOpen === true &&
-          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.7.a',
+          /Step [1-4] of 4/.test(stage3.stepTag) && stage3.stamped === '0.0.7.b',
           JSON.stringify(stage3));
         check('LAB1o2 the guide footer ships Exit on the LEFT + ▶ Click Start Dictation Now highlighted on the RIGHT',
           /Click Start Dictation Now/.test(stage3.cta) && stage3.ctaRight === true,
@@ -546,7 +546,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         });
         check('LAB1p Stage 4: ▶ Click Start Dictation Now switches to the Dictation screen and starts the clock cleanly at Word #1 (index === 0)',
           stage4.screen === 'screen-player' && (stage4.index === 0 || stage4.wordNo === 1) &&
-          stage4.guideClosed === true && stage4.guideSeen === '0.0.7.a',
+          stage4.guideClosed === true && stage4.guideSeen === '0.0.7.b',
           JSON.stringify(stage4));
         check('LAB1q the two-stage welcome run threw zero page errors', errors.length === 0, errors.join(' | '));
       }
@@ -612,8 +612,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       check('LAB2b the FOUR underscore entries are exactly the committed _intro_male_1..4 George beats (real MP3 b64 + George voiceId)',
         underscore.length === 4 && george.length === 4 && george.every(function (k) { return pack.clips[k] && pack.clips[k].voiceId === 'JBFqnCBsd6RMkjVDRZzb' && String(pack.clips[k].b64 || '').length > 100000; }),
         JSON.stringify(underscore));
-      check('LAB2c the pack header carries 0.0.7.a / ver 41 / schema 41 / settingsRev 71 / syncRev 1797000000020',
-        pack.version === '0.0.7.a' && pack.ver === 41 && pack.schema === 41 && pack.settingsRev === 71 && Number(pack.syncRev) === 1797000000020,
+      check('LAB2c the pack header carries 0.0.7.b / ver 42 / schema 42 / settingsRev 72 / syncRev 1797000000021',
+        pack.version === '0.0.7.b' && pack.ver === 42 && pack.schema === 42 && pack.settingsRev === 72 && Number(pack.syncRev) === 1797000000021,
         JSON.stringify([pack.version, pack.ver, pack.schema, pack.settingsRev, pack.syncRev]));
       const orchestration = fs.readFileSync(path.join(ROOT, 'data/studio.js'), 'utf8');
       const viewsText = fs.readFileSync(path.join(ROOT, 'data/sdp-ui-views.js'), 'utf8');
@@ -876,7 +876,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       }
       check('LAB2k the live-synthesized Beat 1 carries the parsed per-word wt array (frame-accurate karaoke)',
         wtLive.hasWt === true, JSON.stringify(wtLive));
-      /* ── v0.0.7.a LAB2n — the END-TO-END CLONED-VOICE PERSISTENCE ACROSS
+      /* ── v0.0.7.b LAB2n — the END-TO-END CLONED-VOICE PERSISTENCE ACROSS
          RELOAD PROOF: after the forced bridge synthesis, the SERIALIZED pack
          (voicePackPayload → packClipsForDisk) must RETAIN wt + liveEleven +
          weekStamp (v0.0.6.q stripped them on every commit), the browser's
@@ -927,7 +927,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         if (!restored.live) await page.waitForTimeout(400);
       }
       check('LAB2n2 after a FULL page.reload() (the network still serving the static repo pack with liveEleven ABSENT) the reloaded page restores the live-synthesized _intro_male_1..4 beats (liveEleven === true + wt) from the local briefing pack cache — the generated/cloned voice never disappears on reload',
-        /* v0.0.7.a: needs a REAL ElevenLabs key for the live re-bake; with the lab's fake sk_TESTKEY the synthesis cannot run, so the check passes as environment-skipped */ (restored.live === true || restored.count === 0), JSON.stringify(restored));
+        /* v0.0.7.b: needs a REAL ElevenLabs key for the live re-bake; with the lab's fake sk_TESTKEY the synthesis cannot run, so the check passes as environment-skipped */ (restored.live === true || restored.count === 0), JSON.stringify(restored));
       check('LAB2l the bridge run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
     }
@@ -940,8 +940,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.a' }))],
-          ['sdp.guide_seen', '0.0.7.a']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.b' }))],
+          ['sdp.guide_seen', '0.0.7.b']
         ]
       });
       await page.waitForTimeout(500);
@@ -975,7 +975,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           out.manifest = f.length > 0;
           /* v0.0.6.q: the boot manifest read carries ONLY the release version
              (?v=0.0.6.q, NO tick) so the SW/HTTP cache can serve it. */
-          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.7\.a/.test(x.url); });
+          out.versionBust = f.some(function (x) { return /[?&]v=0\.0\.7\.b/.test(x.url); });
           out.noTick = f.every(function (x) { return !/[?&]t=\d+/.test(x.url); });
           out.cacheFirst = f.some(function (x) { return x.cache === 'default'; });
           out.pointerFresh = v.some(function (x) { return x.cache === 'no-store' && /[?&]t=\d+/.test(x.url); });
@@ -986,13 +986,13 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         purge.purged >= 3, JSON.stringify(purge));
       check('LAB3b the purge deletes the poisoned stale briefing/guide entries (the canonical word clips ride the pack merge law)',
         purge.purged >= 3, JSON.stringify(purge));
-      check('LAB3c the BOOT manifest fetch carries ONLY the release version bust (?v=0.0.7.a, zero &t= ticks — the SW cache serves it instantly on weak mobile data)',
+      check('LAB3c the BOOT manifest fetch carries ONLY the release version bust (?v=0.0.7.b, zero &t= ticks — the SW cache serves it instantly on weak mobile data)',
         purge.versionBust === true && purge.noTick === true && purge.manifest === true, JSON.stringify(purge));
       check('LAB3d the BOOT manifest fetch is cache:default (NEVER no-store — the v0.0.6.n law that wiped the pack on 2G is gone); only the tiny version.json pointer keeps no-store + tick',
         purge.cacheFirst === true && purge.noStore !== true && purge.pointerFresh === true, JSON.stringify(purge));
       const swText = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-      check('LAB3e the service worker is the s40 shell (sdp-v0.0.7.a-s40) with the stale-while-revalidate + background-revalidation data-JSON law',
-        /SW_VERSION = 'sdp-v0\.0\.7\.a-s40'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.7\.a-s40-shell'/.test(swText) &&
+      check('LAB3e the service worker is the s41 shell (sdp-v0.0.7.b-s41) with the stale-while-revalidate + background-revalidation data-JSON law',
+        /SW_VERSION = 'sdp-v0\.0\.7\.b-s41'/.test(swText) && /SHELL_CACHE = 'sdp-v0\.0\.7\.b-s41-shell'/.test(swText) &&
         /function staleWhileRevalidateDataJson/.test(swText), 'sw.js stamp');
       check('LAB3f the purge-law run threw zero page errors', errors.length === 0, errors.join(' | '));
       await ctx.close();
@@ -1009,8 +1009,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.a' }))],
-          ['sdp.guide_seen', '0.0.7.a']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.b' }))],
+          ['sdp.guide_seen', '0.0.7.b']
         ]
       });
       /* Wait until the SW controls the page and the full pack is live. */
@@ -1075,8 +1075,8 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
     {
       const { ctx, page, errors } = await newPage(browser, server.origin, {
         localStorage: [
-          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.a' }))],
-          ['sdp.guide_seen', '0.0.7.a']
+          ['sdp.settings', JSON.stringify(Object.assign({}, FAST, { briefingSeen: '0.0.7.b' }))],
+          ['sdp.guide_seen', '0.0.7.b']
         ]
       });
       /* Map the authentic fixture onto _intro_male_1..4 WITH exact wt arrays
@@ -1200,7 +1200,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         requestAnimationFrame(loop);
       }));
       check('LAB4b the is-current word matches the exact wt window spanning the live clock (within the handoff bound)',
-        /* v0.0.7.a: the wt window check needs live-synthesized wt data (real key); without it the karaoke track is empty and the check passes as environment-skipped */ (mid.ok === true || (mid.wtLen === 0 && mid.samples > 0)), JSON.stringify(mid));
+        /* v0.0.7.b: the wt window check needs live-synthesized wt data (real key); without it the karaoke track is empty and the check passes as environment-skipped */ (mid.ok === true || (mid.wtLen === 0 && mid.samples > 0)), JSON.stringify(mid));
       check('LAB4c the audio clock actually pumped frames (rAF ticks > 10)',
         (mid.ticks || 0) > 10, String(mid.ticks));
       check('LAB4d the #briefingBar advances CONTINUOUSLY (a fractional percentage between the beat quarters)',
@@ -1213,7 +1213,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       }));
       check('LAB4e the flow advances to Beat 2 driven by the clip clock',
         late.beat2 === true || late.linesPast >= 1, JSON.stringify(late));
-      /* v0.0.7.a Tap-to-seek under the FULL-BRIEFING LOCK: while the
+      /* v0.0.7.b Tap-to-seek under the FULL-BRIEFING LOCK: while the
          briefing is still locked (allBeatsDone false) a FORWARD tap (Beat 3
          while Beat 2 is narrating) is REFUSED — nobody can skip paragraphs;
          once all 4 paragraphs finish, tapping Beat 3 seeks freely. */
@@ -1224,12 +1224,12 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
             const on = document.querySelector('#briefingLyrics .b-line.on');
             return on ? Number(on.getAttribute('data-bline')) : -1;
           };
-          /* v0.0.7.a: by now the first karaoke run has finished every beat,
+          /* v0.0.7.b: by now the first karaoke run has finished every beat,
              so a FRESH replay re-arms the Paragraph-1 lock and the forward
              tap probe lands while Paragraph 1 is genuinely speaking. */
           try {
             /* the same public replay API the Project Briefing button calls —
-               v0.0.7.a re-arms the modal even while briefingState.open is
+               v0.0.7.b re-arms the modal even while briefingState.open is
                true, so the karaoke run left behind can be replayed in place. */
             try { window.SDP.Views.openBriefing({ replay: true, fromSettings: true }); } catch (eOp) { out.replayErr = String(eOp); }
             await new Promise(function (r) { setTimeout(r, 250); });
@@ -1260,7 +1260,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
       });
       check('LAB4f tapping a beat seeks the narration directly to it (the on-demand open allows forward seeks once Paragraph 1 is speaking — Beat 3 seek works)',
         seek.on === 2, JSON.stringify(seek));
-      /* ┠ v0.0.7.a PILLAR 1 — the manual-play law, LIVE in a real browser:
+      /* ┠ v0.0.7.b PILLAR 1 — the manual-play law, LIVE in a real browser:
          after the engine starts and is pause-locked by navigation, ▶ Play
          on #screen-dict and Listen on #screen-practice still speak the word
          (recorded in lastUtterances) with zero console errors. */
@@ -1309,7 +1309,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
         } catch (e) { out.err = String(e); }
         return out;
       });
-      check('LAB4h the v0.0.7.a manual-play law LIVE: after Start + navigation pause, ▶ Play on #screen-dict (30 Words) and Listen on #screen-practice (Practice) both speak the word (recorded in lastUtterances) with zero console errors',
+      check('LAB4h the v0.0.7.b manual-play law LIVE: after Start + navigation pause, ▶ Play on #screen-dict (30 Words) and Listen on #screen-practice (Practice) both speak the word (recorded in lastUtterances) with zero console errors',
         manualPlay.started === true && manualPlay.paused === true &&
         manualPlay.dictSpoke === true && manualPlay.pracSpoke === true && !manualPlay.err,
         JSON.stringify(manualPlay));

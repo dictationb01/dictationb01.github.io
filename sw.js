@@ -21,9 +21,9 @@
  * masked by a stale cache. */
 'use strict';
 
-var SW_VERSION = 'sdp-v0.0.7.a-s40'; /* v0.0.7.a */
-var SHELL_CACHE = 'sdp-v0.0.7.a-s40-shell'; /* v0.0.7.a */
-var SW_RELEASE = '0.0.7.a';
+var SW_VERSION = 'sdp-v0.0.7.b-s41'; /* v0.0.7.b */
+var SHELL_CACHE = 'sdp-v0.0.7.b-s41-shell'; /* v0.0.7.b */
+var SW_RELEASE = '0.0.7.b';
 var PRESERVE_CACHES = ['sdp-audio-clips', 'sdp-youdao-v1'];
 var YOUDAO_CACHE = 'sdp-youdao-v1';
 var CLIP_CACHE = 'sdp-audio-clips';
@@ -40,6 +40,7 @@ var SHELL = [
   './data/sdp-dictation-engine.js',
   './data/sdp-ui-views.js',
   './data/studio.js',
+  './data/sdp-studio-guide.js',
   './data/sdp-morphe-hooks.js',
   './data/version.json',
   './data/config.json',

@@ -71,6 +71,47 @@
     return 'desktop';
   }
 
+  /* v0.0.7.b B6 — privacy-safe device telemetry: the OS / browser FAMILY
+     only (regex-derived, never the raw userAgent string), the physical
+     screen size and the live online flag. Zero PII. */
+  function osFamily() {
+    var ua = '';
+    try { ua = String((global.navigator && global.navigator.userAgent) || ''); } catch (e) { ua = ''; }
+    if (/windows phone/i.test(ua)) return 'Windows Phone';
+    if (/windows/i.test(ua)) return 'Windows';
+    if (/android/i.test(ua)) return 'Android';
+    if (/iphone|ipad|ipod/i.test(ua)) return 'iOS';
+    if (/mac os x|macintosh/i.test(ua)) return 'macOS';
+    if (/cros/i.test(ua)) return 'ChromeOS';
+    if (/linux/i.test(ua)) return 'Linux';
+    return 'Other';
+  }
+  function browserFamily() {
+    var ua = '';
+    try { ua = String((global.navigator && global.navigator.userAgent) || ''); } catch (e) { ua = ''; }
+    if (/edg\//i.test(ua)) return 'Edge';
+    if (/opr\/|opera/i.test(ua)) return 'Opera';
+    if (/samsungbrowser/i.test(ua)) return 'Samsung Internet';
+    if (/firefox\//i.test(ua)) return 'Firefox';
+    if (/chrome\//i.test(ua)) return 'Chrome';
+    if (/safari\//i.test(ua)) return 'Safari';
+    return 'Other';
+  }
+  function deviceTelemetry() {
+    var sc = global.screen || {};
+    return {
+      class: deviceClass(),
+      dpr: Math.round((global.devicePixelRatio || 1) * 100) / 100,
+      vw: global.innerWidth || 0,
+      vh: global.innerHeight || 0,
+      screen: (Number(sc.width) || 0) + 'x' + (Number(sc.height) || 0),
+      os: osFamily(),
+      browser: browserFamily(),
+      online: (function () { try { return global.navigator && global.navigator.onLine !== false; } catch (e) { return true; } })(),
+      net: (function () { try { return String((global.navigator && global.navigator.connection && global.navigator.connection.effectiveType) || 'unknown'); } catch (e) { return 'unknown'; } })()
+    };
+  }
+
   function sessionStart() {
     var t = ledger();
     t.visitCount = Number(t.visitCount || 0) + 1;
@@ -112,19 +153,33 @@
       missedWords: Array.isArray(extra && extra.missedWords) ? extra.missedWords.slice(0, 30) : [],
       lagMs: Number(extra && extra.lagMs) || 0,
       audioTierUsed: String((extra && extra.audioTierUsed) || ''),
-      device: {
-        class: deviceClass(),
-        dpr: Math.round((global.devicePixelRatio || 1) * 100) / 100,
-        vw: global.innerWidth || 0,
-        vh: global.innerHeight || 0,
-        net: (function () { try { return String((global.navigator && global.navigator.connection && global.navigator.connection.effectiveType) || 'unknown'); } catch (e) { return 'unknown'; } })()
-      }
+      rating: Number(extra && extra.rating) || 0,
+      reactions: Array.isArray(extra && extra.reactions) ? extra.reactions.slice(0, 12).map(function (r) { return String(r).slice(0, 40); }) : [],
+      device: deviceTelemetry()
     };
     t.sessions.push(rec);
     t.totalDwellSec = Number(t.totalDwellSec || 0) + rec.dwellSec;
     t.__startedAt = 0; t.__hiddenMs = 0;
     saveSettings({ telemetry: t });
+    /* v0.0.7.b B6 — LIVE beacon: a finished session reaches the Lecturer
+       Studio the moment it completes, never only on tab close. */
+    try { pushTelemetryEnvelope(function () {}); } catch (ePB) {}
     return rec;
+  }
+
+  /* v0.0.7.b B6 — stampLastSession(patch): the student feedback path adds
+     rating / reaction chips to the just-finished session record so the
+     Lecturer Studio sees reactions against real performance. */
+  function stampLastSession(patch) {
+    var t = ledger();
+    if (!t.sessions.length) return null;
+    var p = patch && typeof patch === 'object' ? patch : {};
+    var last = t.sessions[t.sessions.length - 1];
+    if (p.rating) last.rating = Number(p.rating) || 0;
+    if (Array.isArray(p.reactions)) last.reactions = p.reactions.slice(0, 12).map(function (r) { return String(r).slice(0, 40); });
+    saveSettings({ telemetry: t });
+    try { pushTelemetryEnvelope(function () {}); } catch (ePS) {}
+    return last;
   }
 
   /* recordIncident(type, detail) — self-heal incidents ride the ledger. */
@@ -397,12 +452,14 @@
   }
 
   SDP.Telemetry = {
-    version: '1.1.0',
+    version: '1.2.0',
     ledger: ledger,
     owner: owner,
     telemetryTopic: telemetryTopic,
     sessionStart: sessionStart,
     sessionEnd: sessionEnd,
+    stampLastSession: stampLastSession,
+    deviceTelemetry: deviceTelemetry,
     recordIncident: recordIncident,
     envelope: envelope,
     pushTelemetryEnvelope: pushTelemetryEnvelope,

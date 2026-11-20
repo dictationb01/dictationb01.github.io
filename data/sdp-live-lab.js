@@ -164,7 +164,7 @@
     var host = byId('labClipTableBody');
     if (!host) return false;
     setTxt('labPackStatus', 'Loading live /data/elevenlabs-audio.json …');
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'no-store' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack || !isObj(pack.clips)) { setTxt('labPackStatus', '✗ pack unavailable (offline?)'); record('S1', 'manifest loads', false, 'fetch failed'); return; }
@@ -235,7 +235,7 @@
   }
 
   function playKey(key) {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -251,7 +251,7 @@
   }
 
   function testAllWordsSequentially() {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.a', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -443,7 +443,7 @@
     LAB.report = {
       lab: 'SDP Real-Time Live Voice & Clone Lab',
       labVersion: '4.0.0',
-      appVersion: (global.SDP && SDP.version) || '0.0.7.a',
+      appVersion: (global.SDP && SDP.version) || '0.0.7.b',
       at: new Date().toISOString(),
       href: str(global.location && global.location.href),
       viewport: (global.innerWidth || 0) + 'x' + (global.innerHeight || 0),
@@ -587,7 +587,7 @@
     var words = [];
     try { if (global.SDP && SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
     if (words.length) { labBatchRun(words, key); return true; }
-    global.fetch('./data/session.json?v=0.0.7.a', { cache: 'no-store' })
+    global.fetch('./data/session.json?v=0.0.7.b', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (s) {
         if (s && Array.isArray(s.words) && s.words.length) labBatchRun(s.words, key);

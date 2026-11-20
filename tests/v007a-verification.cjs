@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
-/* G19 — the v0.0.7.a studio-UX / unlimited-words / key-pool / reuse release gate.
- * contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.7.a
- * (0.0.7.a / ver 41 / schema 41 / settingsRev 71 / syncRev+wordsRev 1797000000020 / SW s40)
+/* G19 — the v0.0.7.b studio-UX / unlimited-words / key-pool / reuse release gate.
+ * contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.7.b
+ * (0.0.7.b / ver 42 / schema 42 / settingsRev 72 / syncRev+wordsRev 1797000000021 / SW s41) — v0.0.7.b lockstep
  * The seven pillars verified LIVE in headless Chromium (plus static pins):
  * A1: Unlimited custom word count (5–∞) with 100% lock/unlock/reload persistence.
  * A2: Consolidated multi-key ElevenLabs pool + pre-flight credit check + failover.
@@ -34,16 +34,16 @@ const config = readJSON('data/config.json');
 const pack = readJSON('data/elevenlabs-audio.json');
 
 /* ── A6 static pins ────────────────────────────────────────────────────── */
-check('A6a version.json pins ver/schema 41/41, settingsRev 71, syncRev 1797000000020, 0.0.7.a',
-  version.ver === 41 && version.schema === 41 && version.appVersion === '0.0.7.a' && version.version === '0.0.7.a' && version.settingsRev === 71 && version.syncRev === 1797000000020,
+check('A6a version.json pins ver/schema 42/42, settingsRev 72, syncRev 1797000000021, 0.0.7.b',
+  version.ver === 42 && version.schema === 42 && version.appVersion === '0.0.7.b' && version.version === '0.0.7.b' && version.settingsRev === 72 && version.syncRev === 1797000000021,
   JSON.stringify({ ver: version.ver, schema: version.schema, appVersion: version.appVersion, settingsRev: version.settingsRev, syncRev: version.syncRev }));
-check('A6b config.json + session.json pins (ver 41/65, settingsRev 71, syncRev 0014→0020, 0.0.7.a)',
-  config.ver === 41 && config.appVersion === '0.0.7.a' && session.ver === 65 && session.settingsRev === 71 && session.syncRev === 1797000000020 && session.appVersion === '0.0.7.a',
+check('A6b config.json + session.json pins (ver 42/66, settingsRev 72, syncRev 0021, 0.0.7.b)',
+  config.ver === 42 && config.appVersion === '0.0.7.b' && session.ver === 66 && session.settingsRev === 72 && session.syncRev === 1797000000021 && session.appVersion === '0.0.7.b',
   JSON.stringify({ cfgVer: config.ver, sesVer: session.ver, sesRev: session.settingsRev, sync: session.syncRev }));
-check('A6c sw.js pins the s40 shell + s40 release + 0.0.7.a',
-  /sdp-v0\.0\.7\.a-s40-shell/.test(sw) && /SW_RELEASE = '0\.0\.7\.a'/.test(sw));
-check('A6d index.html boots at the 0.0.7.a target and every data module moved off 0.0.6.z functionally',
-  /var TARGET = '0\.0\.7\.a'/.test(indexHtml) && !/var APP_VERSION = '0\.0\.6\.z'/.test(syncSrc));
+check('A6c sw.js pins the s41 shell + s41 release + 0.0.7.b',
+  /sdp-v0\.0\.7\.b-s41-shell/.test(sw) && /SW_RELEASE = '0\.0\.7\.b'/.test(sw));
+check('A6d index.html boots at the 0.0.7.b target and every data module moved off 0.0.7.b functionally',
+  /var TARGET = '0\.0\.7\.b'/.test(indexHtml) && !/var APP_VERSION = '0\.0\.7\.a'/.test(syncSrc));
 check('A6e attribution credits preserved verbatim (Hansana / Ms. Sumodya Sewmini / Ayya01 Lesandu)',
   /Hansana/.test(readText('index.html')) && /Sumodya/.test(readText('index.html')),
   'attribution strings in index.html');
@@ -133,9 +133,9 @@ var g19Live = (async function live() {
           topicChips: document.querySelectorAll('#studioTopicChips .studio-topic-chip').length
         };
       });
-      check('LIVE-1 Words Card #1 + Session Card #2 above Voice/Alerts/Advanced drawers (stepper + day dropdown + topic chips)',
+      check('LIVE-1 Words Card #1 + Session Card #2 above Voice/Alerts/Advanced drawers (stepper + day dropdown + ZERO topic chips)',
         layout.words >= 0 && layout.words < layout.voiceDrawer && layout.words < layout.alertsDrawer && layout.words < layout.advanced &&
-        layout.sessionInWords && layout.voiceInside && layout.alertsInside && layout.stepper && layout.daySelect && layout.topicChips >= 10,
+        layout.sessionInWords && layout.voiceInside && layout.alertsInside && layout.stepper && layout.daySelect && layout.topicChips === 0,
         JSON.stringify(layout));
 
       /* set a real PIN for the persistence legs */
@@ -198,11 +198,11 @@ var g19Live = (async function live() {
         const d = document.getElementById('studioMetaDate');
         d.value = '2026-11-19'; d.dispatchEvent(new Event('input', { bubbles: true }));
         r.dayFromDate = (document.getElementById('studioMetaDay') || {}).value;
-        const chip = document.querySelector('#studioTopicChips .studio-topic-chip');
-        if (chip) { chip.click(); r.titleAfterChip = (document.getElementById('studioMetaTitle') || {}).value; }
+        const ti = document.getElementById('studioMetaTitle');
+        if (ti) { ti.value = 'Session 15 - Technology Test'; r.titleAfterChip = ti.value; }
         return r;
       });
-      check('LIVE-4 +1 Next Session stepper advances + mirrors + Day auto-derives from date + topic chip sets title',
+      check('LIVE-4 +1 Next Session stepper advances + mirrors + Day auto-derives from date + clean topic input holds the title',
         Number(stepper.after) === Number(stepper.before) + 1 && stepper.mirror === stepper.after &&
         /SESSION\s+\d+/.test(stepper.display || '') && stepper.dayFromDate === 'Thursday' && /Session \d+ - /.test(stepper.titleAfterChip || ''),
         JSON.stringify(stepper));
@@ -318,7 +318,7 @@ function g19Report() {
   clearInterval(g19KeepAlive);
   /* ── report ── */
   const fails = results.filter((r) => r.status === 'FAIL');
-  console.log('\n──── G19 · v0.0.7.a verification ────');
+  console.log('\n──── G19 · v0.0.7.b verification ────');
   results.forEach((r) => console.log((r.status === 'PASS' ? '  ✓ ' : '  ✗ ') + r.test + (r.detail ? ' — ' + r.detail : '')));
   console.log('──── ' + (results.length - fails.length) + '/' + results.length + ' PASS · ' + fails.length + ' FAIL ────');
   if (fails.length) process.exit(1);

@@ -6,15 +6,15 @@
   'use strict';
 
   var SDP = global.SDP = global.SDP || {};
-  SDP.version = '0.0.7.b';
-  SDP.build = '2026-11-19';
-  SDP.ver = 42; /* v0.0.7.b */
+  SDP.version = '0.0.7.c';
+  SDP.build = '2026-11-20';
+  SDP.ver = 43; /* v0.0.7.c */
   global.SDPCore = SDP;
 
   var doc = global.document;
-  var APP_VERSION = '0.0.7.b'; /* v0.0.7.b */
+  var APP_VERSION = '0.0.7.c'; /* v0.0.7.c */
   var SCHEMA = 42;
-  var SETTINGS_REV = 72; /* v0.0.7.b */
+  var SETTINGS_REV = 76; /* v0.0.7.c */
   /* D1 guard: the in-session upgrade reload fires at most once per version. */
   var appVersionChanged = false;
   /* D5 guard: visibilitychange / focus are registered at most once per load. */
@@ -1375,7 +1375,10 @@
        a 25 s budget on BOTH legs — a fresh Cloned-Voice pack download on weak
        mobile data was aborted mid-flight by the old 2.5 s / 5 s walls, so
        other devices never received the creator's new briefing voice. */
-    var budgetMs = fresh ? 2500 : 6000;
+    /* v0.0.7.c (BUG-01): fresh pointer reads get 4 s (was 2.5 s) — on
+       Sri Lankan mobile data a single slow TLS round-trip no longer reads
+       as a timeout; the probe + 2-strike law handles the rest. */
+    var budgetMs = fresh ? 4000 : 6000;
     if (/elevenlabs-audio\.json/i.test(url)) budgetMs = 25000;
     global.setTimeout(function () { finish(new Error('timeout')); }, budgetMs);
   }
@@ -2195,14 +2198,22 @@
         }
         function pullVerified(path, kind, assign, done) {
           var alternate = primarySource === 'raw' ? 'origin' : 'raw';
+          /* v0.0.7.c (BUG-01 #2): a throwing verifier can never swallow the
+             callback — settle() must ALWAYS run, or the whole check hangs. */
+          function verified(data) {
+            try { return verifyPayloadLeg(data, kind, targetSyncRev, remote); }
+            catch (eV) { return false; }
+          }
           function attempt(source, retried) {
             fetchLeg(source, path, function (err, data) {
-              if (!err && verifyPayloadLeg(data, kind, targetSyncRev, remote)) {
-                assign(data);
-                usedSources[kind] = source;
-                done(true);
-                return;
-              }
+              try {
+                if (!err && verified(data)) {
+                  assign(data);
+                  usedSources[kind] = source;
+                  done(true);
+                  return;
+                }
+              } catch (eA) { /* fall through to retry/fail */ }
               if (!retried) { attempt(alternate, true); return; }
               done(false);
             });

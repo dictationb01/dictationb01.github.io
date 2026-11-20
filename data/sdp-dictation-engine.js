@@ -30,6 +30,8 @@
   return true;
  }
  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+ /* v0.0.7.c (BUG-05): {N} templating for count strings (mirrors Views.fmtN). */
+ function fmtN(template, n) { return String(template).replace('{N}', String(n === undefined ? 0 : n)); }
  function settings() {
   try { return SDP.Data.settings(); } catch (e) { return { mode: 'paper', writeSecs: 5, repeats: 2, pauseSecs: 1.5, autoAdvance: true, lang: 'en', pacingPreset: 'exam', voiceLock: 'unified', voiceSource: 'auto', rate: 0.95 }; }
  }
@@ -240,7 +242,7 @@
   var total = E.items.length;
   if (!total) {
    try { if (SDP.Sync && SDP.Sync.words) total = SDP.Sync.words().length; } catch (eW) {}
-   if (!total) total = 30;
+   /* v0.0.7.c (BUG-05): zero hard 30 — an unknown bank paints no pills. */
   }
   var i, pill;
   if (host && host.querySelectorAll) {
@@ -262,7 +264,8 @@
   }
   /* Phase 5: the single-line cockpit header (WORD #01 / N).
      v0.0.7.a Z5: the denominator is the LIVE item count, never a fixed 30. */
-  setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + ' / ' + (E.items.length || 30));
+  var progTotal = E.items.length || (function () { try { return SDP.Sync && SDP.Sync.wordCount ? SDP.Sync.wordCount() : 0; } catch (eT) { return 0; } })();
+  setText(byId('sessionProgressCount'), t('progressWordUpper', 'WORD #') + pad2(E.index + 1) + (progTotal ? fmtN(t('progressOf30', ' / {N}'), progTotal) : ''));
   /* v0.0.5.c: an ICON-first deck — the dual-tone SVG is the button, the
     caption beside it carries the word. aria-label keeps it accessible. */
   setBtnIconLabel(byId('btnPrev'), 'prev', '', t('btnPrevNum', '⏮ Prev (#') + (E.index + 1) + ')');
@@ -276,7 +279,8 @@
  }
  function updateMeta() {
   var item = current();
-  setText(el('cockpitProgress'), (E.index + 1) + ' / ' + (E.items.length || 30));
+  var cpTotal = E.items.length || (function () { try { return SDP.Sync && SDP.Sync.wordCount ? SDP.Sync.wordCount() : 0; } catch (eT2) { return 0; } })();
+  setText(el('cockpitProgress'), cpTotal ? ((E.index + 1) + ' / ' + cpTotal) : (E.index + 1) + ' / —');
   var badge = el('wordPosBadge');
   /* D-E4: a retry run is labelled as a retry, and still shows the original
     Session # so a student can find the word in their exercise book. */
@@ -832,6 +836,10 @@
     setBtnIconLabel(btn, 'play', '', t('btnStartDictation', '▶ Start Dictation'));
    }
   }
+  /* v0.0.7.c (BUG-05): the caption under the main transport follows the
+     phase — Pause while playing, Resume while paused, Start when idle. The
+     old code only swapped the icon, leaving the label stuck on 'Pause'. */
+  paintDeckCap();
   /* v0.0.6.f (R1): a paused dial wears a soft amber halo — no text inside
      the dial, the state reads at a glance. */
   var dial = byId('ringWrap');
@@ -841,6 +849,17 @@
   }
   burstOnPhase(E.phase);
   try { if (SDP.Views && SDP.Views.onEngineWordChanged) SDP.Views.onEngineWordChanged(E.index); } catch (e) {}
+  return true;
+ }
+
+ function paintDeckCap() {
+  var btn = byId('btnPlayPause');
+  if (!btn || !btn.parentNode || !btn.parentNode.querySelector) return false;
+  var cap = btn.parentNode.querySelector('.deck-cap');
+  if (!cap) return false;
+  if (E.phase === 'paused') setText(cap, t('capResume', 'Resume'));
+  else if (E.phase === 'listening' || E.phase === 'writing') setText(cap, t('capPause', 'Pause'));
+  else setText(cap, t('capStart', 'Start'));
   return true;
  }
 
@@ -1374,7 +1393,7 @@
   var durSec = Math.round(durMs / 1000);
   var marks = countMarks();
   var full = E.wordsCompletedCount;
-  var total = E.items.length || 30;
+  var total = E.items.length || (function () { try { return SDP.Sync && SDP.Sync.wordCount ? SDP.Sync.wordCount() : 0; } catch (eT) { return 0; } })();
   var auth;
   if ((E.rapidSkipCount >= AUTH_RAPID_SKIPS) || (total >= 20 && durSec > 0 && durSec < AUTH_RUSH_SEC)) {
    auth = 'RAPID_SKIP_SUSPECT';
@@ -1839,7 +1858,7 @@
   saveDraft: saveDraft,
   refreshEls: refreshEls,
   stateText: function () { var n = byId('beatStateText'); return n ? n.textContent : ''; },
-  repaintState: function () { setStateText(); return true; },
+  repaintState: function () { setStateText(); paintDeckCap(); return true; },
   ringColor: ringColor,
   config: function () {
    return { writeSecs: E.writeSecs, repeats: E.repeats, pauseSecs: E.pauseSecs, autoAdvance: E.autoAdvance, mode: E.mode, index: E.index, phase: E.phase, pausedPhase: E.pausedPhase, remainingMs: E.remainingMs, repeatsDone: E.repeatsDone, pauseReason: E.pauseReason, active: isActive() };

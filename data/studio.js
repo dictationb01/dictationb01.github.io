@@ -1162,6 +1162,47 @@
  }
 
  
+ /* v0.0.7.c (BUG-03): THE WORD-RECORD SCHEMA GATE. A word list may only
+    reach GitHub (and every classroom device) when EVERY record carries a
+    complete English meaning, a natural Sinhala meaning, British IPA, a part
+    of speech and an example sentence that contains the word. Blank-si and
+    truncated-m lists can never be published again. */
+ function validateWordRecords(words) {
+  var list = Array.isArray(words) ? words : [];
+  var problems = [];
+  var seen = {};
+  for (var i = 0; i < list.length; i++) {
+   var w = list[i] || {};
+   var name = str(w.w).replace(/^\s+|\s+$/g, '');
+   if (!name) { problems.push('#' + (i + 1) + ': ' + t('studioWordsIssueW', 'missing word')); continue; }
+   if (seen[name.toLowerCase()]) problems.push(name + ': ' + t('studioWordsIssueDup', 'duplicate word'));
+   seen[name.toLowerCase()] = true;
+   var issues = [];
+   var m = str(w.m || '');
+   var si = str(w.si || '');
+   var p = str(w.p || '');
+   var pos = str(w.pos || '');
+   var s = str(w.s || '');
+   if (!si || !/[\u0D80-\u0DFF]/.test(si)) issues.push(t('studioWordsIssueSi', 'missing Sinhala meaning'));
+   if (!m || m.length < 15 || /(\b(the|a|an|of|to|and|into|with|for|from)\.)$/i.test(m)) {
+    issues.push(t('studioWordsIssueM', 'English meaning missing or truncated'));
+   }
+   if (!p || p.charAt(0) !== '/') issues.push(t('studioWordsIssueP', 'missing IPA'));
+   if (!pos || pos.charAt(pos.length - 1) !== '.') issues.push(t('studioWordsIssuePos', 'missing part of speech'));
+   if (!s) issues.push(t('studioWordsIssueS', 'missing example sentence'));
+   else if (name.toLowerCase().indexOf('/') >= 0) {
+    /* a slash word (disc/disk) matches when any variant appears */
+    var any = false, parts2 = name.split('/');
+    for (var q = 0; q < parts2.length; q++) if (parts2[q] && s.toLowerCase().indexOf(parts2[q].toLowerCase().replace(/^\s+|\s+$/g, '')) >= 0) any = true;
+    if (!any) issues.push(t('studioWordsIssueSNoWord', 'example does not contain the word'));
+   } else if (s.toLowerCase().indexOf(name.toLowerCase()) < 0) {
+    issues.push(t('studioWordsIssueSNoWord', 'example does not contain the word'));
+   }
+   if (issues.length) problems.push(name + ' — ' + issues.join(', '));
+  }
+  return { ok: problems.length === 0, total: list.length, problems: problems, summary: problems.slice(0, 3).join(' · ') + (problems.length > 3 ? ' (+' + (problems.length - 3) + ')' : '') };
+ }
+
  function parseWords(text) {
   var lines = str(text).split(/\r?\n/);
   var out = [];
@@ -1903,6 +1944,14 @@
    '<p id="elVerifyStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    keyRowMarkup('ghTokenInput', 'GitHub token (ghp_… / github_pat_…)', 'ghp_… / github_pat_…', 'GhToken') +
    '<label class="lbl" for="studioAiProvider">' + T('studioAiProvider') + '</label>' + aiProviderSelectMarkup() +
+   /* v0.0.7.c (BUG-03): per-provider Test Key buttons with REAL HTTP status
+      diagnostics — a key never fails silently again. */
+   '<div class="chip-row studio-verify-row">' +
+   btn('btnVerifyGroq', t('studioVerifyGroq', 'Test Groq Key'), 'btn-primary') +
+   btn('btnVerifyGemini', t('studioVerifyGemini', 'Test Gemini Key'), 'btn-primary') +
+   '</div>' +
+   '<p id="groqVerifyStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
+   '<p id="geminiVerifyStatus" class="studio-msg" role="status" aria-live="polite"></p>' +
    '<p id="studioFreeNoKey" class="studio-free-badge"' + (freeNoKeyVisible() ? '' : ' hidden') + '>' + T('studioFreeNoKey') + '</p>' +
    keyRowMarkup('studioAiKey', t('studioAiKey'), 'gsk_… / AIza… / sk-or-…', 'Ai') +
    '<label class="lbl" for="studioGasUrl">Apps Script relay URL</label>' + '<div class="key-row">' + '<input id="studioGasUrl" class="input" type="url" autocomplete="off" data-pristine="1" placeholder="https://script.google.com/…">' + btn('btnClearGasUrl', t('studioClear')) + '</div>' +
@@ -2631,6 +2680,80 @@
    });
   return true;
  }
+ /* v0.0.7.c (BUG-03) — REAL HTTP status diagnostics for every provider.
+    200 = valid · 401 = invalid key · 403 = permission / quota · 429 = rate
+    limit · network/CORS = the request never reached the provider. */
+ function httpStatusLine(status) {
+  if (status === 200 || status === 204) return '✓ HTTP ' + status + ' — ' + t('studioVerifyHttpOk', 'key valid');
+  if (status === 401) return '✗ HTTP 401 — ' + t('studioVerifyHttp401', 'invalid key');
+  if (status === 403) return '✗ HTTP 403 — ' + t('studioVerifyHttp403', 'permission / quota denied');
+  if (status === 429) return '✗ HTTP 429 — ' + t('studioVerifyHttp429', 'rate limited — rotate the key pool');
+  if (status >= 500) return '✗ HTTP ' + status + ' — ' + t('studioVerifyHttp5xx', 'provider error — retry later');
+  return '✗ HTTP ' + status + ' — ' + t('studioVerifyHttpOther', 'unexpected response');
+ }
+ function paintProviderVerify(nodeId, text, state) {
+  var node = byId(nodeId);
+  if (!node) return false;
+  node.textContent = str(text);
+  if (node.setAttribute) node.setAttribute('data-state', state || '');
+  return true;
+ }
+ function activeAiKey() {
+  var k = str(fieldValue('studioAiKey') || (ST.secrets && ST.secrets.aiKey) || '');
+  return k.replace(/^\s+|\s+$/g, '');
+ }
+ function verifyGroqKey(cb) {
+  cb = cb || noop;
+  var key = activeAiKey();
+  var node = 'groqVerifyStatus';
+  if (!key) { paintProviderVerify(node, '✗ ' + t('studioVerifyNoKey', 'Paste the AI key first (gsk_…)'), 'bad'); cb(); return false; }
+  paintProviderVerify(node, '⏳ ' + t('studioWorking', 'Working…') + ' api.groq.com …', '');
+  try {
+   global.fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: 'ping' }], max_tokens: 1 })
+   }).then(function (res) {
+    var line = httpStatusLine(res && res.status);
+    paintProviderVerify(node, 'Groq · ' + line, (res && res.status === 200) ? 'ok' : 'bad');
+    cb();
+   }, function () {
+    paintProviderVerify(node, 'Groq · ✗ ' + t('studioVerifyNetErr', 'Network / CORS error — the request never reached api.groq.com. Check the internet and retry.'), 'bad');
+    cb();
+   });
+  } catch (e) {
+   paintProviderVerify(node, 'Groq · ✗ ' + t('studioVerifyNetErr', 'Network / CORS error — the request never reached api.groq.com. Check the internet and retry.'), 'bad');
+   cb();
+   return false;
+  }
+  return true;
+ }
+ function verifyGeminiKey(cb) {
+  cb = cb || noop;
+  var key = activeAiKey();
+  var node = 'geminiVerifyStatus';
+  if (!key) { paintProviderVerify(node, '✗ ' + t('studioVerifyNoKey', 'Paste the AI key first (AIza…)'), 'bad'); cb(); return false; }
+  paintProviderVerify(node, '⏳ ' + t('studioWorking', 'Working…') + ' generativelanguage.googleapis.com …', '');
+  try {
+   /* Zero-cost verification: listing models proves the key without
+      spending a single generation credit. */
+   global.fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1&key=' + encodeURIComponent(key), { cache: 'no-store' })
+    .then(function (res) {
+     var line = httpStatusLine(res && res.status);
+     paintProviderVerify(node, 'Gemini · ' + line, (res && res.status === 200) ? 'ok' : 'bad');
+     cb();
+    }, function () {
+     paintProviderVerify(node, 'Gemini · ✗ ' + t('studioVerifyNetErr', 'Network / CORS error — the request never reached generativelanguage.googleapis.com. Check the internet and retry.'), 'bad');
+     cb();
+    });
+  } catch (e) {
+   paintProviderVerify(node, 'Gemini · ✗ ' + t('studioVerifyNetErr', 'Network / CORS error — the request never reached generativelanguage.googleapis.com. Check the internet and retry.'), 'bad');
+   cb();
+   return false;
+  }
+  return true;
+ }
+
  function aiVerify(w, cb) {
   cb = cb || noop;
   var key = str(ST.secrets && ST.secrets.aiKey) || '';
@@ -3039,9 +3162,16 @@
   for (wk in activeWords) {
    if (Object.prototype.hasOwnProperty.call(activeWords, wk) && validAt('words.' + wk)) wordsReady += 1;
   }
+  /* v0.0.7.c (BUG-05): the pill denominators follow the LIVE bank —
+     words.length words and the real num.* population (31 for a 31-word
+     session), never a hardcoded 30. */
+  var numTotal = 0, seenNum = {}, nk;
+  for (nk in clips) if (Object.prototype.hasOwnProperty.call(clips, nk) && /^num\./.test(nk) && !seenNum[nk]) seenNum[nk] = 1;
+  for (nk in manifestClips) if (Object.prototype.hasOwnProperty.call(manifestClips, nk) && /^num\./.test(nk) && !seenNum[nk]) seenNum[nk] = 1;
+  numTotal = (function () { var t = 0, q; for (q in seenNum) t += 1; return t; })();
   return {
-   words: { ready: wordsReady, total: words.length || 30 },
-   numbers: { ready: count(function (k) { return /^num\./.test(k); }), total: 30 },
+   words: { ready: wordsReady, total: words.length },
+   numbers: { ready: count(function (k) { return /^num\./.test(k); }), total: numTotal || words.length },
    commands: { ready: count(function (k) { return /^cmd\./.test(k); }), total: 6 },
    guide: { ready: count(function (k) { return /^guide\./.test(k); }), total: 4 },
    briefing: { ready: count(function (k) { return /^_intro_male_/.test(k); }), total: 4 }
@@ -4398,6 +4528,9 @@
   /* E8: atomic PIN change — validate 4–8 digits, confirm match, re-seal the */
   btnChangePin: function () { withBusy('btnChangePin', function (d) { changePin(function () { d(); }); }); },
   btnVerifyEleven: function () { withBusy('btnVerifyEleven', function (d) { verifyElevenKey(); d(); }); },
+  /* v0.0.7.c (BUG-03): live per-provider key tests with HTTP diagnostics. */
+  btnVerifyGroq: function () { withBusy('btnVerifyGroq', function (d) { verifyGroqKey(function () { d(); }); }); },
+  btnVerifyGemini: function () { withBusy('btnVerifyGemini', function (d) { verifyGeminiKey(function () { d(); }); }); },
   btnRetryFailedClip: function () {
    var failed = ST.lastFailedClip;
    if (!failed || !failed.key) { msg(t('studioRetryNone'), ''); return; }
@@ -5797,6 +5930,15 @@ function priorIPAFor(w) {
  /* D4: generate clips (non-fatal */
  function publishWordsAndVoice(cb) {
   cb = cb || noop;
+  /* v0.0.7.c (BUG-03): validate BEFORE any clip synthesis — invalid words
+     never burn a single ElevenLabs credit. */
+  var gatePV = validateWordRecords(currentWords());
+  if (!gatePV.ok) {
+   msg(t('studioWordsInvalidTitle', 'Publish blocked — fix these words first:') + ' ' + gatePV.summary, 'bad');
+   showToast(t('studioWordsInvalidTitle', 'Publish blocked — fix these words first:'));
+   cb(new Error('invalid_words'));
+   return;
+  }
   /* v0.0.6.c (F1): Fast Delta Enrich (<2s in-app budget) — ONLY the words */
   function enrichDeltas(next) {
    try { detectWordDeltas(); } catch (e) {}
@@ -6088,6 +6230,15 @@ function priorIPAFor(w) {
   if (!ST.unlocked) { msg(t('studioLocked'), 'bad'); cb(new Error('locked')); return; }
   var token = str(ST.secrets.ghToken);
   if (!token) { msg(t('studioNoToken'), 'bad'); cb(new Error('no_token')); return; }
+  /* v0.0.7.c (BUG-03): the strict word-record schema gate — nothing that
+     fails validation may ever leave the studio. */
+  var gate = validateWordRecords(currentWords());
+  if (!gate.ok) {
+   msg(t('studioWordsInvalidTitle', 'Publish blocked — fix these words first:') + ' ' + gate.summary, 'bad');
+   showToast(t('studioWordsInvalidTitle', 'Publish blocked — fix these words first:'));
+   cb(new Error('invalid_words'));
+   return;
+  }
   /* v0.0.6.m Pillar 2: Publish & Sync first auto-synthesizes any missing
      v0.0.6.s: publish keeps the SEQUENTIAL chain — autoEnsureSystemClips
      runs to completion FIRST (a synchronous delta pass), then the bridge;

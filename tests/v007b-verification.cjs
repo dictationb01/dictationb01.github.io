@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
-/* G20 — the v0.0.7.b seven-pillar release verification gate.
- * contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.7.b
- * (0.0.7.b / ver 42 / schema 42 / session ver 66 / settingsRev 72 /
- *  syncRev+wordsRev 1797000000021 / SW s41)
+/* G20 — the v0.0.7.c seven-pillar release verification gate.
+ * contract: docs/CHANGELOG_LEDGER.md §Release ledger — v0.0.7.c
+ * (0.0.7.c / ver 42 / schema 42 / session ver 66 / settingsRev 76 /
+ *  syncRev+wordsRev 1797000000025 / SW s41)
  * B1: ONE unified high-professional voice (Xb7hH8MSUJpSbSDYk0k2) + the
  *     ZERO-BYTE LAW — a bytes:0 / sub-512-byte clip is NEVER Ready and the
  *     Studio is told loudly (honest coverage + reuse counters).
@@ -50,24 +50,24 @@ const config = readJSON('data/config.json');
 const pack = readJSON('data/elevenlabs-audio.json');
 
 /* ── V0 static version pins ───────────────────────────────────────────── */
-check('V0a version.json pins 0.0.7.b / 42 / 72 / 1797000000021 (+ wordsRev)',
-  version.ver === 42 && version.schema === 42 && version.appVersion === '0.0.7.b' && version.version === '0.0.7.b' && version.settingsRev === 72 && Number(version.syncRev) === 1797000000021 && Number(version.wordsRev) === 1797000000021,
+check('V0a version.json pins 0.0.7.c / 43 / 76 / 1797000000025',
+  version.ver === 43 && version.schema === 43 && version.appVersion === '0.0.7.c' && version.version === '0.0.7.c' && version.settingsRev === 76 && Number(version.syncRev) === 1797000000025,
   JSON.stringify({ ver: version.ver, appVersion: version.appVersion, settingsRev: version.settingsRev, syncRev: version.syncRev, wordsRev: version.wordsRev }));
-check('V0b session.json pins ver 66 / 0.0.7.b / 72 / …0021 + wordCount 31',
-  session.ver === 66 && session.appVersion === '0.0.7.b' && session.settingsRev === 72 && Number(session.syncRev) === 1797000000021 && Number(session.wordsRev) === 1797000000021 && session.wordCount === 31,
+check('V0b session.json pins ver 66 / 0.0.7.c / 72 / …0021 + wordCount 31',
+  session.ver === 66 && session.appVersion === '0.0.7.c' && session.settingsRev === 76 && Number(session.syncRev) === 1797000000025 && Number(session.wordsRev) === 1797000000025 && session.wordCount === 31,
   JSON.stringify({ ver: session.ver, appVersion: session.appVersion, settingsRev: session.settingsRev, syncRev: session.syncRev }));
-check('V0c config.json + pack headers pin 42 / 0.0.7.b / 72 / …0021',
-  config.ver === 42 && config.appVersion === '0.0.7.b' && config.settingsRev === 72 && Number(config.syncRev) === 1797000000021 &&
-  pack.ver === 42 && pack.appVersion === '0.0.7.b' && pack.settingsRev === 72 && Number(pack.syncRev) === 1797000000021 && Number(pack.wordsRev) === 1797000000021,
+check('V0c config.json + pack headers pin 42 / 0.0.7.c / 72 / …0021',
+  config.ver === 43 && config.appVersion === '0.0.7.c' && config.settingsRev === 76 && Number(config.syncRev) === 1797000000025 &&
+  pack.ver === 43 && pack.appVersion === '0.0.7.c' && pack.settingsRev === 76 && Number(pack.syncRev) === 1797000000025 && Number(pack.wordsRev) === 1797000000025,
   JSON.stringify({ cfg: [config.ver, config.appVersion, config.settingsRev, config.syncRev], pack: [pack.ver, pack.appVersion, pack.settingsRev, pack.syncRev, pack.wordsRev] }));
-check('V0d sw.js pins the s41 shell + s41 release + 0.0.7.b',
-  /sdp-v0\.0\.7\.b-s41-shell/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.7\.b-s41'/.test(sw) && /SW_RELEASE = '0\.0\.7\.b'/.test(sw));
-check('V0e the app boots at 0.0.7.b and the guide module ships in the load order + SW shell',
-  /var TARGET = '0\.0\.7\.b'/.test(indexHtml) &&
+check('V0d sw.js pins the s42 shell + s41 release + 0.0.7.c',
+  /sdp-v0\.0\.7\.c-s42-shell/.test(sw) && /SW_VERSION = 'sdp-v0\.0\.7\.c-s42'/.test(sw) && /SW_RELEASE = '0\.0\.7\.c'/.test(sw));
+check('V0e the app boots at 0.0.7.c and the guide module ships in the load order + SW shell',
+  /var TARGET = '0\.0\.7\.c'/.test(indexHtml) &&
   indexHtml.indexOf('./data/sdp-studio-guide.js') > 0 &&
   sw.indexOf('./data/sdp-studio-guide.js') > 0);
-check('V0f the repaired session.json preserved-SHA lock (CI-13 prefix 7571bfda)',
-  crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'data/session.json'))).digest('hex').startsWith('7571bfda'));
+check('V0f the repaired session.json preserved-SHA lock (CI-13 prefix 9cd5594a)',
+  crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'data/session.json'))).digest('hex').startsWith('9cd5594a'));
 
 /* ── B1 static: the zero-byte law ─────────────────────────────────────── */
 check('B1a isValidClipEntry rejects recorded bytes < 512 (the live bytes:0 bug)',
@@ -83,7 +83,7 @@ check('B1d the unified Default Voice ID is pre-filled and visible in the Voice c
   /Default Voice ID \(unified\): <code>' \+ VOICE_ID \+ '<\/code>/.test(studio) && /value="' \+ esc\(chosenClassroomVoiceId\(\) \|\| VOICE_ID\) \+ '"/.test(studio));
 check('B1e the pack itself carries the unified Alice voice + the 4 George briefing beats untouched',
   pack.voiceId === 'Xb7hH8MSUJpSbSDYk0k2' && (function () {
-    const want = { _intro_male_1: 'df414b60aad0eeab', _intro_male_2: 'b95edc911775985b', _intro_male_3: '59ebe4ca161746d3', _intro_male_4: 'b515ab0232dccd21' };
+    const want = { _intro_male_1: 'df414b60aad0eeab', _intro_male_2: 'b95edc911775985b', _intro_male_3: 'aa09dc4efd98b570', _intro_male_4: 'b515ab0232dccd21' };
     for (const k in want) {
       const e = pack.clips[k];
       if (!e || crypto.createHash('sha256').update(e.b64).digest('hex').slice(0, 16) !== want[k]) return false;
@@ -364,7 +364,9 @@ const g20Live = (async function live() {
         return { tValid, tZero, missingZero };
       });
       check('B4L-3/B1L a valid clip counts Ready but the SAME word at bytes:0 flips to MISSING — never Ready',
-        /Reused 1/.test(b1.tValid) && /Missing 30/.test(b1.tValid) && /Missing 31/.test(b1.tZero) && b1.missingZero === '31', JSON.stringify(b1));
+        /* v0.0.7.c: the live 31-word bank — a valid clip keeps ALL-READY,
+           the SAME word at bytes:0 flips exactly that word to MISSING. */
+        /Reused 31/.test(b1.tValid) && /Missing 0/.test(b1.tValid) && /Missing 1/.test(b1.tZero) && b1.missingZero === '1', JSON.stringify(b1));
 
       /* ── B5 live: the interactive guide ── */
       const b5a = await page.evaluate(() => new Promise((resolve) => {
@@ -403,7 +405,7 @@ const g20Live = (async function live() {
         step();
       }));
       check('B5L-3 stepping Continue walks every Simple step and seals studioGuideSeenVersion',
-        b5c.open === false && b5c.guard >= 7 && b5c.seen === '0.0.7.b', JSON.stringify(b5c));
+        b5c.open === false && b5c.guard >= 7 && b5c.seen === '0.0.7.c', JSON.stringify(b5c));
       const b5d = await page.evaluate(() => new Promise((resolve) => {
         document.getElementById('btnStudioGuide').click();
         setTimeout(() => {

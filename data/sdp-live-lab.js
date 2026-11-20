@@ -1,11 +1,11 @@
-/* data/sdp-live-lab.js — v4.0.0 (v0.0.7.a) — window.SDP.LiveLab (strict ES5).
+/* data/sdp-live-lab.js — unified app version 0.0.7.c — window.SDP.LiveLab (strict ES5).
  * Powers the real-time stations of lab.html through REAL browser APIs only
  * (AudioContext.decodeAudioData, <audio> playback, live fetch) — zero mocks.
- * v4.0 (Z3): the pack spectral/LUFS broadcast-signature consistency check
+ * Z3: the pack spectral/LUFS broadcast-signature consistency check
  * (44.1 kHz / mono / -21 LUFS family), the Station 2 ElevenLabs low-credit
  * 1-word verifier with exact HTTP status + root cause + remediation, and the
  * free-speech voice-sample analyzer (no fixed passage).
- * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (v4.0, v0.0.7.a). */
+ * contract: docs/ARCHITECTURE_MAP.md §R-LIVE-LAB (Z3, unified 0.0.7.x line). */
 (function (global) {
   'use strict';
 
@@ -40,6 +40,13 @@
 
   /* ── result registry + report builder ── */
   var LAB = { results: {}, report: null, audioEl: null, ac: null, waveRaf: 0 };
+
+  /* v0.0.7.c (BUG-06): Station 1's last full measurement pass + the Station 7
+     release-verification probes all live in this module. */
+  var lastS1 = null;
+  var S7_EXPECTED_APP = '0.0.7.c';
+  var S7_EXPECTED_SW = 'sdp-v0.0.7.c-s42';
+  var S7_EXPECTED_SHELL = 'sdp-v0.0.7.c-s42-shell';
 
   function record(station, name, ok, detail) {
     if (!LAB.results[station]) LAB.results[station] = [];
@@ -164,7 +171,7 @@
     var host = byId('labClipTableBody');
     if (!host) return false;
     setTxt('labPackStatus', 'Loading live /data/elevenlabs-audio.json …');
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'no-store' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.c', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack || !isObj(pack.clips)) { setTxt('labPackStatus', '✗ pack unavailable (offline?)'); record('S1', 'manifest loads', false, 'fetch failed'); return; }
@@ -195,10 +202,12 @@
         var idx = 0, okSig = 0, measured = 0, lufsOk = 0, srOk = 0, monoOk = 0, kbpsEst = 0;
         var step = function () {
           if (idx >= keys.length) {
+            /* v0.0.7.c: Station 7 reuses this measurement pass — one decode. */
+            lastS1 = { full: !wordFilter, total: keys.length, okSig: okSig, measured: measured, lufsOk: lufsOk, srOk: srOk, monoOk: monoOk, at: nowMs() };
             setTxt('labPackStatus', '✓ ' + keys.length + ' clips · ' + okSig + ' genuine MP3/WAV · ' + measured + ' measured · ' + lufsOk + ' @ −21 LUFS family · ' + srOk + ' @ 44.1 kHz · ' + monoOk + ' mono');
             record('S1', 'the live pack decodes (' + keys.length + ' clips, real AudioContext)', true);
             record('S1', 'every clip carries a genuine MP3 (MPEG-1 Layer III 44.1kHz) or WAV signature', okSig === keys.length, okSig + '/' + keys.length);
-            /* v4.0 (Z3) — the BROADCAST SIGNATURE CONSISTENCY CHECK: the whole
+            /* Z3 — the BROADCAST SIGNATURE CONSISTENCY CHECK: the whole
                pack must hold the locked acoustic profile (44.1 kHz · mono ·
                -21.0 LUFS integrated family, ≤ -1.0 dBTP ceiling respected). */
             record('S1', 'spectral consistency: every measured clip holds 44.1 kHz (mono) broadcast format', measured > 0 && srOk === measured && monoOk === measured, srOk + '/' + measured + ' @44.1kHz · ' + monoOk + '/' + measured + ' mono');
@@ -235,7 +244,7 @@
   }
 
   function playKey(key) {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.c', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -251,7 +260,7 @@
   }
 
   function testAllWordsSequentially() {
-    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.b', { cache: 'default' })
+    global.fetch('./data/elevenlabs-audio.json?v=0.0.7.c', { cache: 'default' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (pack) {
         if (!pack) return;
@@ -424,17 +433,19 @@
   function runFullDiagnostics() {
     LAB.results = {};
     paintScorecard();
-    setTxt('labRunStatus', '🚀 Running all 6 stations …');
+    setTxt('labRunStatus', '🚀 Running all 7 stations …');
     try { station1(false); } catch (e1) { record('S1', 'station 1 crashed', false, str(e1)); }
     try { station2(); } catch (e2) { record('S2', 'station 2 crashed', false, str(e2)); }
     try { station3(); } catch (e3) { record('S3', 'station 3 crashed', false, str(e3)); }
     try { station4(); } catch (e4) { record('S4', 'station 4 crashed', false, str(e4)); }
     try { station5(); } catch (e5) { record('S5', 'station 5 crashed', false, str(e5)); }
-    record('S6', 'the full live diagnostic suite executed all 6 stations', true);
+    /* v0.0.7.c: the release verification station joins the full suite. */
+    try { station7(); } catch (e7) { record('S7', 'station 7 crashed', false, str(e7)); }
+    record('S6', 'the full live diagnostic suite executed all 7 stations', true);
     global.setTimeout(function () {
       var c = counts();
       setTxt('labRunStatus', '✓ Full run: ' + c.pass + ' PASS · ' + c.warn + ' WARN · ' + c.fail + ' FAIL');
-    }, 9000);
+    }, 18000);
     return true;
   }
 
@@ -442,8 +453,8 @@
     var c = counts();
     LAB.report = {
       lab: 'SDP Real-Time Live Voice & Clone Lab',
-      labVersion: '4.0.0',
-      appVersion: (global.SDP && SDP.version) || '0.0.7.b',
+      labVersion: '0.0.7.c',
+      appVersion: (global.SDP && SDP.version) || '0.0.7.c',
       at: new Date().toISOString(),
       href: str(global.location && global.location.href),
       viewport: (global.innerWidth || 0) + 'x' + (global.innerHeight || 0),
@@ -530,7 +541,7 @@
     bindBtn('btnLabWordsOnly', function () { station1(true); });
     bindBtn('btnLabTestAllWords', testAllWordsSequentially);
     bindBtn('btnLabFetchVoices', station2);
-    /* v4.0 (Z3) — the 1-Word Low-Credit Verification Test binding. */
+    /* Z3 — the 1-Word Low-Credit Verification Test binding. */
     bindBtn('btnLabLowCreditVerify', lowCreditVerify);
     bindBtn('btnLabRunRp', station3);
     bindBtn('btnLabBatchRepairWords', labBatchRepairWords);
@@ -538,6 +549,7 @@
     bindBtn('btnLabSync', station5);
     bindBtn('btnLabPurge', forcePurgeAndResync);
     bindBtn('btnLabRunAll', runFullDiagnostics);
+    bindBtn('btnLabRunStation7', station7);
     bindBtn('btnLabDownloadJson', downloadJsonReport);
     bindBtn('btnLabDownloadZip', downloadZipReport);
     /* v3.0 — Station 2B + 3B. */
@@ -587,7 +599,7 @@
     var words = [];
     try { if (global.SDP && SDP.Sync && SDP.Sync.words) words = SDP.Sync.words() || []; } catch (eW) {}
     if (words.length) { labBatchRun(words, key); return true; }
-    global.fetch('./data/session.json?v=0.0.7.b', { cache: 'no-store' })
+    global.fetch('./data/session.json?v=0.0.7.c', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; }, function () { return null; })
       .then(function (s) {
         if (s && Array.isArray(s.words) && s.words.length) labBatchRun(s.words, key);
@@ -687,7 +699,7 @@
       return true;
     }
 
-    /* ══ v4.0 (Z3) — the ElevenLabs 1-WORD LOW-CREDIT VERIFICATION TEST ══
+    /* ══ Z3 — the ElevenLabs 1-WORD LOW-CREDIT VERIFICATION TEST ══
        A single ~10-character eleven_flash_v2_5 take (~1 credit) that proves
        100% whether real ElevenLabs generation succeeds with the vault key.
        On failure it paints the EXACT HTTP status, the root cause and the
@@ -1232,8 +1244,176 @@
     return true;
   }
 
+  /* ══ STATION 7 — v0.0.7.c Unified Release Verification ════════════════
+     The five release probes from the v0.0.7.c mandate, running live. */
+  function s7Line(html) {
+    var host = byId('labS7Trace');
+    if (host) host.innerHTML += '<p class="lab-stage" data-state="info">' + html + '</p>';
+    return true;
+  }
+  function swVersionReport(cb) {
+    cb = cb || function () {};
+    try {
+      if (!(global.navigator && navigator.serviceWorker && navigator.serviceWorker.controller)) { cb(null, 'no_controller'); return false; }
+      var ch = new MessageChannel();
+      var done = false;
+      var timer = global.setTimeout(function () { if (!done) { done = true; cb(null, 'timeout'); } }, 3000);
+      ch.port1.onmessage = function (ev) {
+        if (done) return;
+        done = true;
+        global.clearTimeout(timer);
+        cb((ev && ev.data) || null, null);
+      };
+      navigator.serviceWorker.controller.postMessage({ action: 'version' }, [ch.port2]);
+    } catch (e) { cb(null, str(e)); return false; }
+    return true;
+  }
+  function station7() {
+    setTxt('labS7Status', '🧪 v0.0.7.c release verification running …');
+    if (byId('labS7Trace')) byId('labS7Trace').innerHTML = '';
+    var pill = str(byId('labVerPill') ? byId('labVerPill').textContent : '');
+    var sdVer = str(global.SDP && SDP.version);
+
+    /* ── Probe 1: Version Lockstep ── */
+    global.fetch('./data/version.json?t=' + nowMs(), { cache: 'no-store' })
+      .then(function (r) { return r && r.ok ? r.json() : null; }, function () { return null; })
+      .then(function (ver) {
+        var verApp = ver && str(ver.appVersion);
+        record('S7', 'version lockstep: data/version.json pins the unified ' + S7_EXPECTED_APP + ' (ver 43 / schema 43 / settingsRev 76 / syncRev 1797000000025)',
+          verApp === S7_EXPECTED_APP && Number(ver && ver.ver) === 43 && Number(ver && ver.settingsRev) === 76 && Number(ver && ver.syncRev) === 1797000000025,
+          JSON.stringify(ver || null));
+        record('S7', 'version lockstep: the Lab pill (' + pill + ') == SDP.version (' + sdVer + ') == data/version.json (' + verApp + ')',
+          pill === S7_EXPECTED_APP && sdVer === S7_EXPECTED_APP && verApp === S7_EXPECTED_APP,
+          'pill=' + pill + ' sd=' + sdVer + ' json=' + verApp);
+        swVersionReport(function (sw, err) {
+          record('S7', 'version lockstep: the service worker carries ' + S7_EXPECTED_SW + ' + the s42 shell cache',
+            !!(sw && sw.version === S7_EXPECTED_SW && sw.shell === S7_EXPECTED_SHELL),
+            err || JSON.stringify(sw));
+          s7Line('🔎 Probe 1 · Version Lockstep — pill <code>' + esc(pill) + '</code> · SDP <code>' + esc(sdVer) + '</code> · version.json <code>' + esc(verApp) + '</code> · SW <code>' + esc(sw ? sw.version + ' / ' + sw.shell : ('unavailable (' + str(err) + ')')) + '</code>');
+
+          /* ── Probe 2: Online Probe Accuracy ── */
+          global.fetch('./data/version.json?probe=' + nowMs(), { cache: 'no-store' })
+            .then(function (r) {
+              var reachable = !!(r && r.status > 0);
+              record('S7', 'online probe accuracy: the pointer answers HTTP ' + (r ? r.status : '—') + ' while navigator.onLine is ' + (navigator.onLine !== false), reachable && navigator.onLine !== false, 'status=' + (r ? r.status : 'none'));
+              var frame = byId('labAppProbe');
+              var checkApp = function (attempt) {
+                try {
+                  var win = frame && frame.contentWindow;
+                  var doc2 = win && win.document;
+                  var banner = doc2 && doc2.getElementById ? doc2.getElementById('sdpOfflineModeBanner') : null;
+                  if (!banner) {
+                    /* the iframe may still be booting — retry once, then WARN
+                       (an unavailable iframe is never a release failure). */
+                    if (attempt < 2) { global.setTimeout(function () { checkApp(attempt + 1); }, 3000); return; }
+                    record('S7', 'online probe accuracy: the live app iframe was not reachable in time (best-effort probe)', null, 'iframe not ready after 2 tries (WARN)');
+                    s7Line('📡 Probe 2 · Online Probe Accuracy — HTTP ' + (r ? r.status : '—') + ' · app iframe not reachable (best-effort, WARN)');
+                    return;
+                  }
+                  var studio = doc2.getElementById('screen-studio');
+                  var noFalseOffline = !!(banner && banner.hidden) && !(studio && studio.classList && studio.classList.contains('studio-is-offline'));
+                  record('S7', 'online probe accuracy: the live app shows NO false Offline banner and the Studio is NOT blinded while online', noFalseOffline,
+                    'bannerHidden=' + (banner ? banner.hidden : 'n/a') + ' studioBlinded=' + (studio ? studio.classList.contains('studio-is-offline') : 'n/a'));
+                  s7Line('📡 Probe 2 · Online Probe Accuracy — HTTP ' + (r ? r.status : '—') + ' · app banner hidden=' + banner.hidden + ' · studio blinded=' + (studio ? studio.classList.contains('studio-is-offline') : 'n/a'));
+                } catch (eI) { record('S7', 'online probe accuracy: the live app iframe was not reachable in time (best-effort probe)', null, str(eI)); }
+              };
+              if (frame) {
+                /* v0.0.7.c: the lazy iframe must actually load for the probe. */
+                try { frame.setAttribute('loading', 'eager'); } catch (eL2) {}
+                if (!frame.getAttribute('src')) frame.setAttribute('src', './');
+                global.setTimeout(function () { checkApp(1); }, 3500);
+              } else { checkApp(2); }
+            }, function () {
+              record('S7', 'online probe accuracy: the pointer is NOT reachable right now (offline is honest)', null, 'fetch rejected — network down (WARN, not a release failure)');
+              s7Line('📡 Probe 2 · Online Probe Accuracy — pointer unreachable (honest offline)');
+            });
+
+          /* ── Probe 3: the 76/76 -21 LUFS family gate (reuses Station 1) ── */
+          var runS1then = function () {
+            if (!lastS1 || !lastS1.full) { try { station1(false); } catch (eS1) {} }
+          };
+          var probe3 = function () {
+            var s1 = lastS1;
+            if (!s1 || !s1.full) { global.setTimeout(probe3, 800); return; }
+            record('S7', 'audio family gate: the pack ships 76 genuine clips (≥512 bytes, real MP3 signatures)', s1.total === 76 && s1.okSig === 76, s1.okSig + '/' + s1.total + ' genuine');
+            record('S7', 'audio family gate: 76/76 clips hold 44.1 kHz mono', s1.srOk === 76 && s1.monoOk === 76, s1.srOk + '/76 @44.1kHz · ' + s1.monoOk + '/76 mono');
+            record('S7', 'audio family gate: 76/76 clips sit in the −21 LUFS family (−23.5 … −19.0)', s1.lufsOk === 76 && s1.measured === 76, s1.lufsOk + '/' + s1.measured + ' in family');
+            s7Line('🔊 Probe 3 · Audio −21 LUFS Family — ' + s1.lufsOk + '/' + s1.measured + ' in family · ' + s1.okSig + '/76 genuine · ' + s1.srOk + '/76 @ 44.1 kHz');
+            probe4();
+          };
+          runS1then();
+          probe3();
+
+          /* ── Probe 4: Bilingual Data Integrity ── */
+          function probe4() {
+            global.fetch('./data/session.json?t=' + nowMs(), { cache: 'no-store' })
+              .then(function (r) { return r && r.ok ? r.json() : null; }, function () { return null; })
+              .then(function (sj) {
+                var list = sj && Array.isArray(sj.words) ? sj.words : [];
+                var n = list.length, siOk = 0, mOk = 0, pOk = 0, posOk = 0, sOk = 0;
+                for (var i = 0; i < n; i++) {
+                  var w = list[i] || {};
+                  var name = str(w.w), low = name.toLowerCase();
+                  if (/[\u0D80-\u0DFF]/.test(str(w.si))) siOk += 1;
+                  var m = str(w.m);
+                  if (m.length >= 15 && !/(\b(the|a|an|of|to|and|into|with|for|from)\.)$/i.test(m)) mOk += 1;
+                  if (str(w.p).charAt(0) === '/') pOk += 1;
+                  if (/\.$/.test(str(w.pos))) posOk += 1;
+                  var s = str(w.s).toLowerCase();
+                  var hit = false, parts = low.split('/');
+                  for (var q = 0; q < parts.length; q++) if (parts[q] && s.indexOf(parts[q]) >= 0) hit = true;
+                  if (s && hit) sOk += 1;
+                }
+                record('S7', 'bilingual data integrity: ' + n + '/' + n + ' words carry a real Sinhala meaning (Sinhala script present)', n > 0 && siOk === n, siOk + '/' + n);
+                record('S7', 'bilingual data integrity: ' + n + '/' + n + ' English meanings are complete (never blank / truncated)', n > 0 && mOk === n, mOk + '/' + n);
+                record('S7', 'bilingual data integrity: ' + n + '/' + n + ' words carry IPA, a part of speech and a matching example', n > 0 && pOk === n && posOk === n && sOk === n, pOk + '/' + n + ' IPA · ' + posOk + '/' + n + ' pos · ' + sOk + '/' + n + ' example');
+                s7Line('🔤 Probe 4 · Bilingual Data Integrity — Si ' + siOk + '/' + n + ' · EN ' + mOk + '/' + n + ' · IPA/POS/EX ' + pOk + '/' + posOk + '/' + sOk + ' of ' + n);
+                probe5(n);
+              });
+          }
+
+          /* ── Probe 5: Dynamic Count Gate ── */
+          function probe5(n) {
+            global.fetch('./index.html?t=' + nowMs(), { cache: 'no-store' })
+              .then(function (r) { return r && r.ok ? r.text() : null; }, function () { return null; })
+              .then(function (html) {
+                var stale = [];
+                if (html) {
+                  var patterns = ['30 B1 words', 'to #30', '1–30', '1-30', 'of 30', '30-Word', '30 Words', 'All 30', '30 words', '#01–#30', 'words 30', 'වචන 30'];
+                  for (var pi = 0; pi < patterns.length; pi++) if (html.indexOf(patterns[pi]) >= 0) stale.push(patterns[pi]);
+                }
+                record('S7', 'dynamic count gate: zero stale hardcoded “30” strings in index.html while the session carries ' + n + ' words', n !== 30 && html && stale.length === 0, stale.join(' · ') || 'none');
+                var frame2 = byId('labAppProbe');
+                var readLive = function (attempt) {
+                  var liveOk = null, liveDetail = 'iframe not ready (WARN)';
+                  try {
+                    var doc3 = frame2 && frame2.contentWindow && frame2.contentWindow.document;
+                    if (doc3 && doc3.getElementById && doc3.getElementById('btnStart')) {
+                      var startLbl = str(doc3.getElementById('btnStart').textContent);
+                      var tabLbl = str((doc3.querySelector('#tab-dict [data-i18n="tabWords"]') || {}).textContent);
+                      liveOk = startLbl.indexOf(String(n)) >= 0 && tabLbl.indexOf(String(n)) >= 0;
+                      liveDetail = 'start="' + startLbl.trim() + '" tab="' + tabLbl.trim() + '"';
+                      /* the iframe app may still be hydrating its word bank —
+                         a mid-boot read retries once before judging. */
+                      if (liveOk === false && attempt < 2) { global.setTimeout(function () { readLive(attempt + 1); }, 2500); return; }
+                    }
+                  } catch (eF) { liveDetail = str(eF); }
+                  if (liveOk !== null) record('S7', 'dynamic count gate: the live app paints the real count (' + n + ') on Start and the Words tab', liveOk, liveDetail);
+                  s7Line('🔢 Probe 5 · Dynamic Count Gate — stale-30 strings: ' + (stale.length ? esc(stale.join(' · ')) : 'none') + ' · live labels ' + (liveOk === null ? 'n/a' : (liveOk ? '✓' : '✗')));
+                  var c = counts();
+                  setTxt('labS7Status', (c.fail ? '✗ Station 7 finished with FAIL — see the scorecard' : '✓ Station 7 finished · ' + c.pass + ' PASS · ' + c.warn + ' WARN · ' + c.fail + ' FAIL'));
+                };
+                readLive(1);
+              });
+          }
+        });
+      });
+    return true;
+  }
+
   SDP.LiveLab = {
-    version: '4.0.0',
+    /* v0.0.7.c: the Live Lab shares the app's ONE progressive version. */
+    version: '0.0.7.c',
     labKey: labKey,
     labBatchRepairWords: labBatchRepairWords,
     testVoiceSynthesis: testVoiceSynthesis,
@@ -1245,6 +1425,8 @@
     station3: station3,
     station4: station4,
     station5: station5,
+    /* v0.0.7.c — the unified release verification station. */
+    station7: station7,
     runFullDiagnostics: runFullDiagnostics,
     buildReport: buildReport,
     downloadJsonReport: downloadJsonReport,

@@ -279,7 +279,7 @@ const FAST = { mode: 'paper', writeSecs: 2, repeats: 1, pauseSecs: 0.5, autoAdva
           localStorage.setItem('sdp.guide_seen', seed.guide);
           localStorage.setItem('sdp.settings', JSON.stringify(seed.settings));
         } catch (e) {}
-      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 99 }) });
+      }, { guide: TARGET_VERSION, settings: Object.assign({}, FAST, { appliedSettingsRev: 99, studioGuideSeenVersion: TARGET_VERSION }) });
       const pageA = await ctxA.newPage();
       const errorsA = [];
       pageA.on('pageerror', (e) => errorsA.push(e.message));

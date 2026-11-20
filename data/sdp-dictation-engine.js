@@ -311,10 +311,16 @@
   var lines = [];
   if (E.hints.pos && word.pos) lines.push(t('hintPos', 'Word type') + ': ' + word.pos);
   if (E.hints.first && word.w) {
-   var letters = str(word.w).split('');
-   var masked = [];
-   for (var i = 0; i < letters.length; i++) masked.push(i === 0 ? letters[i] : (/[a-zA-Z]/.test(letters[i]) ? '_' : letters[i]));
-   lines.push(t('hintFirst', 'First letter') + ': ' + masked.join(' '));
+    var letters = str(word.w).split('');
+    var masked = [];
+    var letterCount = 0;
+    for (var i = 0; i < letters.length; i++) {
+     masked.push(i === 0 ? letters[i] : (/[a-zA-Z]/.test(letters[i]) ? '_' : letters[i]));
+     if (/[a-zA-Z]/.test(letters[i])) letterCount += 1;
+    }
+    /* v0.0.7.b B3: the first-letter hint also gives the word LENGTH so the
+       student can structure the answer line before the reveal. */
+    lines.push(t('hintFirst', 'First letter') + ': ' + masked.join(' ') + ' · ' + letterCount + ' ' + t('hintLength', 'letters'));
   }
   if (E.hints.si && word.si) lines.push(word.si);
   if (E.hints.sentence && word.s) {
@@ -325,6 +331,9 @@
   for (var j = 0; j < lines.length; j++) html += '<p class="hint-chip-out">' + escapeHtml(lines[j]) + '</p>';
   out.innerHTML = html;
   out.hidden = lines.length === 0;
+  /* v0.0.7.b B3: .has-hint makes the detailed card visible in PAPER mode
+     too (css law) — the Hint button never renders into a hidden box again. */
+  out.className = 'hint-output' + (lines.length ? ' has-hint' : '');
   var chips = host.querySelectorAll ? host.querySelectorAll('[data-hint]') : [];
   for (var c = 0; c < chips.length; c++) {
    var key = chips[c].getAttribute('data-hint');
@@ -339,12 +348,39 @@
   E.hints[name] = !E.hints[name];
   renderHints();
  }
- /* v0.0.6.g (A2): the Hint pill toggles the reveal card's meaning panel
-    (IPA / word type / Sinhala / English, never the spelling). The per-field
-    chips stay bound for typing mode and direct taps. */
+ /* v0.0.7.b B3 — the Hint pill now works IDENTICALLY in Paper and Typing
+    modes with a clean 3-stage flow:
+      press 1 → the meaning panel (IPA / word type / Si / En — never the
+                spelling) via SDP.Views.showHintPanel();
+      press 2 → the detailed hint card in #hintOutput (first letter + word
+                length + Sinhala + blanked example), visible on every mode;
+      press 3 → every hint off.
+    The per-field chips stay bound for typing mode and direct taps. */
  function hintOrReveal() {
-  try { if (SDP.Views && SDP.Views.toggleHintPanel) return SDP.Views.toggleHintPanel(); } catch (e) {}
-  return cycleHint();
+  var stage = Number(E.hintStage) || 0;
+  if (stage === 0) {
+   try {
+    if (SDP.Views && SDP.Views.showHintPanel) {
+     SDP.Views.showHintPanel();
+     E.hintStage = 1;
+     return 'meaning';
+    }
+   } catch (e) {}
+   return cycleHint(); /* Views unavailable — engine-only fallback */
+  }
+  if (stage === 1) {
+   E.hints.pos = true; E.hints.first = true; E.hints.si = true; E.hints.sentence = true;
+   renderHints();
+   E.hintStage = 2;
+   /* R3: one cue per reveal, never per tap-loop. */
+   try { if (SDP.Speech && SDP.Speech.sayCue) SDP.Speech.sayCue('cmd.hint', noop); } catch (eC) {}
+   return 'detail';
+  }
+  E.hints.pos = false; E.hints.first = false; E.hints.si = false; E.hints.sentence = false;
+  renderHints();
+  try { if (SDP.Views && SDP.Views.hideHintPanel) SDP.Views.hideHintPanel(); } catch (eH) {}
+  E.hintStage = 0;
+  return '';
  }
  function cycleHint() {
   var order = ['pos', 'first', 'si', 'sentence'], i;
@@ -676,6 +712,7 @@
   E.paused = false;
   E.wordStartAt = now();
   E.hints = { pos: false, first: false, si: false, sentence: false };
+  E.hintStage = 0; /* v0.0.7.b B3: the 3-stage Hint flow restarts on every word */
   updateMeta();
   /* v0.0.6.a Track 3: every new beat re-arms the hidden reveal so the next
      spelling can never leak (R10) — phone, projector or desktop alike. */
@@ -1483,6 +1520,7 @@
     si: !!conf.hints.si,
     sentence: !!conf.hints.sentence
    };
+   E.hintStage = 0;
   }
   /* R3 / D9: 5 s · 2× is the classroom default; intervalSec is the older
     field name for the same writing window. */
@@ -1591,6 +1629,7 @@
   E.index = 0;
   E.items = [];
   E.hints = { pos: false, first: false, si: false, sentence: false };
+  E.hintStage = 0;
   E.repeatsDone = 0;
   E.repeatShown = 0;
   E.remainingMs = 0;

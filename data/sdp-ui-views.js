@@ -7,7 +7,7 @@
   var APP_VERSION = (function () {
     try { if (SDP && SDP.version) return String(SDP.version); } catch (e) {}
     try { if (global.__SDP_BOOT_VERSION__) return String(global.__SDP_BOOT_VERSION__); } catch (e) {}
-    return '0.0.7.a';
+    return '0.0.7.b';
   })();
   /* v0.0.6.m (P1/P3): the governed Beta channel stays URL-driven for the
      Project Briefing suite. The v0.0.6.m features are permanent on Main;
@@ -53,6 +53,14 @@
     finishedBeat: 'Finished — check your answers', repeatWord: 'Repeat', remainingWord: 'remaining',
     noWords: 'No words loaded yet', hintPos: 'Word type', hintFirst: 'First letter', hintSi: 'Sinhala meaning',
     hintSentence: 'Example sentence', playAudio: 'Play audio',
+    pronVariantsBadge: 'UK pronunciations accepted', hintLength: 'letters',
+    offlineBanner: 'Running in Offline Mode (No Internet / Mobile Data)', offlineBannerSub: 'Cached audio & sessions active',
+    offlineBannerHelp: 'Get Help', offlineBackOnline: 'Back online',
+    studioAutoLockIn: 'Auto-locking Studio in', studioAutoLockHint: '— tap anywhere to stay unlocked',
+    studioPublishLockOk: 'Published, synced & locked — students can start dictation now.',
+    studioGuideBtn: '📘 Studio Guide', studioGuideTitle: 'Lecturer Studio Guide',
+    studioGuideSimple: 'Simple Guide — daily teaching flow', studioGuideAdvanced: 'Advanced Guide — every admin control',
+    studioGuideLater: 'Maybe later',
     resultsTitle: 'Self-Check & Results', colYourWord: 'Your word', colCorrectWord: 'Correct word', colMark: 'Mark',
     markCorrect: 'Correct', markMissed: 'Missed', markAll: 'Mark all correct', toggleMissed: 'Toggle missed',
     btnRetryMissed: 'Retry missed words', btnNewSession: 'Start new session',
@@ -402,6 +410,14 @@
     finishedBeat: 'අවසන් — පිළිතුරු පරීක්ෂා කරන්න', repeatWord: 'වාරය', remainingWord: 'ඉතිරි',
     noWords: 'වචන තවම පූරණය වී නැත', hintPos: 'වචන වර්ගය', hintFirst: 'පළමු අක්ෂරය', hintSi: 'සිංහල තේරුම',
     hintSentence: 'උදාහරණ වාක්‍යය', playAudio: 'හඬ වාදනය',
+    pronVariantsBadge: 'බ්‍රිතාන්‍ය උච්චාරණ පිළිගනී', hintLength: 'අකුරු',
+    offlineBanner: 'ඕෆ්ලයින් මාදිලියෙන් ක්‍රියාත්මක වේ (මොබයිල් ඩේටා නොමැත)', offlineBannerSub: 'සුරැකි හඬ පට භාවිත වේ',
+    offlineBannerHelp: 'උපකාර ලබා ගන්න', offlineBackOnline: 'නැවත සම්බන්ධ විය',
+    studioAutoLockIn: 'ස්ටූඩියෝව තත්පර', studioAutoLockHint: '— නොවැසී සිටීමට ඕනෑම තැනක ස්පර්ශ කරන්න…',
+    studioPublishLockOk: 'පළ කර සමමුහූර්ත කර අගුලු ලෑවා — ශිෂ්‍යයන්ට දැන් ඩික්ටේෂන් ආරම්භ කළ හැක.',
+    studioGuideBtn: '📘 ස්ටූඩියෝ මාර්ගෝපදේශය', studioGuideTitle: 'කථිකාචාර්ය ස්ටූඩියෝ මාර්ගෝපදේශය',
+    studioGuideSimple: 'සරල මාර්ගෝපදේශය — දෛනික ඉගැන්වීම් ප්‍රවාහය', studioGuideAdvanced: 'උසස් මාර්ගෝපදේශය — සියලු පරිපාලක පාලක',
+    studioGuideLater: 'පසුව බලමු',
     resultsTitle: 'ස්වයං පරීක්ෂාව සහ ප්‍රතිඵල', colYourWord: 'ඔබ ලියූ වචනය', colCorrectWord: 'නිවැරදි වචනය', colMark: 'ලකුණු කිරීම',
     markCorrect: 'නිවැරදි', markMissed: 'වැරදි', markAll: 'සියල්ල නිවැරදි', toggleMissed: 'ලකුණු මාරු කරන්න',
     btnRetryMissed: 'වැරදි නැවත ලියන්න', btnNewSession: 'නව වාරයක්',
@@ -639,7 +655,7 @@
     ssbUnlocked: 'කථිකාචාර්ය ප්‍රකාරය විවෘතයි — උපාංගය සිසුන්ට දීමට පෙර අගුළු දමන්න',
     guardTitle: '🔴 මුලා නොසිදුක් වෙනස්කම්',
     guardBody: 'වෙනස්කල් වන හෝ සැකසුම් තවම පළ නොකර ඇත. මාරු වීමට පෙර පළ කර සමව්රාක අගුලු දමන්න — නැහැත් එවා අතර දමන්න.',
-    guardPublish: '🔴 පළ කර සමව්රාක සිදු යන්න',
+    guardPublish: '🔴 පළ කර, සමමුහූර්ත කර පිටවන්න',
     guardLock: '🔒 අතර දමන්න අගුලු දමන්න',
     guardStay: '✏️ කථිකාචාර්‍ය ප්‍රකාරයෙහි රැඳී සිටින්න',
     studioPublishOkFull: ' සියලුම උපාංග වෙත සාර්ථකව ප්‍රකාශයට පත් කරන ලදී',
@@ -786,6 +802,8 @@
 
   function applyLang(next, quiet) {
     lang = next === 'si' ? 'si' : 'en';
+    /* v0.0.7.b B7: the offline banner speaks the new language at once. */
+    try { paintOfflineBanner(isOfflineNow()); } catch (eOB) {}
     if (doc && doc.documentElement) doc.documentElement.setAttribute('lang', lang === 'si' ? 'si' : 'en');
     if (doc && doc.body) doc.body.setAttribute('data-lang', lang);
     if (!quiet) { try { SDP.Data.saveSettings({ lang: lang }); } catch (e) {} }
@@ -1669,6 +1687,9 @@
         '<div class="d-body">' +
         '<div class="d-top"><span class="d-index">#' + pad2(i + 1) + '</span> <strong class="d-w">' + esc(w.w) + '</strong> <span class="d-pos">' + esc(w.pos) + '</span></div>' +
         '<div class="d-p">/' + esc(str(w.p).replace(/^\/+|\/+$/g, '')) + '/</div>' +
+        /* v0.0.7.b B2: the UK pronunciation-variant hint badge. */
+        (Array.isArray(w.pronunciationVariants) && w.pronunciationVariants.length > 1
+          ? '<div class="d-pron-variants" role="note">🔊 ' + w.pronunciationVariants.length + ' ' + esc(t('pronVariantsBadge')) + ': ' + w.pronunciationVariants.slice(0, 3).map(esc).join(' · ') + '</div>' : '') +
         '<div class="d-m">' + esc(w.m) + '</div>' +
         '<div class="word-si">' + esc(w.si) + '</div>' +
         '<div class="d-s">' + highlightWordInSentence(str(w.s), str(w.w)) + '</div>' +
@@ -2298,8 +2319,13 @@
     var hasErr = (result !== undefined && !!err) || !res.ok;
     if (hasErr) {
       paintSyncBadge({ state: res.error === 'no_fetch' ? 'offline' : 'error', session: syncSessionNo() });
+      /* v0.0.7.b B7: a failed network probe on the 30 s tick keeps the
+         Offline Mode banner up even when navigator.onLine still lies. */
+      if (res.error === 'no_fetch' || res.error === 'timeout') { try { paintOfflineBanner(true); } catch (eO) {} }
       return;
     }
+    /* a real answer from the network proves connectivity — clear the banner. */
+    try { paintOfflineBanner(false); } catch (eO2) {}
     if (res.appVersionChanged) {
       paintSyncBadge({ state: 'update', session: res.session || syncSessionNo() });
       return;
@@ -2722,13 +2748,14 @@
   function paintRevealMeaning(w) {
     var host = byId('revealMeaning');
     if (!host) return false;
-    var ipa = byId('revealIpa'), pos = byId('revealPos'), si = byId('revealSi'), en = byId('revealEn');
+    var ipa = byId('revealIpa'), pos = byId('revealPos'), si = byId('revealSi'), en = byId('revealEn'), pv = byId('revealPronVariants');
     if (!(revealState.shown || revealState.meaningOnly) || !w) {
       host.hidden = true;
       if (ipa) setText(ipa, '/—/');
       if (pos) setText(pos, '—');
       if (si) setText(si, '—');
       if (en) setText(en, '');
+      if (pv) pv.hidden = true;
       return true;
     }
     var rawP = str(w.p).replace(/^\/+|\/+$/g, '');
@@ -2737,6 +2764,17 @@
     if (pos) setText(pos, str(w.pos) || '—');
     if (si) setText(si, str(w.si) || '—');
     if (en) setText(en, str(w.m) || '');
+    /* v0.0.7.b B2: the UK pronunciation-variant hint badge on the Player
+       reveal card — students see both accepted British forms at a glance. */
+    if (pv) {
+      var vars = Array.isArray(w.pronunciationVariants) ? w.pronunciationVariants : [];
+      if (vars.length > 1) {
+        pv.hidden = false;
+        pv.textContent = '🔊 ' + vars.length + ' ' + t('pronVariantsBadge') + ': ' + vars.slice(0, 3).join(' · ');
+      } else {
+        pv.hidden = true;
+      }
+    }
     host.hidden = false;
     return true;
   }
@@ -2777,13 +2815,30 @@
     paintRevealCard();
     return revealState.meaningOnly;
   }
+  /* v0.0.7.b B3: the 3-stage Hint flow drives the meaning panel through
+     these explicit setters (press 1 shows it, press 3 hides it — a spelling
+     reveal is always folded back to a meaning-only hint first). */
+  function showHintPanel() {
+    if (revealState.shown) { revealState.shown = false; revealState.pausedFor = false; }
+    revealState.meaningOnly = true;
+    paintRevealCard();
+    return true;
+  }
+  function hideHintPanel() {
+    revealState.meaningOnly = false;
+    paintRevealCard();
+    return true;
+  }
   var lastRevealIdx = -1;
   function onEngineWordChanged(idx) {
     if (idx === lastRevealIdx) {
-      /* same word, engine re-rendered: a resumed beat re-hides the reveal */
-      if (engineRunningNow() && (revealState.shown || revealState.meaningOnly)) {
+      /* same word, engine re-rendered: a resumed beat re-hides a SHOWN
+         spelling (R10). v0.0.7.b B3: an open meaning HINT (meaningOnly —
+         IPA/POS/Si/En, never the spelling) is NEVER auto-closed by an
+         engine re-render; only the next word or an explicit press closes
+         it (the live Hint-fails-mid-beat bug). */
+      if (engineRunningNow() && revealState.shown) {
         revealState.shown = false;
-        revealState.meaningOnly = false;
         revealState.pausedFor = false;
         paintRevealCard();
       }
@@ -2851,6 +2906,8 @@
   function onNetChange() {
     var off = isOfflineNow();
     paintStudioOffline(off);
+    /* v0.0.7.b B7: the app-wide Offline Mode banner follows every change. */
+    paintOfflineBanner(off);
     if (!off) return true;
     var studioOpen = false;
     try { studioOpen = !!(doc.querySelector && doc.querySelector('#screen-studio.active')); } catch (e) { studioOpen = false; }
@@ -2858,6 +2915,52 @@
       var body = byId('studioBody');
       if (body && body.setAttribute) body.setAttribute('aria-live', 'polite');
     }
+    return true;
+  }
+  /* ══ v0.0.7.b B7 — the ALWAYS-VISIBLE OFFLINE MODE BANNER (#sdpOfflineModeBanner).
+     navigator.onLine alone lies on phone networks ("connected" but no mobile
+     data), so the online event is verified with a tiny live probe of
+     version.json: a failed probe keeps the banner up; a success clears it
+     the instant real connectivity returns. ══ */
+  var offlineProbeBusy = false;
+  function probeConnectivity(cb) {
+    cb = cb || function () {};
+    if (typeof global.fetch !== 'function') { cb(false); return false; }
+    var done = false;
+    var finish = function (ok) { if (!done) { done = true; cb(ok); } };
+    try {
+      global.fetch('./data/version.json?probe=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { finish(!!(r && r.ok)); }, function () { finish(false); });
+    } catch (e) { finish(false); return false; }
+    global.setTimeout(function () { finish(false); }, 6000);
+    return true;
+  }
+  function paintOfflineBanner(show) {
+    var b = byId('sdpOfflineModeBanner');
+    if (!b) return false;
+    b.hidden = !show;
+    b.setAttribute('data-state', show ? 'on' : 'hidden');
+    if (show) {
+      setText(byId('obTitle'), '📡 ' + t('offlineBanner', 'Running in Offline Mode (No Internet / Mobile Data)'));
+      setText(byId('obSub'), t('offlineBannerSub', 'Cached audio & sessions active'));
+      var hb = byId('btnOfflineHelp');
+      if (hb) setText(hb, t('offlineBannerHelp', 'Get Help'));
+    }
+    return true;
+  }
+  function refreshOfflineState(announceOnline) {
+    var off = isOfflineNow();
+    if (off) { onNetChange(); return true; }
+    /* navigator claims online — verify with a probe so "no mobile data"
+       keeps the banner visible. */
+    if (offlineProbeBusy) return true;
+    offlineProbeBusy = true;
+    probeConnectivity(function (ok) {
+      offlineProbeBusy = false;
+      paintOfflineBanner(!ok);
+      paintStudioOffline(!ok);
+      if (ok && announceOnline) { try { showToast(t('offlineBackOnline', 'Back online')); } catch (e) {} }
+    });
     return true;
   }
   /* D-S10/S11 (R7): a teacher publish tells the student, and only the keys… */
@@ -2895,7 +2998,9 @@
     if (global.addEventListener && !bindTeacherUpdates._netBound) {
       bindTeacherUpdates._netBound = true;
       global.addEventListener('offline', function () { onNetChange(); }, false);
-      global.addEventListener('online', function () { onNetChange(); }, false);
+      /* v0.0.7.b B7: the online event is PROBE-verified — a lying
+         navigator.onLine (no mobile data) keeps the banner visible. */
+      global.addEventListener('online', function () { refreshOfflineState(true); }, false);
     }
     return true;
   }
@@ -3004,7 +3109,7 @@
    *     "Tap Anywhere to Start Voice Briefing" pill takes over and the
    *     narration WAITS for the first gesture — never silently skipping.
    * No age detail is ever shown or spoken. */
-  var BETA_SUBVERSION = '0.0.7.a.beta';
+  var BETA_SUBVERSION = '0.0.7.b.beta';
   var BRIEFING_GATE_MS = 10000;
   var PROJECT_START_ISO = '2026-10-22';
   function weeksSinceStart() {
@@ -4376,6 +4481,17 @@
     try {
       if (SDP.Diagnostics) SDP.Diagnostics.captureReview(payload);
     } catch (e) {}
+    /* v0.0.7.b B6: the reaction pills and a 1–5 rating stamp the last
+       telemetry session record and beacon it, so the Lecturer Studio's
+       Live Activity table shows reactions against real performance. */
+    try {
+      if (SDP.Telemetry && SDP.Telemetry.stampLastSession && !skipped) {
+        var rating = picked.length ? 5 : 4; /* pill feedback = engaged rating; text-only still counts */
+        SDP.Telemetry.stampLastSession({ rating: rating, reactions: picked });
+      } else if (SDP.Telemetry && SDP.Telemetry.stampLastSession && skipped) {
+        SDP.Telemetry.stampLastSession({ rating: 3, reactions: ['skipped'] });
+      }
+    } catch (eSt2) {}
     reviewState.done = true;
     stopReviewVoice(false);
     releaseFeedbackAudioLocks('review_sent');
@@ -4451,6 +4567,10 @@
     on('btnSendReview', 'click', function () { sendReview(false); });
     on('btnSkipReview', 'click', function () { sendReview(true); });
     on('btnFabSendReview', 'click', function () { sendReview(false); });
+    /* v0.0.7.b B7: manual entry to the Student Troubleshooting Guide. */
+    on('btnFabTroubleshoot', 'click', function () {
+      try { if (SDP.SelfHeal && SDP.SelfHeal.showTroubleshoot) { SDP.SelfHeal.showTroubleshoot('offline'); return; } } catch (e) {}
+    });
     /* The floating launcher: open / close + the one-time micro-badge. */
     on('sdpFeedbackFab', 'click', function () { toggleFeedbackDrawer(); });
     on('btnFabClose', 'click', function () { toggleFeedbackDrawer(false); });
@@ -4483,6 +4603,19 @@
     bindShell();
     paintIconHosts();
     bindTeacherUpdates();
+    /* v0.0.7.b B7: the Offline Mode banner paints its boot state and the
+       banner's Get Help button opens the Student Troubleshooting Guide. */
+    try {
+      paintOfflineBanner(isOfflineNow());
+      var obHelp = byId('btnOfflineHelp');
+      if (obHelp && !obHelp._sdpBound) {
+        obHelp._sdpBound = true;
+        obHelp.addEventListener('click', function () {
+          try { if (SDP.SelfHeal && SDP.SelfHeal.showTroubleshoot) { SDP.SelfHeal.showTroubleshoot('offline'); return; } } catch (e) {}
+          try { if (SDP.SelfHeal && SDP.SelfHeal.show) SDP.SelfHeal.show('manual', { via: 'offline_banner' }); } catch (e2) {}
+        }, false);
+      }
+    } catch (eOB) {}
     /* v0.0.7.a Z4: the lock overlay buttons arm on boot. */
     bindDictationLockOverlay();
     try { if (SDP.Engine && SDP.Engine.bind) SDP.Engine.bind(); } catch (e) {}
@@ -4861,6 +4994,8 @@
     onEngineWordChanged: onEngineWordChanged,
     toggleRevealCard: toggleRevealCard,
     toggleHintPanel: toggleHintPanel,
+    showHintPanel: showHintPanel,
+    hideHintPanel: hideHintPanel,
     installExtensionShield: installExtensionShield,
     paintUpdateCard: paintUpdateCard,
     isOfflineNow: isOfflineNow,

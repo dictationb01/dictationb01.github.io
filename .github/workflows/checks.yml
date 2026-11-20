@@ -103,13 +103,23 @@ jobs:
       - name: G19 · v0.0.7.a studio UX, unlimited words, key pool & reuse gate
         run: node tests/v007a-verification.cjs
 
+      # v0.0.7.b: the seven-pillar release verification gate — B1 unified
+      # voice + zero-byte rejection, B2 repaired RP data + variant badges,
+      # B3 every dictation button in both modes, B4 publish/sync/leave lock
+      # + 10 s auto-lock + zero topic chips, B5 interactive Studio Guide,
+      # B6 live student activity & alerts, B7 offline banner + student
+      # troubleshooting guide. Verified live at desktop 1280 AND mobile
+      # 390x844 in headless Chromium.
+      - name: G20 · v0.0.7.b unified voice, studio guide, offline & alerts gate
+        run: node tests/v007b-verification.cjs
+
       # Pins mirror PRESERVED_SHA in tests/check.cjs (the single source of truth).
       - name: Preserved payloads must still match their SHA-256 lock
         run: |
           node -e '
             const fs=require("fs"),c=require("crypto");
             const want={
-              "data/session.json":"54d438f9","data/gas-source.txt":"b7bbd23c",
+              "data/session.json":"7571bfda","data/gas-source.txt":"b7bbd23c",
               "assets/fonts/NotoSansSinhala-Regular.woff2":"23f1503e",
               "assets/fonts/NotoSansSinhala-Bold.woff2":"bf59c148"};
             let bad=0;

@@ -274,27 +274,27 @@
       },
       {
         "w": "keyboard",
-        "p": "/ˈkiː.bɔːd/",
+        "p": "/ˈkiːbɔːd/",
         "pos": "noun.",
-        "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
+        "m": "A set of keys used to operate a typewriter, computer.",
         "si": "යතුරු පුවරුව",
         "s": "The 'E' key on my keyboard is broken.",
-        "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
+        "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
       },
       {
         "w": "machine",
-        "p": "/məˈʃiːn/",
+        "p": "/məˈʃin/",
         "pos": "noun.",
-        "m": "A piece of equipment that uses power, such as electricity, to do a job.",
+        "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
         "si": "යන්ත්රය",
-        "s": "This machine makes very good tea in the morning.",
+        "s": "I called you earlier, but all I got was the machine.",
         "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
       },
       {
         "w": "mobile phone",
         "p": "/ˌməʊ.baɪl ˈfəʊn/",
         "pos": "noun.",
-        "m": "A telephone you can carry with you and use anywhere.",
+        "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
         "si": "ජංගම දුරකථනය",
         "s": "I called you on my mobile phone, but you did not answer.",
         "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
@@ -567,27 +567,27 @@
         },
         {
           "w": "keyboard",
-          "p": "/ˈkiː.bɔːd/",
+          "p": "/ˈkiːbɔːd/",
           "pos": "noun.",
-          "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
+          "m": "A set of keys used to operate a typewriter, computer.",
           "si": "යතුරු පුවරුව",
           "s": "The 'E' key on my keyboard is broken.",
-          "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
+          "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
         },
         {
           "w": "machine",
-          "p": "/məˈʃiːn/",
+          "p": "/məˈʃin/",
           "pos": "noun.",
-          "m": "A piece of equipment that uses power, such as electricity, to do a job.",
+          "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
           "si": "යන්ත්රය",
-          "s": "This machine makes very good tea in the morning.",
+          "s": "I called you earlier, but all I got was the machine.",
           "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
         },
         {
           "w": "mobile phone",
           "p": "/ˌməʊ.baɪl ˈfəʊn/",
           "pos": "noun.",
-          "m": "A telephone you can carry with you and use anywhere.",
+          "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
           "si": "ජංගම දුරකථනය",
           "s": "I called you on my mobile phone, but you did not answer.",
           "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
@@ -897,7 +897,7 @@
   "announcement": null,
   "comments": [],
   "appVersion": "0.0.7.b",
-  "updatedAt": "2026-11-20T02:41:35.891Z",
+  "updatedAt": "2026-11-20T02:41:56.475Z",
   "version": "0.0.7.b",
   "buildDate": "2026-11-18",
   "settingsRev": 74,
@@ -1465,27 +1465,27 @@
     },
     {
       "w": "keyboard",
-      "p": "/ˈkiː.bɔːd/",
+      "p": "/ˈkiːbɔːd/",
       "pos": "noun.",
-      "m": "The set of keys on a computer or typewriter that you press to write letters and numbers.",
+      "m": "A set of keys used to operate a typewriter, computer.",
       "si": "යතුරු පුවරුව",
       "s": "The 'E' key on my keyboard is broken.",
-      "audio": "https://dict.youdao.com/dictvoice?type=1&audio=keyboard"
+      "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3"
     },
     {
       "w": "machine",
-      "p": "/məˈʃiːn/",
+      "p": "/məˈʃin/",
       "pos": "noun.",
-      "m": "A piece of equipment that uses power, such as electricity, to do a job.",
+      "m": "A device that directs and controls energy, often in the form of movement or electricity, to produce a certain effect.",
       "si": "යන්ත්රය",
-      "s": "This machine makes very good tea in the morning.",
+      "s": "I called you earlier, but all I got was the machine.",
       "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/machine-uk.mp3"
     },
     {
       "w": "mobile phone",
       "p": "/ˌməʊ.baɪl ˈfəʊn/",
       "pos": "noun.",
-      "m": "A telephone you can carry with you and use anywhere.",
+      "m": "A portable telephone that connects with the telephone network over radio wave transmission.",
       "si": "ජංගම දුරකථනය",
       "s": "I called you on my mobile phone, but you did not answer.",
       "audio": "https://dict.youdao.com/dictvoice?type=1&audio=mobile%20phone"
